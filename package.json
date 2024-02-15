@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-boilerplate",
+  "name": "digifranchises-backend",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -28,6 +28,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
+    "build:digitalocean": "yarn install --production=false && yarn run build && rm -rf node_modules && yarn install --production --frozen-lockfile",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "env-cmd jest --config ./test/jest-e2e.json",
@@ -129,7 +130,8 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": ">=18.18.2",
-    "npm": ">=8.0.0"
+    "node": ">=18.x",
+    "npm": ">=8.0.0",
+    "yarn": "^0.14.0"
   }
 }
