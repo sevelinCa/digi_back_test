@@ -129,7 +129,7 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=18.18.2",
     "npm": ">=8.0.0"
   }
 }
