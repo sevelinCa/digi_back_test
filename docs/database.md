@@ -57,6 +57,8 @@
 
    ```bash
    npm run migration:generate -- src/database/migrations/CreatePostTable
+      npm run migration:generate -- src/database/migrations/createOperatingParametersTable
+
    ```
 
 1. Apply this migration to database via [npm run migration:run](#run-migration).

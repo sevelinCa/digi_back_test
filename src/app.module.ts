@@ -32,7 +32,7 @@ import { MongooseConfigService } from './database/mongoose-config.service';
 import { DatabaseConfig } from './database/config/database-config.type';
 import { AccountingModule } from './accounting/accounting.module';
 import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
-import { InventoryModule } from './inventory/inventory.module';
+// import { InventoryModule } from './inventory/inventory.module';
 import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 
 @Module({
@@ -98,7 +98,7 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
     HomeModule,
     AccountingModule,
     AssetMgtModule,
-    InventoryModule,
+    // InventoryModule,
     DigifranchiseModule,
   ],
 })

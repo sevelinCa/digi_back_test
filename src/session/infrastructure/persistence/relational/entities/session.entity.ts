@@ -14,8 +14,9 @@ import { Session } from '../../../../domain/session';
   name: 'session',
 })
 export class SessionEntity extends EntityRelationalHelper implements Session {
-  @PrimaryGeneratedColumn()
-  id: number;
+
+@PrimaryGeneratedColumn('uuid')
+id: string;
 
   @ManyToOne(() => UserEntity, {
     eager: true,
