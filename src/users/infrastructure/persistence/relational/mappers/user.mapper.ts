@@ -1,9 +1,9 @@
 import { RoleEntity } from 'src/roles/infrastructure/persistence/relational/entities/role.entity';
 import { User } from '../../../../domain/user';
 import { UserEntity } from '../entities/user.entity';
-import { FileEntity } from 'src/files/infrastructure/persistence/relational/entities/file.entity';
+// import { FileEntity } from 'src/files/infrastructure/persistence/relational/entities/file.entity';
 import { StatusEntity } from 'src/statuses/infrastructure/persistence/relational/entities/status.entity';
-import { FileMapper } from 'src/files/infrastructure/persistence/relational/mappers/file.mapper';
+// import { FileMapper } from 'src/files/infrastructure/persistence/relational/mappers/file.mapper';
 
 export class UserMapper {
   static toDomain(raw: UserEntity): User {
@@ -16,9 +16,9 @@ export class UserMapper {
     user.socialId = raw.socialId;
     user.firstName = raw.firstName;
     user.lastName = raw.lastName;
-    if (raw.photo) {
-      user.photo = FileMapper.toDomain(raw.photo);
-    }
+    // if (raw.photo) {
+    //   user.photo = FileMapper.toDomain(raw.photo);
+    // }
     user.role = raw.role;
     user.status = raw.status;
     user.createdAt = raw.createdAt;
@@ -35,12 +35,12 @@ export class UserMapper {
       role.id = user.role.id;
     }
 
-    let photo: FileEntity | undefined = undefined;
+    // let photo: FileEntity | undefined = undefined;
 
-    if (user.photo) {
-      photo = new FileEntity();
-      photo.id = user.photo.id;
-    }
+    // if (user.photo) {
+    //   photo = new FileEntity();
+    //   photo.id = user.photo.id;
+    // }
 
     let status: StatusEntity | undefined = undefined;
 
@@ -60,7 +60,7 @@ export class UserMapper {
     userEntity.socialId = user.socialId;
     userEntity.firstName = user.firstName;
     userEntity.lastName = user.lastName;
-    userEntity.photo = photo;
+    // userEntity.photo = photo;
     userEntity.role = role;
     userEntity.status = status;
     userEntity.createdAt = user.createdAt;

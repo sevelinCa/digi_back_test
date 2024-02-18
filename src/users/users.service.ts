@@ -9,7 +9,7 @@ import { DeepPartial } from 'src/utils/types/deep-partial.type';
 import { User } from './domain/user';
 import { StatusEnum } from 'src/statuses/statuses.enum';
 import { RoleEnum } from 'src/roles/roles.enum';
-import { FilesService } from 'src/files/files.service';
+// import { FilesService } from 'src/files/files.service';
 import bcrypt from 'bcryptjs';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 
@@ -17,7 +17,7 @@ import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
-    private readonly filesService: FilesService,
+    // private readonly filesService: FilesService,
   ) {}
 
   async create(createProfileDto: CreateUserDto): Promise<User> {
@@ -48,23 +48,23 @@ export class UsersService {
       }
     }
 
-    if (clonedPayload.photo?.id) {
-      const fileObject = await this.filesService.findOne({
-        id: clonedPayload.photo.id,
-      });
-      if (!fileObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              photo: 'imageNotExists',
-            },
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-      clonedPayload.photo = fileObject;
-    }
+    // if (clonedPayload.photo?.id) {
+    //   const fileObject = await this.filesService.findOne({
+    //     id: clonedPayload.photo.id,
+    //   });
+    //   if (!fileObject) {
+    //     throw new HttpException(
+    //       {
+    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //         errors: {
+    //           photo: 'imageNotExists',
+    //         },
+    //       },
+    //       HttpStatus.UNPROCESSABLE_ENTITY,
+    //     );
+    //   }
+    //   clonedPayload.photo = fileObject;
+    // }
 
     if (clonedPayload.role?.id) {
       const roleObject = Object.values(RoleEnum).includes(
@@ -155,23 +155,23 @@ export class UsersService {
       }
     }
 
-    if (clonedPayload.photo?.id) {
-      const fileObject = await this.filesService.findOne({
-        id: clonedPayload.photo.id,
-      });
-      if (!fileObject) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              photo: 'imageNotExists',
-            },
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-      clonedPayload.photo = fileObject;
-    }
+    // if (clonedPayload.photo?.id) {
+    //   const fileObject = await this.filesService.findOne({
+    //     id: clonedPayload.photo.id,
+    //   });
+    //   if (!fileObject) {
+    //     throw new HttpException(
+    //       {
+    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //         errors: {
+    //           photo: 'imageNotExists',
+    //         },
+    //       },
+    //       HttpStatus.UNPROCESSABLE_ENTITY,
+    //     );
+    //   }
+    //   clonedPayload.photo = fileObject;
+    // }
 
     if (clonedPayload.role?.id) {
       const roleObject = Object.values(RoleEnum).includes(
