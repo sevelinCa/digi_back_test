@@ -10,8 +10,6 @@ import { FundingService } from './funding.service';
 import { IncomeService } from './income.service';
 import { OperatingParametersService } from './operating-parameters.service';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-// import { Asset } from 'src/asset-mgt/entities/asset.entity';
-// import { Inventory } from 'src/inventory/entities/inventory.entity';
 import { Deposit } from './entities/deposit.entity';
 import { Expense } from './entities/expense.entity';
 import { Funding } from './entities/funding.entity';
@@ -27,8 +25,6 @@ import { OperatingParameters } from './entities/operationParamenters.entity';
       Expense,
       Digifranchise,
       Income,
-      // Asset,
-      // Inventory,
       Funding,
       Deposit,
       OperatingParameters,

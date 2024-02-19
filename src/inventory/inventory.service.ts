@@ -1,25 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Inventory } from './entities/inventory.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import type { Repository } from 'typeorm';
+import { Inventory } from './entities/inventory.entity';
+import { getDigifranchiseByUserId, findInventoryById } from 'src/helper/FindByFunctions';
 import type { CreateInventoryDto } from './dto/create-inventory.dto';
 import type { UpdateInventoryDto } from './dto/update-inventory.dto';
-import { findInventoryById, getDigifranchiseByUserId } from 'src/helper/FindByFunctions';
-
 
 @Injectable()
 export class InventoryService {
-  constructor(
-    @InjectRepository(Inventory)
-    private readonly inventoryRepository: Repository<Inventory>,
-
-    @InjectRepository(Digifranchise)
-    private readonly digifranchiseAccountRepository: Repository<Digifranchise>,
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-  ) {}
+    constructor(
+        @InjectRepository(Inventory)
+        private readonly inventoryRepository: Repository<Inventory>,
+        @InjectRepository(Digifranchise)
+        private readonly digifranchiseRepository: Repository<Digifranchise>,
+    ) {}
 
   async createInventoryItem(
     createInventoryDto: CreateInventoryDto,
@@ -31,11 +26,9 @@ export class InventoryService {
     createInventoryDto.totalValue = totalValue;
 
     const franchiseAccount = await getDigifranchiseByUserId(
-      this.digifranchiseAccountRepository,
+      this.digifranchiseRepository,
       userId,
     );
-
-
 
     if (!franchiseAccount) {
       throw new NotFoundException(
@@ -66,7 +59,6 @@ export class InventoryService {
       this.inventoryRepository.createQueryBuilder('inventory');
 
     queryBuilder.leftJoinAndSelect('inventory.franchiseId', 'franchise');
-    queryBuilder.leftJoinAndSelect('inventory.assetId', 'asset');
 
     if (startDate) {
       queryBuilder.andWhere('inventory.date >= :startDate', { startDate });

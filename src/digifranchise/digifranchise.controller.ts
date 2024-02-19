@@ -2,7 +2,7 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
-import type { User } from 'src/users/domain/user';
+import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import type { Digifranchise } from './entities/digifranchise.entity';
 import { Request} from 'express';
 import { DigifranchiseService } from './digifranchise.service';
@@ -26,7 +26,7 @@ export class DigifranchiseController {
       async createDigifranchise(
         @Req() req: Request,
       ): Promise<Digifranchise> {
-        const userId = (req.user as User).id;
+        const userId = (req.user as UserEntity).id;
         return this.DigifranchiseService.createDigifranchise(userId);
       }
 }

@@ -32,9 +32,9 @@ import { MongooseConfigService } from './database/mongoose-config.service';
 import { DatabaseConfig } from './database/config/database-config.type';
 import { AccountingModule } from './accounting/accounting.module';
 // import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
-// import { InventoryModule } from './inventory/inventory.module';
 import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 
 @Module({
   imports: [
@@ -83,7 +83,7 @@ import { InventoryModule } from './inventory/inventory.module';
           inject: [ConfigService],
         },
       ],
-      imports: [ConfigModule, AccountingModule, DigifranchiseModule, InventoryModule],
+      imports: [ConfigModule, AccountingModule, ],
       inject: [ConfigService],
     }),
     UsersModule,
@@ -98,9 +98,9 @@ import { InventoryModule } from './inventory/inventory.module';
     MailerModule,
     HomeModule,
     AccountingModule,
-    // AssetMgtModule,
-    // InventoryModule,
     DigifranchiseModule,
+    InventoryModule,
+    AssetMgtModule,
   ],
 })
 export class AppModule { }

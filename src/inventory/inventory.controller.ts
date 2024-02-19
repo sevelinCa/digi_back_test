@@ -2,19 +2,19 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuard
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { RolesGuard } from 'src/roles/roles.guard';
-import type { User } from 'src/users/domain/user';
-import type { CreateInventoryDto } from './dto/create-inventory.dto';
-import type { UpdateInventoryDto } from './dto/update-inventory.dto';
-import type { Inventory } from './entities/inventory.entity';
-import type { InventoryService } from './inventory.service';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { CreateInventoryDto } from './dto/create-inventory.dto';
+import { UpdateInventoryDto } from './dto/update-inventory.dto';
+import { Inventory } from './entities/inventory.entity';
+import { InventoryService } from './inventory.service';
 import { Request } from 'express';
-
 @ApiTags('Inventories')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'inventory', version: '1' })
+
 export class InventoryController {
-  constructor(private readonly inventoryService: InventoryService) { }
+    constructor(private readonly inventoryService: InventoryService) { }
 
     @ApiOperation({
         summary: 'CREATE - Record Inventory Item for User',
@@ -24,7 +24,8 @@ export class InventoryController {
         @Req() req: Request,
         @Body() createInventoryDto: CreateInventoryDto,
     ) {
-        const userId = (req.user as User).id;
+        const userId = (req.user as UserEntity).id;
+
         return this.inventoryService.createInventoryItem(
             createInventoryDto,
             userId,

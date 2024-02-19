@@ -8,10 +8,8 @@ import { Deposit } from 'src/accounting/entities/deposit.entity';
 import { Funding } from 'src/accounting/entities/funding.entity';
 import { OperatingParameters } from 'src/accounting/entities/operationParamenters.entity';
 import type { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-// import type { Asset } from 'src/asset-mgt/entities/asset.entity';
 import type { Inventory } from 'src/inventory/entities/inventory.entity';
-// import type { Inventory } from 'src/inventory/entities/inventory.entity';
-// import type { Asset } from 'src/asset-mgt/entities/asset.entity';
+import type { Asset } from 'src/asset-mgt/entities/asset.entity';
 
 export async function findUserById(
   userRepository: Repository<User>,
@@ -73,13 +71,13 @@ export async function findIncomeById(
   return income || null;
 }
 
-// export async function findAssetById(
-//   assetRepository: Repository<Asset>,
-//   assetId: string,
-// ): Promise<Asset | null> {
-//   const asset = await assetRepository.findOne({ where: { id: assetId } });
-//   return asset || null;
-// }
+export async function findAssetById(
+  assetRepository: Repository<Asset>,
+  assetId: string,
+): Promise<Asset | null> {
+  const asset = await assetRepository.findOne({ where: { id: assetId } });
+  return asset || null;
+}
 
 export async function findInventoryById(
   inventoryRepository: Repository<Inventory>,
