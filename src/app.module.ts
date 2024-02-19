@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
-import { FilesModule } from './files/files.module';
+// import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
 import databaseConfig from './database/config/database.config';
 import authConfig from './auth/config/auth.config';
 import appConfig from './config/app.config';
 import mailConfig from './mail/config/mail.config';
-import fileConfig from './files/config/file.config';
+// import fileConfig from './files/config/file.config';
 import facebookConfig from './auth-facebook/config/facebook.config';
 import googleConfig from './auth-google/config/google.config';
 import twitterConfig from './auth-twitter/config/twitter.config';
@@ -31,9 +31,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './database/mongoose-config.service';
 import { DatabaseConfig } from './database/config/database-config.type';
 import { AccountingModule } from './accounting/accounting.module';
-import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
-import { InventoryModule } from './inventory/inventory.module';
+// import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { DigifranchiseModule } from './digifranchise/digifranchise.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
         authConfig,
         appConfig,
         mailConfig,
-        fileConfig,
+        // fileConfig,
         facebookConfig,
         googleConfig,
         twitterConfig,
@@ -54,14 +55,14 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
     }),
     (databaseConfig() as DatabaseConfig).isDocumentDatabase
       ? MongooseModule.forRootAsync({
-          useClass: MongooseConfigService,
-        })
+        useClass: MongooseConfigService,
+      })
       : TypeOrmModule.forRootAsync({
-          useClass: TypeOrmConfigService,
-          dataSourceFactory: async (options: DataSourceOptions) => {
-            return new DataSource(options).initialize();
-          },
-        }),
+        useClass: TypeOrmConfigService,
+        dataSourceFactory: async (options: DataSourceOptions) => {
+          return new DataSource(options).initialize();
+        },
+      }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
@@ -82,11 +83,11 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
           inject: [ConfigService],
         },
       ],
-      imports: [ConfigModule],
+      imports: [ConfigModule, AccountingModule, ],
       inject: [ConfigService],
     }),
     UsersModule,
-    FilesModule,
+    // FilesModule,
     AuthModule,
     AuthFacebookModule,
     AuthGoogleModule,
@@ -97,9 +98,9 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
     MailerModule,
     HomeModule,
     AccountingModule,
-    AssetMgtModule,
-    InventoryModule,
     DigifranchiseModule,
+    InventoryModule,
+    AssetMgtModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

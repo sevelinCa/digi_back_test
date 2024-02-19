@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
-import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
+// import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 // We use class-transformer in ORM entity and domain entity.
@@ -24,8 +24,8 @@ import { User } from '../../../../domain/user';
   name: 'user',
 })
 export class UserEntity extends EntityRelationalHelper implements User {
-  @PrimaryGeneratedColumn()
-  id: number;
+@PrimaryGeneratedColumn('uuid')
+id: string;
 
   // For "string | null" we need to use String type.
   // More info: https://github.com/typeorm/typeorm/issues/2567
@@ -62,10 +62,10 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @Column({ type: String, nullable: true })
   lastName: string | null;
 
-  @ManyToOne(() => FileEntity, {
-    eager: true,
-  })
-  photo?: FileEntity | null;
+  // @ManyToOne(() => FileEntity, {
+  //   eager: true,
+  // })
+  // photo?: FileEntity | null;
 
   @ManyToOne(() => RoleEntity, {
     eager: true,
