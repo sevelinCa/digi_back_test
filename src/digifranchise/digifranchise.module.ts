@@ -2,14 +2,15 @@ import { Module } from '@nestjs/common';
 import { DigifranchiseController } from './digifranchise.controller';
 import { DigifranchiseService } from './digifranchise.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/domain/user';
-import { DigifranchiseAccount } from './entities/digifranchise-account.entity';
+
+import { Digifranchise } from './entities/digifranchise.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      User,
-      DigifranchiseAccount
+      UserEntity,
+      Digifranchise
     ]),
   ],
   controllers: [DigifranchiseController],

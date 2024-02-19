@@ -5,19 +5,19 @@ import { Income } from './entities/income.entity';
 import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
 import {
   findIncomeById,
-  getDigifranchiseAccountByUserId,
+  getDigifranchiseByUserId,
 } from 'src/helper/FindByFunctions';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import { User } from 'src/users/domain/user';
-import { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
 @Injectable()
 export class IncomeService {
   constructor(
     @InjectRepository(Income)
     private readonly incomeRepository: Repository<Income>,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
@@ -26,8 +26,8 @@ export class IncomeService {
     createIncomeDto: CreateIncomeDto,
     userId: string,
   ): Promise<Income> {
-    const franchiseAccount = await getDigifranchiseAccountByUserId(
-      this.digifranchiseAccountRepository,
+    const franchiseAccount = await getDigifranchiseByUserId(
+      this.DigifranchiseRepository,
       userId,
     );
 

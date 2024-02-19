@@ -4,22 +4,22 @@ import { Repository } from 'typeorm';
 import { OperatingParameters } from './entities/operationParamenters.entity';
 import { CreateOperatingParametersDto } from './dto/Create-DTOs/create-operating-parameters.dto';
 import { findOperatingParametersById } from 'src/helper/FindByFunctions';
-import { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
 @Injectable()
 export class OperatingParametersService {
   constructor(
     @InjectRepository(OperatingParameters)
     private readonly operatingParametersRepository: Repository<OperatingParameters>,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
 
   async createOperatingParameters(
     createOperatingParametersDto: CreateOperatingParametersDto,
     userId: string,
   ): Promise<OperatingParameters> {
-    const franchiseAccount = await this.digifranchiseAccountRepository.findOne({
+    const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
 

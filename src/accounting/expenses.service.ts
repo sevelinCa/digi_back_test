@@ -6,20 +6,20 @@ import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
 import {
   findExpenseById,
   findFixedExpenseCategoryById,
-  getDigifranchiseAccountByUserId,
+  getDigifranchiseByUserId,
 } from 'src/helper/FindByFunctions';
 import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
 import { User } from 'src/users/domain/user';
-import { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
 @Injectable()
 export class ExpenseService {
   constructor(
     @InjectRepository(Expense)
     private readonly expenseRepository: Repository<Expense>,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(FixedExpenseCategory)
@@ -35,8 +35,8 @@ export class ExpenseService {
       this.fixedExpenseCategoryRepository,
       fixedExpenseId,
     );
-    const franchiseAccount = await getDigifranchiseAccountByUserId(
-      this.digifranchiseAccountRepository,
+    const franchiseAccount = await getDigifranchiseByUserId(
+      this.DigifranchiseRepository,
       userId,
     );
 

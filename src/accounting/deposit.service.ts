@@ -4,22 +4,22 @@ import { Repository } from 'typeorm';
 import { Deposit } from './entities/deposit.entity';
 import { CreateDepositDto } from './dto/Create-DTOs/create-deposit.dto';
 import { findDepositById } from 'src/helper/FindByFunctions';
-import { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
 @Injectable()
 export class DepositService {
   constructor(
     @InjectRepository(Deposit)
     private readonly depositRepository: Repository<Deposit>,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
 
   async createDeposit(
     createDepositDto: CreateDepositDto,
     userId: string,
   ): Promise<Deposit> {
-    const franchiseAccount = await this.digifranchiseAccountRepository.findOne({
+    const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
 

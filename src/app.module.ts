@@ -31,9 +31,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './database/mongoose-config.service';
 import { DatabaseConfig } from './database/config/database-config.type';
 import { AccountingModule } from './accounting/accounting.module';
-import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
+// import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 // import { InventoryModule } from './inventory/inventory.module';
 import { DigifranchiseModule } from './digifranchise/digifranchise.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -82,7 +83,7 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
           inject: [ConfigService],
         },
       ],
-      imports: [ConfigModule],
+      imports: [ConfigModule, AccountingModule, DigifranchiseModule, InventoryModule],
       inject: [ConfigService],
     }),
     UsersModule,
@@ -97,7 +98,7 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
     MailerModule,
     HomeModule,
     AccountingModule,
-    AssetMgtModule,
+    // AssetMgtModule,
     // InventoryModule,
     DigifranchiseModule,
   ],

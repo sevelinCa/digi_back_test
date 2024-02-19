@@ -3,35 +3,36 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
+  ManyToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
-  ManyToOne,
 } from 'typeorm';
 
 @Entity()
-export class Funding {
+export class Inventory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
 
   @ManyToOne(() => Digifranchise)
   @JoinColumn({ name: 'franchiseId' })
   franchiseId: Digifranchise;
 
-  @Column({ type: 'varchar' })
-  source: string;
+  @Column({ type: 'varchar', length: 255 })
+  itemName: string;
 
-  @Column({ type: 'int' })
-  monthReceived: number;
+  @Column({ type: 'integer' })
+  quantity: number;
 
-  @Column({ type: 'int' })
-  repaymentTerm: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  costPerItem: number;
 
-  @Column({ type: 'decimal', precision: 5, scale: 2 })
-  annualInterestRate: number;
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  totalValue: number;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  fundedAt: Date;
+  @Column({ type: 'date' })
+  dateReceived: Date;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

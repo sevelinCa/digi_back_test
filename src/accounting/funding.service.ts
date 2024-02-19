@@ -5,15 +5,15 @@ import { Funding } from './entities/funding.entity';
 import { CreateFundingDto } from './dto/Create-DTOs/create-funding.dto';
 import { findFundingById } from 'src/helper/FindByFunctions';
 import { User } from 'src/users/domain/user';
-import { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
 @Injectable()
 export class FundingService {
   constructor(
     @InjectRepository(Funding)
     private readonly fundingRepository: Repository<Funding>,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
@@ -22,7 +22,7 @@ export class FundingService {
     createFundingDto: CreateFundingDto,
     userId: string,
   ): Promise<Funding> {
-    const franchiseAccount = await this.digifranchiseAccountRepository.findOne({
+    const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
 

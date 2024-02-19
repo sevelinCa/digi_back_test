@@ -35,7 +35,7 @@ import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ExpenseService } from './expenses.service';
-import { getDigifranchiseAccountByUserId } from 'src/helper/FindByFunctions';
+import { getDigifranchiseByUserId } from 'src/helper/FindByFunctions';
 import { Expense } from './entities/expense.entity';
 import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
 import { IncomeService } from './income.service';
@@ -51,7 +51,7 @@ import { OperatingParameters } from './entities/operationParamenters.entity';
 import { OperatingParametersService } from './operating-parameters.service';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
-import { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
 
 @ApiTags('Admin - Fixed Expenses')
@@ -210,8 +210,8 @@ export class ClientFixedExpensesController {
 export class ExpensesController {
   constructor(
     private readonly expenseService: ExpenseService,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
   @ApiOperation({
     summary: 'CREATE - Record Fixed Expense for User',
@@ -223,8 +223,8 @@ export class ExpensesController {
     @Body() createExpenseDto: CreateExpenseDto,
   ) {
     const userId = (req.user as User).id;
-    const franchiseAccount = await getDigifranchiseAccountByUserId(
-      this.digifranchiseAccountRepository,
+    const franchiseAccount = await getDigifranchiseByUserId(
+      this.DigifranchiseRepository,
       userId,
     );
 
@@ -299,8 +299,8 @@ export class ExpensesController {
 export class IncomesController {
   constructor(
     private readonly incomeService: IncomeService,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
 
   @ApiOperation({
@@ -309,8 +309,8 @@ export class IncomesController {
   @Post()
   async create(@Req() req: Request, @Body() createIncomeDto: CreateIncomeDto) {
     const userId = (req.user as User).id;
-    const franchiseAccount = await getDigifranchiseAccountByUserId(
-      this.digifranchiseAccountRepository,
+    const franchiseAccount = await getDigifranchiseByUserId(
+      this.DigifranchiseRepository,
       userId,
     );
 
@@ -379,8 +379,8 @@ export class IncomesController {
 export class FundingsController {
   constructor(
     private readonly fundingService: FundingService,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
 
   @ApiOperation({
@@ -392,7 +392,7 @@ export class FundingsController {
     @Body() createFundingDto: CreateFundingDto,
   ) {
     const userId = (req.user as User).id;
-    const franchiseAccount = await this.digifranchiseAccountRepository.findOne({
+    const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
 
@@ -444,8 +444,8 @@ export class FundingsController {
 export class DepositsController {
   constructor(
     private readonly depositService: DepositService,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
 
   @ApiOperation({
@@ -457,7 +457,7 @@ export class DepositsController {
     @Body() createDepositDto: CreateDepositDto,
   ) {
     const userId = (req.user as User).id;
-    const franchiseAccount = await this.digifranchiseAccountRepository.findOne({
+    const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
 
@@ -509,8 +509,8 @@ export class DepositsController {
 export class OperatingParametersController {
   constructor(
     private readonly operatingParametersService: OperatingParametersService,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
 
   @ApiOperation({
@@ -522,7 +522,7 @@ export class OperatingParametersController {
     @Body() createOperatingParametersDto: CreateOperatingParametersDto,
   ) {
     const userId = (req.user as User).id;
-    const franchiseAccount = await this.digifranchiseAccountRepository.findOne({
+    const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
 

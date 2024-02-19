@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class DigifranchiseAccount {
+export class Digifranchise {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

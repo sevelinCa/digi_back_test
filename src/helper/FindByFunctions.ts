@@ -7,9 +7,11 @@ import { Income } from 'src/accounting/entities/income.entity';
 import { Deposit } from 'src/accounting/entities/deposit.entity';
 import { Funding } from 'src/accounting/entities/funding.entity';
 import { OperatingParameters } from 'src/accounting/entities/operationParamenters.entity';
-import type { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import type { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+// import type { Asset } from 'src/asset-mgt/entities/asset.entity';
+import type { Inventory } from 'src/inventory/entities/inventory.entity';
 // import type { Inventory } from 'src/inventory/entities/inventory.entity';
-import type { Asset } from 'src/asset-mgt/entities/asset.entity';
+// import type { Asset } from 'src/asset-mgt/entities/asset.entity';
 
 export async function findUserById(
   userRepository: Repository<User>,
@@ -21,28 +23,28 @@ export async function findUserById(
 }
 
 export async function checkIfUserExists(
-  digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+  DigifranchiseRepository: Repository<Digifranchise>,
   userId: string,
-): Promise<DigifranchiseAccount> {
-  const userDigifranchiseAccount = await digifranchiseAccountRepository.findOne(
+): Promise<Digifranchise> {
+  const userDigifranchise = await DigifranchiseRepository.findOne(
     {
       where: { userId: userId },
     },
   );
-  if (!userDigifranchiseAccount) throw new UserNotFoundException(userId);
-  return userDigifranchiseAccount;
+  if (!userDigifranchise) throw new UserNotFoundException(userId);
+  return userDigifranchise;
 }
 
-export async function getDigifranchiseAccountByUserId(
-  digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+export async function getDigifranchiseByUserId(
+  DigifranchiseRepository: Repository<Digifranchise>,
   userId: string,
-): Promise<DigifranchiseAccount | null> {
-  const userDigifranchiseAccount = await digifranchiseAccountRepository.findOne(
+): Promise<Digifranchise | null> {
+  const userDigifranchise = await DigifranchiseRepository.findOne(
     {
       where: { userId: userId },
     },
   );
-  return userDigifranchiseAccount || null;
+  return userDigifranchise || null;
 }
 
 export async function findExpenseById(
@@ -71,23 +73,23 @@ export async function findIncomeById(
   return income || null;
 }
 
-export async function findAssetById(
-  assetRepository: Repository<Asset>,
-  assetId: string,
-): Promise<Asset | null> {
-  const asset = await assetRepository.findOne({ where: { id: assetId } });
-  return asset || null;
-}
-
-// export async function findInventoryById(
-//   inventoryRepository: Repository<Inventory>,
-//   inventoryId: string,
-// ): Promise<Inventory | null> {
-//   const inventory = await inventoryRepository.findOne({
-//     where: { id: inventoryId },
-//   });
-//   return inventory || null;
+// export async function findAssetById(
+//   assetRepository: Repository<Asset>,
+//   assetId: string,
+// ): Promise<Asset | null> {
+//   const asset = await assetRepository.findOne({ where: { id: assetId } });
+//   return asset || null;
 // }
+
+export async function findInventoryById(
+  inventoryRepository: Repository<Inventory>,
+  inventoryId: string,
+): Promise<Inventory | null> {
+  const inventory = await inventoryRepository.findOne({
+    where: { id: inventoryId },
+  });
+  return inventory || null;
+}
 
 export async function findDepositById(
   depositRepository: Repository<Deposit>,

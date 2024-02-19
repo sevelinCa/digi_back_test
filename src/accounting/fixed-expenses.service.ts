@@ -9,7 +9,7 @@ import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
 import { CreateFixedExpenseDto } from './dto/Create-DTOs/create-fixed-expense.dto';
 import { IsNull } from 'typeorm';
 import { checkIfUserExists, findUserById } from 'src/helper/FindByFunctions';
-import { DigifranchiseAccount } from 'src/digifranchise/entities/digifranchise-account.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { User } from 'src/users/domain/user';
 
 @Injectable()
@@ -74,15 +74,15 @@ export class ClientFixedExpensesService {
     private fixedExpenseRepository: Repository<FixedExpenseCategory>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(DigifranchiseAccount)
-    private readonly digifranchiseAccountRepository: Repository<DigifranchiseAccount>,
+    @InjectRepository(Digifranchise)
+    private readonly DigifranchiseRepository: Repository<Digifranchise>,
   ) {}
 
   async createFixedExpenses(
     createFixedExpenseDto: CreateFixedExpenseDto,
     userId: string,
   ): Promise<FixedExpenseCategory> {
-    await checkIfUserExists(this.digifranchiseAccountRepository, userId);
+    await checkIfUserExists(this.DigifranchiseRepository, userId);
 
     const user = await findUserById(this.userRepository, userId);
 
@@ -98,7 +98,7 @@ export class ClientFixedExpensesService {
     userSpecific: FixedExpenseCategory[];
     predefined: FixedExpenseCategory[];
   }> {
-    await checkIfUserExists(this.digifranchiseAccountRepository, userId);
+    await checkIfUserExists(this.DigifranchiseRepository, userId);
 
     const userSpecific = await this.fixedExpenseRepository
       .createQueryBuilder('fixedExpense')
@@ -121,7 +121,7 @@ export class ClientFixedExpensesService {
     userId: string,
     fixedExpenseId: string,
   ): Promise<FixedExpenseCategory> {
-    await checkIfUserExists(this.digifranchiseAccountRepository, userId);
+    await checkIfUserExists(this.DigifranchiseRepository, userId);
 
     const fixedExpense = await this.fixedExpenseRepository
       .createQueryBuilder('fixedExpense')
@@ -148,7 +148,7 @@ export class ClientFixedExpensesService {
     fixedExpenseId: string,
     updateData: CreateFixedExpenseDto,
   ): Promise<FixedExpenseCategory> {
-    await checkIfUserExists(this.digifranchiseAccountRepository, userId);
+    await checkIfUserExists(this.DigifranchiseRepository, userId);
 
     const fixedExpense = await this.getFixedExpenses(userId, fixedExpenseId);
 
