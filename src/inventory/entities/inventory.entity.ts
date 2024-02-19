@@ -14,7 +14,6 @@ export class Inventory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-
   @ManyToOne(() => Digifranchise)
   @JoinColumn({ name: 'franchiseId' })
   franchiseId: Digifranchise;

@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Inventory } from './entities/inventory.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { findInventoryById, getDigifranchiseByUserId } from 'src/helper/FindByFunctions';
-import { User } from 'src/users/domain/user';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import type { CreateInventoryDto } from './dto/create-inventory.dto';
 import type { UpdateInventoryDto } from './dto/update-inventory.dto';
+import { findInventoryById, getDigifranchiseByUserId } from 'src/helper/FindByFunctions';
+
 
 @Injectable()
 export class InventoryService {
@@ -16,8 +17,8 @@ export class InventoryService {
 
     @InjectRepository(Digifranchise)
     private readonly digifranchiseAccountRepository: Repository<Digifranchise>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async createInventoryItem(

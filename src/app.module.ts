@@ -55,14 +55,14 @@ import { InventoryModule } from './inventory/inventory.module';
     }),
     (databaseConfig() as DatabaseConfig).isDocumentDatabase
       ? MongooseModule.forRootAsync({
-          useClass: MongooseConfigService,
-        })
+        useClass: MongooseConfigService,
+      })
       : TypeOrmModule.forRootAsync({
-          useClass: TypeOrmConfigService,
-          dataSourceFactory: async (options: DataSourceOptions) => {
-            return new DataSource(options).initialize();
-          },
-        }),
+        useClass: TypeOrmConfigService,
+        dataSourceFactory: async (options: DataSourceOptions) => {
+          return new DataSource(options).initialize();
+        },
+      }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
@@ -103,4 +103,4 @@ import { InventoryModule } from './inventory/inventory.module';
     DigifranchiseModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

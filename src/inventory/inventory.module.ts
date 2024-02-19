@@ -1,21 +1,24 @@
 import { Module } from '@nestjs/common';
-import { InventoryController } from './inventory.controller';
-import { InventoryService } from './inventory.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/domain/user';
+import { InventoryService } from './inventory.service';
+import { InventoryController } from './inventory.controller';
 import { Inventory } from './entities/inventory.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      UserEntity,
       Inventory,
       Digifranchise,
-      User
     ]),
   ],
-  controllers: [InventoryController],
-  providers: [InventoryService]
+  controllers: [
+    InventoryController,
+  ],
+  providers: [
+    InventoryService,
+  ],
 })
-export class InventoryModule { }
+export class InventoryModule {}

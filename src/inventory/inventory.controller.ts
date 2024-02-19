@@ -13,10 +13,8 @@ import { Request } from 'express';
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'inventory', version: '1' })
-
 export class InventoryController {
-
-    constructor(private readonly inventoryService: InventoryService) { }
+  constructor(private readonly inventoryService: InventoryService) { }
 
     @ApiOperation({
         summary: 'CREATE - Record Inventory Item for User',
