@@ -55,22 +55,23 @@ export class InventoryService {
     inventoryItems: Inventory[];
     count: number;
   }> {
-    const queryBuilder =
-      this.inventoryRepository.createQueryBuilder('inventory');
-
+    const queryBuilder = this.inventoryRepository.createQueryBuilder('inventory');
+  
     queryBuilder.leftJoinAndSelect('inventory.franchiseId', 'franchise');
-
+  
+    queryBuilder.where('inventory.deleteAt IS NULL');
+  
     if (startDate) {
       queryBuilder.andWhere('inventory.date >= :startDate', { startDate });
     }
-
+  
     if (endDate) {
       queryBuilder.andWhere('inventory.date <= :endDate', { endDate });
     }
-
+  
     const inventoryItems = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-
+  
     return { inventoryItems, count };
   }
 
@@ -107,11 +108,13 @@ export class InventoryService {
   }
 
   async deleteInventoryItem(inventoryId: string): Promise<void> {
-    const result = await this.inventoryRepository.delete(inventoryId);
-    if (result.affected === 0) {
-      throw new NotFoundException(
-        `Inventory item not found with ID ${inventoryId}`,
-      );
+    const inventoryItem = await findInventoryById(this.inventoryRepository, inventoryId);
+    if (!inventoryItem) {
+      throw new NotFoundException(`Inventory item not found with ID ${inventoryId}`);
     }
+  
+    inventoryItem.deleteAt = new Date(); 
+  
+    await this.inventoryRepository.save(inventoryItem); 
   }
 }
