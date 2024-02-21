@@ -52,6 +52,7 @@ import { OperatingParametersService } from './operating-parameters.service';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
 
 
 @ApiTags('Admin - Fixed Expenses')
@@ -442,6 +443,17 @@ export class FundingsController {
   @Delete(':fundingId')
   async deleteFunding(@Param('fundingId') fundingId: string): Promise<void> {
     return this.fundingService.deleteFunding(fundingId);
+  }
+
+  @ApiOperation({
+    summary: 'UPDATE - Update a specific funding',
+  })
+  @Put(':fundingId')
+  async updateFunding(
+    @Param('fundingId') fundingId: string,
+    @Body() updateFundingDto: UpdateFundingDto,
+   ): Promise<Funding> {
+    return this.fundingService.updateFunding(fundingId, updateFundingDto);
   }
 }
 
