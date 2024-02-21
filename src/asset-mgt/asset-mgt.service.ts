@@ -45,24 +45,26 @@ export class AssetMgtService {
     async findAllAssets(
         startDate?: string,
         endDate?: string,
-    ): Promise<{ assets: Asset[]; count: number }> {
+      ): Promise<{ assets: Asset[]; count: number }> {
         const queryBuilder = this.assetRepository.createQueryBuilder('asset');
-
+      
         queryBuilder.leftJoinAndSelect('asset.franchiseId', 'franchise');
-
+      
+        queryBuilder.where('asset.deleteAt IS NULL');
+      
         if (startDate) {
-            queryBuilder.andWhere('asset.date >= :startDate', { startDate });
+          queryBuilder.andWhere('asset.date >= :startDate', { startDate });
         }
-
+      
         if (endDate) {
-            queryBuilder.andWhere('asset.date <= :endDate', { endDate });
+          queryBuilder.andWhere('asset.date <= :endDate', { endDate });
         }
-
+      
         const assets = await queryBuilder.getMany();
         const count = await queryBuilder.getCount();
-
+      
         return { assets, count };
-    }
+      }
 
     async getAssetById(assetId: string): Promise<Asset | null> {
         return findAssetById(this.assetRepository, assetId);
@@ -82,9 +84,12 @@ export class AssetMgtService {
     }
 
     async deleteAsset(assetId: string): Promise<void> {
-        const result = await this.assetRepository.delete(assetId);
-        if (result.affected === 0) {
-            throw new NotFoundException(`Asset not found with ID ${assetId}`);
+        const asset = await findAssetById(this.assetRepository, assetId);
+        if (!asset) {
+          throw new NotFoundException(`Asset not found with ID ${assetId}`);
         }
-    }
+      
+        asset.deleteAt = new Date(); 
+        await this.assetRepository.save(asset); 
+      }
 }
