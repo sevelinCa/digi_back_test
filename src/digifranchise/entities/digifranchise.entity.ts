@@ -17,6 +17,10 @@ export class Digifranchise {
   @Column({ type: 'varchar', length: 255 })
   userFullNames: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+franchiseName: string;
+
+
   @Column({ type: 'varchar', length: 255, default: 'active' })
   status: string;
 
