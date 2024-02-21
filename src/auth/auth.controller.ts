@@ -30,17 +30,27 @@ import { User } from 'src/users/domain/user';
   version: '1',
 })
 export class AuthController {
-  constructor(private readonly service: AuthService) {}
+  constructor(private readonly service: AuthService) { }
 
   @SerializeOptions({
     groups: ['me'],
   })
   @Post('email/login')
   @HttpCode(HttpStatus.OK)
-  public login(
+  public async login(
     @Body() loginDto: AuthEmailLoginDto,
-  ): Promise<LoginResponseType> {
-    return this.service.validateLogin(loginDto);
+  ) {
+    const data = await this.service.validateLogin(loginDto);
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
+
+
+    }
   }
 
   @Post('email/register')
