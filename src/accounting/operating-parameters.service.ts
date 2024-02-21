@@ -5,6 +5,7 @@ import { OperatingParameters } from './entities/operationParamenters.entity';
 import { CreateOperatingParametersDto } from './dto/Create-DTOs/create-operating-parameters.dto';
 import { findOperatingParametersById } from 'src/helper/FindByFunctions';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import type { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
 
 @Injectable()
 export class OperatingParametersService {
@@ -81,6 +82,20 @@ export class OperatingParametersService {
     );
   }
 
+  async updateOperatingParameters(
+    parametersId: string,
+    updateOperatingParametersDto: UpdateOperatingParametersDto,
+   ): Promise<OperatingParameters> {
+    const parameters = await findOperatingParametersById(this.operatingParametersRepository, parametersId);
+    if (!parameters) {
+      throw new NotFoundException(`Operating parameters not found with ID ${parametersId}`);
+    }
+
+    Object.assign(parameters, updateOperatingParametersDto);
+
+    return this.operatingParametersRepository.save(parameters);
+  }
+  
   async deleteOperatingParameters(operatingParametersId: string): Promise<void> {
     const operatingParameters = await findOperatingParametersById(
       this.operatingParametersRepository,
