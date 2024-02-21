@@ -130,6 +130,6 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": "18.12.1"
+    "node": "^18.13.0 || >=20.9.0"
   }
 }
