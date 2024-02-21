@@ -5,6 +5,7 @@ import { Deposit } from './entities/deposit.entity';
 import { CreateDepositDto } from './dto/Create-DTOs/create-deposit.dto';
 import { findDepositById } from 'src/helper/FindByFunctions';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
 
 @Injectable()
 export class DepositService {
@@ -76,4 +77,21 @@ export class DepositService {
     deposit.deleteAt = new Date(); 
     await this.depositRepository.save(deposit); 
   }
+
+  async updateDeposit(
+    depositId: string,
+    updateDepositDto: UpdateDepositDto,
+   ): Promise<Deposit> {
+    const deposit = await findDepositById(this.depositRepository, depositId);
+    if (!deposit) {
+      throw new NotFoundException(`Deposit not found with ID ${depositId}`);
+    }
+    Object.assign(deposit, updateDepositDto);
+
+    if (updateDepositDto.depositedAt) {
+      deposit.depositedAt = updateDepositDto.depositedAt;
+    }
+    return this.depositRepository.save(deposit);
+  }
+
 }

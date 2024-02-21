@@ -53,6 +53,7 @@ import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
+import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
 
 
 @ApiTags('Admin - Fixed Expenses')
@@ -438,14 +439,6 @@ export class FundingsController {
   }
 
   @ApiOperation({
-    summary: 'DELETE - Delete a specific funding',
-  })
-  @Delete(':fundingId')
-  async deleteFunding(@Param('fundingId') fundingId: string): Promise<void> {
-    return this.fundingService.deleteFunding(fundingId);
-  }
-
-  @ApiOperation({
     summary: 'UPDATE - Update a specific funding',
   })
   @Put(':fundingId')
@@ -455,6 +448,16 @@ export class FundingsController {
    ): Promise<Funding> {
     return this.fundingService.updateFunding(fundingId, updateFundingDto);
   }
+  
+  @ApiOperation({
+    summary: 'DELETE - Delete a specific funding',
+  })
+  @Delete(':fundingId')
+  async deleteFunding(@Param('fundingId') fundingId: string): Promise<void> {
+    return this.fundingService.deleteFunding(fundingId);
+  }
+
+
 }
 
 @ApiTags('Deposits')
@@ -520,7 +523,16 @@ export class DepositsController {
   ): Promise<Deposit | null> {
     return this.depositService.getDepositById(depositId);
   }
-
+@ApiOperation({
+    summary: 'UPDATE - Update a specific deposit',
+  })
+  @Put(':depositId')
+  async updateDeposit(
+    @Param('depositId') depositId: string,
+    @Body() updateDepositDto: UpdateDepositDto,
+   ): Promise<Deposit> {
+    return this.depositService.updateDeposit(depositId, updateDepositDto);
+  }
   @ApiOperation({
     summary: 'DELETE - Delete a specific deposit',
   })
@@ -528,6 +540,7 @@ export class DepositsController {
   async deleteDeposit(@Param('depositId') depositId: string): Promise<void> {
     return this.depositService.deleteDeposit(depositId);
   }
+  
 }
 
 @ApiTags('OperatingParameters')
