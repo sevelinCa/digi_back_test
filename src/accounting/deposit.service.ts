@@ -55,7 +55,6 @@ export class DepositService {
       queryBuilder.andWhere('deposit.createdAt <= :endDate', { endDate });
     }
   
-    // Exclude soft-deleted records
     queryBuilder.andWhere('deposit.deleteAt IS NULL');
   
     const deposits = await queryBuilder.getMany();
@@ -74,7 +73,7 @@ export class DepositService {
       throw new NotFoundException(`Deposit not found with ID ${depositId}`);
     }
   
-    deposit.deleteAt = new Date(); // Set the deleteAt column to the current timestamp
-    await this.depositRepository.save(deposit); // Save the updated entity
+    deposit.deleteAt = new Date(); 
+    await this.depositRepository.save(deposit); 
   }
 }
