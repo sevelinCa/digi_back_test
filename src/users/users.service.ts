@@ -17,12 +17,12 @@ import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
-    // private readonly filesService: FilesService,
   ) {}
 
   async create(createProfileDto: CreateUserDto): Promise<User> {
     const clonedPayload = {
       provider: AuthProvidersEnum.email,
+      deleteAt: null,
       ...createProfileDto,
     };
 

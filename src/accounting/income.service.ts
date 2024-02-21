@@ -55,20 +55,22 @@ export class IncomeService {
     endDate?: string,
   ): Promise<{ incomes: Income[]; count: number }> {
     const queryBuilder = this.incomeRepository.createQueryBuilder('income');
-
+  
     queryBuilder.leftJoinAndSelect('income.franchiseId', 'franchise');
-
+  
+    queryBuilder.where('income.deleteAt IS NULL');
+  
     if (startDate) {
       queryBuilder.andWhere('income.createdAt >= :startDate', { startDate });
     }
-
+  
     if (endDate) {
       queryBuilder.andWhere('income.createdAt <= :endDate', { endDate });
     }
-
+  
     const incomes = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-
+  
     return { incomes, count };
   }
 
@@ -104,6 +106,8 @@ export class IncomeService {
       throw new NotFoundException(`Income not found with ID ${incomeId}`);
     }
 
-    await this.incomeRepository.remove(income);
+    income.deleteAt = new Date(); 
+
+    await this.incomeRepository.save(income); 
   }
 }
