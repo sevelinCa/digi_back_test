@@ -435,6 +435,14 @@ export class FundingsController {
   ): Promise<Funding | null> {
     return this.fundingService.getFundingById(fundingId);
   }
+
+  @ApiOperation({
+    summary: 'DELETE - Delete a specific funding',
+  })
+  @Delete(':fundingId')
+  async deleteFunding(@Param('fundingId') fundingId: string): Promise<void> {
+    return this.fundingService.deleteFunding(fundingId);
+  }
 }
 
 @ApiTags('Deposits')

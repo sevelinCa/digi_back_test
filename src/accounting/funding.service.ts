@@ -47,24 +47,36 @@ export class FundingService {
     endDate?: string,
   ): Promise<{ fundings: Funding[]; count: number }> {
     const queryBuilder = this.fundingRepository.createQueryBuilder('funding');
-
+  
     queryBuilder.leftJoinAndSelect('funding.franchiseId', 'franchise');
-
+  
     if (startDate) {
       queryBuilder.andWhere('funding.fundedAt >= :startDate', { startDate });
     }
-
+  
     if (endDate) {
       queryBuilder.andWhere('funding.fundedAt <= :endDate', { endDate });
     }
-
+  
+    queryBuilder.andWhere('funding.deleteAt IS NULL');
+  
     const fundings = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-
+  
     return { fundings, count };
   }
 
   async getFundingById(fundingId: string): Promise<Funding | null> {
     return findFundingById(this.fundingRepository, fundingId);
+  }
+
+  async deleteFunding(fundingId: string): Promise<void> {
+    const funding = await findFundingById(this.fundingRepository, fundingId);
+    if (!funding) {
+      throw new NotFoundException(`Funding not found with ID ${fundingId}`);
+    }
+  
+    funding.deleteAt = new Date(); 
+    await this.fundingRepository.save(funding);
   }
 }
