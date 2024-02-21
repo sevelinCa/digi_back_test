@@ -68,25 +68,27 @@ export class ExpenseService {
     endDate?: string,
   ): Promise<{ expenses: Expense[]; count: number }> {
     const queryBuilder = this.expenseRepository.createQueryBuilder('expense');
-
+  
     queryBuilder
       .leftJoinAndSelect('expense.franchiseId', 'franchise')
       .leftJoinAndSelect(
         'expense.fixedExpenseCategoryId',
         'fixedExpenseCategory',
       );
-
+  
     if (startDate) {
       queryBuilder.andWhere('expense.date >= :startDate', { startDate });
     }
-
+  
     if (endDate) {
       queryBuilder.andWhere('expense.date <= :endDate', { endDate });
     }
-
+  
+    queryBuilder.andWhere('expense.deleteAt IS NULL');
+  
     const expenses = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-
+  
     return { expenses, count };
   }
 
@@ -115,7 +117,8 @@ export class ExpenseService {
     if (!expense) {
       throw new NotFoundException(`Expense not found with ID ${expenseId}`);
     }
-
-    await this.expenseRepository.remove(expense);
+  
+    expense.deleteAt = new Date(); 
+    await this.expenseRepository.save(expense); 
   }
 }
