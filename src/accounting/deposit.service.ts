@@ -44,24 +44,37 @@ export class DepositService {
     endDate?: string,
   ): Promise<{ deposits: Deposit[]; count: number }> {
     const queryBuilder = this.depositRepository.createQueryBuilder('deposit');
-
+  
     queryBuilder.leftJoinAndSelect('deposit.franchiseId', 'franchise');
-
+  
     if (startDate) {
       queryBuilder.andWhere('deposit.createdAt >= :startDate', { startDate });
     }
-
+  
     if (endDate) {
       queryBuilder.andWhere('deposit.createdAt <= :endDate', { endDate });
     }
-
+  
+    // Exclude soft-deleted records
+    queryBuilder.andWhere('deposit.deleteAt IS NULL');
+  
     const deposits = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-
+  
     return { deposits, count };
   }
 
   async getDepositById(depositId: string): Promise<Deposit | null> {
     return findDepositById(this.depositRepository, depositId);
+  }
+
+  async deleteDeposit(depositId: string): Promise<void> {
+    const deposit = await findDepositById(this.depositRepository, depositId);
+    if (!deposit) {
+      throw new NotFoundException(`Deposit not found with ID ${depositId}`);
+    }
+  
+    deposit.deleteAt = new Date(); // Set the deleteAt column to the current timestamp
+    await this.depositRepository.save(deposit); // Save the updated entity
   }
 }

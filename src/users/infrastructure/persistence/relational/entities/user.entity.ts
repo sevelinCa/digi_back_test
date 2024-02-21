@@ -85,4 +85,7 @@ id: string;
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  deleteAt: Date | null;
 }
