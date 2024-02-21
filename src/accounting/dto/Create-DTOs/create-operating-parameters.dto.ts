@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsInt, Min, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
+
 export class CreateOperatingParametersDto {
   @ApiProperty({
     example: 500.0,
