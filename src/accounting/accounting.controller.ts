@@ -500,6 +500,14 @@ export class DepositsController {
   ): Promise<Deposit | null> {
     return this.depositService.getDepositById(depositId);
   }
+
+  @ApiOperation({
+    summary: 'DELETE - Delete a specific deposit',
+  })
+  @Delete(':depositId')
+  async deleteDeposit(@Param('depositId') depositId: string): Promise<void> {
+    return this.depositService.deleteDeposit(depositId);
+  }
 }
 
 @ApiTags('OperatingParameters')
