@@ -6,6 +6,7 @@ import { CreateFundingDto } from './dto/Create-DTOs/create-funding.dto';
 import { findFundingById } from 'src/helper/FindByFunctions';
 import { User } from 'src/users/domain/user';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
 
 @Injectable()
 export class FundingService {
@@ -70,6 +71,20 @@ export class FundingService {
     return findFundingById(this.fundingRepository, fundingId);
   }
 
+  async updateFunding(
+    fundingId: string,
+    updateFundingDto: UpdateFundingDto,
+   ): Promise<Funding> {
+    const funding = await findFundingById(this.fundingRepository, fundingId);
+    if (!funding) {
+      throw new NotFoundException(`Funding not found with ID ${fundingId}`);
+    }
+
+    Object.assign(funding, updateFundingDto);
+
+    return this.fundingRepository.save(funding);
+  }
+  
   async deleteFunding(fundingId: string): Promise<void> {
     const funding = await findFundingById(this.fundingRepository, fundingId);
     if (!funding) {
