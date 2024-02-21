@@ -41,4 +41,7 @@ export class Income {
 
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  deleteAt: Date | null;
 }

@@ -25,4 +25,7 @@ export class Digifranchise {
 
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  deleteAt: Date | null;
 }
