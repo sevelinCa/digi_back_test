@@ -589,4 +589,15 @@ export class OperatingParametersController {
       parametersId,
     );
   }
+
+
+  @ApiOperation({
+    summary: 'DELETE - Delete a specific operating parameters',
+  })
+  @Delete(':parametersId')
+  async deleteOperatingParameters(
+    @Param('parametersId') parametersId: string,
+   ): Promise<void> {
+    return this.operatingParametersService.deleteOperatingParameters(parametersId);
+  }
 }

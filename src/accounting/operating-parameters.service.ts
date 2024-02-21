@@ -46,27 +46,29 @@ export class OperatingParametersService {
     const queryBuilder = this.operatingParametersRepository.createQueryBuilder(
       'operatingParameters',
     );
-
+  
     queryBuilder.leftJoinAndSelect(
       'operatingParameters.franchiseId',
       'franchise',
     );
-
+  
     if (startDate) {
       queryBuilder.andWhere('operatingParameters.createdAt >= :startDate', {
         startDate,
       });
     }
-
+  
     if (endDate) {
       queryBuilder.andWhere('operatingParameters.createdAt <= :endDate', {
         endDate,
       });
     }
-
+  
+    queryBuilder.andWhere('operatingParameters.deleteAt IS NULL');
+  
     const parameters = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-
+  
     return { parameters, count };
   }
 
@@ -77,5 +79,20 @@ export class OperatingParametersService {
       this.operatingParametersRepository,
       operatingParametersId,
     );
+  }
+
+  async deleteOperatingParameters(operatingParametersId: string): Promise<void> {
+    const operatingParameters = await findOperatingParametersById(
+      this.operatingParametersRepository,
+      operatingParametersId,
+    );
+    if (!operatingParameters) {
+      throw new NotFoundException(
+        `Operating Parameters not found with ID ${operatingParametersId}`,
+      );
+    }
+  
+    operatingParameters.deleteAt = new Date(); 
+    await this.operatingParametersRepository.save(operatingParameters); 
   }
 }
