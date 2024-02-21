@@ -30,7 +30,7 @@ export class Inventory {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   totalValue: number;
 
-  @Column({ type: 'date' })
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   dateReceived: Date;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

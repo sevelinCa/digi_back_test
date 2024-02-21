@@ -7,6 +7,7 @@ import {
   Min,
   IsNumber,
   IsDate,
+  IsDateString,
 } from 'class-validator';
 
 export class UpdateInventoryDto {
@@ -28,8 +29,11 @@ export class UpdateInventoryDto {
   @Min(0)
   costPerItem?: number;
 
-  @ApiPropertyOptional({ example: '2024-03-15T00:00:00Z' })
+  @ApiPropertyOptional({
+    example: '2024-12-15T00:00:00Z',
+    description: 'Date of the income received',
+  })
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   dateReceived?: Date;
 }

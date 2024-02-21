@@ -92,7 +92,12 @@ export class InventoryService {
         `Inventory item not found with ID ${inventoryId}`,
       );
     }
-
+  
+    if (updateInventoryDto.dateReceived && typeof updateInventoryDto.dateReceived === 'string') {
+      updateInventoryDto.dateReceived = new Date(updateInventoryDto.dateReceived);
+    }
+   
+      
     if (
       updateInventoryDto.quantity !== undefined ||
       updateInventoryDto.costPerItem !== undefined
@@ -102,7 +107,7 @@ export class InventoryService {
         updateInventoryDto.costPerItem ?? inventoryItem.costPerItem;
       inventoryItem.totalValue = quantity * costPerItem;
     }
-
+  
     Object.assign(inventoryItem, updateInventoryDto);
     return this.inventoryRepository.save(inventoryItem);
   }
