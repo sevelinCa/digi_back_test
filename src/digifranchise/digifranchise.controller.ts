@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, Get, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -10,21 +10,31 @@ import type { Digifranchise } from './entities/digifranchise.entity';
 import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
 
-@ApiTags('Digi Franchise')
+@ApiTags('Digifranchise')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'digifranchise', version: '1' })
 export class DigifranchiseController {
     constructor(private readonly digifranchiseService: DigifranchiseService) {}
 
-    @Roles(RoleEnum.user)
-    @ApiOperation({ summary: 'CREATE - Create Digi Franchise for USER' })
+    @Roles()
+    @ApiOperation({ summary: 'CREATE - Create DigiFranchise for USER' })
     @Post('create')
     async createDigifranchise(
       @Req() req: Request,
       @Body() createDigifranchiseDto: CreateDigifranchiseDto,
     ): Promise<Digifranchise> {
       const userId = (req.user as UserEntity).id;
-      return this.digifranchiseService.createDigifranchise(userId, createDigifranchiseDto.franchiseName);
+      return this.digifranchiseService.createDigifranchise(userId, createDigifranchiseDto);
+    }
+
+    @Roles()
+    @ApiOperation({ summary: 'CREATE - Get DigiFranchise by USER' })
+    @Get()
+    async getAllDigifranchises(
+      @Req() req: Request,
+    ): Promise<Digifranchise[]> {
+      const userId = (req.user as UserEntity).id
+      return this.digifranchiseService.getAllDigifranchiseByUser(userId)
     }
 }

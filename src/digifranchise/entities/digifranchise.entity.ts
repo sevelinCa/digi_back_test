@@ -1,3 +1,4 @@
+import { StatusEnum } from 'src/statuses/statuses.enum';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ServiceOffered } from '../dto/create-digifranchise.dto';
 
 @Entity()
 export class Digifranchise {
@@ -18,11 +20,16 @@ export class Digifranchise {
   userFullNames: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-franchiseName: string;
+  franchiseName: string;
 
+  @Column({ type: 'varchar', length: 1000, nullable: true })
+  Description: string;
+
+  @Column({ type: 'varchar', length: 1000, nullable: true })
+  ServicesOffered: ServiceOffered[];
 
   @Column({ type: 'varchar', length: 255, default: 'active' })
-  status: string;
+  status: StatusEnum;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

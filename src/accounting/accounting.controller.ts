@@ -81,7 +81,7 @@ export class ManagerFixedExpensesController {
     );
   }
 
-  @Roles(RoleEnum.user, RoleEnum.admin)
+  @Roles(RoleEnum.digifranchise_user, RoleEnum.admin)
   @ApiOperation({
     summary: 'GET ALL - Retreive All Fixed Expenses for ALL USERS ',
   })
@@ -90,7 +90,7 @@ export class ManagerFixedExpensesController {
     return this.managerFixedExpensesService.getAllFixedExpensesCategories();
   }
 
-  @Roles(RoleEnum.user, RoleEnum.admin)
+  @Roles(RoleEnum.digifranchise_user, RoleEnum.admin)
   @ApiOperation({
     summary: 'GET ONE - Retreive Fixed Expenses for ALL USERS',
   })
@@ -125,7 +125,7 @@ export class ManagerFixedExpensesController {
 
 @ApiTags('Client - Fixed Expenses')
 @ApiBearerAuth()
-@Roles(RoleEnum.user)
+@Roles(RoleEnum.digifranchise_user)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'fixed-expense', version: '1' })
 export class ClientFixedExpensesController {

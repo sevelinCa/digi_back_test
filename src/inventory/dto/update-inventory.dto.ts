@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsOptional,
   IsInt,
@@ -8,32 +8,30 @@ import {
   IsNumber,
   IsDate,
   IsDateString,
+  IsNotEmpty,
+  IsArray,
 } from 'class-validator';
+// import { Entries } from './create-inventory.dto';
+import { InventoryEntries } from '../entities/inventory-entries.entity';
 
 export class UpdateInventoryDto {
-  @ApiPropertyOptional({ example: 'Laptop' })
-  @IsOptional()
-  @IsString()
-  @Length(1, 255)
-  itemName?: string;
-
-  @ApiPropertyOptional({ example: 10 })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  quantity?: number;
-
-  @ApiPropertyOptional({ example: 1500.0 })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  costPerItem?: number;
-
-  @ApiPropertyOptional({
-    example: '2024-12-15T00:00:00Z',
-    description: 'Date of the income received',
+  @ApiProperty({
+    example: 'Item 1',
+    description: 'The name of the inventory item.',
   })
   @IsOptional()
-  @IsDateString()
-  dateReceived?: Date;
+  @IsString()
+  itemName: string;
+
+  // @ApiProperty({
+  //   example: [{
+  //     quantity: 'The Quantity recieved',
+  //     costPerItem: 'cost per item',
+  //     dateRecieved: 'date recieved'
+  //   }],
+  //   description: 'The name of the inventory item.',
+  // })
+  // @IsOptional()
+  // @IsArray()
+  // entries: InventoryEntries[];
 }

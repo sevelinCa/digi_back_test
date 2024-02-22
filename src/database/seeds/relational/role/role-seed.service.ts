@@ -12,17 +12,17 @@ export class RoleSeedService {
   ) {}
 
   async run() {
-    const countUser = await this.repository.count({
+    const countCustomer = await this.repository.count({
       where: {
-        id: RoleEnum.user,
+        id: RoleEnum.customer,
       },
     });
 
-    if (!countUser) {
+    if (!countCustomer) {
       await this.repository.save(
         this.repository.create({
-          id: RoleEnum.user,
-          name: 'User',
+          id: RoleEnum.customer,
+          name: 'Customer',
         }),
       );
     }
@@ -38,6 +38,51 @@ export class RoleSeedService {
         this.repository.create({
           id: RoleEnum.admin,
           name: 'Admin',
+        }),
+      );
+    }
+
+    const countSuperAdmin = await this.repository.count({
+      where: {
+        id: RoleEnum.super_admin,
+      },
+    });
+
+    if (!countSuperAdmin) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.super_admin,
+          name: 'Super Admin',
+        }),
+      );
+    }
+
+    const countDigifranchiseSuperAdmin = await this.repository.count({
+      where: {
+        id: RoleEnum.digifranchise_super_admin,
+      },
+    });
+
+    if (!countDigifranchiseSuperAdmin) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.digifranchise_super_admin,
+          name: 'Digifranchise Super Admin',
+        }),
+      );
+    }
+
+    const countDigifranchiseUser = await this.repository.count({
+      where: {
+        id: RoleEnum.digifranchise_user,
+      },
+    });
+
+    if (!countDigifranchiseUser) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.digifranchise_user,
+          name: 'Digifranchise User',
         }),
       );
     }
