@@ -28,6 +28,7 @@ import { SessionService } from 'src/session/session.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 
 @Injectable()
 export class AuthService {
@@ -282,6 +283,10 @@ export class AuthService {
 
     Object.assign(user, { status: updatedStatus.id })
     await this.userRepository.save(user)
+  }
+
+  async phoneRegister(dto: AuthPhoneRegisterDto) {
+    
   }
 
   async forgotPassword(email: string): Promise<void> {

@@ -13,6 +13,7 @@ import { UserRepository } from 'src/users/infrastructure/persistence/user.reposi
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { SmsModule } from 'src/sms/sms.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersService } from 'src/users/users.service';
     SessionModule,
     PassportModule,
     MailModule,
+    SmsModule,
     JwtModule.register({}),
     TypeOrmModule.forFeature([UserEntity])
   ],

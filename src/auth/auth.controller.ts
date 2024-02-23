@@ -23,6 +23,7 @@ import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { LoginResponseType } from './types/login-response.type';
 import { NullableType } from '../utils/types/nullable.type';
 import { User } from 'src/users/domain/user';
+import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -57,6 +58,12 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
     return this.service.register(createUserDto);
+  }
+
+  @Post('phone/digifranchise-super-admin/register')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async phoneRegister(@Body() phoneRegisterDto: AuthPhoneRegisterDto): Promise<void> {
+    return this.service.phoneRegister(phoneRegisterDto);
   }
 
   @Post('email/confirm')

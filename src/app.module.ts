@@ -35,6 +35,7 @@ import { AccountingModule } from './accounting/accounting.module';
 import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -101,6 +102,7 @@ import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
     DigifranchiseModule,
     InventoryModule,
     AssetMgtModule,
+    SmsModule,
   ],
 })
 export class AppModule { }
