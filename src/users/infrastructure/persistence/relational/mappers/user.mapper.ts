@@ -54,6 +54,7 @@ export class UserMapper {
       userEntity.id = user.id;
     }
     userEntity.email = user.email;
+    userEntity.phoneNumber = user.phoneNumber;
     userEntity.password = user.password;
     userEntity.previousPassword = user.previousPassword;
     userEntity.provider = user.provider;

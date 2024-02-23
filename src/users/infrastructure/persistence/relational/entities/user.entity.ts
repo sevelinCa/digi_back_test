@@ -33,6 +33,10 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @Expose({ groups: ['me', 'admin'] })
   email: string | null;
 
+  @Column({ type: String, unique: true, nullable: true })
+  @Expose({ groups: ['me', 'admin'] })
+  phoneNumber: string | null;
+
   @Column({ nullable: true })
   @Exclude({ toPlainOnly: true })
   password?: string;
