@@ -155,6 +155,8 @@ export class UsersService {
       }
     }
 
+    // console.log("---------", clonedPayload)
+
     // if (clonedPayload.photo?.id) {
     //   const fileObject = await this.filesService.findOne({
     //     id: clonedPayload.photo.id,
@@ -206,6 +208,10 @@ export class UsersService {
         );
       }
     }
+
+    // const { email, ...userWithoutEmail } = clonedPayload;
+    // console.log('>>>>>>>>>>>', userWithoutEmail)
+    this.usersRepository.
 
     return this.usersRepository.update(id, clonedPayload);
   }

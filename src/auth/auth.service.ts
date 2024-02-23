@@ -142,7 +142,7 @@ export class AuthService {
       user = userByEmail;
     } else {
       const role = {
-        id: RoleEnum.customer,
+        id: RoleEnum.digifranchise_super_admin,
       };
       const status = {
         id: StatusEnum.active,
@@ -202,7 +202,7 @@ export class AuthService {
       ...dto,
       email: dto.email,
       role: {
-        id: RoleEnum.customer,
+        id: RoleEnum.digifranchise_super_admin,
       },
       status: {
         id: StatusEnum.inactive,
@@ -223,12 +223,12 @@ export class AuthService {
       },
     );
 
-    // await this.mailService.userSignUp({
-    //   to: dto.email,
-    //   data: {
-    //     hash,
-    //   },
-    // });
+    await this.mailService.userSignUp({
+      to: dto.email,
+      data: {
+        hash,
+      },
+    });
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -260,6 +260,8 @@ export class AuthService {
       id: userId,
     });
 
+    // console.log('>>>>>>>>>>>>>>>>>', user)
+
     if (!user || user?.status?.id !== StatusEnum.inactive) {
       throw new HttpException(
         {
@@ -273,6 +275,8 @@ export class AuthService {
     user.status = {
       id: StatusEnum.active,
     };
+
+    // console.log('++++++++++++++++', user)
 
     await this.usersService.update(user.id, user);
   }

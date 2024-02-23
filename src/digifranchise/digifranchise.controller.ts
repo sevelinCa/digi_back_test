@@ -17,8 +17,8 @@ import { Request } from 'express';
 export class DigifranchiseController {
     constructor(private readonly digifranchiseService: DigifranchiseService) {}
 
-    @Roles()
-    @ApiOperation({ summary: 'CREATE - Create DigiFranchise for USER' })
+    @Roles(RoleEnum.digifranchise_super_admin)
+    @ApiOperation({ summary: 'CREATE - Create Digifranchise' })
     @Post('create')
     async createDigifranchise(
       @Req() req: Request,
