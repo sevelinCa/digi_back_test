@@ -25,6 +25,9 @@ import { User } from 'src/users/domain/user';
 import { Session } from 'src/session/domain/session';
 import { UsersService } from 'src/users/users.service';
 import { SessionService } from 'src/session/session.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +37,8 @@ export class AuthService {
     private sessionService: SessionService,
     private mailService: MailService,
     private configService: ConfigService<AllConfigType>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<User>
   ) {}
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
@@ -260,7 +265,6 @@ export class AuthService {
       id: userId,
     });
 
-    // console.log('>>>>>>>>>>>>>>>>>', user)
 
     if (!user || user?.status?.id !== StatusEnum.inactive) {
       throw new HttpException(
@@ -272,13 +276,12 @@ export class AuthService {
       );
     }
 
-    user.status = {
+    const updatedStatus = {
       id: StatusEnum.active,
     };
 
-    // console.log('++++++++++++++++', user)
-
-    await this.usersService.update(user.id, user);
+    Object.assign(user, { status: updatedStatus.id })
+    await this.userRepository.save(user)
   }
 
   async forgotPassword(email: string): Promise<void> {

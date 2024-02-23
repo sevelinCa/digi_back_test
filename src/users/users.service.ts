@@ -12,11 +12,14 @@ import { RoleEnum } from 'src/roles/roles.enum';
 // import { FilesService } from 'src/files/files.service';
 import bcrypt from 'bcryptjs';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
+import { Repository } from 'typeorm';
+// import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
+    // private readonly userRepo: Repository<UserRepository>
   ) {}
 
   async create(createProfileDto: CreateUserDto): Promise<User> {
@@ -155,8 +158,6 @@ export class UsersService {
       }
     }
 
-    // console.log("---------", clonedPayload)
-
     // if (clonedPayload.photo?.id) {
     //   const fileObject = await this.filesService.findOne({
     //     id: clonedPayload.photo.id,
@@ -209,7 +210,7 @@ export class UsersService {
       }
     }
 
-    return this.usersRepository.update(id, { ...clonedPayload });
+    return this.usersRepository.update(id, clonedPayload );
   }
 
   async softDelete(id: User['id']): Promise<void> {
