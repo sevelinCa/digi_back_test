@@ -36,6 +36,7 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { SmsModule } from './sms/sms.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -103,6 +104,7 @@ import { SmsModule } from './sms/sms.module';
     InventoryModule,
     AssetMgtModule,
     SmsModule,
+    UserModule,
   ],
 })
 export class AppModule { }

@@ -3,6 +3,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { Role } from 'src/roles/domain/role';
 import { Status } from 'src/statuses/domain/status';
 import { PrimaryGeneratedColumn } from 'typeorm';
+import { ProfessionalBody, Qualifications } from '../infrastructure/persistence/relational/entities/user.entity';
 
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -25,6 +26,43 @@ export class User {
 
   @Expose({ groups: ['me', 'admin'] })
   socialId?: string | null;
+
+
+  @Expose({ groups: ['me', 'admin'] })
+  image: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  idImage: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  gender: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  race: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  homeAddress: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  educationLevel: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  currentActivity: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  fieldOfStudy: string | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  qualifications: Qualifications[] | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  professionalBody: ProfessionalBody[] | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  isProfileComplete: boolean;
+
+
+
   firstName: string | null;
   lastName: string | null;
   // photo?: FileType | null;

@@ -11,6 +11,7 @@ import { StatusEnum } from 'src/statuses/statuses.enum';
 import { RoleEnum } from 'src/roles/roles.enum';
 import bcrypt from 'bcryptjs';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
+import { GoogleCreateUserDto } from 'src/auth/dto/google-create-user.dto';
 
 @Injectable()
 export class UsersService {
