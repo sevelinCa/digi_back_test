@@ -28,8 +28,4 @@ export abstract class UserRepository {
   ): Promise<User | null>;
 
   abstract softDelete(id: User['id']): Promise<void>;
-
-  updateUser(id: User['id'], payload:DeepPartial<User>) {
-    
-  }
 }

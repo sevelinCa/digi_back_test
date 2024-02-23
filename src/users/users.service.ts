@@ -209,11 +209,7 @@ export class UsersService {
       }
     }
 
-    // const { email, ...userWithoutEmail } = clonedPayload;
-    // console.log('>>>>>>>>>>>', userWithoutEmail)
-    this.usersRepository.
-
-    return this.usersRepository.update(id, clonedPayload);
+    return this.usersRepository.update(id, { ...clonedPayload });
   }
 
   async softDelete(id: User['id']): Promise<void> {
