@@ -8,7 +8,10 @@ import { UpdateInventoryDto } from './dto/update-inventory.dto';
 import { Inventory } from './entities/inventory.entity';
 import { InventoryService } from './inventory.service';
 import { Request } from 'express';
-@ApiTags('Inventories')
+import { UUID } from 'crypto';
+import { UpdateInventoryEntriesDto } from './dto/update-inventory-entries.dto';
+import { InventoryEntries } from './entities/inventory-entries.entity';
+@ApiTags('Inventory')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'inventory', version: '1' })
@@ -17,51 +20,62 @@ export class InventoryController {
     constructor(private readonly inventoryService: InventoryService) { }
 
     @ApiOperation({
-        summary: 'CREATE - Record Inventory Item for User',
+        summary: 'CREATE - Record Inventory Item for Digifranchise',
     })
     @Post()
     async create(
-        @Req() req: Request,
         @Body() createInventoryDto: CreateInventoryDto,
+        @Query('franchiseId') franchiseId: string
     ) {
-        const userId = (req.user as UserEntity).id;
-
         return this.inventoryService.createInventoryItem(
             createInventoryDto,
-            userId,
+            franchiseId,
         );
     }
+
+    // @ApiOperation({
+    //     summary: 'GET ALL - Retrieve all inventory items',
+    // })
+    // @ApiQuery({
+    //     name: 'startDate',
+    //     required: false,
+    //     description: 'Filter inventory items starting from this date',
+    // })
+    // @ApiQuery({
+    //     name: 'endDate',
+    //     required: false,
+    //     description: 'Filter inventory items ending until this date',
+    // })
+    // @Get()
+    // async findAll(
+    //     @Query('startDate') startDate?: string,
+    //     @Query('endDate') endDate?: string,
+    // ): Promise<{ inventoryItems: Inventory[]; count: number }> {
+    //     return this.inventoryService.findAllInventoryItems(startDate, endDate);
+    // }
+
 
     @ApiOperation({
         summary: 'GET ALL - Retrieve all inventory items',
     })
-    @ApiQuery({
-        name: 'startDate',
-        required: false,
-        description: 'Filter inventory items starting from this date',
-    })
-    @ApiQuery({
-        name: 'endDate',
-        required: false,
-        description: 'Filter inventory items ending until this date',
-    })
     @Get()
-    async findAll(
-        @Query('startDate') startDate?: string,
-        @Query('endDate') endDate?: string,
-    ): Promise<{ inventoryItems: Inventory[]; count: number }> {
-        return this.inventoryService.findAllInventoryItems(startDate, endDate);
+    async findAllInventoryByDigifranchiseId(
+        @Query('digifranchiseId') digifranchiseId: string
+    ) {
+        return this.inventoryService.findInventoryByDigifranchiseId(digifranchiseId)
     }
 
-    @ApiOperation({
-        summary: 'GET ONE - Retrieve Inventory Item by ID',
-    })
-    @Get(':id')
-    async getInventoryById(
-        @Param('id') inventoryId: string,
-    ): Promise<Inventory | null> {
-        return this.inventoryService.findInventoryById(inventoryId);
-    }
+
+
+    // @ApiOperation({
+    //     summary: 'GET ONE - Retrieve Inventory Item by ID',
+    // })
+    // @Get(':id')
+    // async getInventoryById(
+    //     @Param('id') inventoryId: string,
+    // ): Promise<Inventory | null> {
+    //     return this.inventoryService.findInventoryById(inventoryId);
+    // }
 
     @ApiOperation({
         summary: 'UPDATE - Update a specific inventory item',
@@ -76,6 +90,24 @@ export class InventoryController {
             updateInventoryDto,
         );
     }
+
+
+
+    @ApiOperation({
+        summary: 'UPDATE - Update a specific inventory item entry',
+    })
+    @Patch('/entry/:entryId')
+    async updateEntries(
+        @Param('entryId') entryId: string,
+        @Body() updateInventoryEntriesDto: UpdateInventoryEntriesDto,
+    ): Promise<InventoryEntries> {
+        return this.inventoryService.updateInventoryItemEntries(
+            entryId,
+            updateInventoryEntriesDto,
+        );
+    }
+
+
 
     @ApiOperation({
         summary: 'DELETE - Delete a specific inventory item',
