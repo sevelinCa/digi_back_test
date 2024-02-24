@@ -40,3 +40,6 @@ lerna-debug.log*
 sql_commands.sql
 build.env
 .env-deployed
+
+yarn.lock
+package.lock.json
