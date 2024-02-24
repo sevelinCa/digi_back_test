@@ -9,17 +9,13 @@ import { DeepPartial } from 'src/utils/types/deep-partial.type';
 import { User } from './domain/user';
 import { StatusEnum } from 'src/statuses/statuses.enum';
 import { RoleEnum } from 'src/roles/roles.enum';
-// import { FilesService } from 'src/files/files.service';
 import bcrypt from 'bcryptjs';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
-import { Repository } from 'typeorm';
-// import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
-    // private readonly userRepo: Repository<UserRepository>
   ) {}
 
   async create(createProfileDto: CreateUserDto): Promise<User> {

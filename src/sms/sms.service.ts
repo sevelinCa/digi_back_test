@@ -34,7 +34,7 @@ export class SmsService {
         to: phoneNumber,
       });
 
-      console.log(`Message sent. SID`);
+      // console.log(`Message sent. SID`);
       return result;
     } catch (error) {
       console.error('Error sending SMS:', error);
