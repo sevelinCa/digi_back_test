@@ -9,9 +9,15 @@ import { StatusDto } from 'src/statuses/dto/status.dto';
 export class CreateUserDto {
   @ApiProperty({ example: 'test1@example.com' })
   @Transform(lowerCaseTransformer)
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsEmail()
   email: string | null;
+
+  @ApiProperty({ example: '+27450049245' })
+  @Transform(lowerCaseTransformer)
+  // @IsNotEmpty()
+  @IsEmail()
+  phoneNumber: string | null;
 
   @ApiProperty()
   @MinLength(6)

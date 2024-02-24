@@ -23,6 +23,8 @@ import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { LoginResponseType } from './types/login-response.type';
 import { NullableType } from '../utils/types/nullable.type';
 import { User } from 'src/users/domain/user';
+import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
+import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -53,18 +55,30 @@ export class AuthController {
     }
   }
 
-  @Post('email/register')
+  @Post('email/digifranchise-super-admin/register')
   @HttpCode(HttpStatus.NO_CONTENT)
   async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
     return this.service.register(createUserDto);
   }
 
+  @Post('phone/digifranchise-super-admin/register')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async phoneRegister(@Body() phoneRegisterDto: AuthPhoneRegisterDto): Promise<void> {
+    return this.service.phoneRegister(phoneRegisterDto);
+  }
+
+  @Post('phone/confirm')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async confirmOtp(@Body() phoneRegisterDto: AuthConfirmPhoneDto): Promise<void> {
+    return this.service.verifyUserWithPhone(phoneRegisterDto);
+  }
+
   @Post('email/confirm')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmEmail(
-    @Body() confirmEmailDto: AuthConfirmEmailDto,
+    @Body() confirmPhoneDto: AuthConfirmEmailDto,
   ): Promise<void> {
-    return this.service.confirmEmail(confirmEmailDto.hash);
+    return this.service.confirmEmail(confirmPhoneDto.hash);
   }
 
   @Post('forgot/password')

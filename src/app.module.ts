@@ -7,17 +7,17 @@ import authConfig from './auth/config/auth.config';
 import appConfig from './config/app.config';
 import mailConfig from './mail/config/mail.config';
 // import fileConfig from './files/config/file.config';
-import facebookConfig from './auth-facebook/config/facebook.config';
-import googleConfig from './auth-google/config/google.config';
-import twitterConfig from './auth-twitter/config/twitter.config';
-import appleConfig from './auth-apple/config/apple.config';
+// import facebookConfig from './auth-facebook/config/facebook.config';
+// import googleConfig from './auth-google/config/google.config';
+// import twitterConfig from './auth-twitter/config/twitter.config';
+// import appleConfig from './auth-apple/config/apple.config';
 import path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthAppleModule } from './auth-apple/auth-apple.module';
-import { AuthFacebookModule } from './auth-facebook/auth-facebook.module';
-import { AuthGoogleModule } from './auth-google/auth-google.module';
-import { AuthTwitterModule } from './auth-twitter/auth-twitter.module';
+// import { AuthAppleModule } from './auth-apple/auth-apple.module';
+// import { AuthFacebookModule } from './auth-facebook/auth-facebook.module';
+// import { AuthGoogleModule } from './auth-google/auth-google.module';
+// import { AuthTwitterModule } from './auth-twitter/auth-twitter.module';
 import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
 import { HeaderResolver } from 'nestjs-i18n';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
@@ -35,6 +35,7 @@ import { AccountingModule } from './accounting/accounting.module';
 import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -46,10 +47,10 @@ import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
         appConfig,
         mailConfig,
         // fileConfig,
-        facebookConfig,
-        googleConfig,
-        twitterConfig,
-        appleConfig,
+        // facebookConfig,
+        // googleConfig,
+        // twitterConfig,
+        // appleConfig,
       ],
       envFilePath: ['.env'],
     }),
@@ -89,10 +90,10 @@ import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
     UsersModule,
     // FilesModule,
     AuthModule,
-    AuthFacebookModule,
-    AuthGoogleModule,
-    AuthTwitterModule,
-    AuthAppleModule,
+    // AuthFacebookModule,
+    // AuthGoogleModule,
+    // AuthTwitterModule,
+    // AuthAppleModule,
     SessionModule,
     MailModule,
     MailerModule,
@@ -101,6 +102,7 @@ import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
     DigifranchiseModule,
     InventoryModule,
     AssetMgtModule,
+    SmsModule,
   ],
 })
 export class AppModule { }

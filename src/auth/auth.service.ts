@@ -25,6 +25,12 @@ import { User } from 'src/users/domain/user';
 import { Session } from 'src/session/domain/session';
 import { UsersService } from 'src/users/users.service';
 import { SessionService } from 'src/session/session.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
+import { SmsService } from 'src/sms/sms.service';
+import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +40,10 @@ export class AuthService {
     private sessionService: SessionService,
     private mailService: MailService,
     private configService: ConfigService<AllConfigType>,
-  ) {}
+    private smsService: SmsService,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<User>
+  ) { }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
@@ -112,97 +121,98 @@ export class AuthService {
     };
   }
 
-  async validateSocialLogin(
-    authProvider: string,
-    socialData: SocialInterface,
-  ): Promise<LoginResponseType> {
-    let user: NullableType<User> = null;
-    const socialEmail = socialData.email?.toLowerCase();
-    let userByEmail: NullableType<User> = null;
+  // async validateSocialLogin(
+  //   authProvider: string,
+  //   socialData: SocialInterface,
+  // ): Promise<LoginResponseType> {
+  //   let user: NullableType<User> = null;
+  //   const socialEmail = socialData.email?.toLowerCase();
+  //   let userByEmail: NullableType<User> = null;
 
-    if (socialEmail) {
-      userByEmail = await this.usersService.findOne({
-        email: socialEmail,
-      });
-    }
+  //   if (socialEmail) {
+  //     userByEmail = await this.usersService.findOne({
+  //       email: socialEmail,
+  //     });
+  //   }
 
-    if (socialData.id) {
-      user = await this.usersService.findOne({
-        socialId: socialData.id,
-        provider: authProvider,
-      });
-    }
+  //   if (socialData.id) {
+  //     user = await this.usersService.findOne({
+  //       socialId: socialData.id,
+  //       provider: authProvider,
+  //     });
+  //   }
 
-    if (user) {
-      if (socialEmail && !userByEmail) {
-        user.email = socialEmail;
-      }
-      await this.usersService.update(user.id, user);
-    } else if (userByEmail) {
-      user = userByEmail;
-    } else {
-      const role = {
-        id: RoleEnum.customer,
-      };
-      const status = {
-        id: StatusEnum.active,
-      };
+  //   if (user) {
+  //     if (socialEmail && !userByEmail) {
+  //       user.email = socialEmail;
+  //     }
+  //     await this.usersService.update(user.id, user);
+  //   } else if (userByEmail) {
+  //     user = userByEmail;
+  //   } else {
+  //     const role = {
+  //       id: RoleEnum.digifranchise_super_admin,
+  //     };
+  //     const status = {
+  //       id: StatusEnum.active,
+  //     };
 
-      user = await this.usersService.create({
-        email: socialEmail ?? null,
-        firstName: socialData.firstName ?? null,
-        lastName: socialData.lastName ?? null,
-        socialId: socialData.id,
-        provider: authProvider,
-        role,
-        status,
-      });
+  //     user = await this.usersService.create({
+  //       email: socialEmail ?? null,
+  //       firstName: socialData.firstName ?? null,
+  //       lastName: socialData.lastName ?? null,
+  //       socialId: socialData.id,
+  //       provider: authProvider,
+  //       role,
+  //       status,
+  //     });
 
-      user = await this.usersService.findOne({
-        id: user?.id,
-      });
-    }
+  //     user = await this.usersService.findOne({
+  //       id: user?.id,
+  //     });
+  //   }
 
-    if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            user: 'userNotFound',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+  //   if (!user) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: {
+  //           user: 'userNotFound',
+  //         },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
 
-    const session = await this.sessionService.create({
-      user,
-    });
+  //   const session = await this.sessionService.create({
+  //     user,
+  //   });
 
-    const {
-      token: jwtToken,
-      refreshToken,
-      tokenExpires,
-    } = await this.getTokensData({
-      id: user.id,
-      role: user.role,
-      sessionId: session.id,
-    });
+  //   const {
+  //     token: jwtToken,
+  //     refreshToken,
+  //     tokenExpires,
+  //   } = await this.getTokensData({
+  //     id: user.id,
+  //     role: user.role,
+  //     sessionId: session.id,
+  //   });
 
-    return {
-      refreshToken,
-      token: jwtToken,
-      tokenExpires,
-      user,
-    };
-  }
+  //   return {
+  //     refreshToken,
+  //     token: jwtToken,
+  //     tokenExpires,
+  //     user,
+  //   };
+  // }
 
   async register(dto: AuthRegisterLoginDto): Promise<void> {
     const user = await this.usersService.create({
       ...dto,
       email: dto.email,
+      phoneNumber: null,
       role: {
-        id: RoleEnum.customer,
+        id: RoleEnum.digifranchise_super_admin,
       },
       status: {
         id: StatusEnum.inactive,
@@ -223,12 +233,12 @@ export class AuthService {
       },
     );
 
-    // await this.mailService.userSignUp({
-    //   to: dto.email,
-    //   data: {
-    //     hash,
-    //   },
-    // });
+    await this.mailService.userSignUp({
+      to: dto.email,
+      data: {
+        hash,
+      },
+    });
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -260,6 +270,7 @@ export class AuthService {
       id: userId,
     });
 
+
     if (!user || user?.status?.id !== StatusEnum.inactive) {
       throw new HttpException(
         {
@@ -270,11 +281,64 @@ export class AuthService {
       );
     }
 
-    user.status = {
+    const updatedStatus = {
       id: StatusEnum.active,
     };
 
-    await this.usersService.update(user.id, user);
+    Object.assign(user, { status: updatedStatus.id })
+    await this.userRepository.save(user)
+  }
+
+  async phoneRegister(dto: AuthPhoneRegisterDto) {
+    const user = await this.usersService.create({
+      ...dto,
+      provider: AuthProvidersEnum.phone,
+      email: null,
+      phoneNumber: dto.phoneNumber,
+      role: {
+        id: RoleEnum.digifranchise_super_admin,
+      },
+      status: {
+        id: StatusEnum.inactive,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errors: {
+            phoneNumber: 'failedToCreatUser',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    await this.smsService.sendOTP(dto.phoneNumber)
+  }
+
+  async verifyUserWithPhone(dto: AuthConfirmPhoneDto) {
+    const phoneIsVerified = await this.smsService.verifyOTP(dto.phoneNumber, dto.otp)
+
+    if (phoneIsVerified) {
+      const user = await this.usersService.findOne({ phoneNumber: dto.phoneNumber })
+      if (!user || user?.status?.id !== StatusEnum.inactive) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `notFound`,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const updatedStatus = {
+        id: StatusEnum.active,
+      };
+      Object.assign(user, { status: updatedStatus.id })
+      await this.userRepository.save(user)
+    }
   }
 
   async forgotPassword(email: string): Promise<void> {

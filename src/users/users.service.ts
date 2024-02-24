@@ -9,7 +9,6 @@ import { DeepPartial } from 'src/utils/types/deep-partial.type';
 import { User } from './domain/user';
 import { StatusEnum } from 'src/statuses/statuses.enum';
 import { RoleEnum } from 'src/roles/roles.enum';
-// import { FilesService } from 'src/files/files.service';
 import bcrypt from 'bcryptjs';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 
@@ -41,6 +40,23 @@ export class UsersService {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
               email: 'emailAlreadyExists',
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
+    if (clonedPayload.phoneNumber) {
+      const phoneObject = await this.usersRepository.findOne({
+        email: clonedPayload.phoneNumber,
+      });
+      if (phoneObject) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              email: 'phoneAlreadyExists',
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -207,7 +223,7 @@ export class UsersService {
       }
     }
 
-    return this.usersRepository.update(id, clonedPayload);
+    return this.usersRepository.update(id, clonedPayload );
   }
 
   async softDelete(id: User['id']): Promise<void> {

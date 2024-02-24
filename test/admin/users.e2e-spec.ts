@@ -95,7 +95,7 @@ describe('Users Module', () => {
             firstName: `UserByAdmin${Date.now()}`,
             lastName: 'E2E',
             role: {
-              id: RoleEnum.customer,
+              id: RoleEnum.digifranchise_super_admin,
             },
             status: {
               id: StatusEnum.active,
