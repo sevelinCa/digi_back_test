@@ -292,6 +292,7 @@ export class AuthService {
   async phoneRegister(dto: AuthPhoneRegisterDto) {
     const user = await this.usersService.create({
       ...dto,
+      provider: AuthProvidersEnum.phone,
       email: null,
       phoneNumber: dto.phoneNumber,
       role: {
