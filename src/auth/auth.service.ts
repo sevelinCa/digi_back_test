@@ -30,6 +30,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 import { SmsService } from 'src/sms/sms.service';
+import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 
 @Injectable()
 export class AuthService {
@@ -42,7 +43,7 @@ export class AuthService {
     private smsService: SmsService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<User>
-  ) {}
+  ) { }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
@@ -316,8 +317,27 @@ export class AuthService {
     await this.smsService.sendOTP(dto.phoneNumber)
   }
 
-  async verifyUserWithPhone() {
+  async verifyUserWithPhone(dto: AuthConfirmPhoneDto) {
+    const phoneIsVerified = await this.smsService.verifyOTP(dto.phoneNumber, dto.otp)
 
+    if (phoneIsVerified) {
+      const user = await this.usersService.findOne({ phoneNumber: dto.phoneNumber })
+      if (!user || user?.status?.id !== StatusEnum.inactive) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `notFound`,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const updatedStatus = {
+        id: StatusEnum.active,
+      };
+      Object.assign(user, { status: updatedStatus.id })
+      await this.userRepository.save(user)
+    }
   }
 
   async forgotPassword(email: string): Promise<void> {

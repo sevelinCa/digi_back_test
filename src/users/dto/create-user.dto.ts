@@ -13,9 +13,9 @@ export class CreateUserDto {
   @IsEmail()
   email: string | null;
 
-  @ApiProperty({ example: 'test1@example.com' })
+  @ApiProperty({ example: '+27450049245' })
   @Transform(lowerCaseTransformer)
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsEmail()
   phoneNumber: string | null;
 

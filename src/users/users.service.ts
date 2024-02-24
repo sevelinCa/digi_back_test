@@ -51,6 +51,23 @@ export class UsersService {
       }
     }
 
+    if (clonedPayload.phoneNumber) {
+      const phoneObject = await this.usersRepository.findOne({
+        email: clonedPayload.phoneNumber,
+      });
+      if (phoneObject) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              email: 'phoneAlreadyExists',
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
     // if (clonedPayload.photo?.id) {
     //   const fileObject = await this.filesService.findOne({
     //     id: clonedPayload.photo.id,
