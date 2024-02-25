@@ -24,6 +24,20 @@ export class UserMapper {
     user.createdAt = raw.createdAt;
     user.updatedAt = raw.updatedAt;
     user.deletedAt = raw.deletedAt;
+
+
+    user.image = raw.image;
+    user.idImage = raw.idImage;
+    user.gender= raw.gender;
+    user.race= raw.race;
+    user.homeAddress= raw.homeAddress;
+    user.educationLevel= raw.educationLevel;
+    user.currentActivity= raw.currentActivity;
+    user.fieldOfStudy= raw.fieldOfStudy;
+    user.qualifications = raw.qualifications;
+    user.professionalBody= raw.professionalBody;
+    user.isProfileComplete = raw.isProfileComplete;
+
     return user;
   }
 

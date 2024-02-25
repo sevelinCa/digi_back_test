@@ -20,6 +20,21 @@ import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../../../domain/user';
 
+export class Qualifications {
+  qualificationName: string;
+  institution: string;
+  yearObtained: Date
+  qualificationCopy: string;
+}
+
+export class ProfessionalBody {
+  professionalBody: string;
+  certificateName: string;
+  certificateCopy: string;
+  dateObtained: Date;
+  expiryDate: Date
+}
+
 @Entity({
   name: 'user',
 })
@@ -81,6 +96,55 @@ export class UserEntity extends EntityRelationalHelper implements User {
   })
   status?: StatusEntity;
 
+
+
+// ***********************************************************
+
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  image: string | null;
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  idImage: string | null;
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  gender: string | null;
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  race: string | null;
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  homeAddress: string | null;
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  educationLevel: string | null;
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  currentActivity: string | null;
+
+  @Index()
+  @Column({ type: String, nullable: true })
+  fieldOfStudy: string | null;
+
+  @Column({ type: 'json', nullable: true })
+  qualifications: Qualifications[] | null;
+
+  @Column({ type: 'json', nullable: true })
+  professionalBody: ProfessionalBody[] | null;
+
+  @Column({ type: 'boolean', nullable: true, default: false })
+  isProfileComplete: boolean;
+
+
+  // *******************************************************************
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -92,4 +156,5 @@ export class UserEntity extends EntityRelationalHelper implements User {
 
   @Column({ type: 'timestamp', nullable: true })
   deleteAt: Date | null;
+
 }

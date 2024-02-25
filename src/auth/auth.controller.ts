@@ -25,6 +25,7 @@ import { NullableType } from '../utils/types/nullable.type';
 import { User } from 'src/users/domain/user';
 import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
+import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -56,13 +57,17 @@ export class AuthController {
   }
 
   @Post('email/digifranchise-super-admin/register')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
-    return this.service.register(createUserDto);
+  @HttpCode(HttpStatus.OK)
+  async register(@Body() createUserDto: AuthRegisterLoginDto) {
+    await this.service.register(createUserDto);
+    
+    return {
+      message: "SignUp is successfull, check your email to verify!!"
+    }
   }
 
   @Post('phone/digifranchise-super-admin/register')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async phoneRegister(@Body() phoneRegisterDto: AuthPhoneRegisterDto): Promise<void> {
     return this.service.phoneRegister(phoneRegisterDto);
   }
@@ -139,11 +144,15 @@ export class AuthController {
   @Patch('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  public update(
+  public async update(
     @Request() request,
-    @Body() userDto: AuthUpdateDto,
-  ): Promise<NullableType<User>> {
-    return this.service.update(request.user, userDto);
+    @Body() updateUserProfileDto: UserProfileDto,
+  ) {
+    await this.service.update(request.user, updateUserProfileDto);
+    
+    return {
+      message: "Update is successfull"
+    }
   }
 
   @ApiBearerAuth()

@@ -31,6 +31,8 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 import { SmsService } from 'src/sms/sms.service';
 import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
+import { GoogleCreateUserDto } from './dto/google-create-user.dto';
+import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 
 @Injectable()
 export class AuthService {
@@ -120,6 +122,29 @@ export class AuthService {
       user,
     };
   }
+
+  // async googleCreate(googleUser: GoogleCreateUserDto): Promise<any> {
+  //   // const existingUser = await this.usersRepository.findOne({
+  //   //   where: { email: googleUser.email as string },
+  //   // });
+
+  //   // const user = await this.usersService.findOne({
+  //   //   googleUser?.email,
+  //   // });
+
+  //   const existingUser = await this.usersService.findOne({
+  //     email: googleUser.email,
+  //   });
+
+  //   if (existingUser) {
+  //     return existingUser;
+  //   } else {
+  //     const newUser = await this.usersRepository.save(
+  //       this.usersRepository.create(googleUser),
+  //     );
+  //     return newUser;
+  //   }
+  // }
 
   // async validateSocialLogin(
   //   authProvider: string,
@@ -217,6 +242,17 @@ export class AuthService {
       status: {
         id: StatusEnum.inactive,
       },
+      image: null,
+      idImage: null,
+      gender: null,
+      race: null,
+      homeAddress: null,
+      educationLevel: null,
+      currentActivity: null,
+      fieldOfStudy: null,
+      qualifications: null,
+      professionalBody: null,
+      isProfileComplete: false
     });
 
     const hash = await this.jwtService.signAsync(
@@ -301,6 +337,17 @@ export class AuthService {
       status: {
         id: StatusEnum.inactive,
       },
+      image: null,
+      idImage: null,
+      gender: null,
+      race: null,
+      homeAddress: null,
+      educationLevel: null,
+      currentActivity: null,
+      fieldOfStudy: null,
+      qualifications: null,
+      professionalBody: null,
+      isProfileComplete: false
     });
 
     if (!user) {
@@ -439,79 +486,152 @@ export class AuthService {
 
   async update(
     userJwtPayload: JwtPayloadType,
-    userDto: AuthUpdateDto,
-  ): Promise<NullableType<User>> {
-    if (userDto.password) {
-      if (!userDto.oldPassword) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              oldPassword: 'missingOldPassword',
-            },
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
+    updateUserProfileDto: UserProfileDto,
+  ): Promise<void> {
+    // if (userDto.password) {
 
-      const currentUser = await this.usersService.findOne({
-        id: userJwtPayload.id,
+    //   if (!userDto.oldPassword) {
+    //     throw new HttpException(
+    //       {
+    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //         errors: {
+    //           oldPassword: 'missingOldPassword',
+    //         },
+    //       },
+    //       HttpStatus.UNPROCESSABLE_ENTITY,
+    //     );
+    //   }
+
+    //   const currentUser = await this.usersService.findOne({
+    //     id: userJwtPayload.id,
+    //   });
+
+    //   if (!currentUser) {
+    //     throw new HttpException(
+    //       {
+    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //         errors: {
+    //           user: 'userNotFound',
+    //         },
+    //       },
+    //       HttpStatus.UNPROCESSABLE_ENTITY,
+    //     );
+    //   }
+
+    //   if (!currentUser.password) {
+    //     throw new HttpException(
+    //       {
+    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //         errors: {
+    //           oldPassword: 'incorrectOldPassword',
+    //         },
+    //       },
+    //       HttpStatus.UNPROCESSABLE_ENTITY,
+    //     );
+    //   }
+
+    //   const isValidOldPassword = await bcrypt.compare(
+    //     userDto.oldPassword,
+    //     currentUser.password,
+    //   );
+
+    //   if (!isValidOldPassword) {
+    //     throw new HttpException(
+    //       {
+    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //         errors: {
+    //           oldPassword: 'incorrectOldPassword',
+    //         },
+    //       },
+    //       HttpStatus.UNPROCESSABLE_ENTITY,
+    //     );
+    //   } else {
+    //     await this.sessionService.softDelete({
+    //       user: {
+    //         id: currentUser.id,
+    //       },
+    //       excludeId: userJwtPayload.sessionId,
+    //     });
+    //   }
+    // }
+
+    // await this.usersService.update(userJwtPayload.id, userDto);
+
+    // return this.usersService.findOne({
+    //   id: userJwtPayload.id,
+    // });
+
+    const user = await this.usersService.findOne({
+      id: userJwtPayload.id,
+  });
+  
+  if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            hash: `notFound`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+  }
+
+  if (updateUserProfileDto.email) {
+      const userObject = await this.usersService.findOne({
+        email: updateUserProfileDto.email,
       });
 
-      if (!currentUser) {
+      if (userObject && userObject.id !== userJwtPayload.id) {
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              user: 'userNotFound',
+              email: 'emailAlreadyExists',
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
+  }
 
-      if (!currentUser.password) {
+  if (updateUserProfileDto.mobileNumber) {
+      const userObject = await this.usersService.findOne({
+          phoneNumber: updateUserProfileDto.mobileNumber,
+      });
+
+      if (userObject && userObject.id !== userJwtPayload.id) {
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              oldPassword: 'incorrectOldPassword',
+              email: 'phoneNumberAlreadyExists',
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
+  }
 
-      const isValidOldPassword = await bcrypt.compare(
-        userDto.oldPassword,
-        currentUser.password,
-      );
 
-      if (!isValidOldPassword) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              oldPassword: 'incorrectOldPassword',
-            },
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      } else {
-        await this.sessionService.softDelete({
-          user: {
-            id: currentUser.id,
-          },
-          excludeId: userJwtPayload.sessionId,
-        });
-      }
-    }
+  Object.assign(user, {
+      image: updateUserProfileDto?.image,
+      email: updateUserProfileDto?.email,
+      firstName: updateUserProfileDto?.firstName,
+      lastName: updateUserProfileDto?.lastName,
+      idImage: updateUserProfileDto?.idImage,
+      gender: updateUserProfileDto?.gender,
+      race: updateUserProfileDto?.race,
+      homeAddress: updateUserProfileDto?.homeAddress,
+      phoneNumber: updateUserProfileDto?.mobileNumber,
+      educationLevel: updateUserProfileDto?.educationLevel,
+      currentActivity: updateUserProfileDto?.currentActivity,
+      fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
+      qualifications: updateUserProfileDto?.qualifications,
+      professionalBody: updateUserProfileDto?.professionalBody,
+  })
 
-    await this.usersService.update(userJwtPayload.id, userDto);
-
-    return this.usersService.findOne({
-      id: userJwtPayload.id,
-    });
+  await this.userRepository.save(user)
   }
 
   async refreshToken(
