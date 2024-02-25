@@ -26,6 +26,7 @@ import { User } from 'src/users/domain/user';
 import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 import { UserProfileDto } from 'src/user/dto/user.profile.dto';
+import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -55,6 +56,26 @@ export class AuthController {
 
     }
   }
+
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @Post('phone/login')
+  @HttpCode(HttpStatus.OK)
+  public async phoneLogin(
+    @Body() phoneLoginDto: AuthPhoneLoginDto,
+  ) {
+    const data = await this.service.phoneLogin(phoneLoginDto);
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
+    }
+  }
+
 
   @Post('email/digifranchise-super-admin/register')
   @HttpCode(HttpStatus.OK)

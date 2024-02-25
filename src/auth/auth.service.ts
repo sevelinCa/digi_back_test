@@ -33,6 +33,7 @@ import { SmsService } from 'src/sms/sms.service';
 import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 import { GoogleCreateUserDto } from './dto/google-create-user.dto';
 import { UserProfileDto } from 'src/user/dto/user.profile.dto';
+import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 
 @Injectable()
 export class AuthService {
@@ -363,6 +364,79 @@ export class AuthService {
     }
 
     await this.smsService.sendOTP(dto.phoneNumber)
+  }
+
+  async phoneLogin(dto: AuthPhoneLoginDto): Promise<LoginResponseType> {
+    const user = await this.usersService.findOne({
+      phoneNumber: dto.phoneNumber,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'notFound',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (user.provider !== AuthProvidersEnum.phone) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: `needLoginViaProvider:${user.provider}`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (!user.password) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const isValidPassword = await bcrypt.compare(dto.password, user.password)
+
+    if (!isValidPassword) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const session = await this.sessionService.create({
+      user,
+    });
+
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
+      sessionId: session.id,
+    });
+
+    return {
+      refreshToken,
+      token,
+      tokenExpires,
+      user,
+    };
   }
 
   async verifyUserWithPhone(dto: AuthConfirmPhoneDto) {
