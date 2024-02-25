@@ -10,12 +10,12 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: this.configService.get('database.type', { infer: true }),
-      url: this.configService.get('database.url', { infer: true }),
-      // host: this.configService.get('database.host', { infer: true }),
-      // port: this.configService.get('database.port', { infer: true }),
-      // username: this.configService.get('database.username', { infer: true }),
-      // password: this.configService.get('database.password', { infer: true }),
-      // database: this.configService.get('database.name', { infer: true }),
+      // url: this.configService.get('database.url', { infer: true }),
+      host: this.configService.get('database.host', { infer: true }),
+      port: this.configService.get('database.port', { infer: true }),
+      username: this.configService.get('database.username', { infer: true }),
+      password: this.configService.get('database.password', { infer: true }),
+      database: this.configService.get('database.name', { infer: true }),
       synchronize: this.configService.get('database.synchronize', {
         infer: true,
       }),
@@ -37,9 +37,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         ssl: this.configService.get('database.sslEnabled', { infer: true })
           ? {
               rejectUnauthorized: false,
-              ca:
-                this.configService.get('database.ca', { infer: true }) ??
-                undefined,
+              ca: process.env.DATABASE_CA
             }
           : undefined,
       },
