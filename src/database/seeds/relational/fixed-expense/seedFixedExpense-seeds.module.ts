@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FixedExpenseSeedService } from './SeedFixedExpense-seeds.service';
+import { FixedExpenseSeedService } from './seedFixedExpense-seeds.service';
 import { FixedExpenseCategory } from 'src/accounting/entities/fixedExpenseCategory.entity';
 
 @Module({

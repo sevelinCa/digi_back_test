@@ -57,8 +57,9 @@
 
    ```bash
    npm run migration:generate -- src/database/migrations/CreatePostTable
-      npm run migration:generate -- src/database/migrations/updatingIncome
-   ```
+      npm run migration:generate -- src/database/migrations/updatingDigifranchiseTable
+      
+       ```
 
 1. Apply this migration to database via [npm run migration:run](#run-migration).
 

@@ -1,35 +1,31 @@
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { StatusEnum } from 'src/statuses/statuses.enum';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { ServiceOffered } from '../dto/create-digifranchise.dto';
+import { DigifranchiseProduct } from './digifranchise-product.entity';
+import { FranchiseOwnership } from './franchise-ownership.entity';
+import { DigifranchiseService } from './digifranchise-service.entity';
 
 @Entity()
 export class Digifranchise {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  userId: string;
-
-  @Column({ type: 'varchar', length: 255 })
-  userFullNames: string;
-
   @Column({ type: 'varchar', length: 255, nullable: true })
-  franchiseName: string;
+  digifranchiseName: string;
 
-  @Column({ type: 'varchar', length: 1000, nullable: true })
-  Description: string;
+  @Column({ type: 'text', nullable: true })
+  description: string;
 
-  @Column({ type: 'varchar', length: 1000, nullable: true })
-  ServicesOffered: ServiceOffered[];
-
-  @Column({ type: 'varchar', length: 255, default: 'active' })
+  @Column({ type: 'varchar', length: 255, default: StatusEnum.inactive })
   status: StatusEnum;
+
+  @OneToMany(() => DigifranchiseProduct, product => product.digifranchise)
+  products: DigifranchiseProduct[];
+
+  @OneToMany(() => DigifranchiseService, service => service.digifranchise)
+  services: DigifranchiseService[];
+
+  @OneToMany(() => FranchiseOwnership, ownership => ownership.digifranchise)
+  franchiseOwnerships: FranchiseOwnership[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
