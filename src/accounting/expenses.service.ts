@@ -1,124 +1,124 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Expense } from './entities/expense.entity';
-import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
-import {
-  findExpenseById,
-  findFixedExpenseCategoryById,
-  getDigifranchiseByUserId,
-} from 'src/helper/FindByFunctions';
-import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
-import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
-import { User } from 'src/users/domain/user';
-import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+// import { Injectable, NotFoundException } from '@nestjs/common';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
+// import { Expense } from './entities/expense.entity';
+// import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
+// import {
+//   findExpenseById,
+//   findFixedExpenseCategoryById,
+//   getDigifranchiseByUserId,
+// } from 'src/helper/FindByFunctions';
+// import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
+// import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
+// import { User } from 'src/users/domain/user';
+// import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
-@Injectable()
-export class ExpenseService {
-  constructor(
-    @InjectRepository(Expense)
-    private readonly expenseRepository: Repository<Expense>,
-    @InjectRepository(Digifranchise)
-    private readonly DigifranchiseRepository: Repository<Digifranchise>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(FixedExpenseCategory)
-    private readonly fixedExpenseCategoryRepository: Repository<FixedExpenseCategory>,
-  ) {}
+// @Injectable()
+// export class ExpenseService {
+//   constructor(
+//     @InjectRepository(Expense)
+//     private readonly expenseRepository: Repository<Expense>,
+//     @InjectRepository(Digifranchise)
+//     private readonly DigifranchiseRepository: Repository<Digifranchise>,
+//     @InjectRepository(User)
+//     private userRepository: Repository<User>,
+//     @InjectRepository(FixedExpenseCategory)
+//     private readonly fixedExpenseCategoryRepository: Repository<FixedExpenseCategory>,
+//   ) {}
 
-  async createExpense(
-    createExpenseDto: CreateExpenseDto,
-    userId: string,
-    fixedExpenseId: string,
-  ): Promise<Expense> {
-    const expenseCategory = await findFixedExpenseCategoryById(
-      this.fixedExpenseCategoryRepository,
-      fixedExpenseId,
-    );
-    const franchiseAccount = await getDigifranchiseByUserId(
-      this.DigifranchiseRepository,
-      userId,
-    );
+//   async createExpense(
+//     createExpenseDto: CreateExpenseDto,
+//     userId: string,
+//     fixedExpenseId: string,
+//   ): Promise<Expense> {
+//     const expenseCategory = await findFixedExpenseCategoryById(
+//       this.fixedExpenseCategoryRepository,
+//       fixedExpenseId,
+//     );
+//     const franchiseAccount = await getDigifranchiseByUserId(
+//       this.DigifranchiseRepository,
+//       userId,
+//     );
 
-    if (!expenseCategory) {
-      throw new NotFoundException(
-        `Fixed expense category not found for ID ${fixedExpenseId}`,
-      );
-    }
+//     if (!expenseCategory) {
+//       throw new NotFoundException(
+//         `Fixed expense category not found for ID ${fixedExpenseId}`,
+//       );
+//     }
 
-    if (!franchiseAccount) {
-      throw new NotFoundException(
-        `Franchise account not found for user with ID ${userId}`,
-      );
-    }
+//     if (!franchiseAccount) {
+//       throw new NotFoundException(
+//         `Franchise account not found for user with ID ${userId}`,
+//       );
+//     }
 
-    const newExpense = this.expenseRepository.create({
-      ...createExpenseDto,
-      fixedExpenseCategoryId: expenseCategory,
-      franchiseId: franchiseAccount,
-    });
+//     const newExpense = this.expenseRepository.create({
+//       ...createExpenseDto,
+//       fixedExpenseCategoryId: expenseCategory,
+//       franchiseId: franchiseAccount,
+//     });
 
-    const savedExpense = await this.expenseRepository.save(newExpense);
+//     const savedExpense = await this.expenseRepository.save(newExpense);
 
-    return savedExpense;
-  }
+//     return savedExpense;
+//   }
 
-  async findAllExpenses(
-    startDate?: string,
-    endDate?: string,
-  ): Promise<{ expenses: Expense[]; count: number }> {
-    const queryBuilder = this.expenseRepository.createQueryBuilder('expense');
+//   async findAllExpenses(
+//     startDate?: string,
+//     endDate?: string,
+//   ): Promise<{ expenses: Expense[]; count: number }> {
+//     const queryBuilder = this.expenseRepository.createQueryBuilder('expense');
   
-    queryBuilder
-      .leftJoinAndSelect('expense.franchiseId', 'franchise')
-      .leftJoinAndSelect(
-        'expense.fixedExpenseCategoryId',
-        'fixedExpenseCategory',
-      );
+//     queryBuilder
+//       .leftJoinAndSelect('expense.franchiseId', 'franchise')
+//       .leftJoinAndSelect(
+//         'expense.fixedExpenseCategoryId',
+//         'fixedExpenseCategory',
+//       );
   
-    if (startDate) {
-      queryBuilder.andWhere('expense.date >= :startDate', { startDate });
-    }
+//     if (startDate) {
+//       queryBuilder.andWhere('expense.date >= :startDate', { startDate });
+//     }
   
-    if (endDate) {
-      queryBuilder.andWhere('expense.date <= :endDate', { endDate });
-    }
+//     if (endDate) {
+//       queryBuilder.andWhere('expense.date <= :endDate', { endDate });
+//     }
   
-    queryBuilder.andWhere('expense.deleteAt IS NULL');
+//     queryBuilder.andWhere('expense.deleteAt IS NULL');
   
-    const expenses = await queryBuilder.getMany();
-    const count = await queryBuilder.getCount();
+//     const expenses = await queryBuilder.getMany();
+//     const count = await queryBuilder.getCount();
   
-    return { expenses, count };
-  }
+//     return { expenses, count };
+//   }
 
-  async getExpenseById(expenseId: string): Promise<Expense | null> {
-    return findExpenseById(this.expenseRepository, expenseId);
-  }
+//   async getExpenseById(expenseId: string): Promise<Expense | null> {
+//     return findExpenseById(this.expenseRepository, expenseId);
+//   }
 
-  async updateExpense(
-    expenseId: string,
-    updateExpenseDto: UpdateExpenseDto,
-  ): Promise<Expense> {
-    const expense = await findExpenseById(this.expenseRepository, expenseId);
-    if (!expense) {
-      throw new NotFoundException(`Expense not found with ID ${expenseId}`);
-    }
+//   async updateExpense(
+//     expenseId: string,
+//     updateExpenseDto: UpdateExpenseDto,
+//   ): Promise<Expense> {
+//     const expense = await findExpenseById(this.expenseRepository, expenseId);
+//     if (!expense) {
+//       throw new NotFoundException(`Expense not found with ID ${expenseId}`);
+//     }
 
-    const updatedExpense = this.expenseRepository.merge(
-      expense,
-      updateExpenseDto,
-    );
-    return this.expenseRepository.save(updatedExpense);
-  }
+//     const updatedExpense = this.expenseRepository.merge(
+//       expense,
+//       updateExpenseDto,
+//     );
+//     return this.expenseRepository.save(updatedExpense);
+//   }
 
-  async deleteExpense(expenseId: string): Promise<void> {
-    const expense = await findExpenseById(this.expenseRepository, expenseId);
-    if (!expense) {
-      throw new NotFoundException(`Expense not found with ID ${expenseId}`);
-    }
+//   async deleteExpense(expenseId: string): Promise<void> {
+//     const expense = await findExpenseById(this.expenseRepository, expenseId);
+//     if (!expense) {
+//       throw new NotFoundException(`Expense not found with ID ${expenseId}`);
+//     }
   
-    expense.deleteAt = new Date(); 
-    await this.expenseRepository.save(expense); 
-  }
-}
+//     expense.deleteAt = new Date(); 
+//     await this.expenseRepository.save(expense); 
+//   }
+// }

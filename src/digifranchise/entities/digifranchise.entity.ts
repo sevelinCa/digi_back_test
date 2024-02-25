@@ -18,6 +18,9 @@ export class Digifranchise {
   @Column({ type: 'varchar', length: 255, default: StatusEnum.inactive })
   status: StatusEnum;
 
+  @Column({ type: 'text', nullable: true })
+  digifranchiseFee: string;
+
   @OneToMany(() => DigifranchiseProduct, product => product.digifranchise)
   products: DigifranchiseProduct[];
 
