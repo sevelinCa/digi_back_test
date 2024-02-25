@@ -8,7 +8,8 @@ import { TypeOrmConfigService } from '../../typeorm-config.service';
 import { RoleSeedModule } from './role/role-seed.module';
 import { StatusSeedModule } from './status/status-seed.module';
 import { UserSeedModule } from './user/user-seed.module';
-import { FixedExpenseSeedModule } from './fixed-expense/SeedFixedExpense-seeds.module';
+import { FixedExpenseSeedModule } from './fixed-expense/seedFixedExpense-seeds.module';
+import { DigifranchiseServiceOfferSeedModule } from './digifranchise/digifranchise-service-offer-seed.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { FixedExpenseSeedModule } from './fixed-expense/SeedFixedExpense-seeds.m
     StatusSeedModule,
     UserSeedModule,
     FixedExpenseSeedModule,
+    DigifranchiseServiceOfferSeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],

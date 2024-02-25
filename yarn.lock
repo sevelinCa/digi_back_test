@@ -1883,10 +1883,10 @@
     webpack "5.90.1"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@10.3.2":
-  version "10.3.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.3.2.tgz#021c3637b0db3cc302ea24d291e779ec47914ee5"
-  integrity sha512-yrtohmQlN5J/gFS/ui86SO+KIfUKeL39JPR3f/3AWgpz+duIfc9cGkfh7FGZQMfG9ZqXf7Zw+PRO9G+D4iEbPw==
+"@nestjs/common@^10.3.3":
+  version "10.3.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.3.3.tgz#ba20f756dbed62f5fe29737c42384ad41156c9e9"
+  integrity sha512-LAkTe8/CF0uNWM0ecuDwUNTHCi1lVSITmmR4FQ6Ftz1E7ujQCnJ5pMRzd8JRN14vdBkxZZ8VbVF0BDUKoKNxMQ==
   dependencies:
     uid "2.0.2"
     iterare "1.2.1"
@@ -1977,7 +1977,7 @@
   dependencies:
     tslib "2.6.2"
 
-"@nestjs/typeorm@10.0.2":
+"@nestjs/typeorm@^10.0.2":
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-10.0.2.tgz#25e3ec3c9a127b085c06fd7ea25f8690dba145c2"
   integrity sha512-H738bJyydK4SQkRCTeh1aFBxoO1E9xdL/HaLGThwrqN95os5mEyAtK7BLADOS+vldP4jDZ2VQPLj4epWwRqCeQ==
@@ -2961,9 +2961,9 @@
     "@types/node" "*"
 
 "@types/semver@^7.5.0":
-  version "7.5.7"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.7.tgz#326f5fdda70d13580777bcaa1bc6fa772a5aef0e"
-  integrity sha512-/wdoPq1QqkSj9/QOeKkFquEuPzQbHTWAMPH/PaUMB+JuR31lXhlWXRZ52IpfDYVlDOUBvX09uBrPwxGT1hjNBg==
+  version "7.5.8"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.8.tgz#8268a8c57a3e4abd25c165ecd36237db7948a55e"
+  integrity sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==
 
 "@types/send@*":
   version "0.17.4"

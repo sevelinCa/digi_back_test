@@ -29,11 +29,11 @@ import { SessionModule } from './session/session.module';
 import { MailerModule } from './mailer/mailer.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseConfig } from './database/config/database-config.type';
-import { AccountingModule } from './accounting/accounting.module';
+// import { AccountingModule } from './accounting/accounting.module';
 // import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { DigifranchiseModule } from './digifranchise/digifranchise.module';
-import { InventoryModule } from './inventory/inventory.module';
-import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
+// import { InventoryModule } from './inventory/inventory.module';
+// import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { SmsModule } from './sms/sms.module';
 
 @Module({
@@ -79,7 +79,7 @@ import { SmsModule } from './sms/sms.module';
           inject: [ConfigService],
         },
       ],
-      imports: [ConfigModule, AccountingModule, ],
+      imports: [ConfigModule, ],
       inject: [ConfigService],
     }),
     UsersModule,
@@ -93,10 +93,10 @@ import { SmsModule } from './sms/sms.module';
     MailModule,
     MailerModule,
     HomeModule,
-    AccountingModule,
+    // AccountingModule,
     DigifranchiseModule,
-    InventoryModule,
-    AssetMgtModule,
+    // InventoryModule,
+    // AssetMgtModule,
     SmsModule,
   ],
 })

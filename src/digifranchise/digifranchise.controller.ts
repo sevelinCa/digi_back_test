@@ -17,24 +17,30 @@ import { Request } from 'express';
 export class DigifranchiseController {
     constructor(private readonly digifranchiseService: DigifranchiseService) {}
 
-    @Roles(RoleEnum.digifranchise_super_admin)
-    @ApiOperation({ summary: 'CREATE - Create Digifranchise' })
-    @Post('create')
-    async createDigifranchise(
-      @Req() req: Request,
-      @Body() createDigifranchiseDto: CreateDigifranchiseDto,
-    ): Promise<Digifranchise> {
-      const userId = (req.user as UserEntity).id;
-      return this.digifranchiseService.createDigifranchise(userId, createDigifranchiseDto);
-    }
+    // @Roles(RoleEnum.digifranchise_super_admin)
+    // @ApiOperation({ summary: 'CREATE - Create Digifranchise' })
+    // @Post('create')
+    // async createDigifranchise(
+    //   @Req() req: Request,
+    //   @Body() createDigifranchiseDto: CreateDigifranchiseDto,
+    // ): Promise<Digifranchise> {
+    //   const userId = (req.user as UserEntity).id;
+    //   return this.digifranchiseService.createDigifranchise(userId, createDigifranchiseDto);
+    // }
 
-    @Roles()
-    @ApiOperation({ summary: 'CREATE - Get DigiFranchise by USER' })
+    // @Roles()
+    // @ApiOperation({ summary: 'CREATE - Get DigiFranchise by USER' })
+    // @Get()
+    // async getAllDigifranchises(
+    //   @Req() req: Request,
+    // ): Promise<Digifranchise[]> {
+    //   const userId = (req.user as UserEntity).id
+    //   return this.digifranchiseService.getAllDigifranchiseByUser(userId)
+    // }
+
+    @ApiOperation({ summary: 'GET - get all Digifranchise' })
     @Get()
-    async getAllDigifranchises(
-      @Req() req: Request,
-    ): Promise<Digifranchise[]> {
-      const userId = (req.user as UserEntity).id
-      return this.digifranchiseService.getAllDigifranchiseByUser(userId)
+    async getAllDigifranchises(): Promise<Digifranchise[]> {
+      return this.digifranchiseService.getAllDigifranchises()
     }
 }
