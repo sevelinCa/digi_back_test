@@ -421,15 +421,14 @@ export class AuthService {
       );
     }
 
-    user.password = password;
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    await this.sessionService.softDelete({
-      user: {
-        id: user.id,
-      },
-    });
+    // user.password = password;
 
-    await this.usersService.update(user.id, user);
+    Object.assign(user, {password: hashedPassword})
+
+    await this.userRepository.save(user)
   }
 
   async me(userJwtPayload: JwtPayloadType): Promise<NullableType<User>> {
