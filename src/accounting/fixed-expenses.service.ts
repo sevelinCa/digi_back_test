@@ -8,7 +8,7 @@ import { Brackets, Repository } from 'typeorm';
 import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
 import { CreateFixedExpenseDto } from './dto/Create-DTOs/create-fixed-expense.dto';
 import { IsNull } from 'typeorm';
-import { checkIfUserExists, findUserById } from 'src/helper/FindByFunctions';
+import { getDigifranchiseAccountByUserId, findUserById } from 'src/helper/FindByFunctions';
 import { User } from 'src/users/domain/user';
 import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
 
@@ -83,7 +83,7 @@ export class ClientFixedExpensesService {
     createFixedExpenseDto: CreateFixedExpenseDto,
     userId: string,
   ): Promise<FixedExpenseCategory> {
-    await checkIfUserExists(this.DigifranchiseRepository, userId);
+    await getDigifranchiseAccountByUserId(this.DigifranchiseRepository, userId);
 
     const user = await findUserById(this.userRepository, userId);
 
@@ -99,7 +99,7 @@ export class ClientFixedExpensesService {
     userSpecific: FixedExpenseCategory[];
     predefined: FixedExpenseCategory[];
   }> {
-    await checkIfUserExists(this.DigifranchiseRepository, userId);
+    await getDigifranchiseAccountByUserId(this.DigifranchiseRepository, userId);
   
     const userSpecific = await this.fixedExpenseRepository
       .createQueryBuilder('fixedExpense')
@@ -124,7 +124,7 @@ export class ClientFixedExpensesService {
     userId: string,
     fixedExpenseId: string,
   ): Promise<FixedExpenseCategory> {
-    await checkIfUserExists(this.DigifranchiseRepository, userId);
+    await getDigifranchiseAccountByUserId(this.DigifranchiseRepository, userId);
 
     const fixedExpense = await this.fixedExpenseRepository
       .createQueryBuilder('fixedExpense')
@@ -151,7 +151,7 @@ export class ClientFixedExpensesService {
     fixedExpenseId: string,
     updateData: CreateFixedExpenseDto,
   ): Promise<FixedExpenseCategory> {
-    await checkIfUserExists(this.DigifranchiseRepository, userId);
+    await getDigifranchiseAccountByUserId(this.DigifranchiseRepository, userId);
 
     const fixedExpense = await this.getFixedExpenses(userId, fixedExpenseId);
 

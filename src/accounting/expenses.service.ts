@@ -6,7 +6,7 @@ import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
 import {
   findExpenseById,
   findFixedExpenseCategoryById,
-  getDigifranchiseByUserId,
+  getDigifranchiseAccountByUserId,
 } from 'src/helper/FindByFunctions';
 import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
@@ -35,7 +35,7 @@ export class ExpenseService {
       this.fixedExpenseCategoryRepository,
       fixedExpenseId,
     );
-    const franchiseAccount = await getDigifranchiseByUserId(
+    const franchiseAccount = await getDigifranchiseAccountByUserId(
       this.DigifranchiseRepository,
       userId,
     );

@@ -1,18 +1,23 @@
 import { Module } from '@nestjs/common';
-import { DigifranchiseController } from './digifranchise.controller';
+import { DigifranchiseController, DigifranchiseServiceOfferController } from './digifranchise.controller';
 import { DigifranchiseService } from './digifranchise.service';
+import { DigifranchiseServiceTable } from './entities/digifranchise-service.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Digifranchise } from './entities/digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { FranchiseOwnership } from './entities/franchise-ownership.entity';
+import { Digifranchise } from './entities/digifranchise.entity';
+import { DigifranchiseServiceOfferedService } from './digifranchiseService-offered.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       UserEntity,
-      Digifranchise
+      FranchiseOwnership,
+      Digifranchise,
+      DigifranchiseServiceTable
     ]),
   ],
-  controllers: [DigifranchiseController],
-  providers: [DigifranchiseService]
+  controllers: [DigifranchiseController,DigifranchiseServiceOfferController],
+  providers: [DigifranchiseService, DigifranchiseServiceOfferedService]
 })
 export class DigifranchiseModule {}

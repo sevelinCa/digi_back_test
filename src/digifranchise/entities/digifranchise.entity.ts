@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { StatusEnum } from 'src/statuses/statuses.enum';
 import { DigifranchiseProduct } from './digifranchise-product.entity';
 import { FranchiseOwnership } from './franchise-ownership.entity';
-import { DigifranchiseService } from './digifranchise-service.entity';
+import { DigifranchiseServiceTable } from './digifranchise-service.entity';
 
 @Entity()
 export class Digifranchise {
@@ -24,8 +24,8 @@ export class Digifranchise {
   @OneToMany(() => DigifranchiseProduct, product => product.digifranchise)
   products: DigifranchiseProduct[];
 
-  @OneToMany(() => DigifranchiseService, service => service.digifranchise)
-  services: DigifranchiseService[];
+  @OneToMany(() => DigifranchiseServiceTable, service => service.digifranchise)
+  services: DigifranchiseServiceTable[];
 
   @OneToMany(() => FranchiseOwnership, ownership => ownership.digifranchise)
   franchiseOwnerships: FranchiseOwnership[];

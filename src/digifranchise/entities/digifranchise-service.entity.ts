@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Up
 import { Digifranchise } from './digifranchise.entity';
 
 @Entity()
-export class DigifranchiseService {
+export class DigifranchiseServiceTable {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

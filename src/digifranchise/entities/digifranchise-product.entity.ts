@@ -9,7 +9,6 @@ export class DigifranchiseProduct {
   @ManyToOne(() => Digifranchise, digifranchise => digifranchise.products)
   digifranchise: Digifranchise;
 
-
   @Column({type: 'text'})
   productName: string;
   

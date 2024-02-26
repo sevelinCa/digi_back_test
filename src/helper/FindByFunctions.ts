@@ -10,6 +10,8 @@ import { OperatingParameters } from 'src/accounting/entities/operationParamenter
 import type { Inventory } from 'src/inventory/entities/inventory.entity';
 import type { Asset } from 'src/asset-mgt/entities/asset.entity';
 import type { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import type { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 export async function findUserById(
   userRepository: Repository<User>,
@@ -21,19 +23,14 @@ export async function findUserById(
 }
 
 export async function checkIfUserExists(
-  DigifranchiseRepository: Repository<FranchiseOwnership>,
+  userRepository: Repository<UserEntity>,
   userId: string,
-): Promise<FranchiseOwnership> {
-  const userDigifranchise = await DigifranchiseRepository.findOne(
-    {
-      where: { userId: userId },
-    },
-  );
-  if (!userDigifranchise) throw new UserNotFoundException(userId);
-  return userDigifranchise;
+): Promise<UserEntity | null> {
+  const user = await userRepository.findOne({ where: { id: userId } });
+  return user || null;
 }
 
-export async function getDigifranchiseByUserId(
+export async function getDigifranchiseAccountByUserId(
   DigifranchiseRepository: Repository<FranchiseOwnership>,
   userId: string,
 ): Promise<FranchiseOwnership | null> {
@@ -43,6 +40,14 @@ export async function getDigifranchiseByUserId(
     },
   );
   return userDigifranchise || null;
+}
+
+export async function getDigifranchiseById(
+  DigifranchiseRepository: Repository<Digifranchise>,
+  digifranchiseId: string,
+): Promise<Digifranchise | null> {
+  const digifranchise = await DigifranchiseRepository.findOne({where:{id: digifranchiseId}});
+  return digifranchise || null;
 }
 
 export async function findExpenseById(

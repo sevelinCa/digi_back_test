@@ -1,14 +1,14 @@
-import { Body, Controller, Post, Req, UseGuards, Get, Query } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { DigifranchiseService } from './digifranchise.service';
-import { CreateDigifranchiseDto } from './dto/create-digifranchise.dto'; // Import the DTO
-import type { Digifranchise } from './entities/digifranchise.entity';
 import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
+import type { FranchiseOwnership } from './entities/franchise-ownership.entity';
+import type { DigifranchiseServiceOfferedService } from './digifranchiseService-offered.service';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -17,30 +17,63 @@ import { Request } from 'express';
 export class DigifranchiseController {
     constructor(private readonly digifranchiseService: DigifranchiseService) {}
 
+
+
+    @Roles(RoleEnum.digifranchise_super_admin)
+    @ApiOperation({ summary: 'CREATE - Create Digifranchise Account' })
+    @Post('create-account')
+    async createDigifranchiseAccount(
+      @Req() req: Request,
+     ): Promise<FranchiseOwnership> {
+      const userId = (req.user as UserEntity).id;
+      const firstName = (req.user as UserEntity).firstName;
+      const lastName = (req.user as UserEntity).lastName;
+      const userFullNames = `${firstName} ${lastName}`;
+      const digifranchiseId = '';
+  
+      try {
+        return await this.digifranchiseService.createDigifranchiseAccount(userId, userFullNames, digifranchiseId);
+      } catch (error) {
+        if (error instanceof NotFoundException) {
+          throw error;
+        }
+        throw new NotFoundException('Failed to create Digifranchise account');
+      }
+    }
+    
     // @Roles(RoleEnum.digifranchise_super_admin)
     // @ApiOperation({ summary: 'CREATE - Create Digifranchise' })
     // @Post('create')
     // async createDigifranchise(
     //   @Req() req: Request,
     //   @Body() createDigifranchiseDto: CreateDigifranchiseDto,
-    // ): Promise<Digifranchise> {
+    // ): Promise<FranchiseOwnership> {
     //   const userId = (req.user as UserEntity).id;
-    //   return this.digifranchiseService.createDigifranchise(userId, createDigifranchiseDto);
+    //   return this.digifranchiseService.createDigifranchiseAccount(userId, createDigifranchiseDto.userFullNames, createDigifranchiseDto.digifranchiseId);
     // }
 
-    // @Roles()
-    // @ApiOperation({ summary: 'CREATE - Get DigiFranchise by USER' })
-    // @Get()
-    // async getAllDigifranchises(
-    //   @Req() req: Request,
-    // ): Promise<Digifranchise[]> {
-    //   const userId = (req.user as UserEntity).id
-    //   return this.digifranchiseService.getAllDigifranchiseByUser(userId)
+    // @Get('active-digifranchises')
+    // async findAllActiveDigifranchises() {
+    //   return await this.digifranchiseService.findAllActiveDigifranchises();
     // }
-
-    @ApiOperation({ summary: 'GET - get all Digifranchise' })
-    @Get()
-    async getAllDigifranchises(): Promise<Digifranchise[]> {
-      return this.digifranchiseService.getAllDigifranchises()
-    }
 }
+
+
+@ApiTags('Digifranchise Services')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'digifranchise services', version: '1' })
+export class DigifranchiseServiceOfferController {
+  constructor(private readonly digifranchiseServiceOffer: DigifranchiseServiceOfferedService) {}
+
+  @Get('active-services')
+  async findAllActiveDigifranchiseServices() {
+    return await this.digifranchiseServiceOffer.findAllActiveDigifranchiseServices();
+  }
+
+  @Get('digifranchises-with-services')
+  async findAllDigifranchisesWithServices() {
+    return await this.digifranchiseServiceOffer.findAllDigifranchisesWithServices();
+  }
+}
+

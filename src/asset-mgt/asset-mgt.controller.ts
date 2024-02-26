@@ -7,7 +7,7 @@ import { AssetMgtService } from './asset-mgt.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
 import { Asset } from './entities/asset.entity';
-import { getDigifranchiseByUserId } from 'src/helper/FindByFunctions';
+import { getDigifranchiseAccountByUserId } from 'src/helper/FindByFunctions';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -30,7 +30,7 @@ export class AssetMgtController {
     @Post()
     async create(@Req() req: Request, @Body() createAssetDto: CreateAssetDto) {
         const userId = (req.user as UserEntity).id;
-        const franchiseAccount = await getDigifranchiseByUserId(
+        const franchiseAccount = await getDigifranchiseAccountByUserId(
             this.digifranchiseRepository,
             userId,
         );

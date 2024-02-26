@@ -4,8 +4,7 @@ import { Repository } from 'typeorm';
 import { Income } from './entities/income.entity';
 import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
 import {
-  findIncomeById,
-  getDigifranchiseByUserId,
+  findIncomeById, getDigifranchiseAccountByUserId,
 } from 'src/helper/FindByFunctions';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import { User } from 'src/users/domain/user';
@@ -26,7 +25,7 @@ export class IncomeService {
     createIncomeDto: CreateIncomeDto,
     userId: string,
   ): Promise<Income> {
-    const franchiseAccount = await getDigifranchiseByUserId(
+    const franchiseAccount = await getDigifranchiseAccountByUserId(
       this.DigifranchiseRepository,
       userId,
     );

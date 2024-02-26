@@ -35,7 +35,7 @@ import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ExpenseService } from './expenses.service';
-import { getDigifranchiseByUserId } from 'src/helper/FindByFunctions';
+import { getDigifranchiseAccountByUserId } from 'src/helper/FindByFunctions';
 import { Expense } from './entities/expense.entity';
 import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
 import { IncomeService } from './income.service';
@@ -226,7 +226,7 @@ export class ExpensesController {
     @Body() createExpenseDto: CreateExpenseDto,
   ) {
     const userId = (req.user as User).id;
-    const franchiseAccount = await getDigifranchiseByUserId(
+    const franchiseAccount = await getDigifranchiseAccountByUserId(
       this.DigifranchiseRepository,
       userId,
     );
@@ -312,7 +312,7 @@ export class IncomesController {
   @Post()
   async create(@Req() req: Request, @Body() createIncomeDto: CreateIncomeDto) {
     const userId = (req.user as User).id;
-    const franchiseAccount = await getDigifranchiseByUserId(
+    const franchiseAccount = await getDigifranchiseAccountByUserId(
       this.DigifranchiseRepository,
       userId,
     );

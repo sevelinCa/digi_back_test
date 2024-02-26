@@ -1,7 +1,7 @@
 
 import { InjectRepository } from "@nestjs/typeorm";
 import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
-import { DigifranchiseService } from "src/digifranchise/entities/digifranchise-service.entity";
+import { DigifranchiseServiceTable } from "src/digifranchise/entities/digifranchise-service.entity";
 import { StatusEnum } from "src/statuses/statuses.enum";
 import { Repository } from "typeorm";
 
@@ -9,8 +9,8 @@ export class DigifranchiseSeedService {
     constructor(
         @InjectRepository(Digifranchise)
         private digifranchiseRepository: Repository<Digifranchise>,
-        @InjectRepository(DigifranchiseService)
-        private serviceRepository: Repository<DigifranchiseService>,
+        @InjectRepository(DigifranchiseServiceTable)
+        private serviceRepository: Repository<DigifranchiseServiceTable>,
     ) { }
 
     async run() {

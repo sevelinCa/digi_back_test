@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getDigifranchiseByUserId, findAssetById } from 'src/helper/FindByFunctions';
+import {  findAssetById, getDigifranchiseAccountByUserId } from 'src/helper/FindByFunctions';
 import type { Repository } from 'typeorm';
 import type { CreateAssetDto } from './dto/create-asset.dto';
 import type { UpdateAssetDto } from './dto/update-asset.dto';
@@ -21,7 +21,7 @@ export class AssetMgtService {
         createAssetDto: CreateAssetDto,
         userId: string,
     ): Promise<Asset> {
-        const franchiseAccount = await getDigifranchiseByUserId(
+        const franchiseAccount = await getDigifranchiseAccountByUserId(
             this.digifranchiseRepository,
             userId,
         );
