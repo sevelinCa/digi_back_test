@@ -1,4 +1,4 @@
-import { Injectable,  } from '@nestjs/common';
+import { Injectable, NotFoundException,  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {  Equal, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
@@ -71,5 +71,17 @@ export class DigifranchiseService {
 }
 
 
+async findAllOwnedDigifranchiseByUserId(userId: string): Promise<Digifranchise[]> {
+  const ownershipRecords = await this.franchiseOwnerRepository.find({
+    where: { userId },
+    relations: ['digifranchiseId'], 
+  });
+
+  const digifranchiseIds = ownershipRecords
+    .filter(record => record.digifranchiseId) 
+    .map(record => record.digifranchiseId.id); 
+
+  return this.digifranchiseRepository.findByIds(digifranchiseIds);
+}
 
 }
