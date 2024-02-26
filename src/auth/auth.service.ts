@@ -45,7 +45,7 @@ export class AuthService {
     private configService: ConfigService<AllConfigType>,
     private smsService: SmsService,
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<User>
+    private readonly usersRepository: Repository<User>
   ) { }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
@@ -124,28 +124,66 @@ export class AuthService {
     };
   }
 
-  // async googleCreate(googleUser: GoogleCreateUserDto): Promise<any> {
-  //   // const existingUser = await this.usersRepository.findOne({
-  //   //   where: { email: googleUser.email as string },
-  //   // });
+  async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
+    const user = await this.usersRepository.findOne({
+      where: { email: googleUser.email as string },
+    });
 
-  //   // const user = await this.usersService.findOne({
-  //   //   googleUser?.email,
-  //   // });
+    if (user) {
+      const session = await this.sessionService.create({
+        user,
+      });
 
-  //   const existingUser = await this.usersService.findOne({
-  //     email: googleUser.email,
-  //   });
+      const { token, refreshToken, tokenExpires } = await this.getTokensData({
+        id: user.id,
+        role: user.role,
+        sessionId: session.id,
+      });
 
-  //   if (existingUser) {
-  //     return existingUser;
-  //   } else {
-  //     const newUser = await this.usersRepository.save(
-  //       this.usersRepository.create(googleUser),
-  //     );
-  //     return newUser;
-  //   }
-  // }
+      return {
+        refreshToken,
+        token,
+        tokenExpires,
+        user,
+      };
+    } else {
+
+      const newUser = await this.usersRepository.save(
+        this.usersRepository.create({
+          ...googleUser,
+          role: {
+            id: RoleEnum.digifranchise_super_admin
+          },
+          status: {
+            id: StatusEnum.active
+          },
+          image: googleUser.profilePic,
+        }),
+      );
+
+      const user = await this.usersRepository.findOne({
+        where: { email: newUser.email as string },
+      });
+
+      if (user) {
+        const session = await this.sessionService.create({
+          user,
+        });
+        const { token, refreshToken, tokenExpires } = await this.getTokensData({
+          id: user.id,
+          role: newUser.role,
+          sessionId: session.id,
+        });
+
+        return {
+          refreshToken,
+          token,
+          tokenExpires,
+          newUser,
+        }
+      }
+    }
+  }
 
   // async validateSocialLogin(
   //   authProvider: string,
@@ -323,7 +361,7 @@ export class AuthService {
     };
 
     Object.assign(user, { status: updatedStatus.id })
-    await this.userRepository.save(user)
+    await this.usersRepository.save(user)
   }
 
   async phoneRegister(dto: AuthPhoneRegisterDto) {
@@ -458,7 +496,7 @@ export class AuthService {
         id: StatusEnum.active,
       };
       Object.assign(user, { status: updatedStatus.id })
-      await this.userRepository.save(user)
+      await this.usersRepository.save(user)
     }
   }
 
@@ -547,9 +585,9 @@ export class AuthService {
 
     // user.password = password;
 
-    Object.assign(user, {password: hashedPassword})
+    Object.assign(user, { password: hashedPassword })
 
-    await this.userRepository.save(user)
+    await this.usersRepository.save(user)
   }
 
   async me(userJwtPayload: JwtPayloadType): Promise<NullableType<User>> {
@@ -637,9 +675,9 @@ export class AuthService {
 
     const user = await this.usersService.findOne({
       id: userJwtPayload.id,
-  });
-  
-  if (!user) {
+    });
+
+    if (!user) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -649,9 +687,9 @@ export class AuthService {
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
-  }
+    }
 
-  if (updateUserProfileDto.email) {
+    if (updateUserProfileDto.email) {
       const userObject = await this.usersService.findOne({
         email: updateUserProfileDto.email,
       });
@@ -667,11 +705,11 @@ export class AuthService {
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
-  }
+    }
 
-  if (updateUserProfileDto.mobileNumber) {
+    if (updateUserProfileDto.mobileNumber) {
       const userObject = await this.usersService.findOne({
-          phoneNumber: updateUserProfileDto.mobileNumber,
+        phoneNumber: updateUserProfileDto.mobileNumber,
       });
 
       if (userObject && userObject.id !== userJwtPayload.id) {
@@ -685,10 +723,10 @@ export class AuthService {
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
-  }
+    }
 
 
-  Object.assign(user, {
+    Object.assign(user, {
       image: updateUserProfileDto?.image,
       email: updateUserProfileDto?.email,
       firstName: updateUserProfileDto?.firstName,
@@ -703,9 +741,9 @@ export class AuthService {
       fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
       qualifications: updateUserProfileDto?.qualifications,
       professionalBody: updateUserProfileDto?.professionalBody,
-  })
+    })
 
-  await this.userRepository.save(user)
+    await this.usersRepository.save(user)
   }
 
   async refreshToken(

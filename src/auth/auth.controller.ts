@@ -27,6 +27,7 @@ import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
+import { GoogleCreateUserDto } from './dto/google-create-user.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -54,6 +55,26 @@ export class AuthController {
       }
 
 
+    }
+  }
+
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @Post('digifranchise-super-admin/google')
+  @HttpCode(HttpStatus.OK)
+  public async googleAuthentication(
+    @Body() authDto: GoogleCreateUserDto,
+  ) {
+    const data = await this.service.googleAuth(authDto);
+
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
     }
   }
 
