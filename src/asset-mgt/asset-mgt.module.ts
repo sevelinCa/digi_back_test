@@ -1,15 +1,15 @@
-// import { Module } from '@nestjs/common';
-// import { AssetMgtService } from './asset-mgt.service';
-// import { AssetMgtController } from './asset-mgt.controller';
-// import { Asset } from './entities/asset.entity';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import { Module } from '@nestjs/common';
+import { AssetMgtService } from './asset-mgt.service';
+import { AssetMgtController } from './asset-mgt.controller';
+import { Asset } from './entities/asset.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
-// @Module({
-//   imports: [
-//     TypeOrmModule.forFeature([Asset, Digifranchise]),
-//   ],
-//   providers: [AssetMgtService],
-//   controllers: [AssetMgtController]
-// })
-// export class AssetMgtModule {}
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Asset, FranchiseOwner]),
+  ],
+  providers: [AssetMgtService],
+  controllers: [AssetMgtController]
+})
+export class AssetMgtModule {}

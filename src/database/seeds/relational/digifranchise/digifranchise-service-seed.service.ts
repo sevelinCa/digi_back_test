@@ -1,7 +1,7 @@
 
 import { InjectRepository } from "@nestjs/typeorm";
+import { DigifranchiseServiceOffered } from "src/digifranchise/entities/digifranchise-service.entity";
 import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
-import { DigifranchiseService } from "src/digifranchise/entities/digifranchise-service.entity";
 import { StatusEnum } from "src/statuses/statuses.enum";
 import { Repository } from "typeorm";
 
@@ -9,8 +9,8 @@ export class DigifranchiseSeedService {
     constructor(
         @InjectRepository(Digifranchise)
         private digifranchiseRepository: Repository<Digifranchise>,
-        @InjectRepository(DigifranchiseService)
-        private serviceRepository: Repository<DigifranchiseService>,
+        @InjectRepository(DigifranchiseServiceOffered)
+        private serviceRepository: Repository<DigifranchiseServiceOffered>,
     ) { }
 
     async run() {
@@ -33,13 +33,13 @@ export class DigifranchiseSeedService {
         });
 
         if (check === 0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Body Revamp",
-                description: "Body Revamp is a personal training digifranchise where certified individuals offer personalized personal training services to their customers. Customers can either subscribe to online exercise and training content or sign up for training sessions delivered live online or in-person.",
+                description: "Body Revamp is a personal training digifranchiseId where certified individuals offer personalized personal training services to their customers. Customers can either subscribe to online exercise and training content or sign up for training sessions delivered live online or in-person.",
                 status: StatusEnum.active,
             });
 
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
 
             const bodyRevampServices = [
                 {
@@ -82,7 +82,7 @@ export class DigifranchiseSeedService {
             for (const service of bodyRevampServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -95,13 +95,13 @@ export class DigifranchiseSeedService {
         });
 
         if (check === 0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Insightful Journey",
                 description: "Insightful Journey offers a range of mental health services, including counseling and therapy sessions designed to support individual and group needs.",
                 status: StatusEnum.active,
             });
 
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
 
             const insightfulJourneyServices = [
                 {
@@ -134,7 +134,7 @@ export class DigifranchiseSeedService {
             for (const service of insightfulJourneyServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -147,13 +147,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===  0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Sit N Stay",
                 description: "Sit N Stay provides pet sitting and house sitting services to ensure your pets and homes are taken care of while you're away.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const sitNStayServices = [
                 {
@@ -181,7 +181,7 @@ export class DigifranchiseSeedService {
             for (const service of sitNStayServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -194,13 +194,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===  0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Tidy Patch",
                 description: "Tidy Patch offers cleaning services for both indoor and outdoor environments.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const tidyPatchServices = [
                 {
@@ -223,7 +223,7 @@ export class DigifranchiseSeedService {
             for (const service of tidyPatchServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -236,13 +236,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===  0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Flair",
                 description: "Flair provides fashion consultation and shopping guide services.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const flairServices = [
                 {
@@ -265,7 +265,7 @@ export class DigifranchiseSeedService {
             for (const service of flairServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -278,13 +278,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===   0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Stitched  4 U",
                 description: "Stitched  4 U offers a range of clothing alteration and repair services.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const stitched4UServices = [
                 {
@@ -332,7 +332,7 @@ export class DigifranchiseSeedService {
             for (const service of stitched4UServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -345,13 +345,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===   0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Learner Hub",
                 description: "Learner Hub provides online and in-person tutoring sessions.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const learnerHubServices = [
                 {
@@ -369,7 +369,7 @@ export class DigifranchiseSeedService {
             for (const service of learnerHubServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -382,13 +382,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===  0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Collectify",
                 description: "Collectify offers survey design, execution, and data collection services.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const collectifyServices = [
                 {
@@ -421,7 +421,7 @@ export class DigifranchiseSeedService {
             for (const service of collectifyServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -434,13 +434,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===  0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Beauty And Best",
                 description: "Beauty And Best provides beauty and grooming services.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const beautyAndBestServices = [
                 {
@@ -468,7 +468,7 @@ export class DigifranchiseSeedService {
             for (const service of beautyAndBestServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -481,13 +481,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===  0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Crop Minder",
                 description: "Crop Minder offers agricultural services for crop management.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const cropMinderServices = [
                 {
@@ -530,7 +530,7 @@ export class DigifranchiseSeedService {
             for (const service of cropMinderServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }
@@ -543,13 +543,13 @@ export class DigifranchiseSeedService {
         });
     
         if (check ===   0) {
-            const digifranchise = this.digifranchiseRepository.create({
+            const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Aqua Shine",
                 description: "Aqua Shine offers car washing and detailing services.",
                 status: StatusEnum.active,
             });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchise);
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
             const aquaShineServices = [
                 {
@@ -602,7 +602,7 @@ export class DigifranchiseSeedService {
             for (const service of aquaShineServices) {
                 const serviceEntity = this.serviceRepository.create({
                     ...service,
-                    digifranchise: savedDigifranchise,
+                    digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
             }

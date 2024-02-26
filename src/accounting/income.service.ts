@@ -1,113 +1,112 @@
-// import { Injectable, NotFoundException } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Income } from './entities/income.entity';
-// import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
-// import {
-//   findIncomeById,
-//   getDigifranchiseByUserId,
-// } from 'src/helper/FindByFunctions';
-// import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
-// import { User } from 'src/users/domain/user';
-// import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Income } from './entities/income.entity';
+import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
+import {
+  findIncomeById, getDigifranchiseAccountByUserId,
+} from 'src/helper/FindByFunctions';
+import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
+import { User } from 'src/users/domain/user';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
-// @Injectable()
-// export class IncomeService {
-//   constructor(
-//     @InjectRepository(Income)
-//     private readonly incomeRepository: Repository<Income>,
-//     @InjectRepository(Digifranchise)
-//     private readonly DigifranchiseRepository: Repository<Digifranchise>,
-//     @InjectRepository(User)
-//     private userRepository: Repository<User>,
-//   ) {}
+@Injectable()
+export class IncomeService {
+  constructor(
+    @InjectRepository(Income)
+    private readonly incomeRepository: Repository<Income>,
+    @InjectRepository(FranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
-//   async createIncome(
-//     createIncomeDto: CreateIncomeDto,
-//     userId: string,
-//   ): Promise<Income> {
-//     const franchiseAccount = await getDigifranchiseByUserId(
-//       this.DigifranchiseRepository,
-//       userId,
-//     );
+  async createIncome(
+    createIncomeDto: CreateIncomeDto,
+    userId: string,
+  ): Promise<Income> {
+    const franchiseAccount = await getDigifranchiseAccountByUserId(
+      this.DigifranchiseRepository,
+      userId,
+    );
 
-//     if (!franchiseAccount) {
-//       throw new NotFoundException(
-//         `Franchise account not found for user with ID ${userId}`,
-//       );
-//     }
+    if (!franchiseAccount) {
+      throw new NotFoundException(
+        `Franchise account not found for user with ID ${userId}`,
+      );
+    }
 
-//     const totalAmount = createIncomeDto.quantity * createIncomeDto.unityCost;
+    const totalAmount = createIncomeDto.quantity * createIncomeDto.unityCost;
 
-//     const newIncome = this.incomeRepository.create({
-//       ...createIncomeDto,
-//       franchiseId: franchiseAccount,
-//       totalAmount,
-//     });
+    const newIncome = this.incomeRepository.create({
+      ...createIncomeDto,
+      franchiseId: franchiseAccount,
+      totalAmount,
+    });
 
-//     const savedIncome = await this.incomeRepository.save(newIncome);
+    const savedIncome = await this.incomeRepository.save(newIncome);
 
-//     return savedIncome;
-//   }
+    return savedIncome;
+  }
 
-//   async findAllIncomes(
-//     startDate?: string,
-//     endDate?: string,
-//   ): Promise<{ incomes: Income[]; count: number }> {
-//     const queryBuilder = this.incomeRepository.createQueryBuilder('income');
+  async findAllIncomes(
+    startDate?: string,
+    endDate?: string,
+  ): Promise<{ incomes: Income[]; count: number }> {
+    const queryBuilder = this.incomeRepository.createQueryBuilder('income');
   
-//     queryBuilder.leftJoinAndSelect('income.franchiseId', 'franchise');
+    queryBuilder.leftJoinAndSelect('income.franchiseId', 'franchise');
   
-//     queryBuilder.where('income.deleteAt IS NULL');
+    queryBuilder.where('income.deleteAt IS NULL');
   
-//     if (startDate) {
-//       queryBuilder.andWhere('income.createdAt >= :startDate', { startDate });
-//     }
+    if (startDate) {
+      queryBuilder.andWhere('income.createdAt >= :startDate', { startDate });
+    }
   
-//     if (endDate) {
-//       queryBuilder.andWhere('income.createdAt <= :endDate', { endDate });
-//     }
+    if (endDate) {
+      queryBuilder.andWhere('income.createdAt <= :endDate', { endDate });
+    }
   
-//     const incomes = await queryBuilder.getMany();
-//     const count = await queryBuilder.getCount();
+    const incomes = await queryBuilder.getMany();
+    const count = await queryBuilder.getCount();
   
-//     return { incomes, count };
-//   }
+    return { incomes, count };
+  }
 
-//   async getIncomeById(incomeId: string): Promise<Income | null> {
-//     return findIncomeById(this.incomeRepository, incomeId);
-//   }
+  async getIncomeById(incomeId: string): Promise<Income | null> {
+    return findIncomeById(this.incomeRepository, incomeId);
+  }
 
-//   async updateIncome(
-//     incomeId: string,
-//     updateIncomeDto: UpdateIncomeDto,
-//   ): Promise<Income> {
-//     const income = await findIncomeById(this.incomeRepository, incomeId);
-//     if (!income) {
-//       throw new NotFoundException(`Income not found with ID ${incomeId}`);
-//     }
-//     Object.keys(updateIncomeDto).forEach((key) => {
-//       income[key] = updateIncomeDto[key];
-//     });
+  async updateIncome(
+    incomeId: string,
+    updateIncomeDto: UpdateIncomeDto,
+  ): Promise<Income> {
+    const income = await findIncomeById(this.incomeRepository, incomeId);
+    if (!income) {
+      throw new NotFoundException(`Income not found with ID ${incomeId}`);
+    }
+    Object.keys(updateIncomeDto).forEach((key) => {
+      income[key] = updateIncomeDto[key];
+    });
 
-//     if (
-//       updateIncomeDto.quantity !== undefined ||
-//       updateIncomeDto.unityCost !== undefined
-//     ) {
-//       income.totalAmount = (income.quantity ?? 0) * (income.unityCost ?? 0);
-//     }
+    if (
+      updateIncomeDto.quantity !== undefined ||
+      updateIncomeDto.unityCost !== undefined
+    ) {
+      income.totalAmount = (income.quantity ?? 0) * (income.unityCost ?? 0);
+    }
 
-//     return this.incomeRepository.save(income);
-//   }
+    return this.incomeRepository.save(income);
+  }
 
-//   async deleteIncome(incomeId: string): Promise<void> {
-//     const income = await findIncomeById(this.incomeRepository, incomeId);
-//     if (!income) {
-//       throw new NotFoundException(`Income not found with ID ${incomeId}`);
-//     }
+  async deleteIncome(incomeId: string): Promise<void> {
+    const income = await findIncomeById(this.incomeRepository, incomeId);
+    if (!income) {
+      throw new NotFoundException(`Income not found with ID ${incomeId}`);
+    }
 
-//     income.deleteAt = new Date(); 
+    income.deleteAt = new Date(); 
 
-//     await this.incomeRepository.save(income); 
-//   }
-// }
+    await this.incomeRepository.save(income); 
+  }
+}

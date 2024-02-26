@@ -1,55 +1,68 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable,  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { UserNotFoundException } from 'src/middlewares/accounting.exceptions';
+import {  Equal, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { FranchiseOwner } from './entities/franchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
-import { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
-import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
+import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
+import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
 
 @Injectable()
 export class DigifranchiseService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(FranchiseOwner)
+    private franchiseOwnershipRepository: Repository<FranchiseOwner>,
     @InjectRepository(Digifranchise)
     private digifranchiseRepository: Repository<Digifranchise>,
-  ) {}
+    @InjectRepository(DigifranchiseServiceOffered)
+    private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
+    @InjectRepository(FranchiseOwner)
+    private readonly franchiseOwnerRepository: Repository<FranchiseOwner>,
+ 
+  ) { }
 
-  // async createDigifranchise(
-  //   userId: string,
-  //   digifranchiseDto: CreateDigifranchiseDto
-  //  ): Promise<Digifranchise> {
-  //   const user = await this.userRepository.findOne({ where: { id: userId } });
-  //   if (!user) {
-  //     throw new UserNotFoundException(userId);
-  //   }
+  // async createMainDigifranchiseService(
+  //   createDigifranchiseDto: CreateDigifranchiseDto
+  // ): Promise<Digifranchise> {
+  //   console.log('createDigifranchiseDto:', createDigifranchiseDto);
 
-  //   const existingDigifranchise = await this.digifranchiseRepository.findOne({ where: { franchiseName: digifranchiseDto.franchiseName } });
-  //   if (existingDigifranchise) {
-  //     throw new ConflictException('A Digifranchise already exists with this name');
-  //   }
-
-  //   const userFullNames = `${user.firstName} ${user.lastName}`;
-
-  //   const digifranchise = this.digifranchiseRepository.create({
-  //     userId: user.id,
-  //     userFullNames: userFullNames,
-  //     franchiseName: digifranchiseDto.franchiseName,
-  //     Description: digifranchiseDto.description,
-  //     ServicesOffered: digifranchiseDto.servicesOffered
+  //   const newDigifranchise = this.digifranchiseRepository.create({
+  //     ...createDigifranchiseDto,
   //   });
 
-  //   return this.digifranchiseRepository.save(digifranchise);
+  //   const savedDigifranchise = await this.digifranchiseRepository.save(newDigifranchise);
+
+  //   return savedDigifranchise;
   // }
 
-  // async getAllDigifranchiseByUser(userId: string): Promise<Digifranchise[]> {
-  //   const digifranchises = this.digifranchiseRepository.find({ where: { userId }})
-  //   return digifranchises
-  // }
-
-  async getAllDigifranchises(): Promise<Digifranchise[]> {
-    const digifranchises = this.digifranchiseRepository.find()
-    return digifranchises
+  async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<FranchiseOwner> {
+    const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
+    if (!digifranchiseExists) {
+      throw new Error('Digifranchise not found');
+    }
+  
+    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });    if (!digifranchise) {
+      throw new Error('Digifranchise not found');
+    }
+  
+    const newFranchiseOwner = this.franchiseOwnerRepository.create({
+      userId,
+      userFullNames,
+      role,
+      digifranchiseId: digifranchise,
+    });
+  
+    return this.franchiseOwnerRepository.save(newFranchiseOwner);
   }
+
+  async findAllDigifranchise(): Promise<Digifranchise[]> {
+    return await this.digifranchiseRepository.find();
+  }
+
+  async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
+    return await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
+  }
+
 }

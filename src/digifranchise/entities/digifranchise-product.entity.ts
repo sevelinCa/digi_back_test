@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { Digifranchise } from './digifranchise.entity';
 
 @Entity()
@@ -6,9 +6,9 @@ export class DigifranchiseProduct {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Digifranchise, digifranchise => digifranchise.products)
-  digifranchise: Digifranchise;
-
+  @ManyToOne(() => Digifranchise)
+  @JoinColumn({ name: 'digifranchiseId' })
+  digifranchiseId: Digifranchise;
 
   @Column({type: 'text'})
   productName: string;

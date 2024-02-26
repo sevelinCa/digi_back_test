@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { Digifranchise } from './digifranchise.entity';
 
 @Entity()
-export class FranchiseOwnership {
+export class FranchiseOwner {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -11,12 +11,13 @@ export class FranchiseOwnership {
 
   @Column({ type: 'varchar', length: 255 })
   userFullNames: string;
-  
-  @ManyToOne(() => Digifranchise, digifranchise => digifranchise.franchiseOwnerships)
-  digifranchise: Digifranchise;
-
+ 
   @Column({ type: 'varchar', length: 255, nullable: true })
   role: string; 
+
+  @ManyToOne(() => Digifranchise)
+  @JoinColumn({ name: 'digifranchiseId' })
+  digifranchiseId: Digifranchise;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
