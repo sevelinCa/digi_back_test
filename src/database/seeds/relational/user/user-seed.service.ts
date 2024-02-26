@@ -23,55 +23,31 @@ export class UserSeedService {
     });
 
     if (!countAdmin) {
-      const salt = await bcrypt.genSalt();
-      const password = await bcrypt.hash('secret', salt);
+      
+      if(process.env.SUPER_ADMIN_PASS) {
+        const salt = await bcrypt.genSalt();
+        const password = await bcrypt.hash(process.env.SUPER_ADMIN_PASS, salt);
 
-      await this.repository.save(
-        this.repository.create({
-          firstName: 'Super',
-          lastName: 'Admin',
-          email: 'admin@example.com',
-          password,
-          role: {
-            id: RoleEnum.admin,
-            name: 'Admin',
-          },
-          status: {
-            id: StatusEnum.active,
-            name: 'Active',
-          },
-        }),
-      );
-    }
+        await this.repository.save(
+          this.repository.create({
+            firstName: 'Super',
+            lastName: 'Admin',
+            email: 'admin@example.com',
+            password,
+            role: {
+              id: RoleEnum.super_admin,
+              name: 'Super Admin',
+            },
+            status: {
+              id: StatusEnum.active,
+              name: 'Active',
+            },
+          }),
+        );
+      } else {
+        console.log("super admin password not provided")
+      }
 
-    const countUser = await this.repository.count({
-      where: {
-        role: {
-          id: RoleEnum.super_admin,
-        },
-      },
-    });
-
-    if (!countUser) {
-      const salt = await bcrypt.genSalt();
-      const password = await bcrypt.hash('secret', salt);
-
-      await this.repository.save(
-        this.repository.create({
-          firstName: 'John',
-          lastName: 'Doe',
-          email: 'john.doe@example.com',
-          password,
-          role: {
-            id: RoleEnum.super_admin,
-            name: 'Super Admin',
-          },
-          status: {
-            id: StatusEnum.active,
-            name: 'Active',
-          },
-        }),
-      );
     }
   }
 }

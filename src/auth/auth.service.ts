@@ -34,6 +34,7 @@ import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 import { GoogleCreateUserDto } from './dto/google-create-user.dto';
 import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
+import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -158,6 +159,68 @@ export class AuthService {
             id: StatusEnum.active
           },
           image: googleUser.profilePic,
+          provider: 'google',
+        }),
+      );
+
+      const user = await this.usersRepository.findOne({
+        where: { email: newUser.email as string },
+      });
+
+      if (user) {
+        const session = await this.sessionService.create({
+          user,
+        });
+        const { token, refreshToken, tokenExpires } = await this.getTokensData({
+          id: user.id,
+          role: newUser.role,
+          sessionId: session.id,
+        });
+
+        return {
+          refreshToken,
+          token,
+          tokenExpires,
+          newUser,
+        }
+      }
+    }
+  }
+
+  async faceBookAuth(faceBookUser: FaceBookCreateUserDto): Promise<any> {
+    const user = await this.usersRepository.findOne({
+      where: { email: faceBookUser.email as string },
+    });
+
+    if (user) {
+      const session = await this.sessionService.create({
+        user,
+      });
+
+      const { token, refreshToken, tokenExpires } = await this.getTokensData({
+        id: user.id,
+        role: user.role,
+        sessionId: session.id,
+      });
+
+      return {
+        refreshToken,
+        token,
+        tokenExpires,
+        user,
+      };
+    } else {
+      const newUser = await this.usersRepository.save(
+        this.usersRepository.create({
+          ...faceBookUser,
+          role: {
+            id: RoleEnum.digifranchise_super_admin
+          },
+          status: {
+            id: StatusEnum.active
+          },
+          image: faceBookUser.profilePic,
+          provider: 'facebook',
         }),
       );
 

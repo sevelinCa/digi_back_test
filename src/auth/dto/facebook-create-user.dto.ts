@@ -3,8 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
 
-export class GoogleCreateUserDto {
-  @ApiProperty({ example: 'url' })
+export class FaceBookCreateUserDto {
+  @ApiProperty({ example: 'https://platform-lookaside.fbsbx.com/platform/prosh=-4_1ZMXPB2jY02Jdw5g' })
   @IsOptional()
   profilePic: string | null;
 

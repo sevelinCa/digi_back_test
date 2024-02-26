@@ -28,6 +28,7 @@ import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { GoogleCreateUserDto } from './dto/google-create-user.dto';
+import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -77,6 +78,28 @@ export class AuthController {
       }
     }
   }
+  
+
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @Post('digifranchise-super-admin/facebook')
+  @HttpCode(HttpStatus.OK)
+  public async faceBookAuthentication(
+    @Body() authDto: FaceBookCreateUserDto,
+  ) {
+    const data = await this.service.faceBookAuth(authDto);
+
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
+    }
+  }
+
 
   @SerializeOptions({
     groups: ['me'],
