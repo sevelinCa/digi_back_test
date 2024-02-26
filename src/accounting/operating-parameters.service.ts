@@ -5,15 +5,15 @@ import { OperatingParameters } from './entities/operationParamenters.entity';
 import { CreateOperatingParametersDto } from './dto/Create-DTOs/create-operating-parameters.dto';
 import { findOperatingParametersById } from 'src/helper/FindByFunctions';
 import type { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @Injectable()
 export class OperatingParametersService {
   constructor(
     @InjectRepository(OperatingParameters)
     private readonly operatingParametersRepository: Repository<OperatingParameters>,
-    @InjectRepository(FranchiseOwnership)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwnership>,
+    @InjectRepository(FranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
   ) {}
 
   async createOperatingParameters(

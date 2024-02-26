@@ -6,15 +6,15 @@ import { CreateFundingDto } from './dto/Create-DTOs/create-funding.dto';
 import { findFundingById } from 'src/helper/FindByFunctions';
 import { User } from 'src/users/domain/user';
 import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @Injectable()
 export class FundingService {
   constructor(
     @InjectRepository(Funding)
     private readonly fundingRepository: Repository<Funding>,
-    @InjectRepository(FranchiseOwnership)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwnership>,
+    @InjectRepository(FranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}

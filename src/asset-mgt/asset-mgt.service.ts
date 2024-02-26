@@ -5,7 +5,7 @@ import type { Repository } from 'typeorm';
 import type { CreateAssetDto } from './dto/create-asset.dto';
 import type { UpdateAssetDto } from './dto/update-asset.dto';
 import { Asset } from './entities/asset.entity';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @Injectable()
 export class AssetMgtService {
@@ -13,8 +13,8 @@ export class AssetMgtService {
     constructor(
         @InjectRepository(Asset)
         private readonly assetRepository: Repository<Asset>,
-        @InjectRepository(FranchiseOwnership)
-        private readonly digifranchiseRepository: Repository<FranchiseOwnership>,
+        @InjectRepository(FranchiseOwner)
+        private readonly digifranchiseRepository: Repository<FranchiseOwner>,
     ) { }
 
     async createAsset(

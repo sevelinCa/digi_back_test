@@ -1,13 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { Digifranchise } from './digifranchise.entity';
 
 @Entity()
-export class DigifranchiseServiceTable {
+export class DigifranchiseServiceOffered {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => Digifranchise, digifranchise => digifranchise.services)
-    digifranchise: Digifranchise;
+    @ManyToOne(() => Digifranchise)
+    @JoinColumn({ name: 'digifranchiseId' })
+    digifranchiseId: Digifranchise;
 
     @Column({type: 'text'})
     serviceName: string;

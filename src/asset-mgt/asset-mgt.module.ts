@@ -3,11 +3,11 @@ import { AssetMgtService } from './asset-mgt.service';
 import { AssetMgtController } from './asset-mgt.controller';
 import { Asset } from './entities/asset.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Asset, FranchiseOwnership]),
+    TypeOrmModule.forFeature([Asset, FranchiseOwner]),
   ],
   providers: [AssetMgtService],
   controllers: [AssetMgtController]

@@ -10,7 +10,7 @@ import { CreateFixedExpenseDto } from './dto/Create-DTOs/create-fixed-expense.dt
 import { IsNull } from 'typeorm';
 import { getDigifranchiseAccountByUserId, findUserById } from 'src/helper/FindByFunctions';
 import { User } from 'src/users/domain/user';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @Injectable()
 export class ManagerFixedExpensesService {
@@ -75,8 +75,8 @@ export class ClientFixedExpensesService {
     private fixedExpenseRepository: Repository<FixedExpenseCategory>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(FranchiseOwnership)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwnership>,
+    @InjectRepository(FranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
   ) {}
 
   async createFixedExpenses(

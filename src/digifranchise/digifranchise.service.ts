@@ -1,57 +1,68 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable,  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {  Equal, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { FranchiseOwnership } from './entities/franchise-ownership.entity';
-import { checkIfUserExists, getDigifranchiseAccountByUserId, getDigifranchiseById } from 'src/helper/FindByFunctions';
+import { FranchiseOwner } from './entities/franchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
+import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
+import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
 
 @Injectable()
 export class DigifranchiseService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    @InjectRepository(FranchiseOwnership)
-    private franchiseOwnershipRepository: Repository<FranchiseOwnership>,
+    @InjectRepository(FranchiseOwner)
+    private franchiseOwnershipRepository: Repository<FranchiseOwner>,
     @InjectRepository(Digifranchise)
     private digifranchiseRepository: Repository<Digifranchise>,
-  ) {}
+    @InjectRepository(DigifranchiseServiceOffered)
+    private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
+    @InjectRepository(FranchiseOwner)
+    private readonly franchiseOwnerRepository: Repository<FranchiseOwner>,
+ 
+  ) { }
 
+  // async createMainDigifranchiseService(
+  //   createDigifranchiseDto: CreateDigifranchiseDto
+  // ): Promise<Digifranchise> {
+  //   console.log('createDigifranchiseDto:', createDigifranchiseDto);
 
-  async createDigifranchiseAccount(userId: string, userFullNames: string, digifranchiseId: string): Promise<FranchiseOwnership> {
-    const existingFranchiseOwnership = await getDigifranchiseAccountByUserId(this.franchiseOwnershipRepository, userId);
-    if (existingFranchiseOwnership) {
-      throw new NotFoundException(`Franchise account already exists for user with ID ${userId}`);
+  //   const newDigifranchise = this.digifranchiseRepository.create({
+  //     ...createDigifranchiseDto,
+  //   });
+
+  //   const savedDigifranchise = await this.digifranchiseRepository.save(newDigifranchise);
+
+  //   return savedDigifranchise;
+  // }
+
+  async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<FranchiseOwner> {
+    const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
+    if (!digifranchiseExists) {
+      throw new Error('Digifranchise not found');
     }
-    const user = await checkIfUserExists(this.userRepository, userId);
-    if (!user) {
-      throw new NotFoundException(`User not found with ID ${userId}`);
+  
+    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });    if (!digifranchise) {
+      throw new Error('Digifranchise not found');
     }
-    const digifranchise = await getDigifranchiseById(this.digifranchiseRepository, digifranchiseId);
-    if (!digifranchise) {
-      throw new NotFoundException(`Digifranchise not found with ID ${digifranchiseId}`);
-    }
-    const newFranchiseOwnership = this.franchiseOwnershipRepository.create({
-      userId: user.id,
-      userFullNames: userFullNames,
-      digifranchise: digifranchise,
+  
+    const newFranchiseOwner = this.franchiseOwnerRepository.create({
+      userId,
+      userFullNames,
+      role,
+      digifranchiseId: digifranchise,
     });
-
-    const savedFranchiseOwnership = await this.franchiseOwnershipRepository.save(newFranchiseOwnership);
-
-
-    return savedFranchiseOwnership;
+  
+    return this.franchiseOwnerRepository.save(newFranchiseOwner);
   }
 
-
-  async findAllActiveDigifranchises(): Promise<{ digifranchises: Digifranchise[]; count: number }> {
-    const queryBuilder = this.digifranchiseRepository.createQueryBuilder('digifranchise');
-
-    queryBuilder.where('digifranchise.deleteAt IS NULL');
-
-    const digifranchises = await queryBuilder.getMany();
-    const count = await queryBuilder.getCount();
-
-    return { digifranchises, count };
+  async findAllDigifranchise(): Promise<Digifranchise[]> {
+    return await this.digifranchiseRepository.find();
   }
+
+  async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
+    return await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
+  }
+
 }

@@ -1,8 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
 import { StatusEnum } from 'src/statuses/statuses.enum';
-import { DigifranchiseProduct } from './digifranchise-product.entity';
-import { FranchiseOwnership } from './franchise-ownership.entity';
-import { DigifranchiseServiceTable } from './digifranchise-service.entity';
 
 @Entity()
 export class Digifranchise {
@@ -20,15 +17,6 @@ export class Digifranchise {
 
   @Column({ type: 'text', nullable: true })
   digifranchiseFee: string;
-
-  @OneToMany(() => DigifranchiseProduct, product => product.digifranchise)
-  products: DigifranchiseProduct[];
-
-  @OneToMany(() => DigifranchiseServiceTable, service => service.digifranchise)
-  services: DigifranchiseServiceTable[];
-
-  @OneToMany(() => FranchiseOwnership, ownership => ownership.digifranchise)
-  franchiseOwnerships: FranchiseOwnership[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

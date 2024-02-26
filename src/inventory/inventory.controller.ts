@@ -20,7 +20,7 @@ export class InventoryController {
     constructor(private readonly inventoryService: InventoryService) { }
 
     @ApiOperation({
-        summary: 'CREATE - Record Inventory Item for FranchiseOwnership',
+        summary: 'CREATE - Record Inventory Item for FranchiseOwner',
     })
     @Post()
     async create(

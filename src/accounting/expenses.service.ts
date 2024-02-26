@@ -11,15 +11,15 @@ import {
 import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
 import { User } from 'src/users/domain/user';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @Injectable()
 export class ExpenseService {
   constructor(
     @InjectRepository(Expense)
     private readonly expenseRepository: Repository<Expense>,
-    @InjectRepository(FranchiseOwnership)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwnership>,
+    @InjectRepository(FranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(FixedExpenseCategory)

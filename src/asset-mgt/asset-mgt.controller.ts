@@ -11,7 +11,7 @@ import { getDigifranchiseAccountByUserId } from 'src/helper/FindByFunctions';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @ApiTags('Asset')
 @ApiBearerAuth()
@@ -20,8 +20,8 @@ import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownersh
 export class AssetMgtController {
     constructor(
         private readonly assetMgtService: AssetMgtService,
-        @InjectRepository(FranchiseOwnership)
-        private readonly digifranchiseRepository: Repository<FranchiseOwnership>,
+        @InjectRepository(FranchiseOwner)
+        private readonly digifranchiseRepository: Repository<FranchiseOwner>,
     ) { }
 
     @ApiOperation({

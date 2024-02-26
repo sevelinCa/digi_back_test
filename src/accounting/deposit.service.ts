@@ -5,15 +5,15 @@ import { Deposit } from './entities/deposit.entity';
 import { CreateDepositDto } from './dto/Create-DTOs/create-deposit.dto';
 import { findDepositById } from 'src/helper/FindByFunctions';
 import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 @Injectable()
 export class DepositService {
   constructor(
     @InjectRepository(Deposit)
     private readonly depositRepository: Repository<Deposit>,
-    @InjectRepository(FranchiseOwnership)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwnership>,
+    @InjectRepository(FranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
   ) {}
 
   async createDeposit(

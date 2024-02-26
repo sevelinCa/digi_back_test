@@ -8,7 +8,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { FixedExpenseCategory } from './fixedExpenseCategory.entity';
-import { FranchiseOwnership } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
 
 export enum Arrangement {
   CASH = 'cash',
@@ -24,9 +24,9 @@ export class Expense {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => FranchiseOwnership)
+  @ManyToOne(() => FranchiseOwner)
   @JoinColumn({ name: 'franchiseId' })
-  franchiseId: FranchiseOwnership;
+  franchiseId: FranchiseOwner;
 
   @ManyToOne(() => FixedExpenseCategory)
   @JoinColumn({ name: 'fixedExpenseId' })

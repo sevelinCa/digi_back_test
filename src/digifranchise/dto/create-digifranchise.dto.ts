@@ -1,41 +1,28 @@
+
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsOptional, IsString, MaxLength } from 'class-validator';
-
-export class ServiceOffered {
-  @ApiProperty({ example: 'My Awesome Franchise Service', required: false })
-  @IsString()
-  @IsOptional()
-  @MaxLength(255)
-  serviceName: string;
-
-  @ApiProperty({ example: 'My Awesome Franchise Service Description', required: false })
-  @IsString()
-  @IsOptional()
-  @MaxLength(1000)
-  serviceDescription: string
-
-  @ApiProperty({ example: 'My Awesome Franchise', required: false })
-  @IsString()
-  @IsOptional()
-  @MaxLength(255)
-  rate: string;
-}
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
+import { StatusEnum } from 'src/statuses/statuses.enum';
 
 export class CreateDigifranchiseDto {
-  @ApiProperty({ example: 'My Awesome Franchise', required: false })
+  @ApiProperty({ example: 'Unique Digifranchise Name' })
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  @MaxLength(255)
-  franchiseName?: string;
+  digifranchiseName: string;
 
-  @ApiProperty({ example: 'My Awesome Franchise Description', required: false })
-  @IsString()
+  @ApiProperty({ example: 'Description of Digifranchise', required: false })
   @IsOptional()
-  @MaxLength(1000)
+  @IsString()
   description?: string;
 
-  @ApiProperty({ example: [{ ServiceName: 'example service', ServiceDescription: 'service description', Rate: 'Rate' }] ,required: false })
-  @IsArray()
+  @ApiProperty({ example: StatusEnum.inactive, enum: StatusEnum })
+  @IsNotEmpty()
+  @IsEnum(StatusEnum)
+  status: StatusEnum;
+
+  @ApiProperty({ example: '5000', required: false })
   @IsOptional()
-  servicesOffered?: ServiceOffered[];
+  @IsString()
+  digifranchiseFee?: string;
+
+
 }
