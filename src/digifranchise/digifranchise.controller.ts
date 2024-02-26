@@ -71,11 +71,6 @@ export class DigifranchiseController {
       
       return this.digifranchiseService.ownDigifranchise(userId, userFullNames, roleId, digifranchiseId);
     }
-    
-    
-  
-
-
 
 }
 
