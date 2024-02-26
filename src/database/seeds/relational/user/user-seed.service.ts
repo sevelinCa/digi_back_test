@@ -32,7 +32,7 @@ export class UserSeedService {
           this.repository.create({
             firstName: 'Super',
             lastName: 'Admin',
-            email: 'admin@example.com',
+            email: 'admin@digfranchise.co.za',
             password,
             role: {
               id: RoleEnum.super_admin,
