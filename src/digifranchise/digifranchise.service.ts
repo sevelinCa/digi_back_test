@@ -37,26 +37,6 @@ export class DigifranchiseService {
   //   return savedDigifranchise;
   // }
 
-  async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<FranchiseOwner> {
-    const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
-    if (!digifranchiseExists) {
-      throw new Error('Digifranchise not found');
-    }
-  
-    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });    if (!digifranchise) {
-      throw new Error('Digifranchise not found');
-    }
-  
-    const newFranchiseOwner = this.franchiseOwnerRepository.create({
-      userId,
-      userFullNames,
-      role,
-      digifranchiseId: digifranchise,
-    });
-  
-    return this.franchiseOwnerRepository.save(newFranchiseOwner);
-  }
-
   async findAllDigifranchise(): Promise<Digifranchise[]> {
     return await this.digifranchiseRepository.find();
   }
@@ -64,5 +44,32 @@ export class DigifranchiseService {
   async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
   }
+
+  async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<FranchiseOwner> {
+    const existingOwnership = await this.franchiseOwnerRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
+    if (existingOwnership) {
+        throw new Error('User already owns this digifranchise');
+    }
+
+    const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
+    if (!digifranchiseExists) {
+        throw new Error('Digifranchise not found');
+    }
+
+    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
+    if (!digifranchise) {
+        throw new Error('Digifranchise not found');
+    }
+       const newFranchiseOwner = this.franchiseOwnerRepository.create({
+        userId,
+        userFullNames,
+        role,
+        digifranchiseId: digifranchise,
+    });
+
+    return this.franchiseOwnerRepository.save(newFranchiseOwner);
+}
+
+
 
 }
