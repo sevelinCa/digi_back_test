@@ -4,6 +4,9 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
 
 export class GoogleCreateUserDto {
+  @ApiProperty({ example: 'url' })
+  profilePic: string | null;
+
   @ApiProperty({ example: 'test123@example.com' })
   @Transform(lowerCaseTransformer)
   @IsNotEmpty()
