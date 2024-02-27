@@ -14,7 +14,7 @@ import { Expense } from './entities/expense.entity';
 import { Funding } from './entities/funding.entity';
 import { Income } from './entities/income.entity';
 import { OperatingParameters } from './entities/operationParamenters.entity';
-import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 
 @Module({
@@ -23,7 +23,7 @@ import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownersh
       FixedExpenseCategory,
       User,
       Expense,
-      FranchiseOwner,
+      DigifranchiseOwner,
       Income,
       Funding,
       Deposit,

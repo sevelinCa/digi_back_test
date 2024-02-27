@@ -50,7 +50,7 @@ export class DigifranchiseService {
   }
 
 
-  async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
+  async ownDigifranchise(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
     const existingOwnership = await this.franchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
     if (existingOwnership) {
       throw new Error('User already own this digifranchise');
@@ -67,14 +67,12 @@ export class DigifranchiseService {
     }
     const newFranchiseOwner = this.franchiseOwnershipRepository.create({
       userId,
-      userFullNames,
-      role,
-      digifranchiseId: digifranchise,
+      digifranchiseId: digifranchiseId,
+      digifranchise: digifranchise,
     });
 
     return this.franchiseOwnershipRepository.save(newFranchiseOwner);
   }
-
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<Digifranchise[]> {
     const ownershipRecords = await this.franchiseOwnershipRepository.find({

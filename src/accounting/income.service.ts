@@ -8,15 +8,15 @@ import {
 } from 'src/helper/FindByFunctions';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import { User } from 'src/users/domain/user';
-import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class IncomeService {
   constructor(
     @InjectRepository(Income)
     private readonly incomeRepository: Repository<Income>,
-    @InjectRepository(FranchiseOwner)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}

@@ -9,7 +9,7 @@ import { Funding } from 'src/accounting/entities/funding.entity';
 import { OperatingParameters } from 'src/accounting/entities/operationParamenters.entity';
 import type { Inventory } from 'src/inventory/entities/inventory.entity';
 import type { Asset } from 'src/asset-mgt/entities/asset.entity';
-import type { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import type { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import type { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
@@ -31,9 +31,9 @@ export async function checkIfUserExists(
 }
 
 export async function getDigifranchiseAccountByUserId(
-  DigifranchiseRepository: Repository<FranchiseOwner>,
+  DigifranchiseRepository: Repository<DigifranchiseOwner>,
   userId: string,
-): Promise<FranchiseOwner | null> {
+): Promise<DigifranchiseOwner | null> {
   const userDigifranchise = await DigifranchiseRepository.findOne(
     {
       where: { userId: userId },

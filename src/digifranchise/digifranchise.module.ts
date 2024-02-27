@@ -6,6 +6,8 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { Digifranchise } from './entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
 import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
+import { DigifranchiseGeneralInfoService } from './digifranchise-general-information.service';
+import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 
 @Module({
   imports: [
@@ -14,10 +16,10 @@ import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
       DigifranchiseServiceOffered,
       Digifranchise,
       DigifranchiseOwner,
-      
+      DigifranchiseGeneralInfo
     ]),
   ],
   controllers: [DigifranchiseController],
-  providers: [DigifranchiseService]
+  providers: [DigifranchiseService, DigifranchiseGeneralInfoService]
 })
 export class DigifranchiseModule {}

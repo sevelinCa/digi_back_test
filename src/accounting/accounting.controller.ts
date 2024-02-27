@@ -54,7 +54,7 @@ import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
 import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
 import type { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
-import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 
 @ApiTags('Admin - Fixed Expenses')
@@ -213,8 +213,8 @@ export class ClientFixedExpensesController {
 export class ExpensesController {
   constructor(
     private readonly expenseService: ExpenseService,
-    @InjectRepository(FranchiseOwner)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
   ) {}
   @ApiOperation({
     summary: 'CREATE - Record Fixed Expense for User',
@@ -302,8 +302,8 @@ export class ExpensesController {
 export class IncomesController {
   constructor(
     private readonly incomeService: IncomeService,
-    @InjectRepository(FranchiseOwner)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
   ) {}
 
   @ApiOperation({
@@ -382,8 +382,8 @@ export class IncomesController {
 export class FundingsController {
   constructor(
     private readonly fundingService: FundingService,
-    @InjectRepository(FranchiseOwner)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
   ) {}
 
   @ApiOperation({
@@ -468,8 +468,8 @@ export class FundingsController {
 export class DepositsController {
   constructor(
     private readonly depositService: DepositService,
-    @InjectRepository(FranchiseOwner)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
   ) {}
 
   @ApiOperation({
@@ -551,8 +551,8 @@ export class DepositsController {
 export class OperatingParametersController {
   constructor(
     private readonly operatingParametersService: OperatingParametersService,
-    @InjectRepository(FranchiseOwner)
-    private readonly DigifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
   ) {}
 
   @ApiOperation({

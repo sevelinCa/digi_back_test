@@ -10,14 +10,12 @@ export class DigifranchiseOwner {
   userId: string;
 
   @Column({ type: 'varchar', length: 255 })
-  userFullNames: string;
- 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  role: string; 
+  digifranchiseId: string
 
   @ManyToOne(() => Digifranchise)
-  @JoinColumn({ name: 'digifranchiseId' })
-  digifranchiseId: Digifranchise;
+  @JoinColumn({ name: 'digifranchise' })
+  digifranchise: Digifranchise;
+
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
