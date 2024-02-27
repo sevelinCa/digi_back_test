@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateDigifranchiseServiceOfferedDto {
     @ApiProperty({ example: 'Phone Training Sessions 1-on-1' })
@@ -14,6 +14,23 @@ export class CreateDigifranchiseServiceOfferedDto {
 
     @ApiProperty({ example: '200' })
     @IsNotEmpty()
+    @IsString()
+    unitPrice: string;
+}
+
+export class UpdateDigifranchiseServiceOfferedDto {
+    @ApiProperty({ example: 'Phone Training Sessions 1-on-1' })
+    @IsOptional()
+    @IsString()
+    serviceName: string;
+
+    @ApiProperty({ example: 'Phone Training Sessions' })
+    @IsOptional()
+    @IsString()
+    description: string;
+
+    @ApiProperty({ example: '200' })
+    @IsOptional()
     @IsString()
     unitPrice: string;
 }

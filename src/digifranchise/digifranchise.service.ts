@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { Equal, IsNull, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { FranchiseOwner } from './entities/franchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
 import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
-import type { CreateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
+import type { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 
 @Injectable()
 export class DigifranchiseService {
@@ -45,6 +45,7 @@ export class DigifranchiseService {
   async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
   }
+
 
   async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<FranchiseOwner> {
     const existingOwnership = await this.franchiseOwnerRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
@@ -106,6 +107,10 @@ export class DigifranchiseService {
     });
 
     return this.digifranchiseServiceOfferedRepository.save(newDigifranchiseServiceOffered);
+  }
+
+  async getAllDigifranchiseServiceOffered(userId: string): Promise<DigifranchiseServiceOffered[]> {
+    return await this.digifranchiseServiceOfferedRepository.find({ where: { userId: Equal(userId) } });
   }
 
 }
