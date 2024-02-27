@@ -120,4 +120,28 @@ export class DigifranchiseService {
     }
     return serviceOffered;
   }
+
+  async updateDigifranchiseServiceOffered(
+    userId: string,
+    id: string,
+    updateDigifranchiseServiceOfferedDto: UpdateDigifranchiseServiceOfferedDto,
+  ): Promise<DigifranchiseServiceOffered> {
+    const serviceOffered = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id, userId: Equal(userId) } });
+    if (!serviceOffered) {
+      throw new NotFoundException('Digifranchise service offered not found');
+    }
+  
+    Object.assign(serviceOffered, updateDigifranchiseServiceOfferedDto);
+  
+    return this.digifranchiseServiceOfferedRepository.save(serviceOffered);
+  }
+
+  async deleteDigifranchiseServiceOffered(userId: string, id: string): Promise<void> {
+    const serviceOffered = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id, userId: Equal(userId) } });
+    if (!serviceOffered) {
+      throw new NotFoundException('Digifranchise service offered not found');
+    }
+  
+    await this.digifranchiseServiceOfferedRepository.remove(serviceOffered);
+  }
 }
