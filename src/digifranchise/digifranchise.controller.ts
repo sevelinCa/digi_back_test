@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get, HttpCode, HttpStatus, Param, Delete, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -11,7 +11,7 @@ import type { FranchiseOwner } from './entities/franchise-ownership.entity';
 import type { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
 import type { Digifranchise } from './entities/digifranchise.entity';
 import type { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
-import { CreateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
+import { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -96,7 +96,17 @@ export class DigifranchiseController {
   ): Promise<DigifranchiseServiceOffered> {
     const userId = (req.user as UserEntity).id;
 
-    return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseServiceOfferedDto,userId, digifranchiseId);
+    return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseServiceOfferedDto, userId, digifranchiseId);
+  }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET ALL - Retrieve all Sub services' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'All Sub services  have been successfully retrieved.' })
+  @Get('get-all-sub-services')
+  @HttpCode(HttpStatus.OK)
+  async getAllDigifranchiseServiceOffered(@Req() req: Request): Promise<DigifranchiseServiceOffered[]> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseService.getAllDigifranchiseServiceOffered(userId);
   }
 
 
