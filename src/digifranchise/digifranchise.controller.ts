@@ -134,6 +134,16 @@ async updateDigifranchiseServiceOffered(
   return this.digifranchiseService.updateDigifranchiseServiceOffered(userId, id, updateDigifranchiseServiceOfferedDto);
 }
 
+@Roles(RoleEnum.digifranchise_super_admin)
+@ApiOperation({ summary: 'DELETE - Delete a sub service offered by ID' })
+@ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully deleted.' })
+@Delete('delete-sub-service/:id')
+@HttpCode(HttpStatus.OK)
+async deleteDigifranchiseServiceOffered(@Req() req: Request, @Param('id') id: string): Promise<void> {
+  const userId = (req.user as UserEntity).id;
+  return this.digifranchiseService.deleteDigifranchiseServiceOffered(userId, id);
+}
+
 }
 
 
