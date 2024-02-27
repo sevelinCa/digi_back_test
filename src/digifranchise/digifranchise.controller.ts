@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Roles } from 'src/roles/roles.decorator';
@@ -11,6 +11,7 @@ import type { FranchiseOwner } from './entities/franchise-ownership.entity';
 import type { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
 import type { Digifranchise } from './entities/digifranchise.entity';
 import type { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
+import { CreateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -82,7 +83,21 @@ export class DigifranchiseController {
     return this.digifranchiseService.findAllOwnedDigifranchiseByUserId(userId);
   }
 
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'CREATE - Create Sub Service' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'You have created subservice.' })
+  @ApiBody({ type: CreateDigifranchiseServiceOfferedDto })
+  @Post('create-sub-service/:digifranchiseId')
+  @HttpCode(HttpStatus.CREATED)
+  async createSubDigifranchiseServiceOffered(
+    @Body() createDigifranchiseServiceOfferedDto: CreateDigifranchiseServiceOfferedDto,
+    @Req() req: Request,
+    @Param('digifranchiseId') digifranchiseId: string,
+  ): Promise<DigifranchiseServiceOffered> {
+    const userId = (req.user as UserEntity).id;
 
+    return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseServiceOfferedDto,userId, digifranchiseId);
+  }
 
 
 }
