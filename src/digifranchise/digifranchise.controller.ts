@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get, HttpCode, HttpStatus, Param, Delete, Put, Query } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get, HttpCode, HttpStatus, Param, Delete, Put, Query, HttpException } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -13,6 +13,8 @@ import type { Digifranchise } from './entities/digifranchise.entity';
 import type { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
 import { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 import { DigifranchiseGeneralInfoService } from './digifranchise-general-information.service';
+import type { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';
+import { CreateDigifranchiseSubServiceOfferedDto, type UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -54,19 +56,30 @@ export class DigifranchiseController {
     return this.digifranchiseService.findAllByDigifranchiseId(digifranchiseId);
   }
 
-  @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'CREATE - digifranchise setup' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'You owned the dagifranchise.' })
   @Post('own-digifranchise/:digifranchiseId')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   async ownDigifranchise(
     @Req() req: Request,
     @Param('digifranchiseId') digifranchiseId: string,
   ): Promise<DigifranchiseOwner> {
     const userId = (req.user as UserEntity).id;
-
-    return this.digifranchiseService.ownDigifranchise(userId, digifranchiseId);
-  }
+  
+    try {
+      return await this.digifranchiseService.ownDigifranchise(userId, digifranchiseId);
+    } catch (error) {
+      if (error.message === 'User already own this digifranchise') {
+        throw new HttpException({
+          status: HttpStatus.BAD_REQUEST,
+          error: 'User already own this digifranchise',
+        }, HttpStatus.BAD_REQUEST);
+      } else {
+        throw new HttpException({
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Internal server error',
+        }, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }  
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchises owned by the user' })
@@ -80,18 +93,18 @@ export class DigifranchiseController {
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'CREATE - Create Sub Service' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'You have created subservice.' })
-  @ApiBody({ type: CreateDigifranchiseServiceOfferedDto })
-  @Post('create-sub-service/:digifranchiseId')
-  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({ status: HttpStatus.OK, description: 'You have created subservice.' })
+  @ApiBody({ type: CreateDigifranchiseSubServiceOfferedDto })
+  @Post('create-sub-service/:serviceId')
+  @HttpCode(HttpStatus.OK)
   async createSubDigifranchiseServiceOffered(
-    @Body() createDigifranchiseServiceOfferedDto: CreateDigifranchiseServiceOfferedDto,
+    @Body() createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
     @Req() req: Request,
-    @Param('digifranchiseId') digifranchiseId: string,
-  ): Promise<DigifranchiseServiceOffered> {
+    @Param('serviceId') serviceId: string,
+  ): Promise<DigifranchiseSubServices> {
     const userId = (req.user as UserEntity).id;
-
-    return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseServiceOfferedDto, userId, digifranchiseId);
+  
+    return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseSubServiceOfferedDto, userId, serviceId);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -99,9 +112,9 @@ export class DigifranchiseController {
   @ApiResponse({ status: HttpStatus.OK, description: 'All Sub services  have been successfully retrieved.' })
   @Get('get-all-sub-services')
   @HttpCode(HttpStatus.OK)
-  async getAllDigifranchiseServiceOffered(@Req() req: Request): Promise<DigifranchiseServiceOffered[]> {
+  async getAllSubService(@Req() req: Request): Promise<DigifranchiseSubServices[]> {
     const userId = (req.user as UserEntity).id;
-    return this.digifranchiseService.getAllDigifranchiseServiceOffered(userId);
+    return this.digifranchiseService.getAllSubService(userId);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -109,9 +122,9 @@ export class DigifranchiseController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Sub service  has been successfully retrieved.' })
   @Get('get-sub-service/:id')
   @HttpCode(HttpStatus.OK)
-  async getOneDigifranchiseServiceOffered(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseServiceOffered> {
+  async getOneSubServiceById(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseSubServices> {
     const userId = (req.user as UserEntity).id;
-    return this.digifranchiseService.getOneDigifranchiseServiceOffered(userId, id);
+    return this.digifranchiseService.getOneSubServiceById(userId, id);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -120,13 +133,13 @@ export class DigifranchiseController {
   @ApiBody({ type: UpdateDigifranchiseServiceOfferedDto })
   @Put('update-sub-service/:id')
   @HttpCode(HttpStatus.OK)
-  async updateDigifranchiseServiceOffered(
+  async updateSubService(
     @Req() req: Request,
     @Param('id') id: string,
-    @Body() updateDigifranchiseServiceOfferedDto: UpdateDigifranchiseServiceOfferedDto,
-  ): Promise<DigifranchiseServiceOffered> {
+    @Body() updateDigifranchiseSubServiceDto: UpdateDigifranchiseSubServiceDto,
+  ): Promise<DigifranchiseSubServices> {
     const userId = (req.user as UserEntity).id;
-    return this.digifranchiseService.updateDigifranchiseServiceOffered(userId, id, updateDigifranchiseServiceOfferedDto);
+    return this.digifranchiseService.updateSubService(userId, id, updateDigifranchiseSubServiceDto);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -134,15 +147,14 @@ export class DigifranchiseController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully deleted.' })
   @Delete('delete-sub-service/:id')
   @HttpCode(HttpStatus.OK)
-  async deleteDigifranchiseServiceOffered(@Req() req: Request, @Param('id') id: string): Promise<void> {
+  async deleteSubService(@Req() req: Request, @Param('id') id: string): Promise<void> {
     const userId = (req.user as UserEntity).id;
-    return this.digifranchiseService.deleteDigifranchiseServiceOffered(userId, id);
+    return this.digifranchiseService.deleteSubService(userId, id);
   }
 
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET - Get general information of the digifranchise' })
-  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully deleted.' })
   @Get('get-general-info')
   @HttpCode(HttpStatus.OK)
   async getDigifranchiseGeneralInfo(@Req() req: Request, @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<void> {
