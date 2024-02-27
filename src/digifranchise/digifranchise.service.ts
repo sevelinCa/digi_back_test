@@ -43,7 +43,12 @@ export class DigifranchiseService {
   }
 
   async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
-    return await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
+    return await this.digifranchiseServiceOfferedRepository.find({
+      where: {
+        digifranchiseId: Equal(digifranchiseId),
+        userId: IsNull(),
+      },
+    });
   }
 
 
