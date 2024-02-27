@@ -111,13 +111,28 @@ export class DigifranchiseController {
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET ONE - Retrieve a Sub service by ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Digifranchise service offered has been successfully retrieved.' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sub service  has been successfully retrieved.' })
   @Get('get-sub-service/:id')
   @HttpCode(HttpStatus.OK)
   async getOneDigifranchiseServiceOffered(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseServiceOffered> {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseService.getOneDigifranchiseServiceOffered(userId, id);
   }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+@ApiOperation({ summary: 'UPDATE - Update a sub service  by ID' })
+@ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully updated.' })
+@ApiBody({ type: UpdateDigifranchiseServiceOfferedDto })
+@Put('update-sub-service/:id')
+@HttpCode(HttpStatus.OK)
+async updateDigifranchiseServiceOffered(
+  @Req() req: Request,
+  @Param('id') id: string,
+  @Body() updateDigifranchiseServiceOfferedDto: UpdateDigifranchiseServiceOfferedDto, 
+): Promise<DigifranchiseServiceOffered> {
+  const userId = (req.user as UserEntity).id;
+  return this.digifranchiseService.updateDigifranchiseServiceOffered(userId, id, updateDigifranchiseServiceOfferedDto);
+}
 
 }
 
