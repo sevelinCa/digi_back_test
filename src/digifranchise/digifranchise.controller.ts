@@ -135,7 +135,7 @@ async updateDigifranchiseServiceOffered(
 }
 
 @Roles(RoleEnum.digifranchise_super_admin)
-@ApiOperation({ summary: 'DELETE - Delete a sub service offered by ID' })
+@ApiOperation({ summary: 'DELETE - Delete a Sub service offered by ID' })
 @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully deleted.' })
 @Delete('delete-sub-service/:id')
 @HttpCode(HttpStatus.OK)
