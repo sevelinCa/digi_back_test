@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { Digifranchise } from './digifranchise.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Entity()
 export class DigifranchiseServiceOffered {
@@ -9,6 +10,10 @@ export class DigifranchiseServiceOffered {
     @ManyToOne(() => Digifranchise)
     @JoinColumn({ name: 'digifranchiseId' })
     digifranchiseId: Digifranchise;
+
+    @ManyToOne(() => UserEntity, { nullable: true })
+    @JoinColumn({ name: 'userId' })
+    userId: UserEntity | null;
 
     @Column({type: 'text'})
     serviceName: string;
