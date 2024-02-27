@@ -7,7 +7,7 @@ import type { CreateInventoryDto } from './dto/create-inventory.dto';
 import type { UpdateInventoryDto } from './dto/update-inventory.dto';
 import { InventoryEntries } from './entities/inventory-entries.entity';
 import { UpdateInventoryEntriesDto } from './dto/update-inventory-entries.dto';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class InventoryService {
@@ -16,8 +16,8 @@ export class InventoryService {
     private readonly inventoryRepository: Repository<Inventory>,
     @InjectRepository(InventoryEntries)
     private readonly inventoryEntriesRepository: Repository<InventoryEntries>,
-    @InjectRepository(FranchiseOwner)
-    private readonly digifranchiseRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly digifranchiseRepository: Repository<DigifranchiseOwner>,
   ) { }
 
   // async createInventoryItem(
