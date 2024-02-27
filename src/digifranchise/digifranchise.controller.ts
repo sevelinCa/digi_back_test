@@ -35,8 +35,8 @@ export class DigifranchiseController {
 
 
   @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise services' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise services have been successfully retrieved.' })
+  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchises' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise have been successfully retrieved.' })
   @Get('get-all-digifranchise')
   @HttpCode(HttpStatus.OK)
   async findAllDigifranchise(): Promise<Digifranchise[]> {
@@ -53,9 +53,9 @@ export class DigifranchiseController {
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'CREATE - Own digifranchise' })
+  @ApiOperation({ summary: 'CREATE - digifranchise setup' })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'You have owned degifranchise.' })
-  @Post('own-digifranchise:digifranchiseId')
+  @Post('own-digifranchise/:digifranchiseId')
   @HttpCode(HttpStatus.CREATED)
   async ownDigifranchise(
     @Req() req: Request,
@@ -120,29 +120,29 @@ export class DigifranchiseController {
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
-@ApiOperation({ summary: 'UPDATE - Update a sub service  by ID' })
-@ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully updated.' })
-@ApiBody({ type: UpdateDigifranchiseServiceOfferedDto })
-@Put('update-sub-service/:id')
-@HttpCode(HttpStatus.OK)
-async updateDigifranchiseServiceOffered(
-  @Req() req: Request,
-  @Param('id') id: string,
-  @Body() updateDigifranchiseServiceOfferedDto: UpdateDigifranchiseServiceOfferedDto, 
-): Promise<DigifranchiseServiceOffered> {
-  const userId = (req.user as UserEntity).id;
-  return this.digifranchiseService.updateDigifranchiseServiceOffered(userId, id, updateDigifranchiseServiceOfferedDto);
-}
+  @ApiOperation({ summary: 'UPDATE - Update a sub service  by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully updated.' })
+  @ApiBody({ type: UpdateDigifranchiseServiceOfferedDto })
+  @Put('update-sub-service/:id')
+  @HttpCode(HttpStatus.OK)
+  async updateDigifranchiseServiceOffered(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateDigifranchiseServiceOfferedDto: UpdateDigifranchiseServiceOfferedDto,
+  ): Promise<DigifranchiseServiceOffered> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseService.updateDigifranchiseServiceOffered(userId, id, updateDigifranchiseServiceOfferedDto);
+  }
 
-@Roles(RoleEnum.digifranchise_super_admin)
-@ApiOperation({ summary: 'DELETE - Delete a Sub service offered by ID' })
-@ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully deleted.' })
-@Delete('delete-sub-service/:id')
-@HttpCode(HttpStatus.OK)
-async deleteDigifranchiseServiceOffered(@Req() req: Request, @Param('id') id: string): Promise<void> {
-  const userId = (req.user as UserEntity).id;
-  return this.digifranchiseService.deleteDigifranchiseServiceOffered(userId, id);
-}
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'DELETE - Delete a Sub service offered by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully deleted.' })
+  @Delete('delete-sub-service/:id')
+  @HttpCode(HttpStatus.OK)
+  async deleteDigifranchiseServiceOffered(@Req() req: Request, @Param('id') id: string): Promise<void> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseService.deleteDigifranchiseServiceOffered(userId, id);
+  }
 
 }
 

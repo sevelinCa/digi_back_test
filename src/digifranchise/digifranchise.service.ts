@@ -55,7 +55,7 @@ export class DigifranchiseService {
   async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<FranchiseOwner> {
     const existingOwnership = await this.franchiseOwnerRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
     if (existingOwnership) {
-      throw new Error('User already owns this digifranchise');
+      throw new Error('User already own this digifranchise');
     }
 
     const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
