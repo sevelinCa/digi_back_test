@@ -109,6 +109,15 @@ export class DigifranchiseController {
     return this.digifranchiseService.getAllDigifranchiseServiceOffered(userId);
   }
 
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET ONE - Retrieve a Sub service by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Digifranchise service offered has been successfully retrieved.' })
+  @Get('get-sub-service/:id')
+  @HttpCode(HttpStatus.OK)
+  async getOneDigifranchiseServiceOffered(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseServiceOffered> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseService.getOneDigifranchiseServiceOffered(userId, id);
+  }
 
 }
 

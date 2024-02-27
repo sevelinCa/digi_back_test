@@ -113,4 +113,11 @@ export class DigifranchiseService {
     return await this.digifranchiseServiceOfferedRepository.find({ where: { userId: Equal(userId) } });
   }
 
+  async getOneDigifranchiseServiceOffered(userId: string, id: string): Promise<DigifranchiseServiceOffered> {
+    const serviceOffered = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id, userId: Equal(userId) } });
+    if (!serviceOffered) {
+      throw new NotFoundException('Digifranchise service offered not found');
+    }
+    return serviceOffered;
+  }
 }
