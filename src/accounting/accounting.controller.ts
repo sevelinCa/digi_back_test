@@ -54,7 +54,7 @@ import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
 import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
 import type { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 
 @ApiTags('Admin - Fixed Expenses')

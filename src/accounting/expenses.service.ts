@@ -11,7 +11,7 @@ import {
 import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
 import { User } from 'src/users/domain/user';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class ExpenseService {

@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
-import { FranchiseOwner } from './entities/franchise-ownership.entity';
+import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { FranchiseOwner } from './entities/franchise-ownership.entity';
       UserEntity,
       DigifranchiseServiceOffered,
       Digifranchise,
-      FranchiseOwner,
+      DigifranchiseOwner,
       
     ]),
   ],

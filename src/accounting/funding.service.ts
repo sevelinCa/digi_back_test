@@ -6,7 +6,7 @@ import { CreateFundingDto } from './dto/Create-DTOs/create-funding.dto';
 import { findFundingById } from 'src/helper/FindByFunctions';
 import { User } from 'src/users/domain/user';
 import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class FundingService {

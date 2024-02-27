@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, IsNull, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { FranchiseOwner } from './entities/franchise-ownership.entity';
+import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
 import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
@@ -13,14 +13,12 @@ export class DigifranchiseService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    @InjectRepository(FranchiseOwner)
-    private franchiseOwnershipRepository: Repository<FranchiseOwner>,
+    @InjectRepository(DigifranchiseOwner)
+    private franchiseOwnershipRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(Digifranchise)
     private digifranchiseRepository: Repository<Digifranchise>,
     @InjectRepository(DigifranchiseServiceOffered)
     private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
-    @InjectRepository(FranchiseOwner)
-    private readonly franchiseOwnerRepository: Repository<FranchiseOwner>,
 
   ) { }
 
@@ -52,8 +50,8 @@ export class DigifranchiseService {
   }
 
 
-  async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<FranchiseOwner> {
-    const existingOwnership = await this.franchiseOwnerRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
+  async ownDigifranchise(userId: string, userFullNames: string, role: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
+    const existingOwnership = await this.franchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
     if (existingOwnership) {
       throw new Error('User already own this digifranchise');
     }
@@ -67,19 +65,19 @@ export class DigifranchiseService {
     if (!digifranchise) {
       throw new Error('Digifranchise not found');
     }
-    const newFranchiseOwner = this.franchiseOwnerRepository.create({
+    const newFranchiseOwner = this.franchiseOwnershipRepository.create({
       userId,
       userFullNames,
       role,
       digifranchiseId: digifranchise,
     });
 
-    return this.franchiseOwnerRepository.save(newFranchiseOwner);
+    return this.franchiseOwnershipRepository.save(newFranchiseOwner);
   }
 
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<Digifranchise[]> {
-    const ownershipRecords = await this.franchiseOwnerRepository.find({
+    const ownershipRecords = await this.franchiseOwnershipRepository.find({
       where: { userId },
       relations: ['digifranchiseId'],
     });

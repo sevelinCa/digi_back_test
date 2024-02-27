@@ -9,7 +9,7 @@ import { Funding } from 'src/accounting/entities/funding.entity';
 import { OperatingParameters } from 'src/accounting/entities/operationParamenters.entity';
 import type { Inventory } from 'src/inventory/entities/inventory.entity';
 import type { Asset } from 'src/asset-mgt/entities/asset.entity';
-import type { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import type { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import type { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 

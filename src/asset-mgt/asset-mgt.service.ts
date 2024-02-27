@@ -5,7 +5,7 @@ import type { Repository } from 'typeorm';
 import type { CreateAssetDto } from './dto/create-asset.dto';
 import type { UpdateAssetDto } from './dto/update-asset.dto';
 import { Asset } from './entities/asset.entity';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class AssetMgtService {

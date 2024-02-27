@@ -10,7 +10,7 @@ import { CreateFixedExpenseDto } from './dto/Create-DTOs/create-fixed-expense.dt
 import { IsNull } from 'typeorm';
 import { getDigifranchiseAccountByUserId, findUserById } from 'src/helper/FindByFunctions';
 import { User } from 'src/users/domain/user';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class ManagerFixedExpensesService {

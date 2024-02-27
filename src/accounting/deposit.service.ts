@@ -5,7 +5,7 @@ import { Deposit } from './entities/deposit.entity';
 import { CreateDepositDto } from './dto/Create-DTOs/create-deposit.dto';
 import { findDepositById } from 'src/helper/FindByFunctions';
 import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class DepositService {

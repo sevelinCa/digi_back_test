@@ -3,7 +3,7 @@ import { AssetMgtService } from './asset-mgt.service';
 import { AssetMgtController } from './asset-mgt.controller';
 import { Asset } from './entities/asset.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Module({
   imports: [

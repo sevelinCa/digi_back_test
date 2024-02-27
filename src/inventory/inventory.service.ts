@@ -7,7 +7,7 @@ import type { CreateInventoryDto } from './dto/create-inventory.dto';
 import type { UpdateInventoryDto } from './dto/update-inventory.dto';
 import { InventoryEntries } from './entities/inventory-entries.entity';
 import { UpdateInventoryEntriesDto } from './dto/update-inventory-entries.dto';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class InventoryService {

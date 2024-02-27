@@ -8,7 +8,7 @@ import {
 } from 'src/helper/FindByFunctions';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
 import { User } from 'src/users/domain/user';
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { FranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class IncomeService {

@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddProfileToUser1708801150793 implements MigrationInterface {
-    name = 'AddProfileToUser1708801150793'
+export class UpdateUserTable1709022577997 implements MigrationInterface {
+    name = 'UpdateUserTable1709022577997'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "user" ADD "image" character varying`);
@@ -34,6 +34,7 @@ export class AddProfileToUser1708801150793 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "public"."IDX_a0f3f1de3c7590ddf4299b6596"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_d03cc9951fbb73d092fa53127e"`);
         await queryRunner.query(`DROP INDEX "public"."IDX_3bd3f2e16165d1dac3e8e13286"`);
+        await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "isProfileComplete"`);
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "professionalBody"`);
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "qualifications"`);
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "fieldOfStudy"`);
@@ -44,7 +45,6 @@ export class AddProfileToUser1708801150793 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "gender"`);
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "idImage"`);
         await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "image"`);
-        await queryRunner.query(`ALTER TABLE "user" DROP COLUMN "isProfileComplete"`);
     }
 
 }

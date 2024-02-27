@@ -1,4 +1,4 @@
-import { FranchiseOwner } from 'src/digifranchise/entities/franchise-ownership.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -14,9 +14,9 @@ export class Deposit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => FranchiseOwner)
+  @ManyToOne(() => DigifranchiseOwner)
   @JoinColumn({ name: 'franchiseId' })
-  franchiseId: FranchiseOwner;
+  franchiseId: DigifranchiseOwner;
 
   @Column({ type: 'varchar' })
   item: string;
