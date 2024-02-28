@@ -27,33 +27,10 @@ export class DigifranchiseService {
 
   ) { }
 
-  // async createMainDigifranchiseService(
-  //   createDigifranchiseDto: CreateDigifranchiseDto
-  // ): Promise<Digifranchise> {
-  //   console.log('createDigifranchiseDto:', createDigifranchiseDto);
-
-  //   const newDigifranchise = this.digifranchiseRepository.create({
-  //     ...createDigifranchiseDto,
-  //   });
-
-  //   const savedDigifranchise = await this.digifranchiseRepository.save(newDigifranchise);
-
-  //   return savedDigifranchise;
-  // }
 
   async findAllDigifranchise(): Promise<Digifranchise[]> {
     return await this.digifranchiseRepository.find();
   }
-
-  async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
-    return await this.digifranchiseServiceOfferedRepository.find({
-      where: {
-        digifranchiseId: Equal(digifranchiseId),
-        userId: IsNull(),
-      },
-    });
-  }
-
 
   async ownDigifranchise(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
     const existingOwnership = await this.franchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
@@ -79,6 +56,16 @@ export class DigifranchiseService {
     return this.franchiseOwnershipRepository.save(newFranchiseOwner);
   }
 
+  async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
+    return await this.digifranchiseServiceOfferedRepository.find({
+      where: {
+        digifranchiseId: Equal(digifranchiseId),
+        userId: IsNull(),
+      },
+    });
+  }
+
+
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<Digifranchise[]> {
     const ownershipRecords = await this.franchiseOwnershipRepository.find({
       where: { userId },
@@ -92,28 +79,6 @@ export class DigifranchiseService {
     return this.digifranchiseRepository.findByIds(digifranchiseIds);
   }
 
-  // async createSubDigifranchiseServiceOffered(
-  //   createDigifranchiseServiceOfferedDto: CreateDigifranchiseServiceOfferedDto,
-  //   userId: string,
-  //   digifranchiseId: string,
-  // ): Promise<DigifranchiseServiceOffered> {
-  //   const digifranchiseExists = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
-  //   if (!digifranchiseExists) {
-  //     throw new NotFoundException('Digifranchise not found');
-  //   }
-
-  //   const user = await this.userRepository.findOne({ where: { id: userId } });
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-  //   const newDigifranchiseServiceOffered = this.digifranchiseServiceOfferedRepository.create({
-  //     ...createDigifranchiseServiceOfferedDto,
-  //     userId: user,
-  //     digifranchiseId: digifranchiseExists,
-  //   });
-
-  //   return this.digifranchiseServiceOfferedRepository.save(newDigifranchiseServiceOffered);
-  // }
 
   async createSubDigifranchiseServiceOffered(
     createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
