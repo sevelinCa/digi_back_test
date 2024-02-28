@@ -110,12 +110,12 @@ export class DigifranchiseService {
     return savedFranchiseOwner;
   }
 
-  async getDigifranchiseOwnerByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseOwner> {
-    const digifranchiseOwner = await this.franchiseOwnershipRepository.findOne({ where: { digifranchiseId: Equal(digifranchiseId) } });
-    if (!digifranchiseOwner) {
+  async getDigifranchiseByDigifranchiseId(digifranchiseId: string): Promise<Digifranchise> {
+    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId} });
+    if (!digifranchise) {
        throw new NotFoundException('Digifranchise owner not found');
     }
-    return digifranchiseOwner;
+    return digifranchise;
    }
    
   async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
