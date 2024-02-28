@@ -95,12 +95,12 @@ export class ProductService {
     }
   }
 
-//   async deleteSubProduct(userId: string, id: string): Promise<void> {
-//     const product = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
-//     if (!product) {
-//       throw new NotFoundException('Digifranchise service offered not found');
-//     }
+  async deleteSubProduct(userId: string, id: string): Promise<void> {
+    const product = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
+    if (!product) {
+      throw new NotFoundException('Digifranchise service offered not found');
+    }
   
-//     await this.digifranchiseSubProductRepository.remove(product);
-//   }
+    await this.digifranchiseSubProductRepository.remove(product);
+  }
 }

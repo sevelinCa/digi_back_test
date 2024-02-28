@@ -249,15 +249,15 @@ export class DigifranchiseProductController {
   }
 
 
-  // @Roles(RoleEnum.digifranchise_super_admin)
-  // @ApiOperation({ summary: 'DELETE - Delete a Sub product  by ID' })
-  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub product has been successfully deleted.' })
-  // @Delete('delete-sub-product/:id')
-  // @HttpCode(HttpStatus.OK)
-  // async deleteSubProduct(@Req() req: Request, @Param('id') id: string): Promise<void> {
-  //   const userId = (req.user as UserEntity).id;
-  //   return this.productService.deleteSubProduct(userId, id);
-  // }
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'DELETE - Delete a Sub product  by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sub product has been successfully deleted.' })
+  @Delete('delete-sub-product/:id')
+  @HttpCode(HttpStatus.OK)
+  async deleteSubProduct(@Req() req: Request, @Param('id') id: string): Promise<void> {
+    const userId = (req.user as UserEntity).id;
+    return this.productService.deleteSubProduct(userId, id);
+  }
 
 
 }
