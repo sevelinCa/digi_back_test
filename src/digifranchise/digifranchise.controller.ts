@@ -223,15 +223,15 @@ export class DigifranchiseProductController {
     return this.roductService.getAllSubProduct(userId);
   }
 
-  // @Roles(RoleEnum.digifranchise_super_admin)
-  // @ApiOperation({ summary: 'GET ONE - Retrieve a Sub product by ID' })
-  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub product  has been successfully retrieved.' })
-  // @Get('get-sub-product/:id')
-  // @HttpCode(HttpStatus.OK)
-  // async getOneSubServiceById(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseSubProduct> {
-  //   const userId = (req.user as UserEntity).id;
-  //   return this.roductService.getOneSubProductById(userId, id);
-  // }
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET ONE - Retrieve a Sub product by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sub product  has been successfully retrieved.' })
+  @Get('get-sub-product/:id')
+  @HttpCode(HttpStatus.OK)
+  async getOneSubServiceById(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseSubProduct> {
+    const userId = (req.user as UserEntity).id;
+    return this.roductService.getOneSubProductById(userId, id);
+  }
 
   // @Roles(RoleEnum.digifranchise_super_admin)
   // @ApiOperation({ summary: 'UPDATE - Update a sub service  by ID' })
