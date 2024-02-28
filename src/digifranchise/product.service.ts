@@ -66,13 +66,13 @@ export class ProductService {
     return await this.digifranchiseSubProductRepository.find({ where: { userId: Equal(userId) } });
   }
 
-//   async getOneSubProductById(userId: string, id: string): Promise<DigifranchiseSubProduct> {
-//     const serviceOffered = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
-//     if (!serviceOffered) {
-//       throw new NotFoundException('Sub service not found');
-//     }
-//     return serviceOffered;
-//   }
+  async getOneSubProductById(userId: string, id: string): Promise<DigifranchiseSubProduct> {
+    const serviceOffered = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
+    if (!serviceOffered) {
+      throw new NotFoundException('Sub service not found');
+    }
+    return serviceOffered;
+  }
 
 
 //   async updateSubService(
