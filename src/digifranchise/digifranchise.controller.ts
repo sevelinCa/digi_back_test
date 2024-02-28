@@ -85,16 +85,16 @@ export class DigifranchiseController {
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'GET - Retrieve Digifranchise owner by ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Digifranchise owner has been successfully retrieved.' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Digifranchise owner not found.' })
-  @Get('owner/:digifranchiseId')
-  async getDigifranchiseOwnerByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseOwner> {
-    const digifranchiseOwner = await this.digifranchiseService.getDigifranchiseOwnerByDigifranchiseId(digifranchiseId);
-    if (!digifranchiseOwner) {
-      throw new NotFoundException('Digifranchise owner not found');
-    }
-    return digifranchiseOwner;
+  @ApiOperation({ summary: 'GET - Retrieve Digifranchise by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Digifranchise has been successfully retrieved.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Digifranchise not found.' })
+  @Get('get-one-digifranchise/:digifranchiseId')
+  async getDigifranchiseByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<Digifranchise> {
+     const digifranchiseOwner = await this.digifranchiseService.getDigifranchiseByDigifranchiseId(digifranchiseId);
+     if (!digifranchiseOwner) {
+       throw new NotFoundException('Digifranchise not found');
+     }
+     return digifranchiseOwner;
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
