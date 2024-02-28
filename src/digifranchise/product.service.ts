@@ -7,7 +7,7 @@ import { type Repository, Equal, IsNull } from 'typeorm';
 import type { UpdateDigifranchiseProductDto } from './dto/create-digifranchise-product.dto';
 import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
-import type { CreateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
+import type { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
 
 @Injectable()
 export class ProductService {
@@ -67,40 +67,40 @@ export class ProductService {
   }
 
   async getOneSubProductById(userId: string, id: string): Promise<DigifranchiseSubProduct> {
-    const serviceOffered = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
-    if (!serviceOffered) {
+    const product = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
+    if (!product) {
       throw new NotFoundException('Sub service not found');
     }
-    return serviceOffered;
+    return product;
   }
 
 
-//   async updateSubService(
-//     userId: string,
-//     id: string,
-//     updateDigifranchiseServiceDto: UpdateDigifranchiseProductDto,
-//   ): Promise<DigifranchiseSubProduct> {
-//     const serviceOffered = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
-//     if (!serviceOffered) {
-//       throw new NotFoundException('Sub service not found');
-//     }
+  async updateSubProduct(
+    userId: string,
+    id: string,
+    updateDigifranchiseSubProductDto: UpdateDigifranchiseSubProductDto,
+  ): Promise<DigifranchiseSubProduct> {
+    const product = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
+    if (!product) {
+      throw new NotFoundException('Sub service not found');
+    }
   
-//     Object.assign(serviceOffered, updateDigifranchiseServiceDto);
+    Object.assign(product, updateDigifranchiseSubProductDto);
   
-//     try {
-//       return await this.digifranchiseSubProductRepository.save(serviceOffered);
-//     } catch (error) {
-//       console.error('Error updating sub service:', error);
-//       throw error;
-//     }
-//   }
+    try {
+      return await this.digifranchiseSubProductRepository.save(product);
+    } catch (error) {
+      console.error('Error updating sub service:', error);
+      throw error;
+    }
+  }
 
-//   async deleteSubService(userId: string, id: string): Promise<void> {
-//     const serviceOffered = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
-//     if (!serviceOffered) {
+//   async deleteSubProduct(userId: string, id: string): Promise<void> {
+//     const product = await this.digifranchiseSubProductRepository.findOne({ where: { id, userId: Equal(userId) } });
+//     if (!product) {
 //       throw new NotFoundException('Digifranchise service offered not found');
 //     }
   
-//     await this.digifranchiseSubProductRepository.remove(serviceOffered);
+//     await this.digifranchiseSubProductRepository.remove(product);
 //   }
 }
