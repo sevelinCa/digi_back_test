@@ -248,91 +248,6 @@ export class AuthService {
     }
   }
 
-  // async validateSocialLogin(
-  //   authProvider: string,
-  //   socialData: SocialInterface,
-  // ): Promise<LoginResponseType> {
-  //   let user: NullableType<User> = null;
-  //   const socialEmail = socialData.email?.toLowerCase();
-  //   let userByEmail: NullableType<User> = null;
-
-  //   if (socialEmail) {
-  //     userByEmail = await this.usersService.findOne({
-  //       email: socialEmail,
-  //     });
-  //   }
-
-  //   if (socialData.id) {
-  //     user = await this.usersService.findOne({
-  //       socialId: socialData.id,
-  //       provider: authProvider,
-  //     });
-  //   }
-
-  //   if (user) {
-  //     if (socialEmail && !userByEmail) {
-  //       user.email = socialEmail;
-  //     }
-  //     await this.usersService.update(user.id, user);
-  //   } else if (userByEmail) {
-  //     user = userByEmail;
-  //   } else {
-  //     const role = {
-  //       id: RoleEnum.digifranchise_super_admin,
-  //     };
-  //     const status = {
-  //       id: StatusEnum.active,
-  //     };
-
-  //     user = await this.usersService.create({
-  //       email: socialEmail ?? null,
-  //       firstName: socialData.firstName ?? null,
-  //       lastName: socialData.lastName ?? null,
-  //       socialId: socialData.id,
-  //       provider: authProvider,
-  //       role,
-  //       status,
-  //     });
-
-  //     user = await this.usersService.findOne({
-  //       id: user?.id,
-  //     });
-  //   }
-
-  //   if (!user) {
-  //     throw new HttpException(
-  //       {
-  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-  //         errors: {
-  //           user: 'userNotFound',
-  //         },
-  //       },
-  //       HttpStatus.UNPROCESSABLE_ENTITY,
-  //     );
-  //   }
-
-  //   const session = await this.sessionService.create({
-  //     user,
-  //   });
-
-  //   const {
-  //     token: jwtToken,
-  //     refreshToken,
-  //     tokenExpires,
-  //   } = await this.getTokensData({
-  //     id: user.id,
-  //     role: user.role,
-  //     sessionId: session.id,
-  //   });
-
-  //   return {
-  //     refreshToken,
-  //     token: jwtToken,
-  //     tokenExpires,
-  //     user,
-  //   };
-  // }
-
   async register(dto: AuthRegisterLoginDto): Promise<void> {
     const user = await this.usersService.create({
       ...dto,
@@ -600,6 +515,62 @@ export class AuthService {
         hash,
       },
     });
+  }
+
+  async forgotPasswordWithPhone(phoneNumber: string): Promise<any> {
+    const user = await this.usersService.findOne({
+      phoneNumber,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'phoneNotExists',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    await this.smsService.sendOTP(phoneNumber)
+
+    return { message: 'otp sent to phone, check messages'}
+  }
+
+  async resetPasswordWithPhone(otp: string, phoneNumber: string, newPassword: string): Promise<any> {
+    const phoneIsVerified = await this.smsService.verifyOTP(otp, phoneNumber)
+    if (!phoneIsVerified) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: `otpExpired`,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (phoneIsVerified) {
+      const user = await this.usersService.findOne({ phoneNumber })
+      if (!user) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `notFound`,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      Object.assign(user, { password: hashedPassword })
+      await this.usersRepository.save(user)
+
+      return { status: HttpStatus.OK, message: "password successfully reset"}
+    }
   }
 
   async resetPassword(hash: string, password: string): Promise<void> {

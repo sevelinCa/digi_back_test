@@ -29,6 +29,8 @@ import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { GoogleCreateUserDto } from './dto/google-create-user.dto';
 import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
+import { PhoneForgotPasswordDto } from './dto/auth-phone-forgot-password.dto';
+import { PhoneRestPasswordDto } from './dto/auth-phone-reset-password.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -142,6 +144,19 @@ export class AuthController {
   async confirmOtp(@Body() phoneRegisterDto: AuthConfirmPhoneDto): Promise<void> {
     return this.service.verifyUserWithPhone(phoneRegisterDto);
   }
+
+  @Post('phone/forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async phoneForgotPassword(@Body() phoneForgotPasswordDto: PhoneForgotPasswordDto) {
+    return this.service.forgotPasswordWithPhone(phoneForgotPasswordDto.phoneNumber)
+  }
+
+  @Post('phone/reset-password')
+  @HttpCode(HttpStatus.OK)
+  async phoneResetPassword(@Body() dto: PhoneRestPasswordDto) {
+    return this.service.resetPasswordWithPhone(dto.otp, dto.phoneNumber, dto.newPassword)
+  }
+
 
   @Post('email/confirm')
   @HttpCode(HttpStatus.NO_CONTENT)
