@@ -41,7 +41,7 @@ export class DigifranchiseGeneralInfoService {
     return digifranchiseGeneralInfo
   }
 
-  async updateDigifranchiseGeneralInformation(userId: string, generalInfo: UpdateDigifranchiseGeneralInfoDto, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
+  async updateDigifranchiseGeneralInformation(userId: string, dto: UpdateDigifranchiseGeneralInfoDto, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
     const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({ where: { ownedDigifranchiseId } })
     if (!digifranchiseGeneralInfo) {
       throw new NotFoundException(
@@ -55,7 +55,20 @@ export class DigifranchiseGeneralInfoService {
       );
     }
 
-    // await 
+    digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
+    digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle
+    digifranchiseGeneralInfo.tiktokHandle = dto.tiktokHandle
+    digifranchiseGeneralInfo.instagramHandle = dto.instagramHandle
+    digifranchiseGeneralInfo.xHandle = dto.xHandle
+    digifranchiseGeneralInfo.address = dto.address
+    digifranchiseGeneralInfo.connectNumber = dto.connectNumber
+    digifranchiseGeneralInfo.otherMobileNumber = dto.otherMobileNumber
+    digifranchiseGeneralInfo.aboutCompany = dto.aboutCompany
+    digifranchiseGeneralInfo.location = dto.location
+
+    this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo)
+
+    // const updateDigifranchiseComplianceInfo = this.digifranchiseGeneralInfoRepository.update()
 
     return digifranchiseGeneralInfo
   }

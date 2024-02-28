@@ -45,7 +45,7 @@ export class DigifranchiseComplianceInfoService {
     return digifranchiseComplianceInfo
   }
 
-  async updateDigifranchiseComplianceInformation(userId: string, complianceInfo: UpdateDigifranchiseComplianceInfoDto, ownedDigifranchiseId: string): Promise<DigifranchiseComplianceInfo> {
+  async updateDigifranchiseComplianceInformation(userId: string, dto: UpdateDigifranchiseComplianceInfoDto, ownedDigifranchiseId: string): Promise<DigifranchiseComplianceInfo> {
     const digifranchiseComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({ where: { ownedDigifranchiseId } })
     if (!digifranchiseComplianceInfo) {
       throw new NotFoundException(
@@ -58,6 +58,17 @@ export class DigifranchiseComplianceInfoService {
         `digifranchise not owned by current user`,
       );
     }
+
+    digifranchiseComplianceInfo.companyRegisterationNumber = dto.companyRegisterationNumber
+    digifranchiseComplianceInfo.taxNumber = dto.taxNumber
+    digifranchiseComplianceInfo.taxClearencePin = dto.taxClearencePin
+    digifranchiseComplianceInfo.uifRegistration = dto.uifRegistration
+    digifranchiseComplianceInfo.workMansCompensation = dto.workMansCompensation
+    digifranchiseComplianceInfo.sdlNumber = dto.sdlNumber
+    digifranchiseComplianceInfo.otherComplianceDocs = dto.otherComplianceDocs
+    digifranchiseComplianceInfo.uploadedDocs = dto.uploadedDocs
+
+    this.digifranchiseGeneralInfoRepository.save(digifranchiseComplianceInfo)
 
     return digifranchiseComplianceInfo
   }
