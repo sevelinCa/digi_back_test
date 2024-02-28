@@ -17,7 +17,7 @@ import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.e
 import { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { ProductService } from './product.service';
-import { CreateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
+import { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
 import type { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
 
 @ApiTags('Digifranchise')
@@ -182,7 +182,7 @@ export class DigifranchiseServiceOfferedController {
 @Controller({ path: 'digifranchise-product', version: '1' })
 export class DigifranchiseProductController {
   constructor(
-    private readonly roductService: ProductService,
+    private readonly productService: ProductService,
   ) { }
 
 
@@ -193,7 +193,7 @@ export class DigifranchiseProductController {
   @Get('get-products/:digifranchiseId')
   @HttpCode(HttpStatus.OK)
   async findAllProductByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseProduct[]> {
-    return this.roductService.findAllProductByDigifranchiseId(digifranchiseId);
+    return this.productService.findAllProductByDigifranchiseId(digifranchiseId);
   }
   
 
@@ -210,7 +210,7 @@ export class DigifranchiseProductController {
   ): Promise<DigifranchiseSubProduct> {
     const userId = (req.user as UserEntity).id;
   
-    return this.roductService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, productId);
+    return this.productService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, productId);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -218,9 +218,9 @@ export class DigifranchiseProductController {
   @ApiResponse({ status: HttpStatus.OK, description: 'All Sub products  have been successfully retrieved.' })
   @Get('get-all-sub-products')
   @HttpCode(HttpStatus.OK)
-  async getAllSubService(@Req() req: Request): Promise<DigifranchiseSubProduct[]> {
+  async getAllSubProduct(@Req() req: Request): Promise<DigifranchiseSubProduct[]> {
     const userId = (req.user as UserEntity).id;
-    return this.roductService.getAllSubProduct(userId);
+    return this.productService.getAllSubProduct(userId);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -228,35 +228,35 @@ export class DigifranchiseProductController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Sub product  has been successfully retrieved.' })
   @Get('get-sub-product/:id')
   @HttpCode(HttpStatus.OK)
-  async getOneSubServiceById(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseSubProduct> {
+  async getOneSubProductById(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseSubProduct> {
     const userId = (req.user as UserEntity).id;
-    return this.roductService.getOneSubProductById(userId, id);
+    return this.productService.getOneSubProductById(userId, id);
   }
 
-  // @Roles(RoleEnum.digifranchise_super_admin)
-  // @ApiOperation({ summary: 'UPDATE - Update a sub service  by ID' })
-  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully updated.' })
-  // @ApiBody({ type: UpdateDigifranchiseSubServiceDto })
-  // @Put('update-sub-service/:id')
-  // @HttpCode(HttpStatus.OK)
-  // async updateSubService(
-  //   @Req() req: Request,
-  //   @Param('id') id: string,
-  //   @Body() updateDigifranchiseSubServiceDto: UpdateDigifranchiseSubServiceDto,
-  // ): Promise<DigifranchiseSubServices> {
-  //   const userId = (req.user as UserEntity).id;
-  //   return this.digifranchiseService.updateSubService(userId, id, updateDigifranchiseSubServiceDto);
-  // }
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'UPDATE - Update a sub product  by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sub product has been successfully updated.' })
+  @ApiBody({ type: UpdateDigifranchiseSubProductDto })
+  @Put('update-sub-product/:id')
+  @HttpCode(HttpStatus.OK)
+  async updateSubProduct(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() updateDigifranchiseSubProductDto: UpdateDigifranchiseSubProductDto,
+  ): Promise<DigifranchiseSubProduct> {
+    const userId = (req.user as UserEntity).id;
+    return this.productService.updateSubProduct(userId, id, updateDigifranchiseSubProductDto);
+  }
 
 
   // @Roles(RoleEnum.digifranchise_super_admin)
-  // @ApiOperation({ summary: 'DELETE - Delete a Sub service  by ID' })
-  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully deleted.' })
-  // @Delete('delete-sub-service/:id')
+  // @ApiOperation({ summary: 'DELETE - Delete a Sub product  by ID' })
+  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub product has been successfully deleted.' })
+  // @Delete('delete-sub-product/:id')
   // @HttpCode(HttpStatus.OK)
-  // async deleteSubService(@Req() req: Request, @Param('id') id: string): Promise<void> {
+  // async deleteSubProduct(@Req() req: Request, @Param('id') id: string): Promise<void> {
   //   const userId = (req.user as UserEntity).id;
-  //   return this.digifranchiseService.deleteSubService(userId, id);
+  //   return this.productService.deleteSubProduct(userId, id);
   // }
 
 
