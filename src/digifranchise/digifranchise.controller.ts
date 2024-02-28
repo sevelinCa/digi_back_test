@@ -14,7 +14,7 @@ import type { DigifranchiseServiceOffered } from './entities/digifranchise-servi
 import { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 import { DigifranchiseGeneralInfoService } from './digifranchise-general-information.service';
 import type { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';
-import { CreateDigifranchiseSubServiceOfferedDto, type UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
+import { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -130,7 +130,7 @@ export class DigifranchiseController {
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'UPDATE - Update a sub service  by ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Sub service has been successfully updated.' })
-  @ApiBody({ type: UpdateDigifranchiseServiceOfferedDto })
+  @ApiBody({ type: UpdateDigifranchiseSubServiceDto })
   @Put('update-sub-service/:id')
   @HttpCode(HttpStatus.OK)
   async updateSubService(
@@ -141,6 +141,7 @@ export class DigifranchiseController {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseService.updateSubService(userId, id, updateDigifranchiseSubServiceDto);
   }
+
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'DELETE - Delete a Sub service offered by ID' })

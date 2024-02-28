@@ -57,7 +57,7 @@
 
    ```bash
    npm run migration:generate -- src/database/migrations/CreatePostTable
-      npm run migration:generate -- src/database/migrations/createSubServiceAndSubProduct
+      npm run migration:generate -- src/database/migrations/createInventoryTable
       
        ```
 

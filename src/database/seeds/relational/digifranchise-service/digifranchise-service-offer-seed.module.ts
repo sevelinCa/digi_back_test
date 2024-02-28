@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { DigifranchiseSeedService } from './digifranchise-service-seed.service';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service.entity';
+import { DigifranchiseServiceSeedService } from './digifranchise-service-seed.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([DigifranchiseServiceOffered,Digifranchise])],
-  providers: [DigifranchiseSeedService],
-  exports: [DigifranchiseSeedService],
+  providers: [DigifranchiseServiceSeedService],
+  exports: [DigifranchiseServiceSeedService],
 })
-export class DigifranchiseServiceOfferSeedModule {}
+export class DigifranchiseServicerSeedModule {}

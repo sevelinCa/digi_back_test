@@ -9,6 +9,7 @@ import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { DigifranchiseGeneralInfoService } from './digifranchise-general-information.service';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';
+import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.e
       UserEntity,
       DigifranchiseServiceOffered,
       DigifranchiseSubServices,
+      DigifranchiseProduct,
       Digifranchise,
       DigifranchiseOwner,
       DigifranchiseGeneralInfo
