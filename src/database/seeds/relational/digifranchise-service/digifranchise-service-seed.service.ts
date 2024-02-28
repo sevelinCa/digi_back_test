@@ -5,7 +5,7 @@ import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 import { StatusEnum } from "src/statuses/statuses.enum";
 import { Repository } from "typeorm";
 
-export class DigifranchiseSeedService {
+export class DigifranchiseServiceSeedService {
     constructor(
         @InjectRepository(Digifranchise)
         private digifranchiseRepository: Repository<Digifranchise>,

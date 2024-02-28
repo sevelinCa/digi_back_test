@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateInventoryTable1709014586062 implements MigrationInterface {
-    name = 'CreateInventoryTable1709014586062'
+export class CreateInventoryTable1709091406155 implements MigrationInterface {
+    name = 'CreateInventoryTable1709091406155'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "inventory_entries" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "quantity" integer NOT NULL, "costPerItem" integer NOT NULL, "totalValue" integer NOT NULL, "dateReceived" TIMESTAMP NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deleteAt" TIMESTAMP, "inventoryId" uuid NOT NULL, CONSTRAINT "PK_1528e3203da22723e29566514f1" PRIMARY KEY ("id"))`);

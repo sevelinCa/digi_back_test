@@ -9,7 +9,8 @@ import { RoleSeedModule } from './role/role-seed.module';
 import { StatusSeedModule } from './status/status-seed.module';
 import { UserSeedModule } from './user/user-seed.module';
 import { FixedExpenseSeedModule } from './fixed-expense/seedFixedExpense-seeds.module';
-import { DigifranchiseServiceOfferSeedModule } from './digifranchise/digifranchise-service-offer-seed.module';
+import { DigifranchiseServicerSeedModule } from './digifranchise-service/digifranchise-service-offer-seed.module';
+import { DigifranchiseProductSeedModule } from './digifranchise-product/digifranchise-product-offer-seed.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { DigifranchiseServiceOfferSeedModule } from './digifranchise/digifranchi
     StatusSeedModule,
     UserSeedModule,
     FixedExpenseSeedModule,
-    DigifranchiseServiceOfferSeedModule,
+    DigifranchiseServicerSeedModule,
+    DigifranchiseProductSeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],

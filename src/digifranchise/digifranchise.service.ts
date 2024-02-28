@@ -152,6 +152,7 @@ export class DigifranchiseService {
     return serviceOffered;
   }
 
+
   async updateSubService(
     userId: string,
     id: string,
@@ -164,7 +165,12 @@ export class DigifranchiseService {
   
     Object.assign(serviceOffered, updateDigifranchiseServiceDto);
   
-    return this.digifranchiseSubServiceOfferedRepository.save(serviceOffered);
+    try {
+      return await this.digifranchiseSubServiceOfferedRepository.save(serviceOffered);
+    } catch (error) {
+      console.error('Error updating sub service:', error);
+      throw error;
+    }
   }
 
   async deleteSubService(userId: string, id: string): Promise<void> {
