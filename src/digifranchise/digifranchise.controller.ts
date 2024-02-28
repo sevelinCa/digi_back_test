@@ -19,6 +19,11 @@ import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { ProductService } from './product.service';
 import { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
 import type { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
+import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
+import { UpdateDigifranchiseGeneralInfoDto } from './dto/update-digifranchise-general-info.dto';
+import { UpdateDigifranchiseComplianceInfoDto } from './dto/update-digifranchise-compliance-info.dto';
+import { DigifranchiseComplianceInfoService } from './digifranchise-compliance-information.service';
+import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -27,7 +32,6 @@ import type { DigifranchiseSubProduct } from './entities/digifranchise-sub-produ
 export class DigifranchiseController {
   constructor(
     private readonly digifranchiseService: DigifranchiseService,
-    private readonly digifranchiseGeneralInfoService: DigifranchiseGeneralInfoService
   ) { }
 
 
@@ -48,7 +52,7 @@ export class DigifranchiseController {
     @Param('digifranchiseId') digifranchiseId: string,
   ): Promise<DigifranchiseOwner> {
     const userId = (req.user as UserEntity).id;
-  
+
     try {
       return await this.digifranchiseService.ownDigifranchise(userId, digifranchiseId);
     } catch (error) {
@@ -64,7 +68,7 @@ export class DigifranchiseController {
         }, HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
-  }  
+  }
 
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -83,22 +87,22 @@ export class DigifranchiseController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Digifranchise owner not found.' })
   @Get('owner/:digifranchiseId')
   async getDigifranchiseOwnerByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseOwner> {
-     const digifranchiseOwner = await this.digifranchiseService.getDigifranchiseOwnerByDigifranchiseId(digifranchiseId);
-     if (!digifranchiseOwner) {
-       throw new NotFoundException('Digifranchise owner not found');
-     }
-     return digifranchiseOwner;
+    const digifranchiseOwner = await this.digifranchiseService.getDigifranchiseOwnerByDigifranchiseId(digifranchiseId);
+    if (!digifranchiseOwner) {
+      throw new NotFoundException('Digifranchise owner not found');
+    }
+    return digifranchiseOwner;
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
- @ApiOperation({ summary: 'CREATE - Create a new Digifranchise' })
- @ApiResponse({ status: HttpStatus.CREATED, description: 'A new Digifranchise has been successfully created.' })
- @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request.' })
- @Post('create-digifranchise')
- @HttpCode(HttpStatus.CREATED)
- async createDigifranchise(@Body() createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
+  @ApiOperation({ summary: 'CREATE - Create a new Digifranchise' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'A new Digifranchise has been successfully created.' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request.' })
+  @Post('create-digifranchise')
+  @HttpCode(HttpStatus.CREATED)
+  async createDigifranchise(@Body() createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
     return this.digifranchiseService.createDigifranchise(createDigifranchiseDto);
- }
+  }
 }
 
 
@@ -109,7 +113,8 @@ export class DigifranchiseController {
 export class DigifranchiseServiceOfferedController {
   constructor(
     private readonly digifranchiseService: DigifranchiseService,
-    private readonly digifranchiseGeneralInfoService: DigifranchiseGeneralInfoService
+    private readonly digifranchiseGeneralInfoService: DigifranchiseGeneralInfoService,
+    private readonly digifranchiseComplainceInfoService: DigifranchiseComplianceInfoService
   ) { }
 
 
@@ -136,7 +141,7 @@ export class DigifranchiseServiceOfferedController {
     @Param('serviceId') serviceId: string,
   ): Promise<DigifranchiseSubServices> {
     const userId = (req.user as UserEntity).id;
-  
+
     return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseSubServiceOfferedDto, userId, serviceId);
   }
 
@@ -189,11 +194,51 @@ export class DigifranchiseServiceOfferedController {
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET - Get general information of the digifranchise' })
+  @ApiResponse({ status: HttpStatus.OK })
   @Get('get-general-info')
   @HttpCode(HttpStatus.OK)
-  async getDigifranchiseGeneralInfo(@Req() req: Request, @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<void> {
+  async getDigifranchiseGeneralInfo(@Req() req: Request, @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseGeneralInfoService.getDigifranchiseGeneralInformation(userId, ownedDigifranchiseId);
+  }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'UPDATE - Update general information of the digifranchise' })
+  @Put('update-general-info')
+  @HttpCode(HttpStatus.OK)
+  async updateDigifranchiseGeneralInfo(
+    @Req() req: Request,
+    @Body() updateDigifranchiseGeneralInfo: UpdateDigifranchiseGeneralInfoDto,
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string
+  ): Promise<DigifranchiseGeneralInfo> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseGeneralInfoService.updateDigifranchiseGeneralInformation(userId, updateDigifranchiseGeneralInfo, ownedDigifranchiseId);
+  }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET - Get complaince information of the digifranchise' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @Get('get-compliance-info')
+  @HttpCode(HttpStatus.OK)
+  async getDigifranchiseComplainceInfo(
+    @Req() req: Request,
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseComplianceInfo> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseComplainceInfoService.getDigifranchiseComplianceInformation(userId, ownedDigifranchiseId);
+  }
+
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'UPDATE - Update compliance information of the digifranchise' })
+  @Put('update-complaince-info')
+  @HttpCode(HttpStatus.OK)
+  async updateDigifranchiseComplianceInfo(
+    @Req() req: Request,
+    @Body() updateDigifranchiseComplianceInfo: UpdateDigifranchiseComplianceInfoDto,
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string
+  ): Promise<DigifranchiseComplianceInfo> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseComplainceInfoService.updateDigifranchiseComplianceInformation(userId, updateDigifranchiseComplianceInfo, ownedDigifranchiseId);
   }
 
 }
@@ -218,7 +263,7 @@ export class DigifranchiseProductController {
   async findAllProductByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseProduct[]> {
     return this.productService.findAllProductByDigifranchiseId(digifranchiseId);
   }
-  
+
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'CREATE - Create Sub Product' })
@@ -232,7 +277,7 @@ export class DigifranchiseProductController {
     @Param('productId') productId: string,
   ): Promise<DigifranchiseSubProduct> {
     const userId = (req.user as UserEntity).id;
-  
+
     return this.productService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, productId);
   }
 

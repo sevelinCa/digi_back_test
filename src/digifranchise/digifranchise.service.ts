@@ -10,6 +10,8 @@ import type { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOf
 import type { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
 import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';
 import type { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
+import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
+import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 
 @Injectable()
 export class DigifranchiseService {
@@ -22,7 +24,10 @@ export class DigifranchiseService {
     private digifranchiseRepository: Repository<Digifranchise>,
     @InjectRepository(DigifranchiseServiceOffered)
     private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
-
+    @InjectRepository(DigifranchiseGeneralInfo)
+    private readonly digifranchiseGeneralInfoRepository: Repository<DigifranchiseGeneralInfo>,
+    @InjectRepository(DigifranchiseComplianceInfo)
+    private readonly digifranchiseComplianceInfoRepository: Repository<DigifranchiseComplianceInfo>,
     @InjectRepository(DigifranchiseSubServices)
     private readonly digifranchiseSubServiceOfferedRepository:Repository<DigifranchiseSubServices>
 
@@ -58,7 +63,51 @@ export class DigifranchiseService {
       digifranchise: digifranchise,
     });
 
-    return this.franchiseOwnershipRepository.save(newFranchiseOwner);
+    const savedFranchiseOwner = await this.franchiseOwnershipRepository.save(newFranchiseOwner)
+
+
+    // create general information instance
+    const getExistinngGeneralInfoInstance = await this.digifranchiseGeneralInfoRepository.find({ where: { ownedDigifranchiseId: savedFranchiseOwner.id }})
+    if (getExistinngGeneralInfoInstance) {
+      throw new Error('Digifranchise General info already exists');
+    }
+
+    const createGeneralInfoInstance = this.digifranchiseGeneralInfoRepository.create({
+      digifranchiseName: '',
+      ownedDigifranchiseId: savedFranchiseOwner.id,
+      facebookHandle: '',
+      tiktokHandle: '',
+      instagramHandle: '',
+      xHandle: '',
+      connectNumber: '',
+      address: '',
+      otherMobileNumber: '',
+      aboutCompany: '',
+      location: ''
+    })
+    this.digifranchiseGeneralInfoRepository.save(createGeneralInfoInstance)
+
+    // create compliance Information
+    const getExistinngComplianceInstance = await this.digifranchiseGeneralInfoRepository.find({ where: { ownedDigifranchiseId: savedFranchiseOwner.id }})
+    if (getExistinngGeneralInfoInstance) {
+      throw new Error('Digifranchise General info already exists');
+    }
+
+    const createComplianceInfoInstance = this.digifranchiseComplianceInfoRepository.create({
+      ownedDigifranchiseId: savedFranchiseOwner.id,
+      companyRegisterationNumber: '',
+      taxNumber: '',
+      taxClearencePin: '',
+      coidaRegisteration: '',
+      uifRegistration: '',
+      workMansCompensation: '',
+      sdlNumber: '',
+      otherComplianceDocs: '',
+      uploadedDocs: ''
+    })
+    this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
+
+    return savedFranchiseOwner;
   }
 
   async getDigifranchiseOwnerByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseOwner> {

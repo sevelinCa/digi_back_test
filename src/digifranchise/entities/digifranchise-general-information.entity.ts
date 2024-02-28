@@ -12,6 +12,9 @@ export class DigifranchiseGeneralInfo {
   digifranchiseId: DigifranchiseOwner;
 
   @Column()
+  ownedDigifranchiseId: string
+
+  @Column()
   digifranchiseName: string
 
   @Column()

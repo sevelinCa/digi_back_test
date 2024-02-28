@@ -9,9 +9,11 @@ import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
 import type { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 import { UpdateDigifranchiseGeneralInfoDto } from './dto/update-digifranchise-general-info.dto';
+import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
+import { UpdateDigifranchiseComplianceInfoDto } from './dto/update-digifranchise-compliance-info.dto';
 
 @Injectable()
-export class DigifranchiseGeneralInfoService {
+export class DigifranchiseComplianceInfoService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
@@ -21,42 +23,42 @@ export class DigifranchiseGeneralInfoService {
     private digifranchiseOwnersRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(DigifranchiseGeneralInfo)
     private readonly digifranchiseGeneralInfoRepository: Repository<DigifranchiseGeneralInfo>,
+    @InjectRepository(DigifranchiseComplianceInfo)
+    private readonly digifranchiseComplianceInfoRepository: Repository<DigifranchiseComplianceInfo>
   ) { }
 
-  async getDigifranchiseGeneralInformation(userId: string, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
-    const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({ where: { ownedDigifranchiseId } })
+  async getDigifranchiseComplianceInformation(userId: string, ownedDigifranchiseId: string): Promise<DigifranchiseComplianceInfo> {
+    const digifranchiseComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({ where: { ownedDigifranchiseId } })
 
-    if (!digifranchiseGeneralInfo) {
+    if (!digifranchiseComplianceInfo) {
       throw new NotFoundException(
         `digifranchise info not found`,
       );
     }
 
-    if (digifranchiseGeneralInfo.id !== userId) {
+    if (digifranchiseComplianceInfo.id !== userId) {
       throw new NotFoundException(
         `digifranchise not owned by current user`,
       );
     }
 
-    return digifranchiseGeneralInfo
+    return digifranchiseComplianceInfo
   }
 
-  async updateDigifranchiseGeneralInformation(userId: string, generalInfo: UpdateDigifranchiseGeneralInfoDto, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
-    const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({ where: { ownedDigifranchiseId } })
-    if (!digifranchiseGeneralInfo) {
+  async updateDigifranchiseComplianceInformation(userId: string, complianceInfo: UpdateDigifranchiseComplianceInfoDto, ownedDigifranchiseId: string): Promise<DigifranchiseComplianceInfo> {
+    const digifranchiseComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({ where: { ownedDigifranchiseId } })
+    if (!digifranchiseComplianceInfo) {
       throw new NotFoundException(
         `digifranchise info not found`,
       );
     }
 
-    if (digifranchiseGeneralInfo.id !== userId) {
+    if (digifranchiseComplianceInfo.id !== userId) {
       throw new NotFoundException(
         `digifranchise not owned by current user`,
       );
     }
 
-    // await 
-
-    return digifranchiseGeneralInfo
+    return digifranchiseComplianceInfo
   }
 }
