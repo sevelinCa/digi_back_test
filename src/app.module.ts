@@ -36,6 +36,7 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 // import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { SmsModule } from './sms/sms.module';
 import { UserModule } from './user/user.module';
+import { ProfessionalBodiesModule } from './professional-bodies/professional-bodies.module';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { UserModule } from './user/user.module';
     // AssetMgtModule,
     SmsModule,
     UserModule,
+    ProfessionalBodiesModule,
   ],
 })
 export class AppModule { }

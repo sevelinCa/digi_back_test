@@ -11,6 +11,7 @@ import { UserSeedModule } from './user/user-seed.module';
 import { FixedExpenseSeedModule } from './fixed-expense/seedFixedExpense-seeds.module';
 import { DigifranchiseServicerSeedModule } from './digifranchise-service/digifranchise-service-offer-seed.module';
 import { DigifranchiseProductSeedModule } from './digifranchise-product/digifranchise-product-offer-seed.module';
+import { ProfessionalBodySeedModule } from './professional-body/professional-body-seed.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DigifranchiseProductSeedModule } from './digifranchise-product/digifran
     FixedExpenseSeedModule,
     DigifranchiseServicerSeedModule,
     DigifranchiseProductSeedModule,
+    ProfessionalBodySeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],

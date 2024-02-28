@@ -44,8 +44,6 @@ export class DigifranchiseGeneralInfo {
   @Column()
   location: string
 
-  // Professional Body Memberships
-
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 

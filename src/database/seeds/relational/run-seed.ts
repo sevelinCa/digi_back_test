@@ -6,6 +6,7 @@ import { UserSeedService } from './user/user-seed.service';
 import { FixedExpenseSeedService } from './fixed-expense/seedFixedExpense-seeds.service';
 import { DigifranchiseServiceSeedService } from './digifranchise-service/digifranchise-service-seed.service';
 import { DigifranchiseProductSeedService } from './digifranchise-product/digifranchise-product-seed.service';
+import { ProfessionalBodySeedService } from './professional-body/professional-body-seed.service';
 
 
 const runSeed = async () => {
@@ -18,8 +19,7 @@ const runSeed = async () => {
   await app.get(FixedExpenseSeedService).run();
   await app.get(DigifranchiseServiceSeedService).run();
   await app.get(DigifranchiseProductSeedService).run();
-
-
+  await app.get(ProfessionalBodySeedService).run();
 
 
   await app.close();
