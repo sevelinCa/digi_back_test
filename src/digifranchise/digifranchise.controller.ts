@@ -90,15 +90,15 @@ export class DigifranchiseController {
      return digifranchiseOwner;
   }
 
-//   @Roles(RoleEnum.digifranchise_super_admin)
-//  @ApiOperation({ summary: 'CREATE - Create a new Digifranchise' })
-//  @ApiResponse({ status: HttpStatus.CREATED, description: 'A new Digifranchise has been successfully created.' })
-//  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request.' })
-//  @Post('create-digifranchise')
-//  @HttpCode(HttpStatus.CREATED)
-//  async createDigifranchise(@Body() createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
-//     return this.digifranchiseService.createDigifranchise(createDigifranchiseDto);
-//  }
+  @Roles(RoleEnum.digifranchise_super_admin)
+ @ApiOperation({ summary: 'CREATE - Create a new Digifranchise' })
+ @ApiResponse({ status: HttpStatus.CREATED, description: 'A new Digifranchise has been successfully created.' })
+ @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request.' })
+ @Post('create-digifranchise')
+ @HttpCode(HttpStatus.CREATED)
+ async createDigifranchise(@Body() createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
+    return this.digifranchiseService.createDigifranchise(createDigifranchiseDto);
+ }
 }
 
 
