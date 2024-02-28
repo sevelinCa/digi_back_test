@@ -15,34 +15,13 @@ export class DigifranchiseGeneralInfo {
   ownedDigifranchiseId: string
 
   @Column()
-  digifranchiseName: string
+  professionalOrganization: string
 
   @Column()
-  facebookHandle: string
+  accreditation: string
 
   @Column()
-  tiktokHandle: string
-
-  @Column()
-  instagramHandle: string
-
-  @Column()
-  xHandle: string
-
-  @Column()
-  address: string
-
-  @Column()
-  connectNumber: string
-
-  @Column()
-  otherMobileNumber: string
-
-  @Column()
-  aboutCompany: string
-
-  @Column()
-  location: string
+  renewelDate: string
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

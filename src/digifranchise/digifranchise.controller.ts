@@ -276,7 +276,7 @@ export class DigifranchiseProductController {
 
 }
 
-
+ 
 @ApiTags('Digifranchise General Info')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
