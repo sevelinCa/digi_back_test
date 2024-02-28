@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DigifranchiseController, DigifranchiseProductController, DigifranchiseServiceOfferedController } from './digifranchise.controller';
+import { DigifranchiseComplianceInfoController, DigifranchiseController, DigifranchiseGeneralInfoController, DigifranchiseProductController, DigifranchiseServiceOfferedController } from './digifranchise.controller';
 import { DigifranchiseService } from './digifranchise.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
@@ -12,6 +12,8 @@ import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.e
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { ProductService } from './product.service';
 import { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
+import { DigifranchiseComplianceInfoService } from './digifranchise-compliance-information.service';
+import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 
 @Module({
   imports: [
@@ -23,10 +25,21 @@ import { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.en
       DigifranchiseSubProduct,
       Digifranchise,
       DigifranchiseOwner,
-      DigifranchiseGeneralInfo
+      DigifranchiseGeneralInfo,
+      DigifranchiseComplianceInfo
     ]),
   ],
-  controllers: [DigifranchiseController,DigifranchiseServiceOfferedController,DigifranchiseProductController],
-  providers: [DigifranchiseService, DigifranchiseGeneralInfoService, ProductService]
+  controllers: [
+    DigifranchiseController,
+    DigifranchiseServiceOfferedController,
+    DigifranchiseProductController,
+    DigifranchiseGeneralInfoController,
+    DigifranchiseComplianceInfoController
+  ],
+  providers: [
+    DigifranchiseService, 
+    DigifranchiseGeneralInfoService, 
+    DigifranchiseComplianceInfoService, 
+    ProductService]
 })
 export class DigifranchiseModule {}

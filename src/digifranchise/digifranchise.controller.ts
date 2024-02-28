@@ -113,7 +113,6 @@ export class DigifranchiseController {
 export class DigifranchiseServiceOfferedController {
   constructor(
     private readonly digifranchiseService: DigifranchiseService,
-    private readonly digifranchiseGeneralInfoService: DigifranchiseGeneralInfoService,
     private readonly digifranchiseComplainceInfoService: DigifranchiseComplianceInfoService
   ) { }
 
@@ -190,57 +189,6 @@ export class DigifranchiseServiceOfferedController {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseService.deleteSubService(userId, id);
   }
-
-
-  @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'GET - Get general information of the digifranchise' })
-  @ApiResponse({ status: HttpStatus.OK })
-  @Get('get-general-info')
-  @HttpCode(HttpStatus.OK)
-  async getDigifranchiseGeneralInfo(@Req() req: Request, @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
-    const userId = (req.user as UserEntity).id;
-    return this.digifranchiseGeneralInfoService.getDigifranchiseGeneralInformation(userId, ownedDigifranchiseId);
-  }
-
-  @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'UPDATE - Update general information of the digifranchise' })
-  @Put('update-general-info')
-  @HttpCode(HttpStatus.OK)
-  async updateDigifranchiseGeneralInfo(
-    @Req() req: Request,
-    @Body() updateDigifranchiseGeneralInfo: UpdateDigifranchiseGeneralInfoDto,
-    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string
-  ): Promise<DigifranchiseGeneralInfo> {
-    const userId = (req.user as UserEntity).id;
-    return this.digifranchiseGeneralInfoService.updateDigifranchiseGeneralInformation(userId, updateDigifranchiseGeneralInfo, ownedDigifranchiseId);
-  }
-
-  @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'GET - Get complaince information of the digifranchise' })
-  @ApiResponse({ status: HttpStatus.OK })
-  @Get('get-compliance-info')
-  @HttpCode(HttpStatus.OK)
-  async getDigifranchiseComplainceInfo(
-    @Req() req: Request,
-    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseComplianceInfo> {
-    const userId = (req.user as UserEntity).id;
-    return this.digifranchiseComplainceInfoService.getDigifranchiseComplianceInformation(userId, ownedDigifranchiseId);
-  }
-
-
-  @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'UPDATE - Update compliance information of the digifranchise' })
-  @Put('update-complaince-info')
-  @HttpCode(HttpStatus.OK)
-  async updateDigifranchiseComplianceInfo(
-    @Req() req: Request,
-    @Body() updateDigifranchiseComplianceInfo: UpdateDigifranchiseComplianceInfoDto,
-    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string
-  ): Promise<DigifranchiseComplianceInfo> {
-    const userId = (req.user as UserEntity).id;
-    return this.digifranchiseComplainceInfoService.updateDigifranchiseComplianceInformation(userId, updateDigifranchiseComplianceInfo, ownedDigifranchiseId);
-  }
-
 }
 
 
@@ -252,8 +200,6 @@ export class DigifranchiseProductController {
   constructor(
     private readonly productService: ProductService,
   ) { }
-
-
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise products  by Digifranchise ID' })
@@ -330,3 +276,72 @@ export class DigifranchiseProductController {
 
 }
 
+
+@ApiTags('Digifranchise General Info')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'digifranchise', version: '1' })
+export class DigifranchiseGeneralInfoController {
+  constructor(
+    private readonly digifranchiseGeneralInfoService: DigifranchiseGeneralInfoService,
+  ) { }
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET - Get general information of the digifranchise' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @Get('get-general-info')
+  @HttpCode(HttpStatus.OK)
+  async getDigifranchiseGeneralInfo(@Req() req: Request, @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseGeneralInfoService.getDigifranchiseGeneralInformation(userId, ownedDigifranchiseId);
+  }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'UPDATE - Update general information of the digifranchise' })
+  @Put('update-general-info')
+  @HttpCode(HttpStatus.OK)
+  async updateDigifranchiseGeneralInfo(
+    @Req() req: Request,
+    @Body() updateDigifranchiseGeneralInfo: UpdateDigifranchiseGeneralInfoDto,
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string
+  ): Promise<DigifranchiseGeneralInfo> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseGeneralInfoService.updateDigifranchiseGeneralInformation(userId, updateDigifranchiseGeneralInfo, ownedDigifranchiseId);
+  }
+}
+
+
+
+@ApiTags('Digifranchise Compliance Info')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'digifranchise', version: '1' })
+export class DigifranchiseComplianceInfoController {
+  constructor(
+    private readonly digifranchiseComplainceInfoService: DigifranchiseComplianceInfoService,
+  ) { }
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET - Get complaince information of the digifranchise' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @Get('get-compliance-info')
+  @HttpCode(HttpStatus.OK)
+  async getDigifranchiseComplainceInfo(
+    @Req() req: Request,
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseComplianceInfo> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseComplainceInfoService.getDigifranchiseComplianceInformation(userId, ownedDigifranchiseId);
+  }
+
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'UPDATE - Update compliance information of the digifranchise' })
+  @Put('update-complaince-info')
+  @HttpCode(HttpStatus.OK)
+  async updateDigifranchiseComplianceInfo(
+    @Req() req: Request,
+    @Body() updateDigifranchiseComplianceInfo: UpdateDigifranchiseComplianceInfoDto,
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string
+  ): Promise<DigifranchiseComplianceInfo> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseComplainceInfoService.updateDigifranchiseComplianceInformation(userId, updateDigifranchiseComplianceInfo, ownedDigifranchiseId);
+  }
+}

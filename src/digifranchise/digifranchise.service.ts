@@ -89,7 +89,7 @@ export class DigifranchiseService {
 
     // create compliance Information
     const getExistinngComplianceInstance = await this.digifranchiseGeneralInfoRepository.find({ where: { ownedDigifranchiseId: savedFranchiseOwner.id }})
-    if (getExistinngGeneralInfoInstance) {
+    if (getExistinngComplianceInstance) {
       throw new Error('Digifranchise General info already exists');
     }
 
