@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DigifranchiseComplianceInfoController, DigifranchiseController, DigifranchiseGeneralInfoController, DigifranchiseProductController, DigifranchiseServiceOfferedController } from './digifranchise.controller';
+import { DigifranchiseComplianceInfoController, DigifranchiseController, DigifranchiseGeneralInfoController, DigifranchiseProductController, DigifranchiseProfessionalMembershipController, DigifranchiseServiceOfferedController } from './digifranchise.controller';
 import { DigifranchiseService } from './digifranchise.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
@@ -14,6 +14,8 @@ import { ProductService } from './product.service';
 import { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
 import { DigifranchiseComplianceInfoService } from './digifranchise-compliance-information.service';
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
+import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
+import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-professional-body-membership.service';
 
 @Module({
   imports: [
@@ -26,7 +28,8 @@ import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance
       Digifranchise,
       DigifranchiseOwner,
       DigifranchiseGeneralInfo,
-      DigifranchiseComplianceInfo
+      DigifranchiseComplianceInfo,
+      DigifranchiseProfessionalBodyMembership
     ]),
   ],
   controllers: [
@@ -34,12 +37,15 @@ import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance
     DigifranchiseServiceOfferedController,
     DigifranchiseProductController,
     DigifranchiseGeneralInfoController,
-    DigifranchiseComplianceInfoController
+    DigifranchiseComplianceInfoController,
+    DigifranchiseProfessionalMembershipController
   ],
   providers: [
     DigifranchiseService, 
     DigifranchiseGeneralInfoService, 
-    DigifranchiseComplianceInfoService, 
-    ProductService]
+    DigifranchiseComplianceInfoService,
+    DigifranchiseProfessionalBodyMembershipService,
+    ProductService
+  ]
 })
 export class DigifranchiseModule {}

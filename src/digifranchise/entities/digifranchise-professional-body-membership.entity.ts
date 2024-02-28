@@ -15,7 +15,7 @@ export class DigifranchiseProfessionalBodyMembership {
   accreditationId: string
 
   @Column()
-  renewelDate: string
+  renewalDate: string
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

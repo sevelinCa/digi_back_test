@@ -52,8 +52,8 @@ export class DigifranchiseComplianceInfoService {
     digifranchiseComplianceInfo.otherComplianceDocs = dto.otherComplianceDocs
     digifranchiseComplianceInfo.uploadedDocs = dto.uploadedDocs
 
-    this.digifranchiseGeneralInfoRepository.save(digifranchiseComplianceInfo)
+    const savedComplianceInfo = this.digifranchiseComplianceInfoRepository.save(digifranchiseComplianceInfo)
 
-    return digifranchiseComplianceInfo
+    return savedComplianceInfo
   }
 }

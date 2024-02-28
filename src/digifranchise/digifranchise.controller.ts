@@ -24,6 +24,9 @@ import { UpdateDigifranchiseGeneralInfoDto } from './dto/update-digifranchise-ge
 import { UpdateDigifranchiseComplianceInfoDto } from './dto/update-digifranchise-compliance-info.dto';
 import { DigifranchiseComplianceInfoService } from './digifranchise-compliance-information.service';
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
+import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-professional-body-membership.service';
+import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
+import { AddProfessionalMembershipDto } from './dto/add-digifranchise-professional-membership.dto';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -276,7 +279,7 @@ export class DigifranchiseProductController {
 
 }
 
- 
+
 @ApiTags('Digifranchise General Info')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -343,5 +346,38 @@ export class DigifranchiseComplianceInfoController {
   ): Promise<DigifranchiseComplianceInfo> {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseComplainceInfoService.updateDigifranchiseComplianceInformation(userId, updateDigifranchiseComplianceInfo, ownedDigifranchiseId);
+  }
+}
+
+
+@ApiTags('Digifranchise Professional Membership')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'digifranchise', version: '1' })
+export class DigifranchiseProfessionalMembershipController {
+  constructor(
+    private readonly digifranchiseProfessionalMembershipService: DigifranchiseProfessionalBodyMembershipService,
+  ) { }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET - Get professional memberships information of the digifranchise' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @Get('get-professional-memberships-info')
+  @HttpCode(HttpStatus.OK)
+  async getProfessionalMembershipsInfo(
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseProfessionalBodyMembership> {
+    return this.digifranchiseProfessionalMembershipService.getDigifranchiseProfessionalMemberships(ownedDigifranchiseId);
+  }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'POST - Add professional memberships information of the digifranchise' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @Post('add-professional-memberships-info')
+  @HttpCode(HttpStatus.OK)
+  async addProfessionalMembership(
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string,
+    @Body() dto: AddProfessionalMembershipDto
+  ): Promise<DigifranchiseProfessionalBodyMembership> {
+    return this.digifranchiseProfessionalMembershipService.getDigifranchiseProfessionalMemberships(ownedDigifranchiseId);
   }
 }

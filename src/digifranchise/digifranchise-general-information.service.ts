@@ -42,7 +42,7 @@ export class DigifranchiseGeneralInfoService {
         `digifranchise not owned by current user`,
       );
     }
-
+    
     digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
     digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle
     digifranchiseGeneralInfo.tiktokHandle = dto.tiktokHandle
