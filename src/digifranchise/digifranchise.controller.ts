@@ -213,24 +213,24 @@ export class DigifranchiseProductController {
     return this.roductService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, productId);
   }
 
-  // @Roles(RoleEnum.digifranchise_super_admin)
-  // @ApiOperation({ summary: 'GET ALL - Retrieve all Sub products' })
-  // @ApiResponse({ status: HttpStatus.OK, description: 'All Sub products  have been successfully retrieved.' })
-  // @Get('get-all-sub-products')
-  // @HttpCode(HttpStatus.OK)
-  // async getAllSubService(@Req() req: Request): Promise<DigifranchiseSubServices[]> {
-  //   const userId = (req.user as UserEntity).id;
-  //   return this.digifranchiseService.getAllSubService(userId);
-  // }
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET ALL - Retrieve all Sub products' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'All Sub products  have been successfully retrieved.' })
+  @Get('get-all-sub-products')
+  @HttpCode(HttpStatus.OK)
+  async getAllSubService(@Req() req: Request): Promise<DigifranchiseSubProduct[]> {
+    const userId = (req.user as UserEntity).id;
+    return this.roductService.getAllSubProduct(userId);
+  }
 
   // @Roles(RoleEnum.digifranchise_super_admin)
   // @ApiOperation({ summary: 'GET ONE - Retrieve a Sub product by ID' })
-  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub service  has been successfully retrieved.' })
-  // @Get('get-sub-service/:id')
+  // @ApiResponse({ status: HttpStatus.OK, description: 'Sub product  has been successfully retrieved.' })
+  // @Get('get-sub-product/:id')
   // @HttpCode(HttpStatus.OK)
-  // async getOneSubServiceById(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseSubServices> {
+  // async getOneSubServiceById(@Req() req: Request, @Param('id') id: string): Promise<DigifranchiseSubProduct> {
   //   const userId = (req.user as UserEntity).id;
-  //   return this.digifranchiseService.getOneSubServiceById(userId, id);
+  //   return this.roductService.getOneSubProductById(userId, id);
   // }
 
   // @Roles(RoleEnum.digifranchise_super_admin)
