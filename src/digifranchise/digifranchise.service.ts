@@ -9,6 +9,7 @@ import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
 import type { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 import type { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
 import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';
+import type { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
 
 @Injectable()
 export class DigifranchiseService {
@@ -27,7 +28,11 @@ export class DigifranchiseService {
 
   ) { }
 
-
+//   async createDigifranchise(createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
+//     const newDigifranchise = this.digifranchiseRepository.create(createDigifranchiseDto);
+//     return this.digifranchiseRepository.save(newDigifranchise);
+//  }
+ 
   async findAllDigifranchise(): Promise<Digifranchise[]> {
     return await this.digifranchiseRepository.find();
   }
@@ -56,6 +61,14 @@ export class DigifranchiseService {
     return this.franchiseOwnershipRepository.save(newFranchiseOwner);
   }
 
+  async getDigifranchiseOwnerByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseOwner> {
+    const digifranchiseOwner = await this.franchiseOwnershipRepository.findOne({ where: { digifranchiseId: Equal(digifranchiseId) } });
+    if (!digifranchiseOwner) {
+       throw new NotFoundException('Digifranchise owner not found');
+    }
+    return digifranchiseOwner;
+   }
+   
   async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.find({
       where: {

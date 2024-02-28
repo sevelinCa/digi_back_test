@@ -76,6 +76,29 @@ export class DigifranchiseController {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseService.findAllOwnedDigifranchiseByUserId(userId);
   }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET - Retrieve Digifranchise owner by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Digifranchise owner has been successfully retrieved.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Digifranchise owner not found.' })
+  @Get('owner/:digifranchiseId')
+  async getDigifranchiseOwnerByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseOwner> {
+     const digifranchiseOwner = await this.digifranchiseService.getDigifranchiseOwnerByDigifranchiseId(digifranchiseId);
+     if (!digifranchiseOwner) {
+       throw new NotFoundException('Digifranchise owner not found');
+     }
+     return digifranchiseOwner;
+  }
+
+//   @Roles(RoleEnum.digifranchise_super_admin)
+//  @ApiOperation({ summary: 'CREATE - Create a new Digifranchise' })
+//  @ApiResponse({ status: HttpStatus.CREATED, description: 'A new Digifranchise has been successfully created.' })
+//  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request.' })
+//  @Post('create-digifranchise')
+//  @HttpCode(HttpStatus.CREATED)
+//  async createDigifranchise(@Body() createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
+//     return this.digifranchiseService.createDigifranchise(createDigifranchiseDto);
+//  }
 }
 
 
