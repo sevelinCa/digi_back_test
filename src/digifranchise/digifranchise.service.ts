@@ -28,10 +28,10 @@ export class DigifranchiseService {
 
   ) { }
 
-//   async createDigifranchise(createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
-//     const newDigifranchise = this.digifranchiseRepository.create(createDigifranchiseDto);
-//     return this.digifranchiseRepository.save(newDigifranchise);
-//  }
+  async createDigifranchise(createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
+    const newDigifranchise = this.digifranchiseRepository.create(createDigifranchiseDto);
+    return this.digifranchiseRepository.save(newDigifranchise);
+ }
  
   async findAllDigifranchise(): Promise<Digifranchise[]> {
     return await this.digifranchiseRepository.find();
