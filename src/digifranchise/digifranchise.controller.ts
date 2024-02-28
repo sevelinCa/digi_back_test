@@ -198,19 +198,19 @@ export class DigifranchiseProductController {
   
 
   @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'CREATE - Create Sub Service' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'You have created subservice.' })
+  @ApiOperation({ summary: 'CREATE - Create Sub Product' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'You have created sub product.' })
   @ApiBody({ type: CreateDigifranchiseSubProductDto })
-  @Post('create-sub-service/:serviceId')
+  @Post('create-sub-product/:productId')
   @HttpCode(HttpStatus.OK)
   async createSubDigifranchiseProduct(
     @Body() createDigifranchiseSubProductDto: CreateDigifranchiseSubProductDto,
     @Req() req: Request,
-    @Param('serviceId') serviceId: string,
+    @Param('productId') productId: string,
   ): Promise<DigifranchiseSubProduct> {
     const userId = (req.user as UserEntity).id;
   
-    return this.roductService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, serviceId);
+    return this.roductService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, productId);
   }
 
   // @Roles(RoleEnum.digifranchise_super_admin)
@@ -224,7 +224,7 @@ export class DigifranchiseProductController {
   // }
 
   // @Roles(RoleEnum.digifranchise_super_admin)
-  // @ApiOperation({ summary: 'GET ONE - Retrieve a Sub service by ID' })
+  // @ApiOperation({ summary: 'GET ONE - Retrieve a Sub product by ID' })
   // @ApiResponse({ status: HttpStatus.OK, description: 'Sub service  has been successfully retrieved.' })
   // @Get('get-sub-service/:id')
   // @HttpCode(HttpStatus.OK)

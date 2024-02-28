@@ -5,7 +5,7 @@ export class CreateDigifranchiseSubProductDto {
     @ApiProperty({ example: 'Phone Training Sessions 1-on-1' })
     @IsNotEmpty()
     @IsString()
-    serviceName: string;
+    productName: string;
 
     @ApiProperty({ example: 'Phone Training Sessions' })
     @IsNotEmpty()
@@ -22,7 +22,7 @@ export class UpdateDigifranchiseSubProductDto {
     @ApiProperty({ example: 'Phone Training Sessions 1-on-1' })
     @IsOptional()
     @IsString()
-    serviceName: string;
+    productName: string;
 
     @ApiProperty({ example: 'Phone Training Sessions' })
     @IsOptional()
