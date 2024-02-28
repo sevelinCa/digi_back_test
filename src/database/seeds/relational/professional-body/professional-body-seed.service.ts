@@ -29,43 +29,43 @@ export class ProfessionalBodySeedService {
       })
     )
 
-    this.accreditationBodyRepo.save(
+    await this.accreditationBodyRepo.save(
       this.accreditationBodyRepo.create({
         id: uuidv4(),
         accreditationName: "Accreditation - Professionale Body 1",
-        professionalBody: professionalBody1
+        professionalBodyId: professionalBody1.id
       })
     )
 
-    this.accreditationBodyRepo.save(
+    await this.accreditationBodyRepo.save(
       this.accreditationBodyRepo.create({
         id: uuidv4(),
         accreditationName: "Accreditation 2 - Professionale Body 1",
-        professionalBody: professionalBody1
+        professionalBodyId: professionalBody1.id
       })
     )
 
-    this.accreditationBodyRepo.save(
+    await this.accreditationBodyRepo.save(
       this.accreditationBodyRepo.create({
         id: uuidv4(),
         accreditationName: "Accreditation 3 - Professionale Body 1",
-        professionalBody: professionalBody1
+        professionalBodyId: professionalBody1.id
       })
     )
 
-    this.accreditationBodyRepo.save(
+    await this.accreditationBodyRepo.save(
       this.accreditationBodyRepo.create({
         id: uuidv4(),
         accreditationName: "Accreditation 1 - Professionale Body 2",
-        professionalBody: professionalBody2
+        professionalBodyId: professionalBody2.id
       })
     )
 
-    this.accreditationBodyRepo.save(
+    await this.accreditationBodyRepo.save(
       this.accreditationBodyRepo.create({
         id: uuidv4(),
         accreditationName: "Accreditation 2 - Professionale Body 2",
-        professionalBody: professionalBody2
+        professionalBodyId: professionalBody2.id
       })
     )
   }

@@ -9,6 +9,9 @@ export class Accreditation {
   @Column()
   accreditationName: string;
 
-  @ManyToOne(() => ProfessionalBodyEntity, professionalBody => professionalBody.accreditations)
+  @ManyToOne(() => ProfessionalBodyEntity)
   professionalBody: ProfessionalBodyEntity;
+
+  @Column()
+  professionalBodyId: string
 }
