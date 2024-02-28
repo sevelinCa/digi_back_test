@@ -12,7 +12,10 @@ export class DigifranchiseComplianceInfo {
   digifranchiseId: DigifranchiseOwner;
 
   @Column()
-  companyRegisterationNumber: string
+  ownedDigifranchiseId: string
+
+  @Column()
+  companyRegisterationNumber: string 
 
   @Column()
   taxNumber: string
