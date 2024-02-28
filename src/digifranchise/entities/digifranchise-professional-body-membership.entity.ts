@@ -1,24 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
-import { DigifranchiseOwner } from './digifranchise-ownership.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity()
-export class DigifranchiseGeneralInfo {
+export class DigifranchiseProfessionalBodyMembership {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  // General Information
-  @OneToOne(() => DigifranchiseOwner)
-  @JoinColumn({ name: 'ownedDigifranchiseId' })
-  digifranchiseId: DigifranchiseOwner;
 
   @Column()
   ownedDigifranchiseId: string
 
   @Column()
-  professionalOrganization: string
+  professionalOrganizationId: string
 
   @Column()
-  accreditation: string
+  accreditationId: string
 
   @Column()
   renewelDate: string
