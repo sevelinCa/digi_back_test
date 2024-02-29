@@ -10,6 +10,8 @@ import {
   Patch,
   Delete,
   SerializeOptions,
+  Req,
+  HttpException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -67,10 +69,17 @@ export class AuthController {
   @Post('digifranchise-super-admin/google')
   @HttpCode(HttpStatus.OK)
   public async googleAuthentication(
+    @Req() req,
     @Body() authDto: GoogleCreateUserDto,
   ) {
-    const data = await this.service.googleAuth(authDto);
+    if (req.baseUrl != process.env.FRONTEND_DOMAIN) {
+      throw new HttpException({
+        status: HttpStatus.BAD_REQUEST,
+        error: 'Not Authorized',
+      }, HttpStatus.BAD_REQUEST)
+    }
 
+    const data = await this.service.googleAuth(authDto);
     return {
       user: {
         ...data.user,
@@ -82,25 +91,25 @@ export class AuthController {
   }
   
 
-  @SerializeOptions({
-    groups: ['me'],
-  })
-  @Post('digifranchise-super-admin/facebook')
-  @HttpCode(HttpStatus.OK)
-  public async faceBookAuthentication(
-    @Body() authDto: FaceBookCreateUserDto,
-  ) {
-    const data = await this.service.faceBookAuth(authDto);
+  // @SerializeOptions({
+  //   groups: ['me'],
+  // })
+  // @Post('digifranchise-super-admin/facebook')
+  // @HttpCode(HttpStatus.OK)
+  // public async faceBookAuthentication(
+  //   @Body() authDto: FaceBookCreateUserDto,
+  // ) {
+  //   const data = await this.service.faceBookAuth(authDto);
 
-    return {
-      user: {
-        ...data.user,
-        token: data.token,
-        refreshToken: data.refreshToken,
-        tokenExpires: data.tokenExpires
-      }
-    }
-  }
+  //   return {
+  //     user: {
+  //       ...data.user,
+  //       token: data.token,
+  //       refreshToken: data.refreshToken,
+  //       tokenExpires: data.tokenExpires
+  //     }
+  //   }
+  // }
 
 
   @SerializeOptions({
