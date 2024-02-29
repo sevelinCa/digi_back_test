@@ -35,6 +35,10 @@ export class ProfessionalBody {
   expiryDate: Date
 }
 
+export class Crimes {
+  crimeName: string;
+}
+
 @Entity({
   name: 'user',
 })
@@ -138,6 +142,21 @@ export class UserEntity extends EntityRelationalHelper implements User {
 
   @Column({ type: 'json', nullable: true })
   professionalBody: ProfessionalBody[] | null;
+
+  @Column({ type: String, nullable: true })
+  southAfricanCitizen: boolean
+
+  @Column({ type: String, nullable: true })
+  documentId: string
+
+  @Column({ type: String, nullable: true })
+  countryOfOrigin: string
+
+  @Column({ type: String, nullable: true })
+  policeClearenceCertificate: string
+
+  @Column({ type: 'json', nullable: true })
+  crimes: Crimes[] | null
 
   @Column({ type: 'boolean', nullable: true, default: false })
   isProfileComplete: boolean;

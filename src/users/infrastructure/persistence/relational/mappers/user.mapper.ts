@@ -12,6 +12,7 @@ export class UserMapper {
     user.email = raw.email;
     user.password = raw.password;
     user.previousPassword = raw.previousPassword;
+    user.phoneNumber = raw.phoneNumber;
     user.provider = raw.provider;
     user.socialId = raw.socialId;
     user.firstName = raw.firstName;
@@ -28,14 +29,19 @@ export class UserMapper {
 
     user.image = raw.image;
     user.idImage = raw.idImage;
-    user.gender= raw.gender;
-    user.race= raw.race;
-    user.homeAddress= raw.homeAddress;
-    user.educationLevel= raw.educationLevel;
-    user.currentActivity= raw.currentActivity;
-    user.fieldOfStudy= raw.fieldOfStudy;
+    user.gender = raw.gender;
+    user.race = raw.race;
+    user.homeAddress = raw.homeAddress;
+    user.educationLevel = raw.educationLevel;
+    user.currentActivity = raw.currentActivity;
+    user.fieldOfStudy = raw.fieldOfStudy;
     user.qualifications = raw.qualifications;
-    user.professionalBody= raw.professionalBody;
+    user.professionalBody = raw.professionalBody;
+    user.southAfricanCitizen = raw.southAfricanCitizen;
+    user.documentId = raw.documentId;
+    user.countryOfOrigin = raw.countryOfOrigin;
+    user.policeClearenceCertificate = raw.policeClearenceCertificate;
+    user.crimes = raw.crimes;
     user.isProfileComplete = raw.isProfileComplete;
 
     return user;

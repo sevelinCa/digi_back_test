@@ -70,6 +70,15 @@ export class ProfessionalBody {
   expiryDate: Date
 }
 
+export class Crimes {
+  @ApiProperty({
+    example: 'Burglary',
+    description: 'name of crim',
+  })
+  @IsNotEmpty()
+  @IsString()
+  crimeName: string;
+}
 
 
 export class UserProfileDto {
@@ -184,5 +193,45 @@ export class UserProfileDto {
   })
   @IsOptional()
   professionalBody: ProfessionalBody[];
+
+  @ApiProperty({
+    example: 'false',
+    description: 'If SA citizen, true, else false',
+  })
+  @IsOptional()
+  @IsString()
+  southAfricanCitizen: boolean | null
+
+  @ApiProperty({
+    example: 'PC094824',
+    description: 'ID or Document number',
+  })
+  @IsOptional()
+  @IsString()
+  documentId: string | null
+
+  @ApiProperty({
+    example: 'Mozambique',
+    description: 'Country of Origin of user',
+  })
+  @IsOptional()
+  @IsString()
+  countryOfOrigin: string | null
+
+  @ApiProperty({
+    example: 'https://example.com/file.pdf',
+    description: 'Link to Police Clearence Certficate',
+  })
+  @IsOptional()
+  @IsString()
+  policeClearenceCertificate: string | null
+
+  @ApiProperty({
+    type: () => Crimes,
+    isArray: true,
+    description: 'An array of crimes done by the uer',
+  })
+  @IsOptional()
+  crimes: Crimes[] | null
 
 }
