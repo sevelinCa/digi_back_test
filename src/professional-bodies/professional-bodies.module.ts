@@ -3,11 +3,13 @@ import { ProfessionalBodiesService } from './professional-bodies.service';
 import { ProfessionalBodiesController } from './professional-bodies.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfessionalBodyEntity } from './entities/professional-body.entity';
+import { Accreditation } from './entities/professional-accreditation.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature(
     [
-      ProfessionalBodyEntity
+      ProfessionalBodyEntity,
+      Accreditation
     ]
   )],
   providers: [ProfessionalBodiesService],

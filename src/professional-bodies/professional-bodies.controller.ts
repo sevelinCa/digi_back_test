@@ -9,8 +9,8 @@ import { ProfessionalBodyEntity } from './entities/professional-body.entity';
 
 
 @ApiTags('Professional Bodies')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: '', version: '1' })
 @Controller('professional-bodies')
 export class ProfessionalBodiesController {
@@ -24,6 +24,7 @@ export class ProfessionalBodiesController {
   @Get('get-professional-bodies')
   @HttpCode(HttpStatus.OK)
   async getProfessionalBodies(): Promise<ProfessionalBodyEntity[]> {
+    // const professionalBodies = await this.
     return this.professionalBodyService.getProfessionalBodies();
   }
 }
