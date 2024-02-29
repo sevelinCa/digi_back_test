@@ -67,11 +67,6 @@ export class DigifranchiseService {
 
 
     // create general information instance
-    const getExistinngGeneralInfoInstance = await this.digifranchiseGeneralInfoRepository.find({ where: { ownedDigifranchiseId: savedFranchiseOwner.id }})
-    if (getExistinngGeneralInfoInstance) {
-      throw new Error('Digifranchise General info already exists');
-    }
-
     const createGeneralInfoInstance = this.digifranchiseGeneralInfoRepository.create({
       digifranchiseName: '',
       ownedDigifranchiseId: savedFranchiseOwner.id,
@@ -85,14 +80,9 @@ export class DigifranchiseService {
       aboutCompany: '',
       location: ''
     })
-    this.digifranchiseGeneralInfoRepository.save(createGeneralInfoInstance)
+    await this.digifranchiseGeneralInfoRepository.save(createGeneralInfoInstance)
 
     // create compliance Information
-    const getExistinngComplianceInstance = await this.digifranchiseGeneralInfoRepository.find({ where: { ownedDigifranchiseId: savedFranchiseOwner.id }})
-    if (getExistinngComplianceInstance) {
-      throw new Error('Digifranchise General info already exists');
-    }
-
     const createComplianceInfoInstance = this.digifranchiseComplianceInfoRepository.create({
       ownedDigifranchiseId: savedFranchiseOwner.id,
       companyRegisterationNumber: '',
@@ -105,7 +95,7 @@ export class DigifranchiseService {
       otherComplianceDocs: '',
       uploadedDocs: ''
     })
-    this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
+    await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
 
     return savedFranchiseOwner;
   }
