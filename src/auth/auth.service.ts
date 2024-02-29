@@ -540,7 +540,8 @@ export class AuthService {
   }
 
   async resetPasswordWithPhone(otp: string, phoneNumber: string, newPassword: string): Promise<any> {
-    const phoneIsVerified = await this.smsService.verifyOTP(otp, phoneNumber)
+    const phoneIsVerified = await this.smsService.verifyOTP(phoneNumber, otp)
+
     if (!phoneIsVerified) {
       throw new HttpException(
         {
