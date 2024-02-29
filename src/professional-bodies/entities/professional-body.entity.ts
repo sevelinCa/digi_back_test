@@ -10,5 +10,5 @@ export class ProfessionalBodyEntity {
   professionalBodyName: string;
 
   @OneToMany(() => Accreditation, accreditation => accreditation.professionalBody)
-  accreditations: Accreditation[];
+  accreditations: Accreditation[]; 
 }
