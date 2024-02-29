@@ -20,11 +20,11 @@ export class DigifranchiseComplianceInfoService {
       );
     }
 
-    if (digifranchiseComplianceInfo.id !== userId) {
-      throw new NotFoundException(
-        `digifranchise not owned by current user`,
-      );
-    }
+    // if (digifranchiseComplianceInfo.id !== userId) {
+    //   throw new NotFoundException(
+    //     `digifranchise not owned by current user`,
+    //   );
+    // }
 
     return digifranchiseComplianceInfo
   }
@@ -37,11 +37,11 @@ export class DigifranchiseComplianceInfoService {
       );
     }
 
-    if (digifranchiseComplianceInfo.id !== userId) {
-      throw new NotFoundException(
-        `digifranchise not owned by current user`,
-      );
-    }
+    // if (digifranchiseComplianceInfo.id !== userId) {
+    //   throw new NotFoundException(
+    //     `digifranchise not owned by current user`,
+    //   );
+    // }
 
     digifranchiseComplianceInfo.companyRegisterationNumber = dto.companyRegisterationNumber
     digifranchiseComplianceInfo.taxNumber = dto.taxNumber

@@ -7,9 +7,9 @@ export class DigifranchiseComplianceInfo {
   id: string;
 
   // General Information
-  @OneToOne(() => DigifranchiseOwner)
-  @JoinColumn({ name: 'ownedDigifranchiseId' })
-  digifranchiseId: DigifranchiseOwner;
+  // @OneToOne(() => DigifranchiseOwner)
+  // @JoinColumn({ name: 'ownedDigifranchiseId' })
+  // digifranchiseId: DigifranchiseOwner;
 
   @Column()
   ownedDigifranchiseId: string
