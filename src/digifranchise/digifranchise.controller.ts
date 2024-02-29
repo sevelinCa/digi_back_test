@@ -59,7 +59,7 @@ export class DigifranchiseController {
     try {
       return await this.digifranchiseService.ownDigifranchise(userId, digifranchiseId);
     } catch (error) {
-      console.log('>>>>>>', error)
+      // console.log('>>>>>>', error)
       if (error.message === 'User already own this digifranchise') {
         throw new HttpException({
           status: HttpStatus.BAD_REQUEST,

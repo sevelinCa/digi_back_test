@@ -3,7 +3,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { Role } from 'src/roles/domain/role';
 import { Status } from 'src/statuses/domain/status';
 import { PrimaryGeneratedColumn } from 'typeorm';
-import { ProfessionalBody, Qualifications } from '../infrastructure/persistence/relational/entities/user.entity';
+import { Crimes, ProfessionalBody, Qualifications } from '../infrastructure/persistence/relational/entities/user.entity';
 
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -26,7 +26,6 @@ export class User {
 
   @Expose({ groups: ['me', 'admin'] })
   socialId?: string | null;
-
 
   @Expose({ groups: ['me', 'admin'] })
   image: string | null;
@@ -57,6 +56,24 @@ export class User {
 
   @Expose({ groups: ['me', 'admin'] })
   professionalBody: ProfessionalBody[] | null;
+
+  @Expose({ groups: ['me', 'admin'] })
+  southAfricanCitizen: boolean | null
+
+  @Expose({ groups: ['me', 'admin'] })
+  documentId: string | null
+
+  @Expose({ groups: ['me', 'admin'] })
+  countryOfOrigin: string | null
+
+  @Expose({ groups: ['me', 'admin']})
+  criminalRecord: boolean | null
+
+  @Expose({ groups: ['me', 'admin'] })
+  policeClearenceCertificate: string | null
+
+  @Expose({ groups: ['me', 'admin'] })
+  crimes: Crimes[] | null
 
   @Expose({ groups: ['me', 'admin'] })
   isProfileComplete: boolean;

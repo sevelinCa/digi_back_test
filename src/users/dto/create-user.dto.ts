@@ -4,7 +4,7 @@ import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
 import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
 import { RoleDto } from 'src/roles/dto/role.dto';
 import { StatusDto } from 'src/statuses/dto/status.dto';
-import { ProfessionalBody, Qualifications } from '../infrastructure/persistence/relational/entities/user.entity';
+import { Crimes, ProfessionalBody, Qualifications } from '../infrastructure/persistence/relational/entities/user.entity';
 // import { FileDto } from 'src/files/dto/file.dto';
 
 export class CreateUserDto {
@@ -71,6 +71,18 @@ export class CreateUserDto {
   qualifications: Qualifications[] | null;
 
   professionalBody: ProfessionalBody[] | null;
+
+  southAfricanCitizen: boolean | null;
+
+  documentId: string | null;
+
+  countryOfOrigin: string | null;
+
+  criminalRecord: boolean | null;
+
+  policeClearenceCertificate: string | null;
+
+  crimes: Crimes[] | null;
 
   isProfileComplete: boolean;
 }
