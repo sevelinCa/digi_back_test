@@ -1,28 +1,31 @@
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Events } from './events.entity';
+import { CalenderVenue } from './calender-venues.entity';
 
 @Entity()
-export class Booking {
+export class CalenderEvents {
  @PrimaryGeneratedColumn('uuid')
  id: string;
 
- @ManyToOne(() => Events, { onDelete: 'CASCADE' })
- @JoinColumn({ name: 'eventId' })
- eventId: Events;
+ @Column({ type: 'varchar', length: 255, nullable: false })
+ title: string;
+
+ @Column({ type: 'text', nullable: true })
+ description: string;
+
+ @Column({ type: 'timestamp', nullable: false })
+ startTime: Date;
+
+ @Column({ type: 'timestamp', nullable: false })
+ endTime: Date;
 
  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
  @JoinColumn({ name: 'userId' })
  userId: UserEntity;
 
- @Column({ type: 'varchar', length: 50, nullable: false })
- status: string;
-
- @Column({ type: 'int', nullable: true })
- attendees: number;
-
- @Column({ type: 'text', nullable: true })
- notes: string;
+ @ManyToOne(() => CalenderVenue, { onDelete: 'SET NULL' })
+ @JoinColumn({ name: 'venueId' })
+ venueId: CalenderVenue;
 
  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
  createdAt: Date;
