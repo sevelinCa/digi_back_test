@@ -3,6 +3,8 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateDigifranchiseGeneralInfoDto {
   @ApiProperty({ example: 'James\' digifranchise' })
+  @IsString()
+  @IsOptional()
   digifranchiseName: string
 
   @ApiProperty()

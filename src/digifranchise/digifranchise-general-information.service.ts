@@ -12,6 +12,7 @@ export class DigifranchiseGeneralInfoService {
   ) { }
 
   async getDigifranchiseGeneralInformation(userId: string, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
+    console.log(">>>>>>>>", ownedDigifranchiseId)
     const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({ where: { ownedDigifranchiseId } })
 
     if (!digifranchiseGeneralInfo) {
@@ -20,11 +21,11 @@ export class DigifranchiseGeneralInfoService {
       );
     }
 
-    if (digifranchiseGeneralInfo.id !== userId) {
-      throw new NotFoundException(
-        `digifranchise not owned by current user`,
-      );
-    }
+    // if (digifranchiseGeneralInfo.id !== userId) {
+    //   throw new NotFoundException(
+    //     `digifranchise not owned by current user`,
+    //   );
+    // }
 
     return digifranchiseGeneralInfo
   }
@@ -37,11 +38,12 @@ export class DigifranchiseGeneralInfoService {
       );
     }
 
-    if (digifranchiseGeneralInfo.id !== userId) {
-      throw new NotFoundException(
-        `digifranchise not owned by current user`,
-      );
-    }
+    // if (digifranchiseGeneralInfo.id !== userId) {
+    //   throw new NotFoundException(
+    //     `digifranchise not owned by current user`,
+    //   );
+    // }
+    console.log('>>>>>', dto)
     
     digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
     digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle
