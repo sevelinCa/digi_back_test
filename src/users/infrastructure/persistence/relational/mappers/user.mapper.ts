@@ -40,6 +40,7 @@ export class UserMapper {
     user.southAfricanCitizen = raw.southAfricanCitizen;
     user.documentId = raw.documentId;
     user.countryOfOrigin = raw.countryOfOrigin;
+    user.criminalRecord = raw.criminalRecord;
     user.policeClearenceCertificate = raw.policeClearenceCertificate;
     user.crimes = raw.crimes;
     user.isProfileComplete = raw.isProfileComplete;

@@ -272,6 +272,7 @@ export class AuthService {
       southAfricanCitizen: null,
       documentId: null,
       countryOfOrigin: null,
+      criminalRecord: null,
       policeClearenceCertificate: null,
       crimes: null,
       isProfileComplete: false
@@ -372,6 +373,7 @@ export class AuthService {
       southAfricanCitizen: null,
       documentId: null,
       countryOfOrigin: null,
+      criminalRecord: null,
       policeClearenceCertificate: null,
       crimes: null,
       isProfileComplete: false

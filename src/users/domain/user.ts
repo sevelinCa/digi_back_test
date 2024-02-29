@@ -66,6 +66,9 @@ export class User {
   @Expose({ groups: ['me', 'admin'] })
   countryOfOrigin: string | null
 
+  @Expose({ groups: ['me', 'admin']})
+  criminalRecord: boolean | null
+
   @Expose({ groups: ['me', 'admin'] })
   policeClearenceCertificate: string | null
 

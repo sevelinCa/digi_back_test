@@ -78,6 +78,8 @@ export class CreateUserDto {
 
   countryOfOrigin: string | null;
 
+  criminalRecord: boolean | null;
+
   policeClearenceCertificate: string | null;
 
   crimes: Crimes[] | null;

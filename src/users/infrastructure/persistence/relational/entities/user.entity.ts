@@ -153,6 +153,9 @@ export class UserEntity extends EntityRelationalHelper implements User {
   countryOfOrigin: string
 
   @Column({ type: String, nullable: true })
+  criminalRecord: boolean | null;
+
+  @Column({ type: String, nullable: true })
   policeClearenceCertificate: string
 
   @Column({ type: 'json', nullable: true })
