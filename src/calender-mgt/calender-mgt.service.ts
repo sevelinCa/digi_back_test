@@ -32,25 +32,5 @@ export class CalenderMgtService {
         return this.venueRepository.save(newVenue);
     }
 
-    async createEvent(userId: string, venueId: string, createEventDto: CreateEventDto): Promise<CalenderEvents> {
-        const user = await checkIfUserExists(this.userRepository, userId)
-        if (!user) {
-            throw new Error('User does not exist')
-        }
-        const venue = await this.venueRepository.findOne({where:{id:venueId}});
-        if (!venue) {
-            throw new Error('Venue does not exist');
-        }
-        const newEvent = this.eventsRepository.create({ ...createEventDto, userId: user, venueId:venue })
-        const savedEvent = await this.eventsRepository.save(newEvent);
-
-        const newEventOwer = this.eventOwnerRepository.create({
-            eventId:savedEvent,
-            userId:user
-        })
-        await this.eventOwnerRepository.save(newEventOwer)
-
-        return savedEvent;
-    }
 
 }

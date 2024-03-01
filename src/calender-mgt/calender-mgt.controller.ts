@@ -27,17 +27,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.createVenue(createVenueDto);
     }
 
-    @ApiOperation({ summary: 'CREATE - Create - Event', })
-    @ApiResponse({ status: HttpStatus.OK, description: 'You have created Venue.' })
-    @ApiBody({ type: CreateEventDto })
 
-    @Post('create-event')
-    async createEvent(
-        @Req() req: Request,
-        @Param('venueId') venueId: string,
-        @Body() createEventDto: CreateEventDto): Promise<CalenderEvents> {
-        const userId = (req.user as UserEntity).id;
 
-        return this.calenderMgtService.createEvent(userId, venueId, createEventDto);
-    }
+
 }
