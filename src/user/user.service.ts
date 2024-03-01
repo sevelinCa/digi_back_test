@@ -14,194 +14,207 @@ import { JwtPayloadType } from 'src/auth/strategies/types/jwt-payload.type';
 
 @Injectable()
 export class UserService {
-    constructor(
-        private readonly usersRepository: UserRepository,
-        private usersService: UsersService,
-        @InjectRepository(UserEntity)
-        private readonly userRepository: Repository<User>
-    ) {}
+  constructor(
+    private readonly usersRepository: UserRepository,
+    private usersService: UsersService,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<User>
+  ) { }
 
-    async createProfile(
-        userJwtPayload: JwtPayloadType,
-        // userId: string,
-        createUserProfileDto: UserProfileDto,
-      ) {
-        // let userId: User['id'];
+  async createProfile(
+    userJwtPayload: JwtPayloadType,
+    // userId: string,
+    createUserProfileDto: UserProfileDto,
+  ) {
+    // let userId: User['id'];
 
-        const user = await this.usersService.findOne({
-            id: userJwtPayload.id,
-        });
-        
-        if (!user) {
-            throw new HttpException(
-              {
-                status: HttpStatus.UNPROCESSABLE_ENTITY,
-                errors: {
-                  hash: `notFound`,
-                },
-              },
-              HttpStatus.UNPROCESSABLE_ENTITY,
-            );
-        }
+    const user = await this.usersService.findOne({
+      id: userJwtPayload.id,
+    });
 
-        if (createUserProfileDto.email) {
-            const userObject = await this.usersRepository.findOne({
-              email: createUserProfileDto.email,
-            });
-
-            if (userObject && userObject.id !== userJwtPayload.id) {
-              throw new HttpException(
-                {
-                  status: HttpStatus.UNPROCESSABLE_ENTITY,
-                  errors: {
-                    email: 'emailAlreadyExists',
-                  },
-                },
-                HttpStatus.UNPROCESSABLE_ENTITY,
-              );
-            }
-        }
-
-        if (createUserProfileDto.mobileNumber) {
-            const userObject = await this.usersRepository.findOne({
-                phoneNumber: createUserProfileDto.mobileNumber,
-            });
-
-            if (userObject && userObject.id !== userJwtPayload.id) {
-              throw new HttpException(
-                {
-                  status: HttpStatus.UNPROCESSABLE_ENTITY,
-                  errors: {
-                    email: 'phoneNumberAlreadyExists',
-                  },
-                },
-                HttpStatus.UNPROCESSABLE_ENTITY,
-              );
-            }
-        }
-    
-    
-        Object.assign(user, {
-            image: createUserProfileDto?.image,
-            email: createUserProfileDto?.email,
-            firstName: createUserProfileDto?.firstName,
-            lastName: createUserProfileDto?.lastName,
-            idImage: createUserProfileDto?.idImage,
-            gender: createUserProfileDto?.gender,
-            race: createUserProfileDto?.race,
-            homeAddress: createUserProfileDto?.homeAddress,
-            phoneNumber: createUserProfileDto?.mobileNumber,
-            educationLevel: createUserProfileDto?.educationLevel,
-            currentActivity: createUserProfileDto?.currentActivity,
-            fieldOfStudy: createUserProfileDto?.fieldOfStudy,
-            qualifications: createUserProfileDto?.qualifications,
-            professionalBody: createUserProfileDto?.professionalBody,
-            isProfileComplete: true,
-        })
-
-        await this.userRepository.save(user)
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            hash: `notFound`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
-    findManyWithPagination({
-        filterOptions,
-        sortOptions,
-        paginationOptions,
-    }: {
-        filterOptions?: FilterUserDto | null;
-        sortOptions?: SortUserDto[] | null;
-        paginationOptions: IPaginationOptions;
-    }): Promise<User[]> {
-        return this.usersRepository.findManyWithPagination({
-          filterOptions,
-          sortOptions,
-          paginationOptions,
-        });
+    if (createUserProfileDto.email) {
+      const userObject = await this.usersRepository.findOne({
+        email: createUserProfileDto.email,
+      });
+
+      if (userObject && userObject.id !== userJwtPayload.id) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              email: 'emailAlreadyExists',
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
     }
 
-    findOne(fields: EntityCondition<User>): Promise<NullableType<User>> {
-        return this.usersRepository.findOne(fields);
+    if (createUserProfileDto.phoneNumber) {
+      const userObject = await this.usersRepository.findOne({
+        phoneNumber: createUserProfileDto.phoneNumber,
+      });
+
+      if (userObject && userObject.id !== userJwtPayload.id) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              email: 'phoneNumberAlreadyExists',
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
     }
 
-    async updateProfile(
-        userJwtPayload: JwtPayloadType,
-        updateUserProfileDto: UserProfileDto,
-      ) {
-        // let userId: User['id'];
 
-        const user = await this.usersService.findOne({
-            id: userJwtPayload.id,
-        });
-        
-        if (!user) {
-            throw new HttpException(
-              {
-                status: HttpStatus.UNPROCESSABLE_ENTITY,
-                errors: {
-                  hash: `notFound`,
-                },
-              },
-              HttpStatus.UNPROCESSABLE_ENTITY,
-            );
-        }
+    Object.assign(user, {
+      image: createUserProfileDto?.image,
+      email: createUserProfileDto?.email,
+      firstName: createUserProfileDto?.firstName,
+      lastName: createUserProfileDto?.lastName,
+      idImage: createUserProfileDto?.idImage,
+      gender: createUserProfileDto?.gender,
+      race: createUserProfileDto?.race,
+      homeAddress: createUserProfileDto?.homeAddress,
+      phoneNumber: createUserProfileDto?.phoneNumber,
+      educationLevel: createUserProfileDto?.educationLevel,
+      currentActivity: createUserProfileDto?.currentActivity,
+      fieldOfStudy: createUserProfileDto?.fieldOfStudy,
+      qualifications: createUserProfileDto?.qualifications,
+      professionalBody: createUserProfileDto?.professionalBody,
+      southAfricanCitizen: createUserProfileDto?.southAfricanCitizen,
+      documentId: createUserProfileDto?.documentId,
+      countryOfOrigin: createUserProfileDto?.countryOfOrigin,
+      criminalRecord: createUserProfileDto?.criminalRecord,
+      policeClearenceCertificate: createUserProfileDto?.policeClearenceCertificate,
+      crimes: createUserProfileDto?.crimes,
+      isProfileComplete: true,
+    })
 
-        if (updateUserProfileDto.email) {
-            const userObject = await this.usersRepository.findOne({
-              email: updateUserProfileDto.email,
-            });
+    await this.userRepository.save(user)
+  }
 
-            if (userObject && userObject.id !== userJwtPayload.id) {
-              throw new HttpException(
-                {
-                  status: HttpStatus.UNPROCESSABLE_ENTITY,
-                  errors: {
-                    email: 'emailAlreadyExists',
-                  },
-                },
-                HttpStatus.UNPROCESSABLE_ENTITY,
-              );
-            }
-        }
+  findManyWithPagination({
+    filterOptions,
+    sortOptions,
+    paginationOptions,
+  }: {
+    filterOptions?: FilterUserDto | null;
+    sortOptions?: SortUserDto[] | null;
+    paginationOptions: IPaginationOptions;
+  }): Promise<User[]> {
+    return this.usersRepository.findManyWithPagination({
+      filterOptions,
+      sortOptions,
+      paginationOptions,
+    });
+  }
 
-        if (updateUserProfileDto.mobileNumber) {
-            const userObject = await this.usersRepository.findOne({
-                phoneNumber: updateUserProfileDto.mobileNumber,
-            });
+  findOne(fields: EntityCondition<User>): Promise<NullableType<User>> {
+    return this.usersRepository.findOne(fields);
+  }
 
-            if (userObject && userObject.id !== userJwtPayload.id) {
-              throw new HttpException(
-                {
-                  status: HttpStatus.UNPROCESSABLE_ENTITY,
-                  errors: {
-                    email: 'phoneNumberAlreadyExists',
-                  },
-                },
-                HttpStatus.UNPROCESSABLE_ENTITY,
-              );
-            }
-        }
-    
-    
-        Object.assign(user, {
-            image: updateUserProfileDto?.image,
-            email: updateUserProfileDto?.email,
-            firstName: updateUserProfileDto?.firstName,
-            lastName: updateUserProfileDto?.lastName,
-            idImage: updateUserProfileDto?.idImage,
-            gender: updateUserProfileDto?.gender,
-            race: updateUserProfileDto?.race,
-            homeAddress: updateUserProfileDto?.homeAddress,
-            phoneNumber: updateUserProfileDto?.mobileNumber,
-            educationLevel: updateUserProfileDto?.educationLevel,
-            currentActivity: updateUserProfileDto?.currentActivity,
-            fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
-            qualifications: updateUserProfileDto?.qualifications,
-            professionalBody: updateUserProfileDto?.professionalBody,
-        })
+  async updateProfile(
+    userJwtPayload: JwtPayloadType,
+    updateUserProfileDto: UserProfileDto,
+  ) {
+    // let userId: User['id'];
 
-        await this.userRepository.save(user)
+    const user = await this.usersService.findOne({
+      id: userJwtPayload.id,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            hash: `notFound`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
-    async softDelete(id: User['id']): Promise<void> {
-        await this.usersRepository.softDelete(id);
+    if (updateUserProfileDto.email) {
+      const userObject = await this.usersRepository.findOne({
+        email: updateUserProfileDto.email,
+      });
+
+      if (userObject && userObject.id !== userJwtPayload.id) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              email: 'emailAlreadyExists',
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
     }
+
+    if (updateUserProfileDto.phoneNumber) {
+      const userObject = await this.usersRepository.findOne({
+        phoneNumber: updateUserProfileDto.phoneNumber,
+      });
+
+      if (userObject && userObject.id !== userJwtPayload.id) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              email: 'phoneNumberAlreadyExists',
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
+
+    Object.assign(user, {
+      image: updateUserProfileDto?.image,
+      email: updateUserProfileDto?.email,
+      firstName: updateUserProfileDto?.firstName,
+      lastName: updateUserProfileDto?.lastName,
+      idImage: updateUserProfileDto?.idImage,
+      gender: updateUserProfileDto?.gender,
+      race: updateUserProfileDto?.race,
+      homeAddress: updateUserProfileDto?.homeAddress,
+      phoneNumber: updateUserProfileDto?.phoneNumber,
+      educationLevel: updateUserProfileDto?.educationLevel,
+      currentActivity: updateUserProfileDto?.currentActivity,
+      fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
+      qualifications: updateUserProfileDto?.qualifications,
+      professionalBody: updateUserProfileDto?.professionalBody,
+      southAfricanCitizen: updateUserProfileDto?.southAfricanCitizen,
+      documentId: updateUserProfileDto?.documentId,
+      countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
+      criminalRecord: updateUserProfileDto?.criminalRecord,
+      policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
+      crimes: updateUserProfileDto?.crimes,
+      isProfileComplete: true,
+    })
+
+    await this.userRepository.save(user)
+  }
+
+  async softDelete(id: User['id']): Promise<void> {
+    await this.usersRepository.softDelete(id);
+  }
 }

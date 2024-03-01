@@ -754,9 +754,9 @@ export class AuthService {
       }
     }
 
-    if (updateUserProfileDto.mobileNumber) {
+    if (updateUserProfileDto.phoneNumber) {
       const userObject = await this.usersService.findOne({
-        phoneNumber: updateUserProfileDto.mobileNumber,
+        phoneNumber: updateUserProfileDto.phoneNumber,
       });
 
       if (userObject && userObject.id !== userJwtPayload.id) {
@@ -772,7 +772,7 @@ export class AuthService {
       }
     }
 
-
+ 
     Object.assign(user, {
       image: updateUserProfileDto?.image,
       email: updateUserProfileDto?.email,
@@ -782,12 +782,18 @@ export class AuthService {
       gender: updateUserProfileDto?.gender,
       race: updateUserProfileDto?.race,
       homeAddress: updateUserProfileDto?.homeAddress,
-      phoneNumber: updateUserProfileDto?.mobileNumber,
+      phoneNumber: updateUserProfileDto?.phoneNumber,
       educationLevel: updateUserProfileDto?.educationLevel,
       currentActivity: updateUserProfileDto?.currentActivity,
       fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
       qualifications: updateUserProfileDto?.qualifications,
       professionalBody: updateUserProfileDto?.professionalBody,
+      southAfricanCitizen: updateUserProfileDto?.southAfricanCitizen,
+      documentId: updateUserProfileDto?.documentId,
+      countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
+      criminalRecord: updateUserProfileDto?.criminalRecord,
+      policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
+      crimes: updateUserProfileDto?.crimes
     })
 
     await this.usersRepository.save(user)
