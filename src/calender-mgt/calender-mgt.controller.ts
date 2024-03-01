@@ -74,4 +74,11 @@ export class CalenderMgtController {
     async getAllBookings(): Promise<CalenderBooking[]> {
         return this.calenderMgtService.getAllBookings();
     }
+
+
+    @ApiOperation({summary: 'GET ALL - Retrieve all event owners'})
+    @Get('event-owners')
+    async getAllEventOwners(): Promise<CalenderEventOwner[]> {
+        return this.calenderMgtService.getAllEventOwners();
+    }
 }
