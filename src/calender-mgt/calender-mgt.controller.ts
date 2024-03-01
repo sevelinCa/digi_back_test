@@ -40,4 +40,18 @@ export class CalenderMgtController {
 
         return this.calenderMgtService.createEvent(userId, venueId, createEventDto);
     }
+
+    @ApiOperation({ summary: 'CREATE - Record - Booking', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'You have recorded a new booking.' })
+    @ApiBody({ type: CreateBookingDto })
+    @Post('record-booking')
+    async recordBooking(
+        @Req() req: Request,
+        @Param('eventId') eventId: string,
+        @Body() createBookingDto: CreateBookingDto
+    ): Promise<CalenderBooking> {
+        const userId = (req.user as UserEntity).id;
+
+        return this.calenderMgtService.recordBooking(userId, eventId, createBookingDto)
+    }
 }

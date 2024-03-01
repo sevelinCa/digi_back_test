@@ -53,4 +53,24 @@ export class CalenderMgtService {
         return savedEvent;
     }
 
+    async recordBooking(userId:string, eventId:string,createBookingDto: CreateBookingDto): Promise<CalenderBooking>{
+
+        const user = await this.userRepository.findOne({where:{id:userId}});
+        if(!user){
+            throw new Error ('User does not exist');
+        }
+        const event = await this.eventsRepository.findOne({ where: {id: eventId}})
+        if(!event){
+            throw new Error ('Event does not exist');
+        }
+        const newBooking = this.bookingRepository.create({
+            ...createBookingDto,
+            userId:user,
+            eventId: event,
+        })
+
+        const saveNewBooking = this.bookingRepository.save(newBooking)
+        return saveNewBooking;
+    }
+
 }
