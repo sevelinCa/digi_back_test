@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {  findAssetById, getDigifranchiseAccountByUserId } from 'src/helper/FindByFunctions';
-import type { Repository } from 'typeorm';
-import type { CreateAssetDto } from './dto/create-asset.dto';
-import type { UpdateAssetDto } from './dto/update-asset.dto';
+import { Repository } from 'typeorm';
+import { CreateAssetDto } from './dto/create-asset.dto';
+import { UpdateAssetDto } from './dto/update-asset.dto';
 import { Asset } from './entities/asset.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 

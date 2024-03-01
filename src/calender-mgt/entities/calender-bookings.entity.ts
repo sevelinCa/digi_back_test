@@ -2,6 +2,15 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { CalenderEvents } from './calender-events.entity';
 
+export enum BookingStatusEnum {
+    CONFIRMED = 'confirmed',
+    PENDING = 'pending',
+    CANCELLED = 'cancelled',
+    RESCHEDULED = 'rescheduled',
+    NO_SHOW = 'no_show',
+    COMPLETED = 'completed',
+    IN_PROGRESS = 'in_progress',
+   }
 @Entity()
 export class CalenderBooking {
  @PrimaryGeneratedColumn('uuid')
@@ -15,8 +24,12 @@ export class CalenderBooking {
  @JoinColumn({ name: 'userId' })
  userId: UserEntity;
 
- @Column({ type: 'varchar', length: 50, nullable: false })
- status: string;
+ @Column({
+    type: 'enum',
+    enum: BookingStatusEnum,
+    default: BookingStatusEnum.PENDING,
+ })
+ status: BookingStatusEnum;
 
  @Column({ type: 'int', nullable: true })
  attendees: number;
