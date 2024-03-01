@@ -366,7 +366,7 @@ export class DigifranchiseProfessionalMembershipController {
   @Get('get-professional-memberships-info')
   @HttpCode(HttpStatus.OK)
   async getProfessionalMembershipsInfo(
-    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<DigifranchiseProfessionalBodyMembership> {
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<any[]> {
     return this.digifranchiseProfessionalMembershipService.getDigifranchiseProfessionalMemberships(ownedDigifranchiseId);
   }
 
@@ -379,6 +379,6 @@ export class DigifranchiseProfessionalMembershipController {
     @Query('ownedDigifranchiseId') ownedDigifranchiseId: string,
     @Body() dto: AddProfessionalMembershipDto
   ): Promise<DigifranchiseProfessionalBodyMembership> {
-    return this.digifranchiseProfessionalMembershipService.getDigifranchiseProfessionalMemberships(ownedDigifranchiseId);
+    return this.digifranchiseProfessionalMembershipService.addDigifranchiseProfessionalMembership(ownedDigifranchiseId, dto);
   }
 }
