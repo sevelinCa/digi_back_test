@@ -208,7 +208,7 @@ export class UserService {
       criminalRecord: updateUserProfileDto?.criminalRecord,
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
       crimes: updateUserProfileDto?.crimes,
-      isProfileComplete: true,
+      isProfileComplete: true
     })
 
     await this.userRepository.save(user)
