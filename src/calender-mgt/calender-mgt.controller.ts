@@ -87,4 +87,16 @@ export class CalenderMgtController {
     async getVenueById(@Param('venueId') venueId: string): Promise<CalenderVenue | null> {
         return this.calenderMgtService.getVenueById(venueId);
     }
+
+    @ApiOperation({
+        summary: 'UPDATE - Update venue by ID',
+    })
+    @ApiBody({ type: UpdateVenueDto })
+    @Put('venues/:venueId')
+    async updateVenue(
+        @Param('venueId') venueId: string,
+        @Body() updateVenueDto: UpdateVenueDto
+    ): Promise<CalenderVenue> {
+        return this.calenderMgtService.updateVenue(venueId, updateVenueDto);
+    }
 }

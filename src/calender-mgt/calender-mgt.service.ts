@@ -93,4 +93,14 @@ export class CalenderMgtService {
     async getVenueById(venueId: string): Promise<CalenderVenue | null> {
         return this.venueRepository.findOne({ where: { id: venueId, deleteAt: IsNull() } });
     }
+
+
+    async updateVenue(venueId: string, updateVenueDto: UpdateVenueDto): Promise<CalenderVenue> {
+        const venue = await this.venueRepository.findOne({ where: { id: venueId, deleteAt: IsNull() } });
+        if (!venue) {
+            throw new NotFoundException(`Venue with ID ${venueId} not found or has been soft deleted.`);
+        }
+        this.venueRepository.merge(venue, updateVenueDto);
+        return this.venueRepository.save(venue);
+    }
 }
