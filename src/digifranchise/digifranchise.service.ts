@@ -12,6 +12,7 @@ import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.e
 import type { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
+import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
 
 @Injectable()
 export class DigifranchiseService {
@@ -29,15 +30,16 @@ export class DigifranchiseService {
     @InjectRepository(DigifranchiseComplianceInfo)
     private readonly digifranchiseComplianceInfoRepository: Repository<DigifranchiseComplianceInfo>,
     @InjectRepository(DigifranchiseSubServices)
-    private readonly digifranchiseSubServiceOfferedRepository:Repository<DigifranchiseSubServices>
-
+    private readonly digifranchiseSubServiceOfferedRepository: Repository<DigifranchiseSubServices>,
+    @InjectRepository(DigifranchiseProfessionalBodyMembership)
+    private readonly digifranchiseProfessionalBodyMembershipRepository: Repository<DigifranchiseProfessionalBodyMembership>
   ) { }
 
   async createDigifranchise(createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
     const newDigifranchise = this.digifranchiseRepository.create(createDigifranchiseDto);
     return this.digifranchiseRepository.save(newDigifranchise);
- }
- 
+  }
+
   async findAllDigifranchise(): Promise<Digifranchise[]> {
     return await this.digifranchiseRepository.find();
   }
@@ -97,17 +99,26 @@ export class DigifranchiseService {
     })
     await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
 
+    const createProfessionalBodyMembershipInstance = this.digifranchiseProfessionalBodyMembershipRepository.create({
+      ownedDigifranchiseId: savedFranchiseOwner.digifranchiseId,
+      professionalOrganizationId: '',
+      accreditationId: '',
+      renewalDate: ''
+    })
+
+    await this.digifranchiseProfessionalBodyMembershipRepository.save(createProfessionalBodyMembershipInstance)
+
     return savedFranchiseOwner;
   }
 
   async getDigifranchiseByDigifranchiseId(digifranchiseId: string): Promise<Digifranchise> {
-    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId} });
+    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
     if (!digifranchise) {
-       throw new NotFoundException('Digifranchise owner not found');
+      throw new NotFoundException('Digifranchise owner not found');
     }
     return digifranchise;
-   }
-   
+  }
+
   async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.find({
       where: {
@@ -121,13 +132,13 @@ export class DigifranchiseService {
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<Digifranchise[]> {
     const ownershipRecords = await this.franchiseOwnershipRepository.find({
       where: { userId },
-      relations: ['digifranchise'], 
+      relations: ['digifranchise'],
     });
-  
+
     const digifranchiseIds = ownershipRecords
-      .filter(record => record.digifranchise) 
-      .map(record => record.digifranchise.id); 
-  
+      .filter(record => record.digifranchise)
+      .map(record => record.digifranchise.id);
+
     return this.digifranchiseRepository.findByIds(digifranchiseIds);
   }
 
@@ -141,19 +152,19 @@ export class DigifranchiseService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-  
+
     const Service = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: serviceId } });
 
     if (!Service) {
       throw new NotFoundException('Service not found');
     }
-  
+
     const newDigifranchiseSubServiceOffered = this.digifranchiseSubServiceOfferedRepository.create({
       ...createDigifranchiseSubServiceOfferedDto,
-      userId: user,  
-      serviceId : Service,  
+      userId: user,
+      serviceId: Service,
     });
-  
+
     return this.digifranchiseSubServiceOfferedRepository.save(newDigifranchiseSubServiceOffered);
   }
 
@@ -179,9 +190,9 @@ export class DigifranchiseService {
     if (!serviceOffered) {
       throw new NotFoundException('Sub service not found');
     }
-  
+
     Object.assign(serviceOffered, updateDigifranchiseServiceDto);
-  
+
     try {
       return await this.digifranchiseSubServiceOfferedRepository.save(serviceOffered);
     } catch (error) {
@@ -195,7 +206,7 @@ export class DigifranchiseService {
     if (!serviceOffered) {
       throw new NotFoundException('Digifranchise service offered not found');
     }
-  
+
     await this.digifranchiseSubServiceOfferedRepository.remove(serviceOffered);
   }
 }
