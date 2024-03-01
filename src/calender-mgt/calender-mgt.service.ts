@@ -75,4 +75,8 @@ export class CalenderMgtService {
     async getAllVenues(): Promise<CalenderVenue[]> {
         return this.venueRepository.find({ where: { deleteAt: IsNull() } });
     }
+
+    async getAllEvents(): Promise<CalenderEvents[]> {
+        return this.eventsRepository.find({ where: { deleteAt: IsNull() } });
+    }
 }
