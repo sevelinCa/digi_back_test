@@ -72,5 +72,7 @@ export class CalenderMgtService {
         const saveNewBooking = this.bookingRepository.save(newBooking)
         return saveNewBooking;
     }
-
+    async getAllVenues(): Promise<CalenderVenue[]> {
+        return this.venueRepository.find({ where: { deleteAt: IsNull() } });
+    }
 }
