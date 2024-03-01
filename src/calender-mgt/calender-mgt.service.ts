@@ -83,4 +83,9 @@ export class CalenderMgtService {
     async getAllBookings(): Promise<CalenderBooking[]> {
         return this.bookingRepository.find({ where: { deleteAt: IsNull() } });
     }
+
+
+    async getAllEventOwners(): Promise<CalenderEventOwner[]> {
+        return this.eventOwnerRepository.find({ where: { deleteAt: IsNull() } });
+    }
 }
