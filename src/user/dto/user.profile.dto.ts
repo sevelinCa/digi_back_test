@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsObject, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsOptional, IsObject, IsArray, IsBoolean } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class Qualifications {
@@ -91,6 +91,14 @@ export class UserProfileDto {
   image: string;
 
   @ApiProperty({
+    example: 'https://idImage.com',
+    description: 'The id of the user.',
+  })
+  @IsOptional()
+  @IsString()
+  idImage: string;
+
+  @ApiProperty({
     example: 'example@gmail.com',
     description: 'The email of the user.',
   })
@@ -113,14 +121,6 @@ export class UserProfileDto {
   @IsOptional()
   @IsString()
   lastName: string;
-
-  @ApiProperty({
-    example: 'https://idImage.com',
-    description: 'The id of the user.',
-  })
-  @IsOptional()
-  @IsString()
-  idImage: string;
 
   @ApiProperty({
     example: 'MALE',
@@ -152,7 +152,7 @@ export class UserProfileDto {
   })
   @IsOptional()
   @IsString()
-  mobileNumber: string;
+  phoneNumber: string;
 
   @ApiProperty({
     example: 'Bcs',
@@ -199,7 +199,7 @@ export class UserProfileDto {
     description: 'If SA citizen, true, else false',
   })
   @IsOptional()
-  @IsString()
+  @IsBoolean()
   southAfricanCitizen: boolean | null
 
   @ApiProperty({
@@ -217,6 +217,14 @@ export class UserProfileDto {
   @IsOptional()
   @IsString()
   countryOfOrigin: string | null
+
+  @ApiProperty({
+    example: false,
+    description: 'Does the user have a criminal record',
+  })
+  @IsOptional()
+  @IsBoolean()
+  criminalRecord: string | null
 
   @ApiProperty({
     example: 'https://example.com/file.pdf',
