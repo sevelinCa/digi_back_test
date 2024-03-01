@@ -88,4 +88,9 @@ export class CalenderMgtService {
     async getAllEventOwners(): Promise<CalenderEventOwner[]> {
         return this.eventOwnerRepository.find({ where: { deleteAt: IsNull() } });
     }
+
+
+    async getVenueById(venueId: string): Promise<CalenderVenue | null> {
+        return this.venueRepository.findOne({ where: { id: venueId, deleteAt: IsNull() } });
+    }
 }

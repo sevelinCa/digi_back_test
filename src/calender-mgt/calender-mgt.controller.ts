@@ -81,4 +81,10 @@ export class CalenderMgtController {
     async getAllEventOwners(): Promise<CalenderEventOwner[]> {
         return this.calenderMgtService.getAllEventOwners();
     }
+
+    @ApiOperation({summary: 'GET ONE - Retrieve venue by ID'})
+    @Get('venues/:venueId')
+    async getVenueById(@Param('venueId') venueId: string): Promise<CalenderVenue | null> {
+        return this.calenderMgtService.getVenueById(venueId);
+    }
 }
