@@ -37,6 +37,7 @@ import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 import { SmsModule } from './sms/sms.module';
 import { UserModule } from './user/user.module';
 import { ProfessionalBodiesModule } from './professional-bodies/professional-bodies.module';
+import { CalenderMgtModule } from './calender-mgt/calender-mgt.module';
 
 @Module({
   imports: [
@@ -102,6 +103,7 @@ import { ProfessionalBodiesModule } from './professional-bodies/professional-bod
     SmsModule,
     UserModule,
     ProfessionalBodiesModule,
+    CalenderMgtModule
   ],
 })
 export class AppModule { }

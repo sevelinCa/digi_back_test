@@ -1,22 +1,35 @@
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { Events } from './events.entity';
+import { CalenderEvents } from './calender-events.entity';
 
+export enum BookingStatusEnum {
+    CONFIRMED = 'confirmed',
+    PENDING = 'pending',
+    CANCELLED = 'cancelled',
+    RESCHEDULED = 'rescheduled',
+    NO_SHOW = 'no_show',
+    COMPLETED = 'completed',
+    IN_PROGRESS = 'in_progress',
+   }
 @Entity()
-export class Booking {
+export class CalenderBooking {
  @PrimaryGeneratedColumn('uuid')
  id: string;
 
- @ManyToOne(() => Events, { onDelete: 'CASCADE' })
+ @ManyToOne(() => CalenderEvents, { onDelete: 'CASCADE' })
  @JoinColumn({ name: 'eventId' })
- eventId: Events;
+ eventId: CalenderEvents;
 
  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
  @JoinColumn({ name: 'userId' })
  userId: UserEntity;
 
- @Column({ type: 'varchar', length: 50, nullable: false })
- status: string;
+ @Column({
+    type: 'enum',
+    enum: BookingStatusEnum,
+    default: BookingStatusEnum.PENDING,
+ })
+ status: BookingStatusEnum;
 
  @Column({ type: 'int', nullable: true })
  attendees: number;

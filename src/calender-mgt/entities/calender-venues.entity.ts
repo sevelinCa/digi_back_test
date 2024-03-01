@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
-export class Venue {
+export class CalenderVenue {
  @PrimaryGeneratedColumn('uuid')
  id: string;
 
