@@ -99,14 +99,14 @@ export class DigifranchiseService {
     })
     await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
 
-    const createProfessionalBodyMembershipInstance = this.digifranchiseProfessionalBodyMembershipRepository.create({
-      ownedDigifranchiseId: savedFranchiseOwner.digifranchiseId,
-      professionalOrganizationId: '',
-      accreditationId: '',
-      renewalDate: ''
-    })
+    // const createProfessionalBodyMembershipInstance = this.digifranchiseProfessionalBodyMembershipRepository.create({
+    //   ownedDigifranchiseId: savedFranchiseOwner.digifranchiseId,
+    //   professionalOrganizationId: '',
+    //   accreditationId: '',
+    //   renewalDate: ''
+    // })
 
-    await this.digifranchiseProfessionalBodyMembershipRepository.save(createProfessionalBodyMembershipInstance)
+    // await this.digifranchiseProfessionalBodyMembershipRepository.save(createProfessionalBodyMembershipInstance)
 
     return savedFranchiseOwner;
   }

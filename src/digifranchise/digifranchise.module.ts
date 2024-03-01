@@ -16,6 +16,8 @@ import { DigifranchiseComplianceInfoService } from './digifranchise-compliance-i
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
 import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-professional-body-membership.service';
+import { ProfessionalBodyEntity } from 'src/professional-bodies/entities/professional-body.entity';
+import { Accreditation } from 'src/professional-bodies/entities/professional-accreditation.entity';
 
 @Module({
   imports: [
@@ -29,7 +31,9 @@ import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-pr
       DigifranchiseOwner,
       DigifranchiseGeneralInfo,
       DigifranchiseComplianceInfo,
-      DigifranchiseProfessionalBodyMembership
+      DigifranchiseProfessionalBodyMembership,
+      ProfessionalBodyEntity,
+      Accreditation
     ]),
   ],
   controllers: [
