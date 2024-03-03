@@ -45,7 +45,10 @@ export class DigifranchiseComplianceInfoService {
 
     digifranchiseComplianceInfo.companyRegisterationNumber = dto.companyRegisterationNumber
     digifranchiseComplianceInfo.taxNumber = dto.taxNumber
+    digifranchiseComplianceInfo.vatNumber = dto.vatNumber
     digifranchiseComplianceInfo.taxClearencePin = dto.taxClearencePin
+    digifranchiseComplianceInfo.taxClearenceExpiration = dto.taxClearenceExpiration,
+    digifranchiseComplianceInfo.coidaRegisteration = dto.coidaRegisteration
     digifranchiseComplianceInfo.uifRegistration = dto.uifRegistration
     digifranchiseComplianceInfo.workMansCompensation = dto.workMansCompensation
     digifranchiseComplianceInfo.sdlNumber = dto.sdlNumber
@@ -53,6 +56,7 @@ export class DigifranchiseComplianceInfoService {
     digifranchiseComplianceInfo.uploadedDocs = dto.uploadedDocs
 
     const savedComplianceInfo = this.digifranchiseComplianceInfoRepository.save(digifranchiseComplianceInfo)
+    console.log(savedComplianceInfo)
 
     return savedComplianceInfo
   }

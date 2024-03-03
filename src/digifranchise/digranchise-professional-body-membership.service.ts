@@ -51,7 +51,7 @@ export class DigifranchiseProfessionalBodyMembershipService {
       )
     }
 
-    if (getAccrediation.id !== getProfessionalBody.id) {
+    if (getAccrediation.professionalBodyId !== getProfessionalBody.id) {
       throw new ConflictException(
         'professional body does not provide the accreditation'
       )
