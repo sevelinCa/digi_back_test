@@ -89,13 +89,15 @@ export class DigifranchiseService {
       ownedDigifranchiseId: savedFranchiseOwner.digifranchiseId,
       companyRegisterationNumber: '',
       taxNumber: '',
+      vatNumber: '',
       taxClearencePin: '',
+      taxClearenceExpiration: '',
       coidaRegisteration: '',
       uifRegistration: '',
       workMansCompensation: '',
       sdlNumber: '',
-      otherComplianceDocs: '',
-      uploadedDocs: ''
+      otherComplianceDocs: [],
+      uploadedDocs: []
     })
     await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
 

@@ -2,17 +2,17 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class AddProfessionalMembershipDto {
-  @ApiProperty({ example: 'Phone Training Sessions 1-on-1' })
+  @ApiProperty({ example: 'uuid' })
   @IsNotEmpty()
   @IsString()
   professionalBodyId: string;
 
-  @ApiProperty({ example: 'Phone Training Sessions' })
+  @ApiProperty({ example: 'uuid' })
   @IsNotEmpty()
   @IsString()
   accreditationId: string;
 
-  @ApiProperty({ example: '200' })
+  @ApiProperty({ example: '2024-10-10' })
   @IsNotEmpty()
   @IsString()
   renewalDate: string;
