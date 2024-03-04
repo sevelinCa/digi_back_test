@@ -1,5 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
 
+export class Documents {
+  documentName: string
+  link: string
+  renewalDate: string
+}
+
 @Entity()
 export class DigifranchiseProfessionalBodyMembership {
   @PrimaryGeneratedColumn('uuid')
@@ -16,6 +22,9 @@ export class DigifranchiseProfessionalBodyMembership {
 
   @Column()
   renewalDate: string
+
+  @Column({ type: 'json' })
+  documents: Documents[]
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
