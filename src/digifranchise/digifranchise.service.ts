@@ -99,7 +99,6 @@ export class DigifranchiseService {
       otherComplianceDocs: []
     })
     await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
-    console.log(createComplianceInfoInstance)
 
     return savedFranchiseOwner;
   }
