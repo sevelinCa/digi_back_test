@@ -3,12 +3,10 @@ import { DigifranchiseOwner } from './digifranchise-ownership.entity';
 
 export class OtherComplianceDocs {
   docName: string;
+  link: string;
   expiryDate: string;
 }
 
-export class UploadDocs {
-  link: string;
-}
 
 @Entity()
 export class DigifranchiseComplianceInfo {
@@ -32,8 +30,8 @@ export class DigifranchiseComplianceInfo {
   @Column({ nullable: true })
   taxClearencePin: string
 
-  @Column({ type: 'timestamp', nullable: true })
-  taxClearenceExpiration: Date
+  @Column({ nullable: true })
+  taxClearenceExpiration: string
 
   @Column({ nullable: true })
   coidaRegisteration: string
@@ -53,8 +51,8 @@ export class DigifranchiseComplianceInfo {
   @Column({ type: 'json', nullable: true  })
   otherComplianceDocs: OtherComplianceDocs[]
 
-  @Column({ type: 'json', nullable: true  })
-  uploadedDocs: UploadDocs[]
+  // @Column({ type: 'json', nullable: true  })
+  // uploadedDocs: UploadDocs[]
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
