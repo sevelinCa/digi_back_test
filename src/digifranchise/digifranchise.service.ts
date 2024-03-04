@@ -99,15 +99,7 @@ export class DigifranchiseService {
       otherComplianceDocs: []
     })
     await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
-
-    // const createProfessionalBodyMembershipInstance = this.digifranchiseProfessionalBodyMembershipRepository.create({
-    //   ownedDigifranchiseId: savedFranchiseOwner.digifranchiseId,
-    //   professionalOrganizationId: '',
-    //   accreditationId: '',
-    //   renewalDate: ''
-    // })
-
-    // await this.digifranchiseProfessionalBodyMembershipRepository.save(createProfessionalBodyMembershipInstance)
+    console.log(createComplianceInfoInstance)
 
     return savedFranchiseOwner;
   }
