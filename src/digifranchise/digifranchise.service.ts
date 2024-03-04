@@ -96,8 +96,7 @@ export class DigifranchiseService {
       uifRegistration: '',
       workMansCompensation: '',
       sdlNumber: '',
-      otherComplianceDocs: [],
-      uploadedDocs: []
+      otherComplianceDocs: []
     })
     await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
 

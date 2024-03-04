@@ -53,10 +53,8 @@ export class DigifranchiseComplianceInfoService {
     digifranchiseComplianceInfo.workMansCompensation = dto.workMansCompensation
     digifranchiseComplianceInfo.sdlNumber = dto.sdlNumber
     digifranchiseComplianceInfo.otherComplianceDocs = dto.otherComplianceDocs
-    digifranchiseComplianceInfo.uploadedDocs = dto.uploadedDocs
 
     const savedComplianceInfo = this.digifranchiseComplianceInfoRepository.save(digifranchiseComplianceInfo)
-    console.log(savedComplianceInfo)
 
     return savedComplianceInfo
   }

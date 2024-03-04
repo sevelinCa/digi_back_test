@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-import { OtherComplianceDocs, UploadDocs } from '../entities/digifranchise-compliance-information.entity';
+import { IsArray, IsDate, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import { OtherComplianceDocs } from '../entities/digifranchise-compliance-information.entity';
 
 export class UpdateDigifranchiseComplianceInfoDto {
   @ApiProperty({ example: '100391034' })
@@ -24,9 +24,9 @@ export class UpdateDigifranchiseComplianceInfoDto {
   taxClearencePin: string
 
   @ApiProperty()
-  @IsDate()
+  @IsString()
   @IsOptional()
-  taxClearenceExpiration: Date
+  taxClearenceExpiration: string
 
   @ApiProperty()
   @IsString()
@@ -50,16 +50,17 @@ export class UpdateDigifranchiseComplianceInfoDto {
 
   @ApiProperty({ example: [{
     docName: 'example doc name',
+    link: 'https://linktodoc.pdf',
     expiryDate: '2024-10-10'
   }], description: 'other compliance docs' })
-  @IsObject()
+  @IsArray()
   @IsOptional()
   otherComplianceDocs: OtherComplianceDocs[]
 
-  @ApiProperty({ example: [{
-    link: 'https://linktodoc.pdf'
-  }], description: 'upload docs' })
-  @IsObject()
-  @IsOptional()
-  uploadedDocs: UploadDocs[]
+  // @ApiProperty({ example: [{
+  //   link: 'https://linktodoc.pdf'
+  // }], description: 'upload docs' })
+  // @IsArray()
+  // @IsOptional()
+  // uploadedDocs: UploadDocs[]
 }
