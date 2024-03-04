@@ -29,7 +29,7 @@ export class DigifranchiseProfessionalBodyMembershipService {
     const accrediations = await Promise.all(digifranchiseProfessionalMemberInfo.map(async (professionalBodyInfo) => {
       const getProfessionaOrg = await this.professionalBodyEntityRepository.findOne({ where: { id: professionalBodyInfo.professionalOrganizationId } })
       const getAccrediation = await this.accreditationRepository.findOne({ where: { id: professionalBodyInfo.accreditationId } })
-      const accreditationInfo = { ...getProfessionaOrg, accrediation: getAccrediation }
+      const accreditationInfo = { ...getProfessionaOrg, accrediation: getAccrediation, renewalDate: professionalBodyInfo.renewalDate }
       return accreditationInfo
     }))
 

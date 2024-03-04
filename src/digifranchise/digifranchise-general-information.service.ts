@@ -12,7 +12,6 @@ export class DigifranchiseGeneralInfoService {
   ) { }
 
   async getDigifranchiseGeneralInformation(userId: string, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
-    console.log(">>>>>>>>", ownedDigifranchiseId)
     const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({ where: { ownedDigifranchiseId } })
 
     if (!digifranchiseGeneralInfo) {
