@@ -29,7 +29,12 @@ export class DigifranchiseProfessionalBodyMembershipService {
     const accrediations = await Promise.all(digifranchiseProfessionalMemberInfo.map(async (professionalBodyInfo) => {
       const getProfessionaOrg = await this.professionalBodyEntityRepository.findOne({ where: { id: professionalBodyInfo.professionalOrganizationId } })
       const getAccrediation = await this.accreditationRepository.findOne({ where: { id: professionalBodyInfo.accreditationId } })
-      const accreditationInfo = { ...getProfessionaOrg, accrediation: getAccrediation, renewalDate: professionalBodyInfo.renewalDate }
+      const accreditationInfo = { 
+        ...getProfessionaOrg, 
+        accrediation: getAccrediation, 
+        renewalDate: professionalBodyInfo.renewalDate,
+        documents: professionalBodyInfo.documents
+       }
       return accreditationInfo
     }))
 
@@ -68,7 +73,8 @@ export class DigifranchiseProfessionalBodyMembershipService {
       ownedDigifranchiseId,
       professionalOrganizationId: dto.professionalBodyId,
       accreditationId: dto.accreditationId,
-      renewalDate: dto.renewalDate
+      renewalDate: dto.renewalDate,
+      documents: dto.documents
     })
 
     return this.digifranchiseProfessionalMembershipRepository.save(createProfMembership)
