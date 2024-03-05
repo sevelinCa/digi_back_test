@@ -1,17 +1,18 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { CreateVenueDto, UpdateVenueDto } from './dto/create-venues.dto';
 import { CalenderMgtService } from './calender-mgt.service';
 import { CalenderVenue } from './entities/calender-venues.entity';
-import { CreateEventDto, UpdateEventDto } from './dto/create-events.dto';
+import { CreateEventDto, } from './dto/create-events.dto';
 import { CalenderEvents } from './entities/calender-events.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
-import type { CalenderBooking } from './entities/calender-bookings.entity';
-import { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
-import type { CalenderEventOwner } from './entities/calender-event-owner.entity';
+import { CalenderBooking } from './entities/calender-bookings.entity';
+import { CreateBookingDto } from './dto/create-bookings.dto';
+import { CalenderEventOwner } from './entities/calender-event-owner.entity';
+
 @ApiTags('Calender')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -69,20 +70,20 @@ export class CalenderMgtController {
     }
 
 
-    @ApiOperation({summary: 'GET ALL - Retrieve all bookings'})
+    @ApiOperation({ summary: 'GET ALL - Retrieve all bookings' })
     @Get('bookings')
     async getAllBookings(): Promise<CalenderBooking[]> {
         return this.calenderMgtService.getAllBookings();
     }
 
 
-    @ApiOperation({summary: 'GET ALL - Retrieve all event owners'})
+    @ApiOperation({ summary: 'GET ALL - Retrieve all event owners' })
     @Get('event-owners')
     async getAllEventOwners(): Promise<CalenderEventOwner[]> {
         return this.calenderMgtService.getAllEventOwners();
     }
 
-    @ApiOperation({summary: 'GET ONE - Retrieve venue by ID'})
+    @ApiOperation({ summary: 'GET ONE - Retrieve venue by ID' })
     @Get('venues/:venueId')
     async getVenueById(@Param('venueId') venueId: string): Promise<CalenderVenue | null> {
         return this.calenderMgtService.getVenueById(venueId);
@@ -98,5 +99,14 @@ export class CalenderMgtController {
         @Body() updateVenueDto: UpdateVenueDto
     ): Promise<CalenderVenue> {
         return this.calenderMgtService.updateVenue(venueId, updateVenueDto);
+    }
+
+// NEW 
+    @ApiOperation({
+        summary: 'GET ONE - Retrieve event by ID',
+    })
+    @Get('events/:eventId')
+    async getEventById(@Param('eventId') eventId: string): Promise<CalenderEvents | null> {
+        return this.calenderMgtService.getEventById(eventId);
     }
 }

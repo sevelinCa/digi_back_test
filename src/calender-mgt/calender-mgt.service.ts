@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVenueDto, type UpdateVenueDto } from './dto/create-venues.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { CalenderVenue } from './entities/calender-venues.entity';
 import { CalenderEvents } from './entities/calender-events.entity';
-import { CreateEventDto, type UpdateEventDto } from './dto/create-events.dto';
+import { CreateEventDto } from './dto/create-events.dto';
 import { checkIfUserExists } from '../helper/FindByFunctions'
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
 import { CalenderBooking } from './entities/calender-bookings.entity';
-import type { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
+import type { CreateBookingDto } from './dto/create-bookings.dto';
 @Injectable()
 export class CalenderMgtService {
     constructor(
@@ -84,16 +84,13 @@ export class CalenderMgtService {
         return this.bookingRepository.find({ where: { deleteAt: IsNull() } });
     }
 
-
     async getAllEventOwners(): Promise<CalenderEventOwner[]> {
         return this.eventOwnerRepository.find({ where: { deleteAt: IsNull() } });
     }
 
-
     async getVenueById(venueId: string): Promise<CalenderVenue | null> {
         return this.venueRepository.findOne({ where: { id: venueId, deleteAt: IsNull() } });
     }
-
 
     async updateVenue(venueId: string, updateVenueDto: UpdateVenueDto): Promise<CalenderVenue> {
         const venue = await this.venueRepository.findOne({ where: { id: venueId, deleteAt: IsNull() } });
@@ -102,5 +99,10 @@ export class CalenderMgtService {
         }
         this.venueRepository.merge(venue, updateVenueDto);
         return this.venueRepository.save(venue);
+    }
+
+// NEW
+        async getEventById(eventId: string): Promise<CalenderEvents | null> {
+        return this.eventsRepository.findOne({ where: { id: eventId, deleteAt: IsNull() } });
     }
 }
