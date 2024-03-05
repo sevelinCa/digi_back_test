@@ -101,12 +101,19 @@ export class CalenderMgtController {
         return this.calenderMgtService.updateVenue(venueId, updateVenueDto);
     }
 
-// NEW 
     @ApiOperation({
         summary: 'GET ONE - Retrieve event by ID',
     })
     @Get('events/:eventId')
     async getEventById(@Param('eventId') eventId: string): Promise<CalenderEvents | null> {
         return this.calenderMgtService.getEventById(eventId);
+    }
+
+    @ApiOperation({
+        summary: 'GET ONE - Retrieve booking by ID',
+    })
+    @Get('bookings/:bookingId')
+    async getBookingById(@Param('bookingId') bookingId: string): Promise<CalenderBooking | null> {
+        return this.calenderMgtService.getBookingById(bookingId);
     }
 }
