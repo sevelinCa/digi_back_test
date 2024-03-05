@@ -199,6 +199,16 @@ export class CalenderMgtController {
         return this.calenderMgtService.getAllEventsByVenueId(venueId);
     }
 
+    
+    @ApiOperation({
+        summary: 'GET ALL - Retrieve all bookings by user ID',
+    })
+    @Get('bookings/user/:userId')
+    async getAllBookingsByUserId(@Param('userId') userId: string): Promise<CalenderBooking[]> {
+        return this.calenderMgtService.getAllBookingsByUserId(userId);
+    }
+
+
 
 
     
