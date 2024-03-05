@@ -108,4 +108,9 @@ async getEventById(eventId: string): Promise<CalenderEvents | null> {
 async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
     return this.bookingRepository.findOne({ where: { id: bookingId, deleteAt: IsNull() } });
 }
+
+
+    async getEventOwnerById(eventOwnerId: string): Promise<CalenderEventOwner | null> {
+        return this.eventOwnerRepository.findOne({ where: { id: eventOwnerId, deleteAt: IsNull() } });
+    }
 }
