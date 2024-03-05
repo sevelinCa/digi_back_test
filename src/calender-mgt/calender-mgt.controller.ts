@@ -182,5 +182,14 @@ export class CalenderMgtController {
         return this.calenderMgtService.deleteEventOwner(eventOwnerId);
     }
 
+
+    @ApiOperation({
+        summary: 'GET ALL - Retrieve all events by user ID',
+    })
+    @Get('events/user/:userId')
+    async getAllEventsByUserId(@Param('userId') userId: string): Promise<CalenderEvents[]> {
+        return this.calenderMgtService.getAllEventsByUserId(userId);
+    }
+
     
 }
