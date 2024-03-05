@@ -191,5 +191,15 @@ export class CalenderMgtController {
         return this.calenderMgtService.getAllEventsByUserId(userId);
     }
 
+    @ApiOperation({
+        summary: 'GET ALL - Retrieve all events by venue ID',
+    })
+    @Get('events/venue/:venueId')
+    async getAllEventsByVenueId(@Param('venueId') venueId: string): Promise<CalenderEvents[]> {
+        return this.calenderMgtService.getAllEventsByVenueId(venueId);
+    }
+
+
+
     
 }
