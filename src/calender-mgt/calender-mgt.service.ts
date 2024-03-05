@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVenueDto, type UpdateVenueDto } from './dto/create-venues.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { Equal, IsNull, Repository } from 'typeorm';
 import { CalenderVenue } from './entities/calender-venues.entity';
 import { CalenderEvents } from './entities/calender-events.entity';
 import { CreateEventDto, type UpdateEventDto } from './dto/create-events.dto';
@@ -170,5 +170,10 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
         }
         eventOwner.deleteAt = new Date();
         await this.eventOwnerRepository.save(eventOwner);
+    }
+
+
+    async getAllEventsByUserId(userId: string): Promise<CalenderEvents[]> {
+        return this.eventsRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
     }
 }
