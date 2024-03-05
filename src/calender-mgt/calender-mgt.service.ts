@@ -180,4 +180,8 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
     async getAllEventsByVenueId(venueId: string): Promise<CalenderEvents[]> {
         return this.eventsRepository.find({ where: { venueId: Equal(venueId), deleteAt: IsNull() } });
     }
+
+    async getAllBookingsByUserId(userId: string): Promise<CalenderBooking[]> {
+        return this.bookingRepository.find({ where: { userId:Equal (userId), deleteAt: IsNull() } });
+    }
 }
