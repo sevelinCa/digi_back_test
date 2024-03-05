@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { CalenderVenue } from './entities/calender-venues.entity';
 import { CalenderEvents } from './entities/calender-events.entity';
-import { CreateEventDto } from './dto/create-events.dto';
+import { CreateEventDto, type UpdateEventDto } from './dto/create-events.dto';
 import { checkIfUserExists } from '../helper/FindByFunctions'
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';

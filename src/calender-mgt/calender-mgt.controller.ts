@@ -5,7 +5,7 @@ import { RolesGuard } from 'src/roles/roles.guard';
 import { CreateVenueDto, UpdateVenueDto } from './dto/create-venues.dto';
 import { CalenderMgtService } from './calender-mgt.service';
 import { CalenderVenue } from './entities/calender-venues.entity';
-import { CreateEventDto, } from './dto/create-events.dto';
+import { CreateEventDto, UpdateEventDto, } from './dto/create-events.dto';
 import { CalenderEvents } from './entities/calender-events.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
