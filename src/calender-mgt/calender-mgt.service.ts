@@ -113,4 +113,13 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
     async getEventOwnerById(eventOwnerId: string): Promise<CalenderEventOwner | null> {
         return this.eventOwnerRepository.findOne({ where: { id: eventOwnerId, deleteAt: IsNull() } });
     }
+
+    async updateEvent(eventId: string, updateEventDto: UpdateEventDto): Promise<CalenderEvents> {
+        const event = await this.eventsRepository.findOne({ where: { id: eventId, deleteAt: IsNull() } });
+        if (!event) {
+            throw new NotFoundException(`Event with ID ${eventId} not found or has been soft deleted.`);
+        }
+        this.eventsRepository.merge(event, updateEventDto);
+        return this.eventsRepository.save(event);
+    }
 }

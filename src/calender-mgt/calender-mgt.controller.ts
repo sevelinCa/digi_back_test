@@ -124,4 +124,17 @@ export class CalenderMgtController {
     async getEventOwnerById(@Param('eventOwnerId') eventOwnerId: string): Promise<CalenderEventOwner | null> {
         return this.calenderMgtService.getEventOwnerById(eventOwnerId);
     }
+
+
+    @ApiOperation({
+        summary: 'UPDATE - Update event by ID',
+    })
+    @ApiBody({ type: UpdateEventDto })
+    @Put('events/:eventId')
+    async updateEvent(
+        @Param('eventId') eventId: string,
+        @Body() updateEventDto: UpdateEventDto
+    ): Promise<CalenderEvents> {
+        return this.calenderMgtService.updateEvent(eventId, updateEventDto);
+    }
 }
