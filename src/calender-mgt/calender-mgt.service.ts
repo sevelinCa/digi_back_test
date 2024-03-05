@@ -131,4 +131,15 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
         this.bookingRepository.merge(booking, updateBookingDto);
         return this.bookingRepository.save(booking);
     }
+
+
+
+    async deleteVenue(venueId: string): Promise<void> {
+        const venue = await this.venueRepository.findOne({ where: { id: venueId } });
+        if (!venue) {
+            throw new NotFoundException(`Venue with ID ${venueId} not found.`);
+        }
+        venue.deleteAt = new Date();
+        await this.venueRepository.save(venue);
+    }
 }

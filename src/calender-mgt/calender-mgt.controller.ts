@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -147,6 +147,14 @@ export class CalenderMgtController {
         @Body() updateBookingDto: UpdateBookingDto
     ): Promise<CalenderBooking> {
         return this.calenderMgtService.updateBooking(bookingId, updateBookingDto);
+    }
+
+    @ApiOperation({
+        summary: 'DELETE - Soft delete venue by ID',
+    })
+    @Delete('venues/:venueId')
+    async deleteVenue(@Param('venueId') venueId: string): Promise<void> {
+        return this.calenderMgtService.deleteVenue(venueId);
     }
 
     
