@@ -142,4 +142,14 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
         venue.deleteAt = new Date();
         await this.venueRepository.save(venue);
     }
+
+
+    async deleteEvent(eventId: string): Promise<void> {
+        const event = await this.eventsRepository.findOne({ where: { id: eventId } });
+        if (!event) {
+            throw new NotFoundException(`Event with ID ${eventId} not found.`);
+        }
+        event.deleteAt = new Date();
+        await this.eventsRepository.save(event);
+    }
 }
