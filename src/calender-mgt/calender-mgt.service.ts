@@ -9,7 +9,7 @@ import { checkIfUserExists } from '../helper/FindByFunctions'
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
 import { CalenderBooking } from './entities/calender-bookings.entity';
-import type { CreateBookingDto } from './dto/create-bookings.dto';
+import type { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 @Injectable()
 export class CalenderMgtService {
     constructor(
@@ -121,5 +121,14 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
         }
         this.eventsRepository.merge(event, updateEventDto);
         return this.eventsRepository.save(event);
+    }
+
+    async updateBooking(bookingId: string, updateBookingDto: UpdateBookingDto): Promise<CalenderBooking> {
+        const booking = await this.bookingRepository.findOne({ where: { id: bookingId, deleteAt: IsNull() } });
+        if (!booking) {
+            throw new NotFoundException(`Booking with ID ${bookingId} not found or has been soft deleted.`);
+        }
+        this.bookingRepository.merge(booking, updateBookingDto);
+        return this.bookingRepository.save(booking);
     }
 }

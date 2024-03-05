@@ -10,7 +10,7 @@ import { CalenderEvents } from './entities/calender-events.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
 import { CalenderBooking } from './entities/calender-bookings.entity';
-import { CreateBookingDto } from './dto/create-bookings.dto';
+import { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
 
 @ApiTags('Calender')
@@ -137,4 +137,17 @@ export class CalenderMgtController {
     ): Promise<CalenderEvents> {
         return this.calenderMgtService.updateEvent(eventId, updateEventDto);
     }
+    @ApiOperation({
+        summary: 'UPDATE - Update booking by ID',
+    })
+    @ApiBody({ type: UpdateBookingDto })
+    @Put('bookings/:bookingId')
+    async updateBooking(
+        @Param('bookingId') bookingId: string,
+        @Body() updateBookingDto: UpdateBookingDto
+    ): Promise<CalenderBooking> {
+        return this.calenderMgtService.updateBooking(bookingId, updateBookingDto);
+    }
+
+    
 }
