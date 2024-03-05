@@ -109,11 +109,5 @@ export class CalenderMgtController {
         return this.calenderMgtService.getEventById(eventId);
     }
 
-    @ApiOperation({
-        summary: 'GET ONE - Retrieve booking by ID',
-    })
-    @Get('bookings/:bookingId')
-    async getBookingById(@Param('bookingId') bookingId: string): Promise<CalenderBooking | null> {
-        return this.calenderMgtService.getBookingById(bookingId);
-    }
+
 }
