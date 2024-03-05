@@ -101,7 +101,6 @@ export class CalenderMgtController {
         return this.calenderMgtService.updateVenue(venueId, updateVenueDto);
     }
 
-// NEW 
     @ApiOperation({
         summary: 'GET ONE - Retrieve event by ID',
     })
@@ -109,4 +108,6 @@ export class CalenderMgtController {
     async getEventById(@Param('eventId') eventId: string): Promise<CalenderEvents | null> {
         return this.calenderMgtService.getEventById(eventId);
     }
+
+
 }

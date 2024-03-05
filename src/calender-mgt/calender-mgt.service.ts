@@ -101,8 +101,9 @@ export class CalenderMgtService {
         return this.venueRepository.save(venue);
     }
 
-// NEW
-        async getEventById(eventId: string): Promise<CalenderEvents | null> {
-        return this.eventsRepository.findOne({ where: { id: eventId, deleteAt: IsNull() } });
-    }
+async getEventById(eventId: string): Promise<CalenderEvents | null> {
+    return this.eventsRepository.findOne({ where: { id: eventId, deleteAt: IsNull() } });
+}
+
+
 }
