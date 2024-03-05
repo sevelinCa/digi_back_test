@@ -176,4 +176,8 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
     async getAllEventsByUserId(userId: string): Promise<CalenderEvents[]> {
         return this.eventsRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
     }
+
+    async getAllEventsByVenueId(venueId: string): Promise<CalenderEvents[]> {
+        return this.eventsRepository.find({ where: { venueId: Equal(venueId), deleteAt: IsNull() } });
+    }
 }
