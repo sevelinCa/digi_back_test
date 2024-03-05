@@ -163,5 +163,12 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
         await this.bookingRepository.save(booking);
     }
 
-    
+        async deleteEventOwner(eventOwnerId: string): Promise<void> {
+        const eventOwner = await this.eventOwnerRepository.findOne({ where: { id: eventOwnerId } });
+        if (!eventOwner) {
+            throw new NotFoundException(`Event owner with ID ${eventOwnerId} not found.`);
+        }
+        eventOwner.deleteAt = new Date();
+        await this.eventOwnerRepository.save(eventOwner);
+    }
 }
