@@ -166,5 +166,15 @@ export class CalenderMgtController {
         return this.calenderMgtService.deleteEvent(eventId);
     }
 
+    @ApiOperation({
+        summary: 'DELETE - Soft delete booking by ID',
+    })
+    @Delete('bookings/:bookingId')
+    async deleteBooking(@Param('bookingId') bookingId: string): Promise<void> {
+        return this.calenderMgtService.deleteBooking(bookingId);
+    }
+
+    
+
     
 }
