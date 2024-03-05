@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { CalenderVenue } from './entities/calender-venues.entity';
 import { CalenderEvents } from './entities/calender-events.entity';
-import { CreateEventDto } from './dto/create-events.dto';
+import { CreateEventDto, type UpdateEventDto } from './dto/create-events.dto';
 import { checkIfUserExists } from '../helper/FindByFunctions'
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
@@ -108,4 +108,18 @@ async getEventById(eventId: string): Promise<CalenderEvents | null> {
 async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
     return this.bookingRepository.findOne({ where: { id: bookingId, deleteAt: IsNull() } });
 }
+
+
+    async getEventOwnerById(eventOwnerId: string): Promise<CalenderEventOwner | null> {
+        return this.eventOwnerRepository.findOne({ where: { id: eventOwnerId, deleteAt: IsNull() } });
+    }
+
+    async updateEvent(eventId: string, updateEventDto: UpdateEventDto): Promise<CalenderEvents> {
+        const event = await this.eventsRepository.findOne({ where: { id: eventId, deleteAt: IsNull() } });
+        if (!event) {
+            throw new NotFoundException(`Event with ID ${eventId} not found or has been soft deleted.`);
+        }
+        this.eventsRepository.merge(event, updateEventDto);
+        return this.eventsRepository.save(event);
+    }
 }

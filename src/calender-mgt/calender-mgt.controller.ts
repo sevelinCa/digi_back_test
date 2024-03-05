@@ -5,7 +5,7 @@ import { RolesGuard } from 'src/roles/roles.guard';
 import { CreateVenueDto, UpdateVenueDto } from './dto/create-venues.dto';
 import { CalenderMgtService } from './calender-mgt.service';
 import { CalenderVenue } from './entities/calender-venues.entity';
-import { CreateEventDto, } from './dto/create-events.dto';
+import { CreateEventDto, UpdateEventDto, } from './dto/create-events.dto';
 import { CalenderEvents } from './entities/calender-events.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
@@ -115,5 +115,26 @@ export class CalenderMgtController {
     @Get('bookings/:bookingId')
     async getBookingById(@Param('bookingId') bookingId: string): Promise<CalenderBooking | null> {
         return this.calenderMgtService.getBookingById(bookingId);
+    }
+
+        @ApiOperation({
+        summary: 'GET ONE - Retrieve event owner by ID',
+    })
+    @Get('event-owners/:eventOwnerId')
+    async getEventOwnerById(@Param('eventOwnerId') eventOwnerId: string): Promise<CalenderEventOwner | null> {
+        return this.calenderMgtService.getEventOwnerById(eventOwnerId);
+    }
+
+
+    @ApiOperation({
+        summary: 'UPDATE - Update event by ID',
+    })
+    @ApiBody({ type: UpdateEventDto })
+    @Put('events/:eventId')
+    async updateEvent(
+        @Param('eventId') eventId: string,
+        @Body() updateEventDto: UpdateEventDto
+    ): Promise<CalenderEvents> {
+        return this.calenderMgtService.updateEvent(eventId, updateEventDto);
     }
 }
