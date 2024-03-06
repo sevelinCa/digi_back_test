@@ -38,6 +38,7 @@ import { SmsModule } from './sms/sms.module';
 import { UserModule } from './user/user.module';
 import { ProfessionalBodiesModule } from './professional-bodies/professional-bodies.module';
 import { CalenderMgtModule } from './calender-mgt/calender-mgt.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -103,7 +104,8 @@ import { CalenderMgtModule } from './calender-mgt/calender-mgt.module';
     SmsModule,
     UserModule,
     ProfessionalBodiesModule,
-    CalenderMgtModule
+    CalenderMgtModule,
+    FilesModule
   ],
 })
 export class AppModule { }

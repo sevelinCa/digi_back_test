@@ -71,7 +71,7 @@ export class DigifranchiseService {
     // create general information instance
     const createGeneralInfoInstance = this.digifranchiseGeneralInfoRepository.create({
       digifranchiseName: '',
-      ownedDigifranchiseId: savedFranchiseOwner.digifranchiseId,
+      ownedDigifranchiseId: savedFranchiseOwner.id,
       facebookHandle: '',
       tiktokHandle: '',
       instagramHandle: '',
@@ -86,7 +86,7 @@ export class DigifranchiseService {
 
     // create compliance Information
     const createComplianceInfoInstance = this.digifranchiseComplianceInfoRepository.create({
-      ownedDigifranchiseId: savedFranchiseOwner.digifranchiseId,
+      ownedDigifranchiseId: savedFranchiseOwner.id,
       companyRegisterationNumber: '',
       taxNumber: '',
       taxClearencePin: '',
