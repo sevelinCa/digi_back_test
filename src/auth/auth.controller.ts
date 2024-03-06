@@ -72,13 +72,6 @@ export class AuthController {
     @Req() req,
     @Body() authDto: GoogleCreateUserDto,
   ) {
-    if (req.baseUrl != process.env.FRONTEND_DOMAIN) {
-      throw new HttpException({
-        status: HttpStatus.BAD_REQUEST,
-        error: 'Not Authorized',
-      }, HttpStatus.BAD_REQUEST)
-    }
-
     const data = await this.service.googleAuth(authDto);
     return {
       user: {
@@ -89,27 +82,6 @@ export class AuthController {
       }
     }
   }
-  
-
-  // @SerializeOptions({
-  //   groups: ['me'],
-  // })
-  // @Post('digifranchise-super-admin/facebook')
-  // @HttpCode(HttpStatus.OK)
-  // public async faceBookAuthentication(
-  //   @Body() authDto: FaceBookCreateUserDto,
-  // ) {
-  //   const data = await this.service.faceBookAuth(authDto);
-
-  //   return {
-  //     user: {
-  //       ...data.user,
-  //       token: data.token,
-  //       refreshToken: data.refreshToken,
-  //       tokenExpires: data.tokenExpires
-  //     }
-  //   }
-  // }
 
 
   @SerializeOptions({
