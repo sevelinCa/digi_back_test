@@ -12,6 +12,8 @@ import { AppModule } from './app.module';
 import validationOptions from './utils/validation-options';
 import { AllConfigType } from './config/config.type';
 import { ResolvePromisesInterceptor } from './utils/serializer.interceptor';
+import * as express from 'express';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -34,6 +36,9 @@ async function bootstrap() {
     new ResolvePromisesInterceptor(),
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
+
+  const staticFilesDirectory = path.resolve(__dirname, '..', 'uploads');
+  app.use('/uploads', express.static(staticFilesDirectory));
 
   const options = new DocumentBuilder()
     .setTitle('API')
