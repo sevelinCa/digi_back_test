@@ -80,7 +80,7 @@ export class DigifranchiseController {
   @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchises owned by the user have been successfully retrieved.' })
   @Get('get-owned-digifranchises')
   @HttpCode(HttpStatus.OK)
-  async findAllOwnedDigifranchise(@Req() req: Request): Promise<Digifranchise[]> {
+  async findAllOwnedDigifranchise(@Req() req: Request): Promise<DigifranchiseOwner[]> {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseService.findAllOwnedDigifranchiseByUserId(userId);
   }
