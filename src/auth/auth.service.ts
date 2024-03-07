@@ -487,6 +487,14 @@ export class AuthService {
       };
       Object.assign(user, { status: updatedStatus.id })
       await this.usersRepository.save(user)
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Wrong otp'
+        },
+        HttpStatus.BAD_REQUEST
+      )
     }
   }
 

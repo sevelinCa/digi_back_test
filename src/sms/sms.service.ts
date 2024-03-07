@@ -34,7 +34,6 @@ export class SmsService {
         to: phoneNumber,
       });
 
-      // console.log(`Message sent. SID`);
       return result;
     } catch (error) {
       console.error('Error sending SMS:', error);
@@ -44,6 +43,7 @@ export class SmsService {
 
   async verifyOTP(phoneNumber: string, otp: string): Promise<boolean> {
     const storedData = this.otpStore.get(phoneNumber);
+
     if (storedData && storedData.otp === otp && storedData.expiry > Date.now()) {
       this.otpStore.delete(phoneNumber); 
       return true;
