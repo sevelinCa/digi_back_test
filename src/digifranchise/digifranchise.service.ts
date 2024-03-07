@@ -121,17 +121,12 @@ export class DigifranchiseService {
   }
 
 
-  async findAllOwnedDigifranchiseByUserId(userId: string): Promise<Digifranchise[]> {
+  async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
     const ownershipRecords = await this.franchiseOwnershipRepository.find({
       where: { userId },
       relations: ['digifranchise'],
     });
-
-    const digifranchiseIds = ownershipRecords
-      .filter(record => record.digifranchise)
-      .map(record => record.digifranchise.id);
-
-    return this.digifranchiseRepository.findByIds(digifranchiseIds);
+    return ownershipRecords;
   }
 
 
