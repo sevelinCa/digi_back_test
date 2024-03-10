@@ -216,6 +216,7 @@ export class CalenderMgtController {
     async getAllBookingsByEventId(@Param('eventId') eventId: string): Promise<CalenderBooking[]> {
         return this.calenderMgtService.getAllBookingsByEventId(eventId);
     }
+    
 
 
     

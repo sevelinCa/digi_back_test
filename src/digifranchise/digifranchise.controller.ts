@@ -123,12 +123,21 @@ export class DigifranchiseServiceOfferedController {
 
 
   @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise products  by Digifranchise ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise products  by the specified Digifranchise ID have been successfully retrieved.' })
-  @Get('get-products/:digifranchiseId')
+  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise service  by Digifranchise ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise service  by the specified Digifranchise ID have been successfully retrieved.' })
+  @Get('get-all-services/:digifranchiseId')
   @HttpCode(HttpStatus.OK)
-  async findAllByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
-    return this.digifranchiseService.findAllByDigifranchiseId(digifranchiseId);
+  async findAllServiceOfferedByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
+    return this.digifranchiseService.findAllServiceOfferedByDigifranchiseId(digifranchiseId);
+  }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise service  by Digifranchise ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise service  by the specified Digifranchise ID have been successfully retrieved.' })
+  @Get('get-all-services-with-subs/:digifranchiseId')
+  @HttpCode(HttpStatus.OK)
+  async getServicesAndSubServicesByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
+    return this.digifranchiseService.getServicesAndSubServicesByDigifranchiseId(digifranchiseId);
   }
 
 
@@ -213,6 +222,7 @@ export class DigifranchiseProductController {
   async findAllProductByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseProduct[]> {
     return this.productService.findAllProductByDigifranchiseId(digifranchiseId);
   }
+
 
 
   @Roles(RoleEnum.digifranchise_super_admin)
