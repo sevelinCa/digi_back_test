@@ -47,4 +47,8 @@ export class CustomerManagementService {
         return this.customerManagementRepository.find({ where: { deleteAt: IsNull() } });
     }
 
+    async getOneCustomerById(customerId: string): Promise<CustomerManagement | null> {
+        return this.customerManagementRepository.findOne({ where: { id: customerId, deleteAt: IsNull() } });
+    }
+
 }
