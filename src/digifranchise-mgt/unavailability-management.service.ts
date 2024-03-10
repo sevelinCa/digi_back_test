@@ -50,4 +50,19 @@ export class UnavailableManagementService {
     return this.unavailableManagementRepository.findOne({ where: { id, deleteAt: IsNull() } });
    }
 
+
+   async updateUnavailableManagement(unavailabilityId: string, updateUnavailableManagementDto: UpdateUnavailableManagementDto): Promise<UnavailableManagement> {
+    const unavailability = await this.unavailableManagementRepository.findOne({ where: { id: unavailabilityId, deleteAt: IsNull() } });
+    if (!unavailability) {
+        throw new NotFoundException(`availability with ID ${unavailabilityId} not found or has been soft deleted.`);
+    }
+
+    this.unavailableManagementRepository.merge(unavailability, updateUnavailableManagementDto);
+
+    const updatedUnvailability = await this.unavailableManagementRepository.save(unavailability);
+
+    return updatedUnvailability;
+ }
+
+
 }

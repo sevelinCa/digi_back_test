@@ -96,4 +96,15 @@ export class UnavailableManagementController {
      return this.unavailableManagementService.getOneUnavailableManagementById(unavailableId);
  }
 
+ @ApiOperation({ summary: 'UPDATE - Update Unavailable Management', })
+ @ApiResponse({ status: HttpStatus.OK, description: 'Updated unavailable management.' })
+ @ApiBody({ type: UpdateUnavailableManagementDto })
+ @Put('update-unavailable-management/:unavailableId')
+ async updateUnavailableManagement(
+     @Param('unavailableId') unavailableId: string,
+     @Body() updateUnavailableManagementDto: UpdateUnavailableManagementDto): Promise<UnavailableManagement> {
+     return this.unavailableManagementService.updateUnavailableManagement(unavailableId, updateUnavailableManagementDto);
+ }
+
+
 }
