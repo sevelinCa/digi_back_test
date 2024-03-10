@@ -82,4 +82,11 @@ export class UnavailableManagementController {
     return this.unavailableManagementService.createUnavailableManagement(userId, digifranchiseId, createUnavailableManagementDto);
 }
 
+ @ApiOperation({ summary: 'GET - Get All Unavailable Management', })
+ @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all unavailable management.' })
+ @Get('get-all-unavailable-managements')
+ async getAllUnavailableManagement(): Promise<UnavailableManagement[]> {
+     return this.unavailableManagementService.getAllUnavailableManagement();
+ }
+
 }
