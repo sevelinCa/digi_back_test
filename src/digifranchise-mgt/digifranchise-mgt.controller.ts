@@ -136,4 +136,12 @@ export class CustomerManagementController {
         return this.customerManagementService.createCustomer(userId, digifranchiseId, createCustomerManagementDto);
     }
 
+
+    @ApiOperation({ summary: 'Retrieve all customer availabilities' })
+    @ApiResponse({ status: 200, description: 'The list of customer availabilities has been successfully retrieved.' })
+    @Get('get-all-customers')
+    async getAllCustomer(): Promise<CustomerManagement[]> {
+        return this.customerManagementService.getAllCustomer();
+    }
+
 }
