@@ -151,4 +151,15 @@ export class CustomerManagementController {
         return this.customerManagementService.getOneCustomerById(customerId);
     }
 
+    @ApiOperation({ summary: 'Update a customer availability by ID' })
+    @ApiResponse({ status: 200, description: 'The customer availability has been successfully updated.' })
+    @ApiBody({ type: UpdateCustomerManagementDto })
+    @Put('update-customer/:customerId')
+    async updateCustomer(
+        @Param('customerId') customerId: string,
+        @Body() updateCustomerManagementDto: UpdateCustomerManagementDto,
+    ): Promise<CustomerManagement> {
+        return this.customerManagementService.updateCustomer(customerId, updateCustomerManagementDto);
+    }
+
 }

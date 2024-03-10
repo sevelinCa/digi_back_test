@@ -51,4 +51,20 @@ export class CustomerManagementService {
         return this.customerManagementRepository.findOne({ where: { id: customerId, deleteAt: IsNull() } });
     }
 
+
+
+    async updateCustomer(customerId: string, updateCustomerManagementDto: UpdateCustomerManagementDto): Promise<CustomerManagement> {
+        const customer = await this.customerManagementRepository.findOne({ where: { id: customerId, deleteAt: IsNull() } });
+        if (!customer) {
+            throw new NotFoundException(`customer with ID ${customerId} not found or has been soft deleted.`);
+        }
+
+        this.customerManagementRepository.merge(customer, updateCustomerManagementDto);
+
+        const updatedCustomer = await this.customerManagementRepository.save(customer);
+
+        return updatedCustomer;
+    }
+
+
 }
