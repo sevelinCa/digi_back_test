@@ -111,7 +111,7 @@ export class DigifranchiseService {
     return digifranchise;
   }
 
-  async findAllByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
+  async findAllServiceOfferedByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.find({
       where: {
         digifranchiseId: Equal(digifranchiseId),
@@ -120,6 +120,29 @@ export class DigifranchiseService {
     });
   }
 
+  async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string): Promise<any> {
+    const servicesOffered = await this.digifranchiseServiceOfferedRepository.find({
+       where: {
+         digifranchiseId: Equal(digifranchiseId),
+         userId: IsNull(),
+       },
+    });
+   
+    const servicesWithSubServices = await Promise.all(servicesOffered.map(async (service) => {
+       const subServices = await this.digifranchiseSubServiceOfferedRepository.find({
+         where: {
+           serviceId: Equal(service.id),
+         },
+       });
+   
+       return {
+         ...service,
+         subServices,
+       };
+    }));
+   
+    return servicesWithSubServices;
+   }
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
     const ownershipRecords = await this.franchiseOwnershipRepository.find({
@@ -128,7 +151,6 @@ export class DigifranchiseService {
     });
     return ownershipRecords;
   }
-
 
   async createSubDigifranchiseServiceOffered(
     createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
