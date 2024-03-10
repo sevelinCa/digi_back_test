@@ -7,6 +7,9 @@ import { AvailabilityManagementService } from './availability-management.service
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { CreateUnavailableManagementDto, UpdateUnavailableManagementDto } from './dto/create-unavailable-Management.dto';
+import  { UnavailableManagement } from './entities/unavailable-management.entity';
+import  { UnavailableManagementService } from './unavailability-management.service';
 
 @ApiTags('Availability Management')
 @ApiBearerAuth()
@@ -57,4 +60,26 @@ export class AvailabilityManagementController {
     async deleteVenue(@Param('availabilityId') availabilityId: string): Promise<void> {
         return this.availabilityManagementService.deleteVenue(availabilityId);
     }
+}
+
+
+@ApiTags('Unavailable Management')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'unavailable-mgt', version: '1' })
+export class UnavailableManagementController {
+ constructor(private readonly unavailableManagementService: UnavailableManagementService) { }
+
+ @ApiOperation({ summary: 'CREATE - Create Unavailable Management', })
+ @ApiResponse({ status: HttpStatus.OK, description: 'You have created Unavailable Management.' })
+ @ApiBody({ type: CreateUnavailableManagementDto })
+ @Post('create-unavailable-management/:digifranchiseId')
+ async createUnavailableManagement(
+    @Req() req: Request,
+    @Param('digifranchiseId') digifranchiseId: string,
+    @Body() createUnavailableManagementDto: CreateUnavailableManagementDto): Promise<UnavailableManagement> {
+    const userId = (req.user as UserEntity).id;
+    return this.unavailableManagementService.createUnavailableManagement(userId, digifranchiseId, createUnavailableManagementDto);
+}
+
 }
