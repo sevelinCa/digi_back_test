@@ -162,4 +162,10 @@ export class CustomerManagementController {
         return this.customerManagementService.updateCustomer(customerId, updateCustomerManagementDto);
     }
 
+    @ApiOperation({ summary: 'Delete a customer availability by ID' })
+    @ApiResponse({ status: 204, description: 'The customer availability has been successfully deleted.' })
+    @Delete('delete-customer/:customerId')
+    async deleteCustomer(@Param('customerId') customerId: string): Promise<void> {
+        return this.customerManagementService.deleteCustomer(customerId);
+    }
 }

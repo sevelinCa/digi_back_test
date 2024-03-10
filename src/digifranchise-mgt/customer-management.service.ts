@@ -66,5 +66,13 @@ export class CustomerManagementService {
         return updatedCustomer;
     }
 
+    async deleteCustomer(customerId: string): Promise<void> {
+        const customer = await this.customerManagementRepository.findOne({ where: { id: customerId } });
+        if (!customer) {
+            throw new NotFoundException(`customer with ID ${customerId} not found.`);
+        }
+        customer.deleteAt = new Date();
+        await this.customerManagementRepository.save(customer);
+    }
 
 }
