@@ -144,4 +144,11 @@ export class CustomerManagementController {
         return this.customerManagementService.getAllCustomer();
     }
 
+    @ApiOperation({ summary: 'Retrieve a customer availability by ID' })
+    @ApiResponse({ status: 200, description: 'The customer availability has been successfully retrieved.' })
+    @Get('get-one-customer/:customerId')
+    async getOneCustomerById(@Param('customerId') customerId: string): Promise<CustomerManagement | null> {
+        return this.customerManagementService.getOneCustomerById(customerId);
+    }
+
 }
