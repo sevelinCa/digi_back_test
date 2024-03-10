@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { AvailableManagement } from './available-management.entity';
 
 
 export class UnavailableTime {
@@ -21,6 +22,10 @@ export class UnavailableManagement {
   @ManyToOne(() => Digifranchise)
   @JoinColumn({ name: 'digifranchiseId' })
   digifranchiseId: Digifranchise;
+
+  @ManyToOne(() => AvailableManagement)
+  @JoinColumn({ name: 'AvailableManagementId' })
+  AvailableManagementId: AvailableManagement;
 
   @Column({ type: 'json' })
   unavailableTime: UnavailableTime[];

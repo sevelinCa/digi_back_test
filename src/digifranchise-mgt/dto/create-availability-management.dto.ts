@@ -1,22 +1,61 @@
-import { IsNotEmpty, IsEnum, IsBoolean, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsBoolean, IsArray, ValidateNested, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { WeekDaysAndTimes, AllowedTimeSlotUnits, MinTimeBetweenBookedSlots, UnavailableTime } from '../entities/available-management.entity';
+
+export class WeekDaysAndTimes {
+ @IsString()
+ @ApiProperty({ example: 'Monday' })
+ day: string;
+
+ @IsString()
+ @ApiProperty({ example: '09:00' })
+ startTime: string;
+
+ @IsString()
+ @ApiProperty({ example: '17:00' })
+ endTime: string;
+}
+
+export enum AllowedTimeSlotUnits {
+ FIFTEEN_MINUTES = 15,
+ THIRTY_MINUTES = 30,
+ ONE_HOUR = 60,
+ ONE_HOUR_AND_HALF = 90,
+}
+
+export enum MinTimeBetweenBookedSlots {
+ FIFTEEN_MINUTES = 15,
+ THIRTY_MINUTES = 30,
+ ONE_HOUR = 60,
+}
+
+export class UnavailableTime {
+ @IsString()
+ @ApiProperty({ example: '2023-04-01' })
+ date: string;
+
+ @IsString()
+ @ApiProperty({ example: '10:00' })
+ startTime: string;
+
+ @IsString()
+ @ApiProperty({ example: '12:00' })
+ endTime: string;
+}
 
 export class CreateAvailabilityManagementDto {
-
  @ApiProperty({
     type: () => WeekDaysAndTimes,
     isArray: true,
     description: 'An array of WeekDaysAndTimes objects',
     example: [
-        { day: 'Monday', startTime: '09:00', endTime: '17:00' },
-        { day: 'Tuesday', startTime: '09:00', endTime: '17:00' },
-        { day: 'Wednesday', startTime: '09:00', endTime: '17:00' },
-        { day: 'Thursday', startTime: '09:00', endTime: '17:00' },
-        { day: 'Friday', startTime: '09:00', endTime: '17:00' },
-        { day: 'Saturday', startTime: '09:00', endTime: '17:00' },
-        { day: 'Sunday', startTime: '09:00', endTime: '17:00' },  
+      { day: 'Monday', startTime: '09:00', endTime: '17:00' },
+      { day: 'Tuesday', startTime: '09:00', endTime: '17:00' },
+      { day: 'Wednesday', startTime: '09:00', endTime: '17:00' },
+      { day: 'Thursday', startTime: '09:00', endTime: '17:00' },
+      { day: 'Friday', startTime: '09:00', endTime: '17:00' },
+      { day: 'Saturday', startTime: '09:00', endTime: '17:00' },
+      { day: 'Sunday', startTime: '09:00', endTime: '17:00' },  
     ],
  })
  @IsNotEmpty()

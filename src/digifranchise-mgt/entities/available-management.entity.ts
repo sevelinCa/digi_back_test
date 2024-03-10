@@ -9,7 +9,7 @@ export class WeekDaysAndTimes {
 }
 
 export class UnavailableTime {
-  date: Date;
+  date: string;
   startTime: string;
   endTime: string;
 }
