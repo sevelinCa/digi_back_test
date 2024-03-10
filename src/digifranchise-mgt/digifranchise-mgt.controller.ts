@@ -34,5 +34,12 @@ export class AvailabilityManagementController {
         return this.availabilityManagementService.getAllAvailability();
     }
 
+    @ApiOperation({ summary: 'GET - Get Availability by ID', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved availability by ID.' })
+    @Get('get-one-availability/:availabilityId')
+    async getOneAvailabiltyById(@Param('availabilityId') availabilityId: string): Promise<AvailableManagement | null> {
+        return this.availabilityManagementService.getOneAvailabiltyById(availabilityId);
+    }
+
 
 }
