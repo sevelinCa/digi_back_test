@@ -223,6 +223,14 @@ export class DigifranchiseProductController {
     return this.productService.findAllProductByDigifranchiseId(digifranchiseId);
   }
 
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise products  by Digifranchise ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise products  by the specified Digifranchise ID have been successfully retrieved.' })
+  @Get('get-all-products-with-subs/:digifranchiseId')
+  @HttpCode(HttpStatus.OK)
+  async getProductsAndSubProductsById(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseProduct[]> {
+    return this.productService.getProductsAndSubProductsById(digifranchiseId);
+  }
 
 
   @Roles(RoleEnum.digifranchise_super_admin)
