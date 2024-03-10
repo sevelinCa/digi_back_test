@@ -1,10 +1,23 @@
-import { IsNotEmpty, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsArray, ValidateNested, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { UnavailableTime } from '../entities/unavailable-management.entity';
+export class UnavailableTime {
+  @IsString()
+  @ApiProperty({ example: '2023-04-01' })
+  date: string;
+ 
+  @IsString()
+  @ApiProperty({ example: '10:00' })
+  startTime: string;
+ 
+  @IsString()
+  @ApiProperty({ example: '12:00' })
+  endTime: string;
+ }
 
 export class CreateUnavailableManagementDto {
- @ApiProperty({
+
+  @ApiProperty({
     type: () => UnavailableTime,
     isArray: true,
     description: 'An array of UnavailableTime objects',
@@ -18,4 +31,21 @@ export class CreateUnavailableManagementDto {
  @ValidateNested({ each: true })
  @Type(() => UnavailableTime)
  unavailableTime: UnavailableTime[];
+}
+
+export class UpdateUnavailableManagementDto {
+  @ApiProperty({
+    type: () => UnavailableTime,
+    isArray: true,
+    description: 'An array of UnavailableTime objects',
+    example: [
+      { date: '2023-04-01', startTime: '10:00', endTime: '12:00' },
+      { date: '2023-04-02', startTime: '14:00', endTime: '16:00' },
+    ],
+ })
+ @IsOptional()
+ @IsArray()
+ @ValidateNested({ each: true })
+ @Type(() => UnavailableTime)
+ unavailableTime?: UnavailableTime[];
 }
