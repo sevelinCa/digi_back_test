@@ -21,7 +21,7 @@ export class CalenderMgtService {
         private readonly userRepository: Repository<UserEntity>,
         @InjectRepository(CalenderEventOwner)
         private readonly eventOwnerRepository: Repository<CalenderEventOwner>,
-        
+
         @InjectRepository(CalenderBooking)
         private readonly bookingRepository: Repository<CalenderBooking>
     ) { }
@@ -37,35 +37,35 @@ export class CalenderMgtService {
         if (!user) {
             throw new Error('User does not exist')
         }
-        const venue = await this.venueRepository.findOne({where:{id:venueId}});
+        const venue = await this.venueRepository.findOne({ where: { id: venueId } });
         if (!venue) {
             throw new Error('Venue does not exist');
         }
-        const newEvent = this.eventsRepository.create({ ...createEventDto, userId: user, venueId:venue })
+        const newEvent = this.eventsRepository.create({ ...createEventDto, userId: user, venueId: venue })
         const savedEvent = await this.eventsRepository.save(newEvent);
 
         const newEventOwer = this.eventOwnerRepository.create({
-            eventId:savedEvent,
-            userId:user
+            eventId: savedEvent,
+            userId: user
         })
         await this.eventOwnerRepository.save(newEventOwer)
 
         return savedEvent;
     }
 
-    async recordBooking(userId:string, eventId:string,createBookingDto: CreateBookingDto): Promise<CalenderBooking>{
+    async recordBooking(userId: string, eventId: string, createBookingDto: CreateBookingDto): Promise<CalenderBooking> {
 
-        const user = await this.userRepository.findOne({where:{id:userId}});
-        if(!user){
-            throw new Error ('User does not exist');
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new Error('User does not exist');
         }
-        const event = await this.eventsRepository.findOne({ where: {id: eventId}})
-        if(!event){
-            throw new Error ('Event does not exist');
+        const event = await this.eventsRepository.findOne({ where: { id: eventId } })
+        if (!event) {
+            throw new Error('Event does not exist');
         }
         const newBooking = this.bookingRepository.create({
             ...createBookingDto,
-            userId:user,
+            userId: user,
             eventId: event,
         })
 
@@ -101,13 +101,13 @@ export class CalenderMgtService {
         return this.venueRepository.save(venue);
     }
 
-async getEventById(eventId: string): Promise<CalenderEvents | null> {
-    return this.eventsRepository.findOne({ where: { id: eventId, deleteAt: IsNull() } });
-}
+    async getEventById(eventId: string): Promise<CalenderEvents | null> {
+        return this.eventsRepository.findOne({ where: { id: eventId, deleteAt: IsNull() } });
+    }
 
-async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
-    return this.bookingRepository.findOne({ where: { id: bookingId, deleteAt: IsNull() } });
-}
+    async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
+        return this.bookingRepository.findOne({ where: { id: bookingId, deleteAt: IsNull() } });
+    }
 
 
     async getEventOwnerById(eventOwnerId: string): Promise<CalenderEventOwner | null> {
@@ -163,7 +163,7 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
         await this.bookingRepository.save(booking);
     }
 
-        async deleteEventOwner(eventOwnerId: string): Promise<void> {
+    async deleteEventOwner(eventOwnerId: string): Promise<void> {
         const eventOwner = await this.eventOwnerRepository.findOne({ where: { id: eventOwnerId } });
         if (!eventOwner) {
             throw new NotFoundException(`Event owner with ID ${eventOwnerId} not found.`);
@@ -182,12 +182,12 @@ async getBookingById(bookingId: string): Promise<CalenderBooking | null> {
     }
 
     async getAllBookingsByUserId(userId: string): Promise<CalenderBooking[]> {
-        return this.bookingRepository.find({ where: { userId:Equal (userId), deleteAt: IsNull() } });
+        return this.bookingRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
     }
 
     async getAllBookingsByEventId(eventId: string): Promise<CalenderBooking[]> {
         return this.bookingRepository.find({ where: { eventId: Equal(eventId), deleteAt: IsNull() } });
     }
 
-    
+
 }
