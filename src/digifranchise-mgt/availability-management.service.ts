@@ -20,32 +20,32 @@ export class AvailabilityManagementService {
         private readonly userRepository: Repository<UserEntity>,
         @InjectRepository(Digifranchise)
         private readonly digifranchiseRepository: Repository<Digifranchise>,
-        @InjectRepository(UnavailableManagement) // Inject the UnavailableManagement repository
+        @InjectRepository(UnavailableManagement) 
         private readonly unavailableManagementRepository: Repository<UnavailableManagement>,
     
     ) { }
 
 
-    // async createAvailability(userId: string, digifranchiseId: string, createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
-    //     const user = await checkIfUserExists(this.userRepository, userId);
-    //     if (!user) {
-    //         throw new Error('User does not exist');
-    //     }
+    async createAvailabilit(userId: string, digifranchiseId: string, createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
+        const user = await checkIfUserExists(this.userRepository, userId);
+        if (!user) {
+            throw new Error('User does not exist');
+        }
 
-    //     const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
-    //     if (!digifranchise) {
-    //         throw new Error('Digifranchise does not exist')
-    //     }
+        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
+        if (!digifranchise) {
+            throw new Error('Digifranchise does not exist')
+        }
 
-    //     const newAvailability = this.availabilityRepository.create({
-    //         ...createAvailabilityManagementDto,
-    //         userId: user,
-    //         digifranchiseId: digifranchise
-    //     });
+        const newAvailability = this.availabilityRepository.create({
+            ...createAvailabilityManagementDto,
+            userId: user,
+            digifranchiseId: digifranchise
+        });
 
-    //     const savedAvailability = await this.availabilityRepository.save(newAvailability);
-    //     return savedAvailability;
-    // }
+        const savedAvailability = await this.availabilityRepository.save(newAvailability);
+        return savedAvailability;
+    }
 
     async createAvailability(userId: string, digifranchiseId: string, createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
@@ -103,7 +103,7 @@ export class AvailabilityManagementService {
         return updatedAvailability;
      }
 
-    async deleteVenue(availabilityId: string): Promise<void> {
+    async deleteAvailability(availabilityId: string): Promise<void> {
         const availability = await this.availabilityRepository.findOne({ where: { id: availabilityId } });
         if (!availability) {
             throw new NotFoundException(`availability with ID ${availabilityId} not found.`);
