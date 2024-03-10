@@ -39,6 +39,7 @@ import { UserModule } from './user/user.module';
 import { ProfessionalBodiesModule } from './professional-bodies/professional-bodies.module';
 import { CalenderMgtModule } from './calender-mgt/calender-mgt.module';
 import { FilesModule } from './files/files.module';
+import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.module';
 
 @Module({
   imports: [
@@ -105,7 +106,8 @@ import { FilesModule } from './files/files.module';
     UserModule,
     ProfessionalBodiesModule,
     CalenderMgtModule,
-    FilesModule
+    FilesModule,
+    DigifranchiseMgtModule
   ],
 })
 export class AppModule { }
