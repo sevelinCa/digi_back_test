@@ -37,6 +37,30 @@ export class ProductService {
   }
 
 
+  async getProductsAndSubProductsById(digifranchiseId: string): Promise<any> {
+ const productsOffered = await this.digifranchiseProductRepository.find({
+    where: {
+      digifranchiseId: Equal(digifranchiseId),
+      userId: IsNull(),
+    },
+ });
+
+ const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
+    const subProducts = await this.digifranchiseSubProductRepository.find({
+      where: {
+        productId: Equal(product.id),
+      },
+    });
+
+    return {
+      ...product,
+      subProducts,
+    };
+ }));
+
+ return productsWithSubProducts;
+}
+
   async createSubDigifranchiseProduct(
     createDigifranchiseSubProductDto: CreateDigifranchiseSubProductDto,
     userId: string,
