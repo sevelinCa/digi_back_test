@@ -45,5 +45,9 @@ export class AvailabilityManagementService {
         return this.availabilityRepository.find({ where: { deleteAt: IsNull() } });
     }
 
+    async getOneAvailabiltyById(availabilityId: string): Promise<AvailableManagement | null> {
+        return this.availabilityRepository.findOne({ where: { id: availabilityId, deleteAt: IsNull() } });
+    }
+
 
 }
