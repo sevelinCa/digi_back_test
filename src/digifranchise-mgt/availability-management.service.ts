@@ -64,4 +64,13 @@ export class AvailabilityManagementService {
         return updatedAvailability;
      }
 
+    async deleteVenue(availabilityId: string): Promise<void> {
+        const availability = await this.availabilityRepository.findOne({ where: { id: availabilityId } });
+        if (!availability) {
+            throw new NotFoundException(`availability with ID ${availabilityId} not found.`);
+        }
+        availability.deleteAt = new Date();
+        await this.availabilityRepository.save(availability);
+    }
+
 }

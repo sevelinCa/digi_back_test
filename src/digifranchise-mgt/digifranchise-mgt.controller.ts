@@ -51,4 +51,10 @@ export class AvailabilityManagementController {
         return this.availabilityManagementService.updateAvailability(availabilityId, updateAvailabilityManagementDto);
     }
 
+    @ApiOperation({ summary: 'DELETE - Delete Availability', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Deleted availability.' })
+    @Delete('delete-availability/:availabilityId')
+    async deleteVenue(@Param('availabilityId') availabilityId: string): Promise<void> {
+        return this.availabilityManagementService.deleteVenue(availabilityId);
+    }
 }
