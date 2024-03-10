@@ -64,5 +64,12 @@ export class UnavailableManagementService {
     return updatedUnvailability;
  }
 
-
+   async deleteUnavailableManagement(id: string): Promise<void> {
+    const unavailableManagement = await this.unavailableManagementRepository.findOne({ where: { id } });
+    if (!unavailableManagement) {
+       throw new NotFoundException(`Unavailable Management with ID ${id} not found.`);
+    }
+    unavailableManagement.deleteAt = new Date();
+    await this.unavailableManagementRepository.save(unavailableManagement);
+   }
 }
