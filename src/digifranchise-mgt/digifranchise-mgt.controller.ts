@@ -106,5 +106,10 @@ export class UnavailableManagementController {
      return this.unavailableManagementService.updateUnavailableManagement(unavailableId, updateUnavailableManagementDto);
  }
 
-
+ @ApiOperation({ summary: 'DELETE - Delete Unavailable Management', })
+ @ApiResponse({ status: HttpStatus.OK, description: 'Deleted unavailable management.' })
+ @Delete('delete-unavailable-management/:unavailableId')
+ async deleteUnavailableManagement(@Param('unavailableId') unavailableId: string): Promise<void> {
+     return this.unavailableManagementService.deleteUnavailableManagement(unavailableId);
+ }
 }
