@@ -89,4 +89,11 @@ export class UnavailableManagementController {
      return this.unavailableManagementService.getAllUnavailableManagement();
  }
 
+ @ApiOperation({ summary: 'GET - Get Unavailable Management by ID', })
+ @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved unavailable management by ID.' })
+ @Get('get-one-unavailable-management/:unavailableId')
+ async getOneUnavailableManagementById(@Param('unavailableId') unavailableId: string): Promise<UnavailableManagement | null> {
+     return this.unavailableManagementService.getOneUnavailableManagementById(unavailableId);
+ }
+
 }

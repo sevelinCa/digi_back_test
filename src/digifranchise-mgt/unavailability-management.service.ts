@@ -46,4 +46,8 @@ export class UnavailableManagementService {
     return this.unavailableManagementRepository.find({ where: { deleteAt: IsNull() } });
    }
 
+   async getOneUnavailableManagementById(id: string): Promise<UnavailableManagement | null> {
+    return this.unavailableManagementRepository.findOne({ where: { id, deleteAt: IsNull() } });
+   }
+
 }
