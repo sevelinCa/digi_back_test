@@ -50,4 +50,18 @@ export class AvailabilityManagementService {
     }
 
 
+
+    async updateAvailability(availabilityId: string, updateAvailabilityManagementDto: UpdateAvailabilityManagementDto): Promise<AvailableManagement> {
+        const availability = await this.availabilityRepository.findOne({ where: { id: availabilityId, deleteAt: IsNull() } });
+        if (!availability) {
+            throw new NotFoundException(`availability with ID ${availabilityId} not found or has been soft deleted.`);
+        }
+    
+        this.availabilityRepository.merge(availability, updateAvailabilityManagementDto);
+    
+        const updatedAvailability = await this.availabilityRepository.save(availability);
+    
+        return updatedAvailability;
+     }
+
 }

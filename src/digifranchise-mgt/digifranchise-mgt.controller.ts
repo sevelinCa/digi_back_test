@@ -41,5 +41,14 @@ export class AvailabilityManagementController {
         return this.availabilityManagementService.getOneAvailabiltyById(availabilityId);
     }
 
+    @ApiOperation({ summary: 'UPDATE - Update Availability', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Updated availability.' })
+    @ApiBody({ type: UpdateAvailabilityManagementDto })
+    @Put('update-availability/:availabilityId')
+    async updateAvailability(
+        @Param('availabilityId') availabilityId: string,
+        @Body() updateAvailabilityManagementDto: UpdateAvailabilityManagementDto): Promise<AvailableManagement> {
+        return this.availabilityManagementService.updateAvailability(availabilityId, updateAvailabilityManagementDto);
+    }
 
 }
