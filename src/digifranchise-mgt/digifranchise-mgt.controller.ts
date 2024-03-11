@@ -265,4 +265,15 @@ export class StaffManagementController {
         return this.staffManagementService.getOneStaffById(staffId);
     }
 
+    @ApiOperation({ summary: 'Update a staff  by ID' })
+    @ApiResponse({ status: 200, description: 'The staff  has been successfully updated.' })
+    @ApiBody({ type: UpdateStaffManagementDto })
+    @Put('update-staff/:staffId')
+    async updateStaff(
+        @Param('staffId') staffId: string,
+        @Body() updateStaffManagementDto: UpdateStaffManagementDto,
+    ): Promise<StaffManagement> {
+        return this.staffManagementService.updateStaff(staffId, updateStaffManagementDto);
+    }
+
 }

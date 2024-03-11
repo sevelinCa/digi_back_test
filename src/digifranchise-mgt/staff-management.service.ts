@@ -52,4 +52,17 @@ export class StaffManagementService {
 
 
 
+    async updateStaff(staffId: string, updateStaffManagementDto: UpdateStaffManagementDto): Promise<StaffManagement> {
+        const staff = await this.staffManagementRepository.findOne({ where: { id: staffId, deleteAt: IsNull() } });
+        if (!staff) {
+            throw new NotFoundException(`staff with ID ${staffId} not found or has been soft deleted.`);
+        }
+
+        this.staffManagementRepository.merge(staff, updateStaffManagementDto);
+
+        const updatedStaff = await this.staffManagementRepository.save(staff);
+
+        return updatedStaff;
+    }
+
 }
