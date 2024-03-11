@@ -4,7 +4,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @Entity()
-export class SuppliersManagement {
+export class SupplierManagement {
  @PrimaryGeneratedColumn('uuid')
  id: string;
 

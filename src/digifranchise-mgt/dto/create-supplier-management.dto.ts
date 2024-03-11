@@ -21,7 +21,7 @@ export class CreateSupplierManagementDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({ example: 'Individual' })
-    customer_type: string;
+    supplier_type: string;
 
     @IsOptional()
     @IsString()
@@ -59,7 +59,7 @@ export class UpdateSupplierManagementDto {
     @IsOptional()
     @IsString()
     @ApiProperty({ example: 'Individual', description: 'The type of supplier' })
-    customer_type?: string;
+    supplier_type?: string;
 
     @IsOptional()
     @IsString()
