@@ -250,4 +250,12 @@ export class StaffManagementController {
         return this.staffManagementService.createStaff(userId, digifranchiseId, createStaffManagementDto);
     }
 
+
+    @ApiOperation({ summary: 'Retrieve all staff availabilities' })
+    @ApiResponse({ status: 200, description: 'The list of staff availabilities has been successfully retrieved.' })
+    @Get('get-all-staffs')
+    async getAllStaff(): Promise<StaffManagement[]> {
+        return this.staffManagementService.getAllStaff();
+    }
+
 }
