@@ -42,4 +42,8 @@ export class StaffManagementService {
     }
 
 
+    async getAllStaff(): Promise<StaffManagement[]> {
+        return this.staffManagementRepository.find({ where: { deleteAt: IsNull() } });
+    }
+
 }
