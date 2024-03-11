@@ -43,8 +43,8 @@ export class AvailabilityManagementController {
     }
 
     @ApiOperation({ summary: 'GET - Get All Availabilities', })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all availabilities.' })
-    @Get('get-all-availabilities')
+    @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all .' })
+    @Get('get-all-')
     async getAllAvailability(): Promise<AvailableManagement[]> {
         return this.availabilityManagementService.getAllAvailability();
     }
@@ -146,8 +146,8 @@ export class CustomerManagementController {
     }
 
 
-    @ApiOperation({ summary: 'Retrieve all customer availabilities' })
-    @ApiResponse({ status: 200, description: 'The list of customer availabilities has been successfully retrieved.' })
+    @ApiOperation({ summary: 'Retrieve all customer ' })
+    @ApiResponse({ status: 200, description: 'The list of customer  has been successfully retrieved.' })
     @Get('get-all-customers')
     async getAllCustomer(): Promise<CustomerManagement[]> {
         return this.customerManagementService.getAllCustomer();
@@ -200,8 +200,8 @@ export class SupplierManagementController {
     }
 
 
-    @ApiOperation({ summary: 'Retrieve all supplier availabilities' })
-    @ApiResponse({ status: 200, description: 'The list of supplier availabilities has been successfully retrieved.' })
+    @ApiOperation({ summary: 'Retrieve all supplier ' })
+    @ApiResponse({ status: 200, description: 'The list of supplier  has been successfully retrieved.' })
     @Get('get-all-suppliers')
     async getAllSupplier(): Promise<SupplierManagement[]> {
         return this.supplierManagementService.getAllSupplier();
@@ -254,8 +254,8 @@ export class StaffManagementController {
     }
 
 
-    @ApiOperation({ summary: 'Retrieve all staff availabilities' })
-    @ApiResponse({ status: 200, description: 'The list of staff availabilities has been successfully retrieved.' })
+    @ApiOperation({ summary: 'Retrieve all staff ' })
+    @ApiResponse({ status: 200, description: 'The list of staff  has been successfully retrieved.' })
     @Get('get-all-staffs')
     async getAllStaff(): Promise<StaffManagement[]> {
         return this.staffManagementService.getAllStaff();
