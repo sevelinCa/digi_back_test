@@ -50,4 +50,17 @@ export class InventoryManagementService {
         return this.inventoryManagementRepository.findOne({ where: { id: inventoryId, deleteAt: IsNull() } });
     }
 
+    async updateInventory(inventoryId: string, updateInventoryManagementDto: UpdateInventoryManagementDto): Promise<InventoryManagement> {
+        const inventory = await this.inventoryManagementRepository.findOne({ where: { id: inventoryId, deleteAt: IsNull() } });
+        if (!inventory) {
+            throw new NotFoundException(`inventory with ID ${inventoryId} not found or has been soft deleted.`);
+        }
+
+        this.inventoryManagementRepository.merge(inventory, updateInventoryManagementDto);
+
+        const updatedInventory = await this.inventoryManagementRepository.save(inventory);
+
+        return updatedInventory;
+    }
+
 }

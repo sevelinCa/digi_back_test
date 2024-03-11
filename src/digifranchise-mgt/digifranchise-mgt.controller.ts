@@ -321,4 +321,16 @@ export class InventoryManagementController {
         return this.inventoryManagementService.getOneInventoryById(inventoryId);
     }
 
+    @ApiOperation({ summary: 'Update a inventory  by ID' })
+    @ApiResponse({ status: 200, description: 'The inventory  has been successfully updated.' })
+    @ApiBody({ type: UpdateInventoryManagementDto })
+    @Put('update-inventory/:inventoryId')
+    async updateInventory(
+        @Param('inventoryId') inventoryId: string,
+        @Body() updateInventoryManagementDto: UpdateInventoryManagementDto,
+    ): Promise<InventoryManagement> {
+        return this.inventoryManagementService.updateInventory(inventoryId, updateInventoryManagementDto);
+    }
+
+
 }
