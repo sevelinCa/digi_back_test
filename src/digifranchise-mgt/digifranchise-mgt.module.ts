@@ -9,12 +9,13 @@ import { UnavailableManagementService } from './unavailability-management.servic
 import { UnavailableManagement } from './entities/unavailable-management.entity';
 import { CustomerManagementService } from './customer-management.service';
 import { CustomerManagement } from './entities/customer-management.entity';
+import { SupplierManagementService } from './supplier-management.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AvailableManagement,Digifranchise, UserEntity, CustomerManagement, UnavailableManagement]),
   ],
-  providers: [AvailabilityManagementService, UnavailableManagementService, CustomerManagementService],
+  providers: [AvailabilityManagementService, UnavailableManagementService, CustomerManagementService, SupplierManagementService],
   controllers: [AvailabilityManagementController,UnavailableManagementController,CustomerManagementController]
 })
 export class DigifranchiseMgtModule {}
