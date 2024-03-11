@@ -207,4 +207,16 @@ export class SupplierManagementController {
     async getOneSupplierById(@Param('supplierId') supplierId: string): Promise<SupplierManagement | null> {
         return this.supplierManagementService.getOneSupplierById(supplierId);
     }
+
+    @ApiOperation({ summary: 'Update a supplier  by ID' })
+    @ApiResponse({ status: 200, description: 'The supplier  has been successfully updated.' })
+    @ApiBody({ type: UpdateSupplierManagementDto })
+    @Put('update-supplier/:supplierId')
+    async updateSupplier(
+        @Param('supplierId') supplierId: string,
+        @Body() updateSupplierManagementDto: UpdateSupplierManagementDto,
+    ): Promise<SupplierManagement> {
+        return this.supplierManagementService.updateSupplier(supplierId, updateSupplierManagementDto);
+    }
+
 }
