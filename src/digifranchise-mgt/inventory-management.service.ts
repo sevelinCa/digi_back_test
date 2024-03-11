@@ -42,4 +42,8 @@ export class InventoryManagementService {
     }
 
 
+    async getAllInventory(): Promise<InventoryManagement[]> {
+        return this.inventoryManagementRepository.find({ where: { deleteAt: IsNull() } });
+    }
+
 }
