@@ -127,8 +127,8 @@ export class UnavailableManagementController {
 export class CustomerManagementController {
     constructor(private readonly customerManagementService: CustomerManagementService) { }
 
-    @ApiOperation({ summary: 'Create a new customer availability' })
-    @ApiResponse({ status: 201, description: 'The customer availability has been successfully created.' })
+    @ApiOperation({ summary: 'Create a new customer ' })
+    @ApiResponse({ status: 201, description: 'The customer  has been successfully created.' })
     @ApiBody({ type: CreateCustomerManagementDto })
     @Post('create-customer/:digifranchiseId')
     async createCustomer(
@@ -147,15 +147,15 @@ export class CustomerManagementController {
         return this.customerManagementService.getAllCustomer();
     }
 
-    @ApiOperation({ summary: 'Retrieve a customer availability by ID' })
-    @ApiResponse({ status: 200, description: 'The customer availability has been successfully retrieved.' })
+    @ApiOperation({ summary: 'Retrieve a customer  by ID' })
+    @ApiResponse({ status: 200, description: 'The customer  has been successfully retrieved.' })
     @Get('get-one-customer/:customerId')
     async getOneCustomerById(@Param('customerId') customerId: string): Promise<CustomerManagement | null> {
         return this.customerManagementService.getOneCustomerById(customerId);
     }
 
-    @ApiOperation({ summary: 'Update a customer availability by ID' })
-    @ApiResponse({ status: 200, description: 'The customer availability has been successfully updated.' })
+    @ApiOperation({ summary: 'Update a customer  by ID' })
+    @ApiResponse({ status: 200, description: 'The customer  has been successfully updated.' })
     @ApiBody({ type: UpdateCustomerManagementDto })
     @Put('update-customer/:customerId')
     async updateCustomer(
@@ -165,8 +165,8 @@ export class CustomerManagementController {
         return this.customerManagementService.updateCustomer(customerId, updateCustomerManagementDto);
     }
 
-    @ApiOperation({ summary: 'Delete a customer availability by ID' })
-    @ApiResponse({ status: 204, description: 'The customer availability has been successfully deleted.' })
+    @ApiOperation({ summary: 'Delete a customer  by ID' })
+    @ApiResponse({ status: 204, description: 'The customer  has been successfully deleted.' })
     @Delete('delete-customer/:customerId')
     async deleteCustomer(@Param('customerId') customerId: string): Promise<void> {
         return this.customerManagementService.deleteCustomer(customerId);
@@ -181,8 +181,8 @@ export class CustomerManagementController {
 export class SupplierManagementController {
     constructor(private readonly supplierManagementService: SupplierManagementService) { }
 
-    @ApiOperation({ summary: 'Create a new supplier availability' })
-    @ApiResponse({ status: 201, description: 'The supplier availability has been successfully created.' })
+    @ApiOperation({ summary: 'Create a new supplier ' })
+    @ApiResponse({ status: 201, description: 'The supplier  has been successfully created.' })
     @ApiBody({ type: CreateSupplierManagementDto })
     @Post('create-supplier/:digifranchiseId')
     async createSupplier(
