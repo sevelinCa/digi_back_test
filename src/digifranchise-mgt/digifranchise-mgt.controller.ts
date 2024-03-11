@@ -332,5 +332,10 @@ export class InventoryManagementController {
         return this.inventoryManagementService.updateInventory(inventoryId, updateInventoryManagementDto);
     }
 
-
+    @ApiOperation({ summary: 'Delete a inventory  by ID' })
+    @ApiResponse({ status: 204, description: 'The inventory  has been successfully deleted.' })
+    @Delete('delete-inventory/:inventoryId')
+    async deleteInventory(@Param('inventoryId') inventoryId: string): Promise<void> {
+        return this.inventoryManagementService.deleteInventory(inventoryId);
+    }
 }

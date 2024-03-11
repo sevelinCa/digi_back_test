@@ -63,4 +63,12 @@ export class InventoryManagementService {
         return updatedInventory;
     }
 
+    async deleteInventory(inventoryId: string): Promise<void> {
+        const inventory = await this.inventoryManagementRepository.findOne({ where: { id: inventoryId } });
+        if (!inventory) {
+            throw new NotFoundException(`inventory with ID ${inventoryId} not found.`);
+        }
+        inventory.deleteAt = new Date();
+        await this.inventoryManagementRepository.save(inventory);
+    }
 }
