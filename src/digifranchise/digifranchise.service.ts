@@ -20,7 +20,7 @@ export class DigifranchiseService {
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     @InjectRepository(DigifranchiseOwner)
-    private franchiseOwnershipRepository: Repository<DigifranchiseOwner>,
+    private digifranchiseOwnershipRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(Digifranchise)
     private digifranchiseRepository: Repository<Digifranchise>,
     @InjectRepository(DigifranchiseServiceOffered)
@@ -45,7 +45,7 @@ export class DigifranchiseService {
   }
 
   async ownDigifranchise(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
-    const existingOwnership = await this.franchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
+    const existingOwnership = await this.digifranchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
     if (existingOwnership) {
       throw new Error('User already own this digifranchise');
     }
@@ -59,13 +59,13 @@ export class DigifranchiseService {
     if (!digifranchise) {
       throw new Error('Digifranchise not found');
     }
-    const newFranchiseOwner = this.franchiseOwnershipRepository.create({
+    const newFranchiseOwner = this.digifranchiseOwnershipRepository.create({
       userId,
       digifranchiseId: digifranchiseId,
       digifranchise: digifranchise,
     });
 
-    const savedFranchiseOwner = await this.franchiseOwnershipRepository.save(newFranchiseOwner)
+    const savedFranchiseOwner = await this.digifranchiseOwnershipRepository.save(newFranchiseOwner)
 
 
     // create general information instance
@@ -145,7 +145,7 @@ export class DigifranchiseService {
    }
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
-    const ownershipRecords = await this.franchiseOwnershipRepository.find({
+    const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
       where: { userId },
       relations: ['digifranchise'],
     });
@@ -217,5 +217,38 @@ export class DigifranchiseService {
     }
 
     await this.digifranchiseSubServiceOfferedRepository.remove(serviceOffered);
+  }
+
+  async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
+    
+    const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({ 
+      where: [
+        { connectNumber: phoneNumber },
+        { otherMobileNumber: phoneNumber }
+      ]
+    })
+
+    const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({ 
+      where: { id: getDigifranchiseGeneralInfoByPhone?.ownedDigifranchiseId }
+    })
+
+    const getComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({
+      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone?.ownedDigifranchiseId }
+    })
+
+    const getProfessionalBodyMemberships = await this.digifranchiseProfessionalBodyMembershipRepository.find({
+      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone?.ownedDigifranchiseId }
+    })
+
+    return {
+      generalInfo: getDigifranchiseGeneralInfoByPhone,
+      complainceInfo: getComplianceInfo,
+      professionalBodies: getProfessionalBodyMemberships
+    }
+
+    console.log('>>>>>>>>', getDigifranchiseGeneralInfoByPhone)
+    console.log('<<<<<<<<<', getDigifranchiseInformation)
+    console.log('********', getComplianceInfo)
+    // const digifranchise = await this.digifranchiseOwnershipRepository.findOne({ where: { }})
   }
 }

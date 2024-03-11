@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
 import { Digifranchise } from './digifranchise.entity';
+import { DigifranchiseGeneralInfo } from './digifranchise-general-information.entity';
+import { DigifranchiseComplianceInfo } from './digifranchise-compliance-information.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -16,6 +18,11 @@ export class DigifranchiseOwner {
   @JoinColumn({ name: 'digifranchise' })
   digifranchise: Digifranchise;
 
+  @OneToOne(() => DigifranchiseGeneralInfo, digifranchiseInfo => digifranchiseInfo.digifranchiseOwner)
+  digifranchiseGeneralInfo: DigifranchiseGeneralInfo;
+
+  @OneToOne(() => DigifranchiseComplianceInfo, digifranchiseInfo => digifranchiseInfo.digifranchiseOwner)
+  digifranchiseComplianceInfo: DigifranchiseComplianceInfo;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

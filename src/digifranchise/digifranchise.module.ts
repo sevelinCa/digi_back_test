@@ -18,6 +18,7 @@ import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchis
 import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-professional-body-membership.service';
 import { ProfessionalBodyEntity } from 'src/professional-bodies/entities/professional-body.entity';
 import { Accreditation } from 'src/professional-bodies/entities/professional-accreditation.entity';
+import { DigifranchiseWebController } from './digifranchise-web.controller';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { Accreditation } from 'src/professional-bodies/entities/professional-acc
     DigifranchiseProductController,
     DigifranchiseGeneralInfoController,
     DigifranchiseComplianceInfoController,
-    DigifranchiseProfessionalMembershipController
+    DigifranchiseProfessionalMembershipController,
+    DigifranchiseWebController
   ],
   providers: [
     DigifranchiseService, 

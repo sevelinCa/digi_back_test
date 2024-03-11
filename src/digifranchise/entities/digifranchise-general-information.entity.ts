@@ -7,11 +7,11 @@ export class DigifranchiseGeneralInfo {
   id: string;
 
   // General Information
-  // @OneToOne(() => DigifranchiseOwner, owner => owner.digifranchiseId)
-  // @JoinColumn({ name: 'ownedDigifranchiseId' })
-  // digifranchiseId: DigifranchiseOwner;
+  @OneToOne(() => DigifranchiseOwner, owner => owner.digifranchiseId)
+  @JoinColumn({ name: 'ownedDigifranchiseId' })
+  digifranchiseOwner: DigifranchiseOwner;
 
-  @Column()
+  @Column({ nullable: true })
   ownedDigifranchiseId: string
 
   @Column()
@@ -37,6 +37,9 @@ export class DigifranchiseGeneralInfo {
 
   @Column()
   otherMobileNumber: string
+
+  @Column({ default: false })
+  useOtherMobileNumberForWebsite: boolean
 
   @Column()
   aboutCompany: string

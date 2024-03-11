@@ -20,12 +20,6 @@ export class DigifranchiseGeneralInfoService {
       );
     }
 
-    // if (digifranchiseGeneralInfo.id !== userId) {
-    //   throw new NotFoundException(
-    //     `digifranchise not owned by current user`,
-    //   );
-    // }
-
     return digifranchiseGeneralInfo
   }
 
@@ -36,13 +30,6 @@ export class DigifranchiseGeneralInfoService {
         `digifranchise info not found`,
       );
     }
-
-    // if (digifranchiseGeneralInfo.id !== userId) {
-    //   throw new NotFoundException(
-    //     `digifranchise not owned by current user`,
-    //   );
-    // }
-    console.log('>>>>>', dto)
     
     digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
     digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle
@@ -56,8 +43,6 @@ export class DigifranchiseGeneralInfoService {
     digifranchiseGeneralInfo.location = dto.location
 
     this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo)
-
-    // const updateDigifranchiseComplianceInfo = this.digifranchiseGeneralInfoRepository.update()
 
     return digifranchiseGeneralInfo
   }
