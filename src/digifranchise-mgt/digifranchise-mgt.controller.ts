@@ -19,6 +19,9 @@ import { SupplierManagementService } from './supplier-management.service';
 import { CreateStaffManagementDto, UpdateStaffManagementDto } from './dto/create-staff-management.dto';
 import { StaffManagement } from './entities/staff-management.entity';
 import { StaffManagementService } from './staff-management.service';
+import { CreateInventoryManagementDto, UpdateInventoryManagementDto } from './dto/create-inventory-management.dto';
+import { InventoryManagement } from './entities/inventory-management.entity';
+import { InventoryManagementService } from './inventory-management.service';
 
 @ApiTags('Availability Management')
 @ApiBearerAuth()
@@ -282,4 +285,26 @@ export class StaffManagementController {
     async deleteStaff(@Param('staffId') staffId: string): Promise<void> {
         return this.staffManagementService.deleteStaff(staffId);
     }
+}
+
+@ApiTags('Inventory Management')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller('inventory-management')
+export class InventoryManagementController {
+    constructor(private readonly inventoryManagementService: InventoryManagementService) { }
+
+    @ApiOperation({ summary: 'Create a new inventory ' })
+    @ApiResponse({ status: 201, description: 'The inventory  has been successfully created.' })
+    @ApiBody({ type: CreateInventoryManagementDto })
+    @Post('create-inventory/:digifranchiseId')
+    async createInventory(
+        @Req() req: Request,
+        @Param('digifranchiseId') digifranchiseId: string,
+        @Body() createInventoryManagementDto: CreateInventoryManagementDto): Promise<InventoryManagement> {
+        const userId = (req.user as UserEntity).id;
+        return this.inventoryManagementService.createInventory(userId, digifranchiseId, createInventoryManagementDto);
+    }
+
+
 }
