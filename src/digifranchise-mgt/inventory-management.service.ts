@@ -46,4 +46,8 @@ export class InventoryManagementService {
         return this.inventoryManagementRepository.find({ where: { deleteAt: IsNull() } });
     }
 
+    async getOneInventoryById(inventoryId: string): Promise<InventoryManagement | null> {
+        return this.inventoryManagementRepository.findOne({ where: { id: inventoryId, deleteAt: IsNull() } });
+    }
+
 }
