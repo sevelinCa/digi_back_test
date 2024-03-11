@@ -307,8 +307,8 @@ export class InventoryManagementController {
     }
 
 
-    @ApiOperation({ summary: 'Retrieve all inventory availabilities' })
-    @ApiResponse({ status: 200, description: 'The list of inventory availabilities has been successfully retrieved.' })
+    @ApiOperation({ summary: 'Retrieve all inventory' })
+    @ApiResponse({ status: 200, description: 'The list of inventory has been successfully retrieved.' })
     @Get('get-all-inventorys')
     async getAllInventory(): Promise<InventoryManagement[]> {
         return this.inventoryManagementService.getAllInventory();
