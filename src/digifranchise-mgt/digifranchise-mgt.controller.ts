@@ -194,4 +194,11 @@ export class SupplierManagementController {
     }
 
 
+    @ApiOperation({ summary: 'Retrieve all supplier availabilities' })
+    @ApiResponse({ status: 200, description: 'The list of supplier availabilities has been successfully retrieved.' })
+    @Get('get-all-suppliers')
+    async getAllSupplier(): Promise<SupplierManagement[]> {
+        return this.supplierManagementService.getAllSupplier();
+    }
+
 }

@@ -44,4 +44,8 @@ export class SupplierManagementService {
     }
 
 
+    async getAllSupplier(): Promise<SupplierManagement[]> {
+        return this.supplierManagementRepository.find({ where: { deleteAt: IsNull() } });
+    }
+
 }
