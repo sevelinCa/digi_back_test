@@ -16,6 +16,9 @@ import { CustomerManagement } from './entities/customer-management.entity';
 import { CreateSupplierManagementDto, UpdateSupplierManagementDto } from './dto/create-supplier-management.dto';
 import { SupplierManagement } from './entities/supplier-management.entity';
 import { SupplierManagementService } from './supplier-management.service';
+import { CreateStaffManagementDto, UpdateStaffManagementDto } from './dto/create-staff-management.dto';
+import { StaffManagement } from './entities/staff-management.entity';
+import { StaffManagementService } from './staff-management.service';
 
 @ApiTags('Availability Management')
 @ApiBearerAuth()
@@ -225,4 +228,26 @@ export class SupplierManagementController {
     async deleteSupplier(@Param('supplierId') supplierId: string): Promise<void> {
         return this.supplierManagementService.deleteSupplier(supplierId);
     }
+}
+
+
+@ApiTags('Staff Management')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller('staff-management')
+export class StaffManagementController {
+    constructor(private readonly staffManagementService: StaffManagementService) { }
+
+    @ApiOperation({ summary: 'Create a new staff ' })
+    @ApiResponse({ status: 201, description: 'The staff  has been successfully created.' })
+    @ApiBody({ type: CreateStaffManagementDto })
+    @Post('create-staff/:digifranchiseId')
+    async createStaff(
+        @Req() req: Request,
+        @Param('digifranchiseId') digifranchiseId: string,
+        @Body() createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
+        const userId = (req.user as UserEntity).id;
+        return this.staffManagementService.createStaff(userId, digifranchiseId, createStaffManagementDto);
+    }
+
 }
