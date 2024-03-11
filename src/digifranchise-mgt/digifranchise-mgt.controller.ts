@@ -13,6 +13,9 @@ import { UnavailableManagementService } from './unavailability-management.servic
 import { CustomerManagementService } from './customer-management.service';
 import { CreateCustomerManagementDto, UpdateCustomerManagementDto } from './dto/create-customer-management.dto';
 import { CustomerManagement } from './entities/customer-management.entity';
+import { CreateSupplierManagementDto, UpdateSupplierManagementDto } from './dto/create-supplier-management.dto';
+import { SupplierManagement } from './entities/supplier-management.entity';
+import { SupplierManagementService } from './supplier-management.service';
 
 @ApiTags('Availability Management')
 @ApiBearerAuth()
@@ -161,5 +164,34 @@ export class CustomerManagementController {
     ): Promise<CustomerManagement> {
         return this.customerManagementService.updateCustomer(customerId, updateCustomerManagementDto);
     }
+
+    @ApiOperation({ summary: 'Delete a customer availability by ID' })
+    @ApiResponse({ status: 204, description: 'The customer availability has been successfully deleted.' })
+    @Delete('delete-customer/:customerId')
+    async deleteCustomer(@Param('customerId') customerId: string): Promise<void> {
+        return this.customerManagementService.deleteCustomer(customerId);
+    }
+}
+
+
+@ApiTags('Supplier Management')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller('supplier-management')
+export class SupplierManagementController {
+    constructor(private readonly supplierManagementService: SupplierManagementService) { }
+
+    @ApiOperation({ summary: 'Create a new supplier availability' })
+    @ApiResponse({ status: 201, description: 'The supplier availability has been successfully created.' })
+    @ApiBody({ type: CreateSupplierManagementDto })
+    @Post('create-supplier/:digifranchiseId')
+    async createSupplier(
+        @Req() req: Request,
+        @Param('digifranchiseId') digifranchiseId: string,
+        @Body() createSupplierManagementDto: CreateSupplierManagementDto): Promise<SupplierManagement> {
+        const userId = (req.user as UserEntity).id;
+        return this.supplierManagementService.createSupplier(userId, digifranchiseId, createSupplierManagementDto);
+    }
+
 
 }

@@ -4,7 +4,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @Entity()
-export class CustomerManagement {
+export class SupplierManagement {
  @PrimaryGeneratedColumn('uuid')
  id: string;
 
@@ -20,7 +20,7 @@ export class CustomerManagement {
  @IsString()
  @Column({ type: 'text' })
  fullNames: string;
- 
+
  @IsNotEmpty()
  @IsEmail()
  @Column()
@@ -34,7 +34,7 @@ export class CustomerManagement {
  @IsNotEmpty()
  @IsString()
  @Column()
- customer_type: string;
+ supplier_type: string;
 
  @IsOptional()
  @IsString()
