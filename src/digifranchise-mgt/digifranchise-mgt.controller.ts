@@ -307,11 +307,18 @@ export class InventoryManagementController {
     }
 
 
-    @ApiOperation({ summary: 'Retrieve all inventory' })
-    @ApiResponse({ status: 200, description: 'The list of inventory has been successfully retrieved.' })
+    @ApiOperation({ summary: 'Retrieve all inventory ' })
+    @ApiResponse({ status: 200, description: 'The list of inventory  has been successfully retrieved.' })
     @Get('get-all-inventorys')
     async getAllInventory(): Promise<InventoryManagement[]> {
         return this.inventoryManagementService.getAllInventory();
+    }
+
+    @ApiOperation({ summary: 'Retrieve a inventory  by ID' })
+    @ApiResponse({ status: 200, description: 'The inventory  has been successfully retrieved.' })
+    @Get('get-one-inventory/:inventoryId')
+    async getOneInventoryById(@Param('inventoryId') inventoryId: string): Promise<InventoryManagement | null> {
+        return this.inventoryManagementService.getOneInventoryById(inventoryId);
     }
 
 }
