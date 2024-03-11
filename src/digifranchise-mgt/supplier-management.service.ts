@@ -67,4 +67,12 @@ export class SupplierManagementService {
         return updatedSupplier;
     }
 
+    async deleteSupplier(supplierId: string): Promise<void> {
+        const supplier = await this.supplierManagementRepository.findOne({ where: { id: supplierId } });
+        if (!supplier) {
+            throw new NotFoundException(`supplier with ID ${supplierId} not found.`);
+        }
+        supplier.deleteAt = new Date();
+        await this.supplierManagementRepository.save(supplier);
+    }
 }
