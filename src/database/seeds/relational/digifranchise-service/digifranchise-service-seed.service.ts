@@ -68,11 +68,6 @@ export class DigifranchiseServiceSeedService {
                     unitPrice: '100'
                 },
                 {
-                    serviceName: 'Custom Exercise Plans',
-                    description: 'Custom Exercise Plans',
-                    unitPrice: '250'
-                },
-                {
                     serviceName: 'Exercise Channel Subscription - 30 days',
                     description: 'Exercise Channel Subscription - 30 days',
                     unitPrice: '50'
