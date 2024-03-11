@@ -65,4 +65,12 @@ export class StaffManagementService {
         return updatedStaff;
     }
 
+    async deleteStaff(staffId: string): Promise<void> {
+        const staff = await this.staffManagementRepository.findOne({ where: { id: staffId } });
+        if (!staff) {
+            throw new NotFoundException(`staff with ID ${staffId} not found.`);
+        }
+        staff.deleteAt = new Date();
+        await this.staffManagementRepository.save(staff);
+    }
 }
