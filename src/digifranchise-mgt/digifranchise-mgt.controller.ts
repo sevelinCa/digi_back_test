@@ -276,4 +276,10 @@ export class StaffManagementController {
         return this.staffManagementService.updateStaff(staffId, updateStaffManagementDto);
     }
 
+    @ApiOperation({ summary: 'Delete a staff  by ID' })
+    @ApiResponse({ status: 204, description: 'The staff  has been successfully deleted.' })
+    @Delete('delete-staff/:staffId')
+    async deleteStaff(@Param('staffId') staffId: string): Promise<void> {
+        return this.staffManagementService.deleteStaff(staffId);
+    }
 }

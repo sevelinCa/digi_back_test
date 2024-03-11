@@ -88,13 +88,18 @@ export class DigifranchiseProductSeedService {
                     productName: 'Play Therapy for Kids',
                     description: 'Play Therapy for Kids',
                     unitPrice: '120'
-                }
+                },
+                {
+                    productName: 'Custom Exercise Plans',
+                    description: 'Custom Exercise Plans',
+                    unitPrice: '250'
+                },
             ];
 
             for (const service of SalonMaterialServices) {
                 const serviceEntity = this.productRepository.create({
                     ...service,
-                    digifranchiseId: savedDigifranchise, // Assign the entire savedDigifranchise entity
+                    digifranchiseId: savedDigifranchise, 
                 });
                 await this.productRepository.save(serviceEntity);
             }
