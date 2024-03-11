@@ -219,4 +219,10 @@ export class SupplierManagementController {
         return this.supplierManagementService.updateSupplier(supplierId, updateSupplierManagementDto);
     }
 
+    @ApiOperation({ summary: 'Delete a supplier  by ID' })
+    @ApiResponse({ status: 204, description: 'The supplier  has been successfully deleted.' })
+    @Delete('delete-supplier/:supplierId')
+    async deleteSupplier(@Param('supplierId') supplierId: string): Promise<void> {
+        return this.supplierManagementService.deleteSupplier(supplierId);
+    }
 }
