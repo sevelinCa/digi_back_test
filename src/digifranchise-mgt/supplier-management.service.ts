@@ -52,4 +52,19 @@ export class SupplierManagementService {
         return this.supplierManagementRepository.findOne({ where: { id: supplierId, deleteAt: IsNull() } });
     }
 
+
+
+    async updateSupplier(supplierId: string, updateSupplierManagementDto: UpdateSupplierManagementDto): Promise<SupplierManagement> {
+        const supplier = await this.supplierManagementRepository.findOne({ where: { id: supplierId, deleteAt: IsNull() } });
+        if (!supplier) {
+            throw new NotFoundException(`supplier with ID ${supplierId} not found or has been soft deleted.`);
+        }
+
+        this.supplierManagementRepository.merge(supplier, updateSupplierManagementDto);
+
+        const updatedSupplier = await this.supplierManagementRepository.save(supplier);
+
+        return updatedSupplier;
+    }
+
 }
