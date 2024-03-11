@@ -258,4 +258,11 @@ export class StaffManagementController {
         return this.staffManagementService.getAllStaff();
     }
 
+    @ApiOperation({ summary: 'Retrieve a staff  by ID' })
+    @ApiResponse({ status: 200, description: 'The staff  has been successfully retrieved.' })
+    @Get('get-one-staff/:staffId')
+    async getOneStaffById(@Param('staffId') staffId: string): Promise<StaffManagement | null> {
+        return this.staffManagementService.getOneStaffById(staffId);
+    }
+
 }
