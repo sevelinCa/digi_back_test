@@ -201,4 +201,10 @@ export class SupplierManagementController {
         return this.supplierManagementService.getAllSupplier();
     }
 
+    @ApiOperation({ summary: 'Retrieve a supplier  by ID' })
+    @ApiResponse({ status: 200, description: 'The supplier  has been successfully retrieved.' })
+    @Get('get-one-supplier/:supplierId')
+    async getOneSupplierById(@Param('supplierId') supplierId: string): Promise<SupplierManagement | null> {
+        return this.supplierManagementService.getOneSupplierById(supplierId);
+    }
 }

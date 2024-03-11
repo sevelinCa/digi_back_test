@@ -48,4 +48,8 @@ export class SupplierManagementService {
         return this.supplierManagementRepository.find({ where: { deleteAt: IsNull() } });
     }
 
+    async getOneSupplierById(supplierId: string): Promise<SupplierManagement | null> {
+        return this.supplierManagementRepository.findOne({ where: { id: supplierId, deleteAt: IsNull() } });
+    }
+
 }
