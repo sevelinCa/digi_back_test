@@ -46,4 +46,10 @@ export class StaffManagementService {
         return this.staffManagementRepository.find({ where: { deleteAt: IsNull() } });
     }
 
+    async getOneStaffById(staffId: string): Promise<StaffManagement | null> {
+        return this.staffManagementRepository.findOne({ where: { id: staffId, deleteAt: IsNull() } });
+    }
+
+
+
 }
