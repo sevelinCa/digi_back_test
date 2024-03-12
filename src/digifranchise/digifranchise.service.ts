@@ -240,15 +240,20 @@ export class DigifranchiseService {
       where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone?.ownedDigifranchiseId }
     })
 
+    const digifranchise = await this.digifranchiseRepository.findOne({
+      where: { id: getDigifranchiseInformation?.digifranchiseId }
+    })
+
+    const digifranchiseOwner = await this.userRepository.findOne({
+      where: { id: getDigifranchiseInformation?.userId }
+    })
+
     return {
+      digifranchiseInfo: digifranchise,
+      ownerInfo: digifranchiseOwner,
       generalInfo: getDigifranchiseGeneralInfoByPhone,
       complainceInfo: getComplianceInfo,
-      professionalBodies: getProfessionalBodyMemberships
+      professionalBodiesInfo: getProfessionalBodyMemberships
     }
-
-    console.log('>>>>>>>>', getDigifranchiseGeneralInfoByPhone)
-    console.log('<<<<<<<<<', getDigifranchiseInformation)
-    console.log('********', getComplianceInfo)
-    // const digifranchise = await this.digifranchiseOwnershipRepository.findOne({ where: { }})
   }
 }
