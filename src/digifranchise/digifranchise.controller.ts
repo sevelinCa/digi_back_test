@@ -120,8 +120,6 @@ export class DigifranchiseServiceOfferedController {
     private readonly digifranchiseComplainceInfoService: DigifranchiseComplianceInfoService
   ) { }
 
-
-
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise service  by Digifranchise ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise service  by the specified Digifranchise ID have been successfully retrieved.' })

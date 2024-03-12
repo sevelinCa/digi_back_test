@@ -13,12 +13,11 @@ export class DigifranchiseComplianceInfo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // General Information
-  // @OneToOne(() => DigifranchiseOwner)
-  // @JoinColumn({ name: 'ownedDigifranchiseId' })
-  // digifranchiseId: DigifranchiseOwner;
+  @OneToOne(() => DigifranchiseOwner, owner => owner.digifranchiseId)
+  @JoinColumn({ name: 'ownedDigifranchiseId' })
+  digifranchiseOwner: DigifranchiseOwner;
 
-  @Column()
+  @Column({ nullable: true })
   ownedDigifranchiseId: string
 
   @Column({ nullable: true })

@@ -11,20 +11,19 @@ import type { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto
 
 @Injectable()
 export class ProductService {
-    constructor(
-        @InjectRepository(UserEntity)
-        private userRepository: Repository<UserEntity>,
-        @InjectRepository(DigifranchiseOwner)
-        private franchiseOwnershipRepository: Repository<DigifranchiseOwner>,
-        @InjectRepository(Digifranchise)
-        private digifranchiseRepository: Repository<Digifranchise>,
-        @InjectRepository(DigifranchiseProduct)
-        private readonly digifranchiseProductRepository: Repository<DigifranchiseProduct>,
-    
-        @InjectRepository(DigifranchiseSubProduct)
-        private readonly digifranchiseSubProductRepository:Repository<DigifranchiseSubProduct>
-    
-      ) { }
+  constructor(
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    @InjectRepository(DigifranchiseOwner)
+    private franchiseOwnershipRepository: Repository<DigifranchiseOwner>,
+    @InjectRepository(Digifranchise)
+    private digifranchiseRepository: Repository<Digifranchise>,
+    @InjectRepository(DigifranchiseProduct)
+    private readonly digifranchiseProductRepository: Repository<DigifranchiseProduct>,
+    @InjectRepository(DigifranchiseSubProduct)
+    private readonly digifranchiseSubProductRepository: Repository<DigifranchiseSubProduct>
+
+  ) { }
 
 
   async findAllProductByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseProduct[]> {
@@ -38,28 +37,28 @@ export class ProductService {
 
 
   async getProductsAndSubProductsById(digifranchiseId: string): Promise<any> {
- const productsOffered = await this.digifranchiseProductRepository.find({
-    where: {
-      digifranchiseId: Equal(digifranchiseId),
-      userId: IsNull(),
-    },
- });
-
- const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
-    const subProducts = await this.digifranchiseSubProductRepository.find({
+    const productsOffered = await this.digifranchiseProductRepository.find({
       where: {
-        productId: Equal(product.id),
+        digifranchiseId: Equal(digifranchiseId),
+        userId: IsNull(),
       },
     });
 
-    return {
-      ...product,
-      subProducts,
-    };
- }));
+    const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
+      const subProducts = await this.digifranchiseSubProductRepository.find({
+        where: {
+          productId: Equal(product.id),
+        },
+      });
 
- return productsWithSubProducts;
-}
+      return {
+        ...product,
+        subProducts,
+      };
+    }));
+
+    return productsWithSubProducts;
+  }
 
   async createSubDigifranchiseProduct(
     createDigifranchiseSubProductDto: CreateDigifranchiseSubProductDto,
@@ -70,19 +69,19 @@ export class ProductService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-  
+
     const Service = await this.digifranchiseProductRepository.findOne({ where: { id: productId } });
 
     if (!Service) {
       throw new NotFoundException('Service not found');
     }
-  
+
     const newDigifranchiseSubProduct = this.digifranchiseSubProductRepository.create({
       ...createDigifranchiseSubProductDto,
-      userId: user,  
-      productId : Service,  
+      userId: user,
+      productId: Service,
     });
-  
+
     return this.digifranchiseSubProductRepository.save(newDigifranchiseSubProduct);
   }
 
@@ -108,9 +107,9 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Sub service not found');
     }
-  
+
     Object.assign(product, updateDigifranchiseSubProductDto);
-  
+
     try {
       return await this.digifranchiseSubProductRepository.save(product);
     } catch (error) {
@@ -124,7 +123,7 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Digifranchise service offered not found');
     }
-  
+
     await this.digifranchiseSubProductRepository.remove(product);
   }
 }
