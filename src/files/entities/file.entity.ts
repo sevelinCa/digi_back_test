@@ -11,6 +11,9 @@ export class File {
   @Column()
   filePath: string;
 
+  @Column()
+  url: string
+
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
