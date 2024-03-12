@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Controller, Post, Delete, Param, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, ConflictException, Controller, Post, Delete, Param, Query, UploadedFile, UseGuards, UseInterceptors, Put, Patch } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -9,6 +9,7 @@ import { User } from 'src/users/domain/user';
 import { File } from './entities/file.entity';
 import { Repository } from 'typeorm';
 import { FilesService } from './files.service';
+import { generateRandomString } from 'src/utils/generate-rand-string';
 
 @ApiTags('Uploads')
 @Controller({
@@ -42,7 +43,8 @@ export class FilesController {
       destination: './uploads/profile/ids',
       filename: (req, file, callback) => {
         const userId = (req.user as User).id;
-        callback(null, `${userId}_profile_id${extname(file.originalname)}`);
+        const randomString = generateRandomString(6);
+        callback(null, `${userId}_${randomString}_profile_id${extname(file.originalname)}`);
       }
     }),
     limits: {
@@ -61,7 +63,8 @@ export class FilesController {
     if (!fileExists) {
       const newFile = this.filesRepository.create({
         filename: file.filename,
-        filePath: file.path
+        filePath: file.path,
+        url: `${process.env.BACKEND_DOMAIN}/${file.path}`
       })
       const savedFile = await this.filesRepository.save(newFile)
       return savedFile
@@ -91,7 +94,8 @@ export class FilesController {
       destination: './uploads/profile/pic',
       filename: (req, file, callback) => {
         const userId = (req.user as User).id;
-        callback(null, `${userId}_profile_pic${extname(file.originalname)}`);
+        const randomString = generateRandomString(6);
+        callback(null, `${userId}_${randomString}_profile_pic${extname(file.originalname)}`);
       }
     }),
     limits: {
@@ -110,7 +114,8 @@ export class FilesController {
     if (!fileExists) {
       const newFile = this.filesRepository.create({
         filename: file.filename,
-        filePath: file.path
+        filePath: file.path,
+        url: `${process.env.BACKEND_DOMAIN}/${file.path}`
       })
       const savedFile = await this.filesRepository.save(newFile)
       return savedFile
@@ -140,7 +145,8 @@ export class FilesController {
       destination: './uploads/profile/police-clearence',
       filename: (req, file, callback) => {
         const userId = (req.user as User).id;
-        callback(null, `${userId}_police-clearence${extname(file.originalname)}`);
+        const randomString = generateRandomString(6);
+        callback(null, `${userId}_${randomString}_police-clearence${extname(file.originalname)}`);
       }
     }),
     limits: {
@@ -159,7 +165,8 @@ export class FilesController {
     if (!fileExists) {
       const newFile = this.filesRepository.create({
         filename: file.filename,
-        filePath: file.path
+        filePath: file.path,
+        url: `${process.env.BACKEND_DOMAIN}/${file.path}`
       })
       const savedFile = await this.filesRepository.save(newFile)
       return savedFile
@@ -188,7 +195,8 @@ export class FilesController {
       destination: './uploads/profile/qualifications',
       filename: (req, file, callback) => {
         const userId = (req.user as User).id;
-        callback(null, `${userId}_qualifications_${file.originalname}${extname(file.originalname)}`);
+        const randomString = generateRandomString(6);
+        callback(null, `${userId}_${randomString}_qualifications_${file.originalname}${extname(file.originalname)}`);
       }
     }),
     limits: {
@@ -207,7 +215,8 @@ export class FilesController {
     if (!fileExists) {
       const newFile = this.filesRepository.create({
         filename: file.filename,
-        filePath: file.path
+        filePath: file.path,
+        url: `${process.env.BACKEND_DOMAIN}/${file.path}`
       })
       const savedFile = await this.filesRepository.save(newFile)
       return savedFile
@@ -236,7 +245,8 @@ export class FilesController {
       destination: './uploads/profile/professional-body',
       filename: (req, file, callback) => {
         const userId = (req.user as User).id;
-        callback(null, `${userId}_professional-body${extname(file.originalname)}`);
+        const randomString = generateRandomString(6);
+        callback(null, `${userId}_${randomString}_professional-body${extname(file.originalname)}`);
       }
     }),
     limits: {
@@ -256,7 +266,8 @@ export class FilesController {
     if (!fileExists) {
       const newFile = this.filesRepository.create({
         filename: file.filename,
-        filePath: file.path
+        filePath: file.path,
+        url: `${process.env.BACKEND_DOMAIN}/${file.path}`
       })
       const savedFile = await this.filesRepository.save(newFile)
       return savedFile
@@ -286,7 +297,8 @@ export class FilesController {
       destination: './uploads/digifranchise/compliance',
       filename: (req, file, callback) => {
         const { ownedDigifranchiseId } = req.query
-        callback(null, `${ownedDigifranchiseId}_compliance_${file.originalname}`);
+        const randomString = generateRandomString(6);
+        callback(null, `${ownedDigifranchiseId}_${randomString}_compliance_${file.originalname}`);
       }
     }),
     limits: {
@@ -306,7 +318,8 @@ export class FilesController {
     if (!fileExists) {
       const newFile = this.filesRepository.create({
         filename: file.filename,
-        filePath: file.path
+        filePath: file.path,
+        url: `${process.env.BACKEND_DOMAIN}/${file.path}`
       })
       const savedFile = await this.filesRepository.save(newFile)
       return savedFile
@@ -335,7 +348,8 @@ export class FilesController {
       destination: './uploads/digifranchise/professional-body',
       filename: (req, file, callback) => {
         const { ownedDigifranchiseId } = req.query
-        callback(null, `${ownedDigifranchiseId}_professional-body_${file.originalname}`);
+        const randomString = generateRandomString(6);
+        callback(null, `${ownedDigifranchiseId}_${randomString}_professional-body_${file.originalname}`);
       }
     }),
     limits: {
@@ -355,17 +369,13 @@ export class FilesController {
     if (!fileExists) {
       const newFile = this.filesRepository.create({
         filename: file.filename,
-        filePath: file.path
+        filePath: file.path,
+        url: `${process.env.BACKEND_DOMAIN}/${file.path}`
       })
       const savedFile = await this.filesRepository.save(newFile)
       return savedFile
     } else {
       throw new ConflictException('file already exits')
     }
-  }
-
-  @Delete(':filename')
-  async deletePicture(@Param('filename') filename: string): Promise<void> {
-    await this.fileService.deletePicture(filename);
   }
 }
