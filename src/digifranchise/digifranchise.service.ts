@@ -259,8 +259,8 @@ export class DigifranchiseService {
     })
 
 
-    const digifranchiseProducts = await this.productService.findAllProductByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
-    const digifranchiseServices = await this.findAllServiceOfferedByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
+    const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId)
+    const digifranchiseServices = await this.getServicesAndSubServicesByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
 
     return {
       digifranchiseInfo: digifranchise,
