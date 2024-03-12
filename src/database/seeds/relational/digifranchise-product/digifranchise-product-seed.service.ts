@@ -17,34 +17,39 @@ export class DigifranchiseProductSeedService {
     }
 
     private async seedBodyRevampProduct() {
-        const check = await this.digifranchiseRepository.count({
-            where: { digifranchiseName: "Body Revamp Product" },
+        const existingDigifranchise = await this.digifranchiseRepository.findOne({
+            where: { digifranchiseName: "Body Revamp" },
         });
-
-        if (check === 0) {
+    
+        let digifranchiseId;
+    
+        if (existingDigifranchise) {
+            digifranchiseId = existingDigifranchise.id;
+        } else {
             const newDigifranchise = this.digifranchiseRepository.create({
-                digifranchiseName: "Body Revamp Product",
+                digifranchiseName: "Body Revamp",
                 description: "Body Revamp Product is a personal training digifranchiseId where certified individuals offer personalized personal training services to their customers. Customers can either subscribe to online exercise and training content or sign up for training sessions delivered live online or in-person.",
                 status: StatusEnum.active,
             });
-
+    
             const savedDigifranchise = await this.digifranchiseRepository.save(newDigifranchise);
-
-            const bodyRevampProduct = [
-                {
-                    productName: 'Custom Exercise Plans',
-                    description: 'Custom Exercise Plans',
-                    unitPrice: '250'
-                }
-            ];
-
-            for (const service of bodyRevampProduct) {
-                const serviceEntity = this.productRepository.create({
-                    ...service,
-                    digifranchiseId: savedDigifranchise, 
-                });
-                await this.productRepository.save(serviceEntity);
+            digifranchiseId = savedDigifranchise.id;
+        }
+    
+        const bodyRevampProduct = [
+            {
+                productName: 'Custom Exercise Plans',
+                description: 'Custom Exercise Plans',
+                unitPrice: '250'
             }
+        ];
+    
+        for (const product of bodyRevampProduct) {
+            const productEntity = this.productRepository.create({
+                ...product,
+                digifranchiseId: digifranchiseId, 
+            });
+            await this.productRepository.save(productEntity);
         }
     }
 
