@@ -13,10 +13,12 @@ import type { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
+import { ProductService } from './product.service';
 
 @Injectable()
 export class DigifranchiseService {
   constructor(
+    private readonly productService: ProductService,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     @InjectRepository(DigifranchiseOwner)
@@ -228,32 +230,46 @@ export class DigifranchiseService {
       ]
     })
 
+    if (!getDigifranchiseGeneralInfoByPhone) {
+      throw new NotFoundException('digifranchise not found')
+    }
+
     const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({ 
-      where: { id: getDigifranchiseGeneralInfoByPhone?.ownedDigifranchiseId }
+      where: { id: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
     })
 
+    if (!getDigifranchiseInformation) {
+      throw new NotFoundException('digifranchise not found')
+    }
+
     const getComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({
-      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone?.ownedDigifranchiseId }
+      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
     })
 
     const getProfessionalBodyMemberships = await this.digifranchiseProfessionalBodyMembershipRepository.find({
-      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone?.ownedDigifranchiseId }
+      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
     })
 
     const digifranchise = await this.digifranchiseRepository.findOne({
-      where: { id: getDigifranchiseInformation?.digifranchiseId }
+      where: { id: getDigifranchiseInformation.digifranchiseId }
     })
 
     const digifranchiseOwner = await this.userRepository.findOne({
-      where: { id: getDigifranchiseInformation?.userId }
+      where: { id: getDigifranchiseInformation.userId }
     })
+
+
+    const digifranchiseProducts = await this.productService.findAllProductByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
+    const digifranchiseServices = await this.findAllServiceOfferedByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
 
     return {
       digifranchiseInfo: digifranchise,
       ownerInfo: digifranchiseOwner,
       generalInfo: getDigifranchiseGeneralInfoByPhone,
       complainceInfo: getComplianceInfo,
-      professionalBodiesInfo: getProfessionalBodyMemberships
+      professionalBodiesInfo: getProfessionalBodyMemberships,
+      products: digifranchiseProducts,
+      services: digifranchiseServices
     }
   }
 }

@@ -20,7 +20,6 @@ export class ProductService {
         private digifranchiseRepository: Repository<Digifranchise>,
         @InjectRepository(DigifranchiseProduct)
         private readonly digifranchiseProductRepository: Repository<DigifranchiseProduct>,
-    
         @InjectRepository(DigifranchiseSubProduct)
         private readonly digifranchiseSubProductRepository:Repository<DigifranchiseSubProduct>
     
