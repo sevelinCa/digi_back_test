@@ -2,6 +2,10 @@ import { IsNotEmpty, IsString, IsEmail, IsOptional, Length, IsBoolean, IsDecimal
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateStaffManagementDto {
+    @IsOptional()
+    @ApiProperty({ example: 'Image' })
+    image?: string;
+    
     @IsNotEmpty()
     @IsString()
     @ApiProperty({ example: 'John Doe' })
@@ -69,6 +73,11 @@ export class CreateStaffManagementDto {
 }
 
 export class UpdateStaffManagementDto {
+
+    @IsOptional()
+    @ApiProperty({ example: 'Image' })
+    image?: string;
+
     @IsOptional()
     @IsString()
     @ApiProperty({ example: 'John Doe' })

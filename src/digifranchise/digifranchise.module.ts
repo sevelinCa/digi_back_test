@@ -51,7 +51,7 @@ import { DigifranchiseWebController } from './digifranchise-web.controller';
     DigifranchiseGeneralInfoService, 
     DigifranchiseComplianceInfoService,
     DigifranchiseProfessionalBodyMembershipService,
-    ProductService
+    ProductService,
   ]
 })
 export class DigifranchiseModule {}

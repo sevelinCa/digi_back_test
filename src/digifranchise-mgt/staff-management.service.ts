@@ -20,21 +20,14 @@ export class StaffManagementService {
 
     ) { }
 
-    async createStaff(userId: string, digifranchiseId: string, createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
+    async createStaff(userId: string,createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new Error('User does not exist');
         }
-
-        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
-        if (!digifranchise) {
-            throw new Error('Digifranchise does not exist')
-        }
-
         const newStaff = this.staffManagementRepository.create({
             ...createStaffManagementDto,
             userId: user,
-            digifranchiseId: digifranchise
         });
 
         const savedStaff = await this.staffManagementRepository.save(newStaff);

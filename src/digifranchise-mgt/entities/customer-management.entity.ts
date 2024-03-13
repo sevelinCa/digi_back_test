@@ -12,10 +12,6 @@ export class CustomerManagement {
  @JoinColumn({ name: 'userId' })
  userId: UserEntity;
 
- @ManyToOne(() => Digifranchise)
- @JoinColumn({ name: 'digifranchiseId' })
- digifranchiseId: Digifranchise;
-
  @IsNotEmpty()
  @IsString()
  @Column({ type: 'text' })
