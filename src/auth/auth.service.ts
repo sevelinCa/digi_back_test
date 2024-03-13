@@ -187,66 +187,66 @@ export class AuthService {
     }
   }
 
-  async faceBookAuth(faceBookUser: FaceBookCreateUserDto): Promise<any> {
-    const user = await this.usersRepository.findOne({
-      where: { email: faceBookUser.email as string },
-    });
+  // async faceBookAuth(faceBookUser: FaceBookCreateUserDto): Promise<any> {
+  //   const user = await this.usersRepository.findOne({
+  //     where: { email: faceBookUser.email as string },
+  //   });
 
-    if (user) {
-      const session = await this.sessionService.create({
-        user,
-      });
+  //   if (user) {
+  //     const session = await this.sessionService.create({
+  //       user,
+  //     });
 
-      const { token, refreshToken, tokenExpires } = await this.getTokensData({
-        id: user.id,
-        role: user.role,
-        sessionId: session.id,
-      });
+  //     const { token, refreshToken, tokenExpires } = await this.getTokensData({
+  //       id: user.id,
+  //       role: user.role,
+  //       sessionId: session.id,
+  //     });
 
-      return {
-        refreshToken,
-        token,
-        tokenExpires,
-        user,
-      };
-    } else {
-      const newUser = await this.usersRepository.save(
-        this.usersRepository.create({
-          ...faceBookUser,
-          role: {
-            id: RoleEnum.digifranchise_super_admin
-          },
-          status: {
-            id: StatusEnum.active
-          },
-          image: faceBookUser.profilePic,
-          provider: 'facebook',
-        }),
-      );
+  //     return {
+  //       refreshToken,
+  //       token,
+  //       tokenExpires,
+  //       user,
+  //     };
+  //   } else {
+  //     const newUser = await this.usersRepository.save(
+  //       this.usersRepository.create({
+  //         ...faceBookUser,
+  //         role: {
+  //           id: RoleEnum.digifranchise_super_admin
+  //         },
+  //         status: {
+  //           id: StatusEnum.active
+  //         },
+  //         image: faceBookUser.profilePic,
+  //         provider: 'facebook',
+  //       }),
+  //     );
 
-      const user = await this.usersRepository.findOne({
-        where: { email: newUser.email as string },
-      });
+  //     const user = await this.usersRepository.findOne({
+  //       where: { email: newUser.email as string },
+  //     });
 
-      if (user) {
-        const session = await this.sessionService.create({
-          user,
-        });
-        const { token, refreshToken, tokenExpires } = await this.getTokensData({
-          id: user.id,
-          role: newUser.role,
-          sessionId: session.id,
-        });
+  //     if (user) {
+  //       const session = await this.sessionService.create({
+  //         user,
+  //       });
+  //       const { token, refreshToken, tokenExpires } = await this.getTokensData({
+  //         id: user.id,
+  //         role: newUser.role,
+  //         sessionId: session.id,
+  //       });
 
-        return {
-          refreshToken,
-          token,
-          tokenExpires,
-          newUser,
-        }
-      }
-    }
-  }
+  //       return {
+  //         refreshToken,
+  //         token,
+  //         tokenExpires,
+  //         newUser,
+  //       }
+  //     }
+  //   }
+  // }
 
   async register(dto: AuthRegisterLoginDto): Promise<void> {
     const user = await this.usersService.create({
@@ -255,6 +255,58 @@ export class AuthService {
       phoneNumber: null,
       role: {
         id: RoleEnum.digifranchise_super_admin,
+      },
+      status: {
+        id: StatusEnum.inactive,
+      },
+      image: null,
+      idImage: null,
+      gender: null,
+      race: null,
+      homeAddress: null,
+      educationLevel: null,
+      currentActivity: null,
+      fieldOfStudy: null,
+      qualifications: null,
+      professionalBody: null,
+      southAfricanCitizen: null,
+      documentId: null,
+      countryOfOrigin: null,
+      criminalRecord: null,
+      policeClearenceCertificate: null,
+      crimes: null,
+      isProfileComplete: false
+    });
+
+    const hash = await this.jwtService.signAsync(
+      {
+        confirmEmailUserId: user.id,
+      },
+      {
+        secret: this.configService.getOrThrow('auth.confirmEmailSecret', {
+          infer: true,
+        }),
+        expiresIn: this.configService.getOrThrow('auth.confirmEmailExpires', {
+          infer: true,
+        }),
+      },
+    );
+
+    await this.mailService.userSignUp({
+      to: dto.email,
+      data: {
+        hash,
+      },
+    });
+  }
+
+  async customerRegister(digifranchiseId: string, dto: AuthRegisterLoginDto): Promise<void> {
+    const user = await this.usersService.create({
+      ...dto,
+      email: dto.email,
+      phoneNumber: null,
+      role: {
+        id: RoleEnum.customer,
       },
       status: {
         id: StatusEnum.inactive,
@@ -356,6 +408,52 @@ export class AuthService {
       phoneNumber: dto.phoneNumber,
       role: {
         id: RoleEnum.digifranchise_super_admin,
+      },
+      status: {
+        id: StatusEnum.inactive,
+      },
+      image: null,
+      idImage: null,
+      gender: null,
+      race: null,
+      homeAddress: null,
+      educationLevel: null,
+      currentActivity: null,
+      fieldOfStudy: null,
+      qualifications: null,
+      professionalBody: null,
+      southAfricanCitizen: null,
+      documentId: null,
+      countryOfOrigin: null,
+      criminalRecord: null,
+      policeClearenceCertificate: null,
+      crimes: null,
+      isProfileComplete: false
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errors: {
+            phoneNumber: 'failedToCreatUser',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    await this.smsService.sendOTP(dto.phoneNumber)
+  }
+
+  async phoneCustomerRegister(digifranchiseId: string, dto: AuthPhoneRegisterDto) {
+    const user = await this.usersService.create({
+      ...dto,
+      provider: AuthProvidersEnum.phone,
+      email: null,
+      phoneNumber: dto.phoneNumber,
+      role: {
+        id: RoleEnum.customer,
       },
       status: {
         id: StatusEnum.inactive,

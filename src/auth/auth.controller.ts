@@ -12,6 +12,7 @@ import {
   SerializeOptions,
   Req,
   HttpException,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -110,7 +111,28 @@ export class AuthController {
     await this.service.register(createUserDto);
     
     return {
-      message: "SignUp is successfull, check your email to verify!!"
+      message: "sign up is successfull, check your email to verify!!"
+    }
+  }
+
+
+  @Post('email/digifranchise-customer/register')
+  @HttpCode(HttpStatus.OK)
+  async registerCustomer(@Query('digifranchiseId') digifranchiseId: string, @Body() createUserDto: AuthRegisterLoginDto) {
+    await this.service.customerRegister(digifranchiseId, createUserDto);
+    
+    return {
+      message: "sign up is successfull, check your email to verify!!"
+    }
+  }
+
+  @Post('phone/digifranchise-customer/register')
+  @HttpCode(HttpStatus.OK)
+  async registerCustomerWithPhone(@Query('digifranchiseId') digifranchiseId: string, @Body() phoneRegisterDto: AuthPhoneRegisterDto) {
+    await this.service.phoneCustomerRegister(digifranchiseId, phoneRegisterDto);
+    
+    return {
+      message: "sign up is successfull, check phone for otp"
     }
   }
 
