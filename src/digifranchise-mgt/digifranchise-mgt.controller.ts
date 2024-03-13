@@ -139,17 +139,20 @@ export class CustomerManagementController {
     @Post('create-customer')
     async createCustomer(
         @Req() req: Request,
+        @Param('digifranchiseId') digifranchiseId: string,
         @Body() createCustomerManagementDto: CreateCustomerManagementDto): Promise<CustomerManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.customerManagementService.createCustomer(userId, createCustomerManagementDto);
+        return this.customerManagementService.createCustomer(userId, digifranchiseId, createCustomerManagementDto);
     }
 
 
     @ApiOperation({ summary: 'Retrieve all customer ' })
     @ApiResponse({ status: 200, description: 'The list of customer  has been successfully retrieved.' })
     @Get('get-all-customers')
-    async getAllCustomer(): Promise<CustomerManagement[]> {
-        return this.customerManagementService.getAllCustomer();
+    @Get('get-all-customers')
+    async getAllCustomer(@Req() req: Request): Promise<CustomerManagement[]> {
+        const userId = (req.user as UserEntity).id;
+        return this.customerManagementService.getAllCustomer(userId);
     }
 
     @ApiOperation({ summary: 'Retrieve a customer  by ID' })
@@ -246,17 +249,19 @@ export class StaffManagementController {
     @Post('create-staff')
     async createStaff(
         @Req() req: Request,
+        @Param('digifranchiseId') digifranchiseId: string,
         @Body() createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.staffManagementService.createStaff(userId, createStaffManagementDto);
+        return this.staffManagementService.createStaff(userId, digifranchiseId, createStaffManagementDto);
     }
 
 
     @ApiOperation({ summary: 'Retrieve all staff ' })
     @ApiResponse({ status: 200, description: 'The list of staff  has been successfully retrieved.' })
     @Get('get-all-staffs')
-    async getAllStaff(): Promise<StaffManagement[]> {
-        return this.staffManagementService.getAllStaff();
+    async getAllStaff(@Req() req: Request): Promise<StaffManagement[]> {
+        const userId = (req.user as UserEntity).id;
+        return this.staffManagementService.getAllStaff(userId);
     }
 
     @ApiOperation({ summary: 'Retrieve a staff  by ID' })

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { checkIfUserExists } from 'src/helper/FindByFunctions';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import {  Repository, IsNull } from 'typeorm';
+import {  Repository, IsNull, Equal } from 'typeorm';
 import  { CreateStaffManagementDto, UpdateStaffManagementDto } from './dto/create-staff-management.dto';
 import { StaffManagement } from './entities/staff-management.entity';
 
@@ -20,14 +20,20 @@ export class StaffManagementService {
 
     ) { }
 
-    async createStaff(userId: string,createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
+    async createStaff(userId: string,digifranchiseId: string,createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new Error('User does not exist');
         }
+
+        const digifranchise = await this.digifranchiseRepository.findOne({where:{id:digifranchiseId}})
+        if(!digifranchise){
+            throw new Error('User does not exist')
+        }
         const newStaff = this.staffManagementRepository.create({
             ...createStaffManagementDto,
             userId: user,
+            digifranchiseId: digifranchise
         });
 
         const savedStaff = await this.staffManagementRepository.save(newStaff);
@@ -35,9 +41,10 @@ export class StaffManagementService {
     }
 
 
-    async getAllStaff(): Promise<StaffManagement[]> {
-        return this.staffManagementRepository.find({ where: { deleteAt: IsNull() } });
+    async getAllStaff(userId: string): Promise<StaffManagement[]> {
+        return this.staffManagementRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
     }
+
 
     async getOneStaffById(staffId: string): Promise<StaffManagement | null> {
         return this.staffManagementRepository.findOne({ where: { id: staffId, deleteAt: IsNull() } });
