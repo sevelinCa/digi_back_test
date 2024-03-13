@@ -59,4 +59,9 @@ async createSubscription(userId: string, digifranchiseId: string): Promise<Custo
       await this.customerSubscriptionRepository.delete(id);
    }
 
+   async getSubscribersByDigifranchiseId(digifranchiseId: string): Promise<CustomerSubscription[]> {
+      return this.customerSubscriptionRepository.find({
+          where: { digifranchiseId: Equal(digifranchiseId), deleteAt: IsNull() },
+      });
+  }
 }

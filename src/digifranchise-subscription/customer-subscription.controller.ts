@@ -48,4 +48,10 @@ export class CustomerSubscriptionController {
         return this.subscriptionService.deleteSubscription(subscriptionId);
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve subscribers by Digifranchise ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Subscribers have been successfully retrieved.' })
+    @Get('get-subscribers/:digifranchiseId')
+    async getSubscribersByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<CustomerSubscription[]> {
+        return this.subscriptionService.getSubscribersByDigifranchiseId(digifranchiseId);
+    }
 }
