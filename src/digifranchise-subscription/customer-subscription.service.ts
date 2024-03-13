@@ -44,4 +44,10 @@ async createSubscription(userId: string, digifranchiseId: string): Promise<Custo
     return savedSubscription;
 }
 
+
+   async getAllSubscriptions(userId: string): Promise<CustomerSubscription[]> {
+      return this.customerSubscriptionRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
+   }
+
+
 }

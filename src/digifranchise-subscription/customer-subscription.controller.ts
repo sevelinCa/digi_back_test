@@ -26,4 +26,12 @@ export class CustomerSubscriptionController {
         return this.subscriptionService.createSubscription(userId, digifranchiseId);
     }
 
+    @ApiOperation({ summary: 'GET ALL - Retrieve all subscriptions' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All subscriptions have been successfully retrieved.' })
+    @Get('get-all-subscriptions')
+    async getAllSubscriptions(@Req() req: Request): Promise<CustomerSubscription[]> {
+        const userId = (req.user as UserEntity).id;
+        return this.subscriptionService.getAllSubscriptions(userId);
+    }
+
 }
