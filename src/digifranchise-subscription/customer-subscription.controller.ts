@@ -41,4 +41,11 @@ export class CustomerSubscriptionController {
         return this.subscriptionService.getOneSubscription(subscriptionId);
     }
 
+    @ApiOperation({ summary: 'DELETE - Delete a subscription by ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Subscription has been successfully deleted.' })
+    @Delete('delete-subscription/:subscriptionId')
+    async deleteSubscription(@Param('subscriptionId') subscriptionId: string): Promise<void> {
+        return this.subscriptionService.deleteSubscription(subscriptionId);
+    }
+
 }
