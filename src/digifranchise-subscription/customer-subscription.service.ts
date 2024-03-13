@@ -19,37 +19,44 @@ export class CustomerSubscriptionService {
 
 
 
-   async createSubscription(userId: string, digifranchiseId: string): Promise<CustomerSubscription> {
-      const user = await checkIfUserExists(this.userRepository, userId);
-      if (!user) {
-         throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
-      }
-      const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
-      if (!digifranchise) {
-         throw new HttpException('Digifranchise not exist', HttpStatus.NOT_FOUND);
-      }
+async createSubscription(userId: string, digifranchiseId: string): Promise<CustomerSubscription> {
+    const user = await checkIfUserExists(this.userRepository, userId);
+    if (!user) {
+        throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+    }
+    const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
+    if (!digifranchise) {
+        throw new HttpException('Digifranchise not exist', HttpStatus.NOT_FOUND);
+    }
 
-      const existingSubscription = await this.customerSubscriptionRepository.findOne({
-         where: { userId: Equal(user.id), digifranchiseId: Equal(digifranchise.id) }
-      });
-      if (existingSubscription) {
-         throw new HttpException('User is already subscribed to this digifranchise', HttpStatus.CONFLICT);
-      }
+    const existingSubscription = await this.customerSubscriptionRepository.findOne({
+        where: { userId: Equal(user.id), digifranchiseId: Equal(digifranchise.id) }
+    });
+    if (existingSubscription) {
+        throw new HttpException('User is already subscribed to this digifranchise', HttpStatus.CONFLICT);
+    }
 
-      const newSubscription = this.customerSubscriptionRepository.create({
-         userId: user,
-         digifranchiseId: digifranchise
-      });
-      const savedSubscription = await this.customerSubscriptionRepository.save(newSubscription);
-      return savedSubscription;
-   }
+    const newSubscription = this.customerSubscriptionRepository.create({
+        userId: user,
+        digifranchiseId: digifranchise
+    });
+    const savedSubscription = await this.customerSubscriptionRepository.save(newSubscription);
+    return savedSubscription;
+}
+
 
    async getAllSubscriptions(userId: string): Promise<CustomerSubscription[]> {
       return this.customerSubscriptionRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
    }
 
+
+
    async getOneSubscription(id: string): Promise<CustomerSubscription | null> {
       return this.customerSubscriptionRepository.findOne({ where: { deleteAt: IsNull() } });
+   }
+
+   async deleteSubscription(id: string): Promise<void> {
+      await this.customerSubscriptionRepository.delete(id);
    }
 
 }
