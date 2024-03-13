@@ -34,4 +34,11 @@ export class CustomerSubscriptionController {
         return this.subscriptionService.getAllSubscriptions(userId);
     }
 
+    @ApiOperation({ summary: 'GET ONE - Retrieve a subscription by ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Subscription has been successfully retrieved.' })
+    @Get('get-one-subscription/:subscriptionId')
+    async getOneSubscription(@Param('subscriptionId') subscriptionId: string): Promise<CustomerSubscription | null> {
+        return this.subscriptionService.getOneSubscription(subscriptionId);
+    }
+
 }
