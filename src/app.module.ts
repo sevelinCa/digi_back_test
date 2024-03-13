@@ -40,6 +40,7 @@ import { ProfessionalBodiesModule } from './professional-bodies/professional-bod
 import { CalenderMgtModule } from './calender-mgt/calender-mgt.module';
 import { FilesModule } from './files/files.module';
 import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.module';
+import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/digifranchise-subscription.module';
 
 @Module({
   imports: [
@@ -107,7 +108,8 @@ import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.mo
     ProfessionalBodiesModule,
     CalenderMgtModule,
     FilesModule,
-    DigifranchiseMgtModule
+    DigifranchiseMgtModule,
+    DigifranchiseSubscriptionModule,
   ],
 })
 export class AppModule { }
