@@ -1,4 +1,3 @@
-import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, JoinColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
 
@@ -11,9 +10,8 @@ export class StaffManagement {
     @JoinColumn({ name: 'userId' })
     userId: UserEntity;
     
-    @ManyToOne(() => Digifranchise)
-    @JoinColumn({ name: 'digifranchiseId' })
-    digifranchiseId: Digifranchise;
+    @Column({ type: 'text' })
+    image: string;
 
     @Column({ type: 'text' })
     fullNames: string;

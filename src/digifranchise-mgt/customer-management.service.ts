@@ -21,21 +21,15 @@ export class CustomerManagementService {
 
     ) { }
 
-    async createCustomer(userId: string, digifranchiseId: string, createCustomerManagementDto: CreateCustomerManagementDto): Promise<CustomerManagement> {
+    async createCustomer(userId: string,createCustomerManagementDto: CreateCustomerManagementDto): Promise<CustomerManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new Error('User does not exist');
         }
 
-        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
-        if (!digifranchise) {
-            throw new Error('Digifranchise does not exist')
-        }
-
         const newCustomer = this.customerManagementRepository.create({
             ...createCustomerManagementDto,
             userId: user,
-            digifranchiseId: digifranchise
         });
 
         const savedCustomer = await this.customerManagementRepository.save(newCustomer);

@@ -136,13 +136,12 @@ export class CustomerManagementController {
     @ApiOperation({ summary: 'Create a new customer ' })
     @ApiResponse({ status: 201, description: 'The customer  has been successfully created.' })
     @ApiBody({ type: CreateCustomerManagementDto })
-    @Post('create-customer/:digifranchiseId')
+    @Post('create-customer')
     async createCustomer(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
         @Body() createCustomerManagementDto: CreateCustomerManagementDto): Promise<CustomerManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.customerManagementService.createCustomer(userId, digifranchiseId, createCustomerManagementDto);
+        return this.customerManagementService.createCustomer(userId, createCustomerManagementDto);
     }
 
 
@@ -244,13 +243,12 @@ export class StaffManagementController {
     @ApiOperation({ summary: 'Create a new staff ' })
     @ApiResponse({ status: 201, description: 'The staff  has been successfully created.' })
     @ApiBody({ type: CreateStaffManagementDto })
-    @Post('create-staff/:digifranchiseId')
+    @Post('create-staff')
     async createStaff(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
         @Body() createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.staffManagementService.createStaff(userId, digifranchiseId, createStaffManagementDto);
+        return this.staffManagementService.createStaff(userId, createStaffManagementDto);
     }
 
 

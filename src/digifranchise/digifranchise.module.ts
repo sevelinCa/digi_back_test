@@ -49,7 +49,7 @@ import { Accreditation } from 'src/professional-bodies/entities/professional-acc
     DigifranchiseGeneralInfoService, 
     DigifranchiseComplianceInfoService,
     DigifranchiseProfessionalBodyMembershipService,
-    ProductService
+    ProductService,
   ]
 })
 export class DigifranchiseModule {}
