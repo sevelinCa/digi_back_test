@@ -47,8 +47,6 @@ async createSubscription(userId: string, digifranchiseId: string): Promise<Custo
       return this.customerSubscriptionRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
    }
 
-
-
    async getOneSubscription(id: string): Promise<CustomerSubscription | null> {
       return this.customerSubscriptionRepository.findOne({ where: { deleteAt: IsNull() } });
    }
