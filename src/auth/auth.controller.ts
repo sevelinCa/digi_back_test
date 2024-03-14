@@ -126,6 +126,12 @@ export class AuthController {
     }
   }
 
+  @Post('email/digifranchise-customer/login')
+  @HttpCode(HttpStatus.OK)
+  async loginCustomerEmail(@Query('digifranchiseId') digifranchiseId: string, @Body() createUserDto: AuthRegisterLoginDto) {
+    await this.service.customerEmailLogin(digifranchiseId, createUserDto);
+  }
+
   @Post('phone/digifranchise-customer/register')
   @HttpCode(HttpStatus.OK)
   async registerCustomerWithPhone(@Query('digifranchiseId') digifranchiseId: string, @Body() phoneRegisterDto: AuthPhoneRegisterDto) {
@@ -140,6 +146,26 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async phoneRegister(@Body() phoneRegisterDto: AuthPhoneRegisterDto): Promise<void> {
     return this.service.phoneRegister(phoneRegisterDto);
+  }
+
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @Post('phone/digifranchise-customer/login')
+  @HttpCode(HttpStatus.OK)
+  public async customerPhoneLogin(
+    @Query('digifranchiseId') digifranchiseId: string,
+    @Body() phoneLoginDto: AuthPhoneLoginDto,
+  ) {
+    const data = await this.service.customerPhoneLogin(digifranchiseId, phoneLoginDto);
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
+    }
   }
 
   @Post('phone/confirm')
