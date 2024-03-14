@@ -124,27 +124,27 @@ export class DigifranchiseService {
 
   async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string): Promise<any> {
     const servicesOffered = await this.digifranchiseServiceOfferedRepository.find({
-       where: {
-         digifranchiseId: Equal(digifranchiseId),
-         userId: IsNull(),
-       },
+      where: {
+        digifranchiseId: Equal(digifranchiseId),
+        userId: IsNull(),
+      },
     });
-   
+
     const servicesWithSubServices = await Promise.all(servicesOffered.map(async (service) => {
-       const subServices = await this.digifranchiseSubServiceOfferedRepository.find({
-         where: {
-           serviceId: Equal(service.id),
-         },
-       });
-   
-       return {
-         ...service,
-         subServices,
-       };
+      const subServices = await this.digifranchiseSubServiceOfferedRepository.find({
+        where: {
+          serviceId: Equal(service.id),
+        },
+      });
+
+      return {
+        ...service,
+        subServices,
+      };
     }));
-   
+
     return servicesWithSubServices;
-   }
+  }
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
@@ -222,8 +222,8 @@ export class DigifranchiseService {
   }
 
   async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
-    
-    const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({ 
+
+    const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
       where: [
         { connectNumber: phoneNumber },
         { otherMobileNumber: phoneNumber }
@@ -234,7 +234,11 @@ export class DigifranchiseService {
       throw new NotFoundException('digifranchise not found')
     }
 
-    const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({ 
+    if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
+      throw new NotFoundException('digifranchise not yet published')
+    }
+
+    const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({
       where: { id: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
     })
 
@@ -270,6 +274,27 @@ export class DigifranchiseService {
       professionalBodiesInfo: getProfessionalBodyMemberships,
       products: digifranchiseProducts,
       services: digifranchiseServices
+    }
+  }
+
+  async publishDigifranchiseWeb(digifranchiseId: string): Promise<any> {
+    const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({
+      where: { ownedDigifranchiseId: digifranchiseId }
+    })
+
+    if (!digifranchiseGeneralInfo) {
+      throw new NotFoundException('digifranchise not found')
+    }
+
+    if (!digifranchiseGeneralInfo.connectNumber && !digifranchiseGeneralInfo.otherMobileNumber) {
+      throw new NotFoundException('digifranchise is without phone number')
+    }
+
+    Object.assign(digifranchiseGeneralInfo, { digifranchisePublished: true })
+    this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo)
+
+    return {
+      message: 'your digifranchise has been published successfully'
     }
   }
 }

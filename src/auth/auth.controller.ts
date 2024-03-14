@@ -12,6 +12,7 @@ import {
   SerializeOptions,
   Req,
   HttpException,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -83,6 +84,27 @@ export class AuthController {
     }
   }
 
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @Post('digifranchise-customer/google')
+  @HttpCode(HttpStatus.OK)
+  public async googleAuthenticationCustomer(
+    @Req() req,
+    @Query('digifranchiseId') digifranchiseId: string,
+    @Body() authDto: GoogleCreateUserDto,
+  ) {
+    const data = await this.service.googleAuthCustomer(digifranchiseId, authDto);
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
+    }
+  }
+
 
   @SerializeOptions({
     groups: ['me'],
@@ -110,7 +132,34 @@ export class AuthController {
     await this.service.register(createUserDto);
     
     return {
-      message: "SignUp is successfull, check your email to verify!!"
+      message: "sign up is successfull, check your email to verify!!"
+    }
+  }
+
+
+  @Post('email/digifranchise-customer/register')
+  @HttpCode(HttpStatus.OK)
+  async registerCustomer(@Query('digifranchiseId') digifranchiseId: string, @Body() createUserDto: AuthRegisterLoginDto) {
+    await this.service.customerRegister(digifranchiseId, createUserDto);
+    
+    return {
+      message: "sign up is successfull, check your email to verify!!"
+    }
+  }
+
+  @Post('email/digifranchise-customer/login')
+  @HttpCode(HttpStatus.OK)
+  async loginCustomerEmail(@Query('digifranchiseId') digifranchiseId: string, @Body() createUserDto: AuthRegisterLoginDto) {
+    await this.service.customerEmailLogin(digifranchiseId, createUserDto);
+  }
+
+  @Post('phone/digifranchise-customer/register')
+  @HttpCode(HttpStatus.OK)
+  async registerCustomerWithPhone(@Query('digifranchiseId') digifranchiseId: string, @Body() phoneRegisterDto: AuthPhoneRegisterDto) {
+    await this.service.phoneCustomerRegister(digifranchiseId, phoneRegisterDto);
+    
+    return {
+      message: "sign up is successfull, check phone for otp"
     }
   }
 
@@ -118,6 +167,26 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async phoneRegister(@Body() phoneRegisterDto: AuthPhoneRegisterDto): Promise<void> {
     return this.service.phoneRegister(phoneRegisterDto);
+  }
+
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @Post('phone/digifranchise-customer/login')
+  @HttpCode(HttpStatus.OK)
+  public async customerPhoneLogin(
+    @Query('digifranchiseId') digifranchiseId: string,
+    @Body() phoneLoginDto: AuthPhoneLoginDto,
+  ) {
+    const data = await this.service.customerPhoneLogin(digifranchiseId, phoneLoginDto);
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
+    }
   }
 
   @Post('phone/confirm')

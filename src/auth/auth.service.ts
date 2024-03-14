@@ -35,6 +35,8 @@ import { GoogleCreateUserDto } from './dto/google-create-user.dto';
 import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
+import { CustomerSubscriptionService } from 'src/digifranchise-subscription/customer-subscription.service';
+import { CustomerSubscription } from 'src/digifranchise-subscription/entities/customer-subscription.entity';
 
 @Injectable()
 export class AuthService {
@@ -45,6 +47,7 @@ export class AuthService {
     private mailService: MailService,
     private configService: ConfigService<AllConfigType>,
     private smsService: SmsService,
+    private customerSubscription: CustomerSubscriptionService,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<User>
   ) { }
@@ -125,6 +128,92 @@ export class AuthService {
     };
   }
 
+  async customerEmailLogin(digifranchiseId: string, loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
+    const user = await this.usersService.findOne({
+      email: loginDto.email,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'notFound',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (user.provider !== AuthProvidersEnum.email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: `needLoginViaProvider:${user.provider}`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (!user.password) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
+
+    if (!isValidPassword) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const session = await this.sessionService.create({
+      user,
+    });
+
+    const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+
+    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+      if (subscription.digifranchiseId.id === digifranchiseId) {
+        return
+      } else {
+        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+      }
+    })
+
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
+      sessionId: session.id,
+    });
+
+    return {
+      refreshToken,
+      token,
+      tokenExpires,
+      user,
+    };
+  }
+
   async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
     const user = await this.usersRepository.findOne({
       where: { email: googleUser.email as string },
@@ -187,9 +276,9 @@ export class AuthService {
     }
   }
 
-  async faceBookAuth(faceBookUser: FaceBookCreateUserDto): Promise<any> {
+  async googleAuthCustomer(digifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
     const user = await this.usersRepository.findOne({
-      where: { email: faceBookUser.email as string },
+      where: { email: googleUser.email as string },
     });
 
     if (user) {
@@ -210,17 +299,18 @@ export class AuthService {
         user,
       };
     } else {
+
       const newUser = await this.usersRepository.save(
         this.usersRepository.create({
-          ...faceBookUser,
+          ...googleUser,
           role: {
-            id: RoleEnum.digifranchise_super_admin
+            id: RoleEnum.customer
           },
           status: {
             id: StatusEnum.active
           },
-          image: faceBookUser.profilePic,
-          provider: 'facebook',
+          image: googleUser.profilePic,
+          provider: 'google',
         }),
       );
 
@@ -232,6 +322,16 @@ export class AuthService {
         const session = await this.sessionService.create({
           user,
         });
+
+        const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+
+        getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+          if (subscription.digifranchiseId.id === digifranchiseId) {
+            return
+          } else {
+            await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+          }
+        })
         const { token, refreshToken, tokenExpires } = await this.getTokensData({
           id: user.id,
           role: newUser.role,
@@ -291,6 +391,60 @@ export class AuthService {
         }),
       },
     );
+
+    await this.mailService.userSignUp({
+      to: dto.email,
+      data: {
+        hash,
+      },
+    });
+  }
+
+  async customerRegister(digifranchiseId: string, dto: AuthRegisterLoginDto): Promise<void> {
+    const user = await this.usersService.create({
+      ...dto,
+      email: dto.email,
+      phoneNumber: null,
+      role: {
+        id: RoleEnum.customer,
+      },
+      status: {
+        id: StatusEnum.inactive,
+      },
+      image: null,
+      idImage: null,
+      gender: null,
+      race: null,
+      homeAddress: null,
+      educationLevel: null,
+      currentActivity: null,
+      fieldOfStudy: null,
+      qualifications: null,
+      professionalBody: null,
+      southAfricanCitizen: null,
+      documentId: null,
+      countryOfOrigin: null,
+      criminalRecord: null,
+      policeClearenceCertificate: null,
+      crimes: null,
+      isProfileComplete: false
+    });
+
+    const hash = await this.jwtService.signAsync(
+      {
+        confirmEmailUserId: user.id,
+      },
+      {
+        secret: this.configService.getOrThrow('auth.confirmEmailSecret', {
+          infer: true,
+        }),
+        expiresIn: this.configService.getOrThrow('auth.confirmEmailExpires', {
+          infer: true,
+        }),
+      },
+    );
+
+    await this.customerSubscription.createSubscription(user.id, digifranchiseId)
 
     await this.mailService.userSignUp({
       to: dto.email,
@@ -394,6 +548,54 @@ export class AuthService {
     await this.smsService.sendOTP(dto.phoneNumber)
   }
 
+  async phoneCustomerRegister(digifranchiseId: string, dto: AuthPhoneRegisterDto) {
+    const user = await this.usersService.create({
+      ...dto,
+      provider: AuthProvidersEnum.phone,
+      email: null,
+      phoneNumber: dto.phoneNumber,
+      role: {
+        id: RoleEnum.customer,
+      },
+      status: {
+        id: StatusEnum.inactive,
+      },
+      image: null,
+      idImage: null,
+      gender: null,
+      race: null,
+      homeAddress: null,
+      educationLevel: null,
+      currentActivity: null,
+      fieldOfStudy: null,
+      qualifications: null,
+      professionalBody: null,
+      southAfricanCitizen: null,
+      documentId: null,
+      countryOfOrigin: null,
+      criminalRecord: null,
+      policeClearenceCertificate: null,
+      crimes: null,
+      isProfileComplete: false
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errors: {
+            phoneNumber: 'failedToCreatUser',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+
+    await this.smsService.sendOTP(dto.phoneNumber)
+  }
+
   async phoneLogin(dto: AuthPhoneLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
       phoneNumber: dto.phoneNumber,
@@ -404,7 +606,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'notFound',
+            phone: 'notFound',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -452,6 +654,90 @@ export class AuthService {
     const session = await this.sessionService.create({
       user,
     });
+
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
+      sessionId: session.id,
+    });
+
+    return {
+      refreshToken,
+      token,
+      tokenExpires,
+      user,
+    };
+  }
+
+  async customerPhoneLogin(digifranchiseId: string, dto: AuthPhoneLoginDto): Promise<LoginResponseType> {
+    const user = await this.usersService.findOne({
+      phoneNumber: dto.phoneNumber,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            phone: 'notFound',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (user.provider !== AuthProvidersEnum.phone) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: `needLoginViaProvider:${user.provider}`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (!user.password) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const isValidPassword = await bcrypt.compare(dto.password, user.password)
+
+    if (!isValidPassword) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const session = await this.sessionService.create({
+      user,
+    });
+
+    const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+
+    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+      if (subscription.digifranchiseId.id === digifranchiseId) {
+        return
+      } else {
+        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+      }
+    })
+
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
@@ -556,7 +842,7 @@ export class AuthService {
 
     await this.smsService.sendOTP(phoneNumber)
 
-    return { message: 'otp sent to phone, check messages'}
+    return { message: 'otp sent to phone, check messages' }
   }
 
   async resetPasswordWithPhone(otp: string, phoneNumber: string, newPassword: string): Promise<any> {
@@ -590,7 +876,7 @@ export class AuthService {
       Object.assign(user, { password: hashedPassword })
       await this.usersRepository.save(user)
 
-      return { status: HttpStatus.OK, message: "password successfully reset"}
+      return { status: HttpStatus.OK, message: "password successfully reset" }
     }
   }
 
@@ -780,7 +1066,7 @@ export class AuthService {
       }
     }
 
- 
+
     Object.assign(user, {
       image: updateUserProfileDto?.image,
       email: updateUserProfileDto?.email,
@@ -801,7 +1087,12 @@ export class AuthService {
       countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
       criminalRecord: updateUserProfileDto?.criminalRecord,
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
-      crimes: updateUserProfileDto?.crimes
+      crimes: updateUserProfileDto?.crimes,
+      isProfileComplete:
+        updateUserProfileDto.email !== null || updateUserProfileDto.phoneNumber !== null &&
+        updateUserProfileDto.gender !== null && updateUserProfileDto.race !== null &&
+        updateUserProfileDto.homeAddress !== null
+
     })
 
     await this.usersRepository.save(user)

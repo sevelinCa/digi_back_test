@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { DigifranchiseSubscriptionController } from './digifranchise-subscription.controller';
 import { CustomerSubscription } from './entities/customer-subscription.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerSubscriptionService } from './customer-subscription.service';
@@ -10,9 +9,14 @@ import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CustomerSubscription, UserEntity, Digifranchise ]),
+    TypeOrmModule.forFeature(
+      [
+        CustomerSubscription,
+        UserEntity,
+        Digifranchise
+      ]),
   ],
-  providers: [ CustomerSubscriptionService],
-  controllers: [DigifranchiseSubscriptionController, CustomerSubscriptionController]
+  providers: [CustomerSubscriptionService],
+  controllers: [CustomerSubscriptionController]
 })
-export class DigifranchiseSubscriptionModule {}
+export class DigifranchiseSubscriptionModule { }
