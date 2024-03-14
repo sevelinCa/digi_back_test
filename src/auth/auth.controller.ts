@@ -84,6 +84,27 @@ export class AuthController {
     }
   }
 
+  @SerializeOptions({
+    groups: ['me'],
+  })
+  @Post('digifranchise-customer/google')
+  @HttpCode(HttpStatus.OK)
+  public async googleAuthenticationCustomer(
+    @Req() req,
+    @Query('digifranchiseId') digifranchiseId: string,
+    @Body() authDto: GoogleCreateUserDto,
+  ) {
+    const data = await this.service.googleAuthCustomer(digifranchiseId, authDto);
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires
+      }
+    }
+  }
+
 
   @SerializeOptions({
     groups: ['me'],

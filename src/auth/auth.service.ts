@@ -36,6 +36,7 @@ import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
 import { CustomerSubscriptionService } from 'src/digifranchise-subscription/customer-subscription.service';
+import { CustomerSubscription } from 'src/digifranchise-subscription/entities/customer-subscription.entity';
 
 @Injectable()
 export class AuthService {
@@ -189,6 +190,16 @@ export class AuthService {
       user,
     });
 
+    const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+
+    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+      if (subscription.digifranchiseId.id === digifranchiseId) {
+        return
+      } else {
+        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+      }
+    })
+
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
       role: user.role,
@@ -249,6 +260,78 @@ export class AuthService {
         const session = await this.sessionService.create({
           user,
         });
+        const { token, refreshToken, tokenExpires } = await this.getTokensData({
+          id: user.id,
+          role: newUser.role,
+          sessionId: session.id,
+        });
+
+        return {
+          refreshToken,
+          token,
+          tokenExpires,
+          newUser,
+        }
+      }
+    }
+  }
+
+  async googleAuthCustomer(digifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
+    const user = await this.usersRepository.findOne({
+      where: { email: googleUser.email as string },
+    });
+
+    if (user) {
+      const session = await this.sessionService.create({
+        user,
+      });
+
+      const { token, refreshToken, tokenExpires } = await this.getTokensData({
+        id: user.id,
+        role: user.role,
+        sessionId: session.id,
+      });
+
+      return {
+        refreshToken,
+        token,
+        tokenExpires,
+        user,
+      };
+    } else {
+
+      const newUser = await this.usersRepository.save(
+        this.usersRepository.create({
+          ...googleUser,
+          role: {
+            id: RoleEnum.customer
+          },
+          status: {
+            id: StatusEnum.active
+          },
+          image: googleUser.profilePic,
+          provider: 'google',
+        }),
+      );
+
+      const user = await this.usersRepository.findOne({
+        where: { email: newUser.email as string },
+      });
+
+      if (user) {
+        const session = await this.sessionService.create({
+          user,
+        });
+
+        const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+
+        getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+          if (subscription.digifranchiseId.id === digifranchiseId) {
+            return
+          } else {
+            await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+          }
+        })
         const { token, refreshToken, tokenExpires } = await this.getTokensData({
           id: user.id,
           role: newUser.role,
@@ -645,6 +728,17 @@ export class AuthService {
       user,
     });
 
+    const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+
+    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+      if (subscription.digifranchiseId.id === digifranchiseId) {
+        return
+      } else {
+        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+      }
+    })
+
+
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
       role: user.role,
@@ -748,7 +842,7 @@ export class AuthService {
 
     await this.smsService.sendOTP(phoneNumber)
 
-    return { message: 'otp sent to phone, check messages'}
+    return { message: 'otp sent to phone, check messages' }
   }
 
   async resetPasswordWithPhone(otp: string, phoneNumber: string, newPassword: string): Promise<any> {
@@ -782,7 +876,7 @@ export class AuthService {
       Object.assign(user, { password: hashedPassword })
       await this.usersRepository.save(user)
 
-      return { status: HttpStatus.OK, message: "password successfully reset"}
+      return { status: HttpStatus.OK, message: "password successfully reset" }
     }
   }
 
@@ -972,7 +1066,7 @@ export class AuthService {
       }
     }
 
- 
+
     Object.assign(user, {
       image: updateUserProfileDto?.image,
       email: updateUserProfileDto?.email,
@@ -994,7 +1088,7 @@ export class AuthService {
       criminalRecord: updateUserProfileDto?.criminalRecord,
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
       crimes: updateUserProfileDto?.crimes,
-      isProfileComplete: 
+      isProfileComplete:
         updateUserProfileDto.email !== null || updateUserProfileDto.phoneNumber !== null &&
         updateUserProfileDto.gender !== null && updateUserProfileDto.race !== null &&
         updateUserProfileDto.homeAddress !== null
