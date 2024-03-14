@@ -41,6 +41,7 @@ import { CalenderMgtModule } from './calender-mgt/calender-mgt.module';
 import { FilesModule } from './files/files.module';
 import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.module';
 import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/digifranchise-subscription.module';
+import { DigifranchisePaymentModule } from './digifranchise-payment/digifranchise-payment.module';
 
 @Module({
   imports: [
@@ -110,6 +111,7 @@ import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/di
     FilesModule,
     DigifranchiseMgtModule,
     DigifranchiseSubscriptionModule,
+    DigifranchisePaymentModule,
   ],
 })
 export class AppModule { }

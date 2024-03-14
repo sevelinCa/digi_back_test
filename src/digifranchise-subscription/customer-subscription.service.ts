@@ -17,8 +17,6 @@ export class CustomerSubscriptionService {
       private readonly customerSubscriptionRepository: Repository<CustomerSubscription>,
    ) { }
 
-
-
 async createSubscription(userId: string, digifranchiseId: string): Promise<CustomerSubscription> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
