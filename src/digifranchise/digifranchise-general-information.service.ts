@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
@@ -30,6 +30,16 @@ export class DigifranchiseGeneralInfoService {
         `digifranchise info not found`,
       );
     }
+
+    if (
+      (digifranchiseGeneralInfo.connectNumber !== dto.connectNumber || 
+        digifranchiseGeneralInfo.otherMobileNumber !== dto.connectNumber) &&
+        digifranchiseGeneralInfo.digifranchisePublished
+      ) {
+        throw new ConflictException(
+          "to update phone numbers for digifranchise, please first unpublish the current version, make the necessary changes, and then republish."
+        )
+      }
     
     digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
     digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle

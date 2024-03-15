@@ -297,4 +297,25 @@ export class DigifranchiseService {
       message: 'your digifranchise has been published successfully'
     }
   }
+
+  async unPublishDigifranchiseWeb(digifranchiseId: string): Promise<any> {
+    const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({
+      where: { ownedDigifranchiseId: digifranchiseId }
+    })
+
+    if (!digifranchiseGeneralInfo) {
+      throw new NotFoundException('digifranchise not found')
+    }
+
+    if (!digifranchiseGeneralInfo.connectNumber && !digifranchiseGeneralInfo.otherMobileNumber) {
+      throw new NotFoundException('digifranchise is without phone number')
+    }
+
+    Object.assign(digifranchiseGeneralInfo, { digifranchisePublished: true })
+    this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo)
+
+    return {
+      message: 'your digifranchise has been published successfully'
+    }
+  }
 }

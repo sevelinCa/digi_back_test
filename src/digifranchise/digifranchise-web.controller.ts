@@ -31,4 +31,15 @@ export class DigifranchiseWebController {
   async publishDigifranchise(@Query('digifranchiseId') digifranchiseId: string) {
     return this.digifranchiseService.publishDigifranchiseWeb(digifranchiseId)
   }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'POST - Publish your Digifranchise' })
+  @ApiResponse({ status: HttpStatus.OK })
+  @Post('unpublish-digifranchise')
+  @HttpCode(HttpStatus.OK)
+  async unPublishDigifranchise(@Query('digifranchiseId') digifranchiseId: string) {
+    return this.digifranchiseService.unPublishDigifranchiseWeb(digifranchiseId)
+  }
 }
