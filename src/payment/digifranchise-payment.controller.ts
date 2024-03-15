@@ -36,6 +36,16 @@ export class RateController {
         return this.rateService.getOneRateTable(rateId);
     }
 
+    @ApiOperation({ summary: 'Update a rate table by ID' })
+    @ApiResponse({ status: 200, description: 'Rate table has been successfully updated.' })
+    @ApiBody({ type: UpdateRateDto })
+    @Put('update-rate/:rateId')
+    async updateRateTable(
+        @Param('rateId') rateId: string,
+        @Body() updateRateDto: UpdateRateDto,
+    ): Promise<RateTable> {
+        return this.rateService.updateRateTable(rateId, updateRateDto);
+    }
 
 }
 

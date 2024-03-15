@@ -28,7 +28,14 @@ export class RateService {
     return rateTable;
  }
 
-
-
+ async updateRateTable(id: string, updateRateDto: UpdateRateDto): Promise<RateTable> {
+    const rateTable = await this.rateTableRepository.findOne({ where: { id, deleteAt: IsNull() } });
+    if (!rateTable) {
+      throw new NotFoundException(`RateTable with ID ${id} not found.`);
+    }
+    this.rateTableRepository.merge(rateTable, updateRateDto);
+    const updatedRateTable = await this.rateTableRepository.save(rateTable);
+    return updatedRateTable;
+ }
 
 }
