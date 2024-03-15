@@ -105,6 +105,12 @@ export class OrderController {
         return this.orderService.updateOrder(orderId, updateOrderTableDto);
     }
 
+    @ApiOperation({ summary: 'Delete an order by ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Order has been successfully deleted.' })
+    @Delete('delete-order/:orderId')
+    async deleteOrder(@Param('orderId') orderId: string): Promise<void> {
+        return this.orderService.deleteOrder(orderId);
+    }
 }
 
 
