@@ -221,6 +221,14 @@ export class CalenderMgtService {
         return this.calenderEventCustomersRepository.findOne({where: {id}});
      }
 
-
+    
+     async removeCustomerFromEvent(id: string): Promise<void> {
+        const calenderEventCustomer = await this.calenderEventCustomersRepository.findOne({where:{id}});
+        if (!calenderEventCustomer) {
+          throw new NotFoundException(`CalenderEventCustomer with ID ${id} not found.`);
+        }
+    
+        await this.calenderEventCustomersRepository.remove(calenderEventCustomer);
+     }
 
 }

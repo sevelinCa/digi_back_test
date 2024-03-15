@@ -250,4 +250,10 @@ export class CalenderEventCustomersController {
         return this.calenderMgtService.findOneCustomerForEvenet(id);
     }
 
+    @ApiOperation({ summary: 'Remove a customer from an event' })
+    @ApiResponse({ status: 204, description: 'The customer has been successfully removed from the event.' })
+    @Delete('remove-customer-from-event/:id')
+    async removeCustomerFromEvent(@Param('id') id: string): Promise<void> {
+        return this.calenderMgtService.removeCustomerFromEvent(id);
+    }
 }
