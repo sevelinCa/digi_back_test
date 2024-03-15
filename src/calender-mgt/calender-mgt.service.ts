@@ -10,8 +10,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import type { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
-import { CalenderEventGuest } from './entities/calender-event-guest.entity';
-import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
+import { CalenderEventCustomers } from './entities/calender-event-customer.entity';
 @Injectable()
 export class CalenderMgtService {
     constructor(
@@ -23,10 +22,10 @@ export class CalenderMgtService {
         private readonly userRepository: Repository<UserEntity>,
         @InjectRepository(CalenderEventOwner)
         private readonly eventOwnerRepository: Repository<CalenderEventOwner>,
-        @InjectRepository(CalenderEventGuest)
-        private readonly calenderEventGuestRepository: Repository<CalenderEventGuest>,
-        @InjectRepository(CustomerManagement)
-        private readonly customerManagementRepository: Repository<CustomerManagement>,
+        @InjectRepository(CalenderEventCustomers)
+        private readonly calenderEventCustomersRepository: Repository<CalenderEventCustomers>,
+        
+
         @InjectRepository(CalenderBooking)
         private readonly bookingRepository: Repository<CalenderBooking>
     ) { }
@@ -36,7 +35,6 @@ export class CalenderMgtService {
         const newVenue = this.venueRepository.create(createVenueDto);
         return this.venueRepository.save(newVenue);
     }
-
 
     async createEvent(userId: string, venueId: string, createEventDto: CreateEventDto): Promise<CalenderEvents> {
         const user = await checkIfUserExists(this.userRepository, userId)
@@ -49,28 +47,13 @@ export class CalenderMgtService {
         }
         const newEvent = this.eventsRepository.create({ ...createEventDto, userId: user, venueId: venue })
         const savedEvent = await this.eventsRepository.save(newEvent);
-    
-        const newEventOwner = this.eventOwnerRepository.create({
+
+        const newEventOwer = this.eventOwnerRepository.create({
             eventId: savedEvent,
             userId: user
         })
-        await this.eventOwnerRepository.save(newEventOwner)
-    
-        if (createEventDto.guestIds) {
-            for (const guestId of createEventDto.guestIds) {
-                const customer = await this.customerManagementRepository.findOne({where:{id:guestId}});
-                if (!customer) {
-                    throw new Error(`Customer with ID ${guestId} not found.`);
-                }
-    
-                const guest = this.calenderEventGuestRepository.create({
-                    customerId: customer,
-                    eventId: savedEvent,
-                });
-                await this.calenderEventGuestRepository.save(guest);
-            }
-        }
-    
+        await this.eventOwnerRepository.save(newEventOwer)
+
         return savedEvent;
     }
 
@@ -100,8 +83,6 @@ export class CalenderMgtService {
     async getAllEvents(): Promise<CalenderEvents[]> {
         return this.eventsRepository.find({ where: { deleteAt: IsNull() } });
     }
-
-
 
     async getAllBookings(): Promise<CalenderBooking[]> {
         return this.bookingRepository.find({ where: { deleteAt: IsNull() } });
@@ -155,6 +136,8 @@ export class CalenderMgtService {
         return this.bookingRepository.save(booking);
     }
 
+
+
     async deleteVenue(venueId: string): Promise<void> {
         const venue = await this.venueRepository.findOne({ where: { id: venueId } });
         if (!venue) {
@@ -163,6 +146,7 @@ export class CalenderMgtService {
         venue.deleteAt = new Date();
         await this.venueRepository.save(venue);
     }
+
 
     async deleteEvent(eventId: string): Promise<void> {
         const event = await this.eventsRepository.findOne({ where: { id: eventId } });
@@ -192,6 +176,7 @@ export class CalenderMgtService {
         await this.eventOwnerRepository.save(eventOwner);
     }
 
+
     async getAllEventsByUserId(userId: string): Promise<CalenderEvents[]> {
         return this.eventsRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
     }
@@ -208,8 +193,9 @@ export class CalenderMgtService {
         return this.bookingRepository.find({ where: { eventId: Equal(eventId), deleteAt: IsNull() } });
     }
 
-    async addCustomerToEvent(customerId: string, eventId: string): Promise<CalenderEventGuest> {
-        const customer = await this.calenderEventGuestRepository.findOne({where:{id:customerId}});
+
+    async addCustomerToEvent(customerId: string, eventId: string): Promise<CalenderEventCustomers> {
+        const customer = await this.calenderEventCustomersRepository.findOne({where:{id:customerId}});
         if (!customer) {
           throw new NotFoundException(`Customer with ID ${customerId} not found.`);
         }
@@ -219,29 +205,22 @@ export class CalenderMgtService {
           throw new NotFoundException(`Event with ID ${eventId} not found.`);
         }
     
-        const newCalenderEventGuest = this.calenderEventGuestRepository.create({
+        const newCalenderEventCustomer = this.calenderEventCustomersRepository.create({
           customerId: customer,
           eventId: event,
         });
     
-        return this.calenderEventGuestRepository.save(newCalenderEventGuest);
+        return this.calenderEventCustomersRepository.save(newCalenderEventCustomer);
      }
     
-     async findAllCustomersForEvent(): Promise<CalenderEventGuest[]> {
-        return this.calenderEventGuestRepository.find({ where: { deleteAt: IsNull() } });
+     async findAllCustomersForEvent(): Promise<CalenderEventCustomers[]> {
+        return this.calenderEventCustomersRepository.find({ where: { deleteAt: IsNull() } });
      }
     
-     async findOneCustomerForEvenet(id: string): Promise<CalenderEventGuest | null> {
-        return this.calenderEventGuestRepository.findOne({where: {id}});
+     async findOneCustomerForEvenet(id: string): Promise<CalenderEventCustomers | null> {
+        return this.calenderEventCustomersRepository.findOne({where: {id}});
      }
 
-     async removeCustomerFromEvent(id: string): Promise<void> {
-        const calenderEventGuest = await this.calenderEventGuestRepository.findOne({where:{id}});
-        if (!calenderEventGuest) {
-          throw new NotFoundException(`CalenderEventCustomer with ID ${id} not found.`);
-        }
-    
-        await this.calenderEventGuestRepository.remove(calenderEventGuest);
-     }
+
 
 }
