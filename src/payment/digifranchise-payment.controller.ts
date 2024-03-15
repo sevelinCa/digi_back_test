@@ -29,6 +29,14 @@ export class RateController {
         return this.rateService.getAllRateTables();
     }
 
+    @ApiOperation({ summary: 'Get a single rate table by ID' })
+    @ApiResponse({ status: 200, description: 'Rate table has been successfully retrieved.' })
+    @Get('get-one-rate/:rateId')
+    async getOneRateTable(@Param('rateId') rateId: string): Promise<RateTable> {
+        return this.rateService.getOneRateTable(rateId);
+    }
+
+
 }
 
 

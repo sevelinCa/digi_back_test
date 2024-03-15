@@ -20,6 +20,15 @@ export class RateService {
     return this.rateTableRepository.find({ where: { deleteAt: IsNull() } });
 }
 
+ async getOneRateTable(id: string): Promise<RateTable> {
+    const rateTable = await this.rateTableRepository.findOne({ where: { id, deleteAt: IsNull() } });
+    if (!rateTable) {
+      throw new NotFoundException(`RateTable with ID ${id} not found.`);
+    }
+    return rateTable;
+ }
+
+
 
 
 }
