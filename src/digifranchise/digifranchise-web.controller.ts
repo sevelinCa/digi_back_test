@@ -35,7 +35,7 @@ export class DigifranchiseWebController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'POST - Publish your Digifranchise' })
+  @ApiOperation({ summary: 'POST - Unpublish your Digifranchise' })
   @ApiResponse({ status: HttpStatus.OK })
   @Post('unpublish-digifranchise')
   @HttpCode(HttpStatus.OK)
