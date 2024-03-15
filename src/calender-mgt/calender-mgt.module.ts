@@ -7,22 +7,12 @@ import { CalenderEvents } from './entities/calender-events.entity';
 import { CalenderVenue } from './entities/calender-venues.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { CalenderEventGuest } from './entities/calender-event-guest.entity';
-import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      CalenderBooking, 
-      CalenderEventOwner, 
-      CalenderEvents, 
-      CalenderVenue, 
-      UserEntity,
-      CalenderEventGuest,
-      CustomerManagement
-    ]),
+    TypeOrmModule.forFeature([CalenderBooking, CalenderEventOwner, CalenderEvents, CalenderVenue, UserEntity]),
   ],
   providers: [CalenderMgtService],
   controllers: [CalenderMgtController]
 })
-export class CalenderMgtModule { }
+export class CalenderMgtModule {}
