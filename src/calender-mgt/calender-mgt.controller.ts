@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
-import type { CalenderEventCustomers } from './entities/calender-event-customer.entity';
+import type { CalenderEventGuest } from './entities/calender-event-guest.entity';
 
 @ApiTags('Calender')
 @ApiBearerAuth()
@@ -70,7 +70,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.getAllEvents();
     }
 
-
+    
     @ApiOperation({ summary: 'GET ALL - Retrieve all bookings' })
     @Get('bookings')
     async getAllBookings(): Promise<CalenderBooking[]> {
@@ -217,14 +217,7 @@ export class CalenderMgtController {
     async getAllBookingsByEventId(@Param('eventId') eventId: string): Promise<CalenderBooking[]> {
         return this.calenderMgtService.getAllBookingsByEventId(eventId);
     }
-}
 
-@ApiTags('Calendar Event Customers')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
-@Controller('calendar-event-customers')
-export class CalenderEventCustomersController {
-    constructor(private readonly calenderMgtService: CalenderMgtService) { }
 
     @ApiOperation({ summary: 'Add a customer to an event' })
     @ApiResponse({ status: 201, description: 'The customer has been successfully added to the event.' })
@@ -232,21 +225,21 @@ export class CalenderEventCustomersController {
     async addCustomerToEvent(
         @Param('customerId') customerId: string,
         @Param('eventId') eventId: string,
-    ): Promise<CalenderEventCustomers> {
+    ): Promise<CalenderEventGuest> {
         return this.calenderMgtService.addCustomerToEvent(customerId, eventId);
     }
 
     @ApiOperation({ summary: 'Retrieve all customers for an event' })
     @ApiResponse({ status: 200, description: 'The list of customers for an event has been successfully retrieved.' })
     @Get('find-all-customers-for-event')
-    async findAllCustomersForEvent(): Promise<CalenderEventCustomers[]> {
+    async findAllCustomersForEvent(): Promise<CalenderEventGuest[]> {
         return this.calenderMgtService.findAllCustomersForEvent();
     }
 
     @ApiOperation({ summary: 'Retrieve a customer for an event by ID' })
     @ApiResponse({ status: 200, description: 'The customer for an event has been successfully retrieved.' })
     @Get('find-one-customer-for-event/:id')
-    async findOneCustomerForEvenet(@Param('id') id: string): Promise<CalenderEventCustomers | null> {
+    async findOneCustomerForEvenet(@Param('id') id: string): Promise<CalenderEventGuest | null> {
         return this.calenderMgtService.findOneCustomerForEvenet(id);
     }
 
@@ -257,3 +250,8 @@ export class CalenderEventCustomersController {
         return this.calenderMgtService.removeCustomerFromEvent(id);
     }
 }
+
+
+
+
+

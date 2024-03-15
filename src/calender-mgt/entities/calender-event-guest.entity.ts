@@ -3,14 +3,14 @@ import { CalenderEvents } from './calender-events.entity';
 import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
 
 @Entity()
-export class CalenderEventCustomers {
+export class CalenderEventGuest{
  @PrimaryGeneratedColumn('uuid')
  id: string;
 
  @ManyToOne(() => CustomerManagement, { onDelete: 'CASCADE' })
  @JoinColumn({ name: 'customerId' })
  customerId: CustomerManagement;
-
+ 
  @ManyToOne(() => CalenderEvents, { onDelete: 'CASCADE' })
  @JoinColumn({ name: 'eventId' })
  eventId: CalenderEvents;
