@@ -1017,18 +1017,46 @@ export class AuthService {
       crimes: updateUserProfileDto?.crimes
     })
 
-    if (
-      (user.email !== null || user.phoneNumber !== null) &&
-      user.gender !== null &&
-      user.race !== null &&
-      user.homeAddress
-    ) {
-      Object.assign(user, {
-        isProfileComplete: true
-      })
+    await this.usersRepository.save(user)
+
+    const updatedUser = await this.usersService.findOne({
+      id: userJwtPayload.id,
+    });
+    if (!updatedUser) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            hash: `notFound`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
-    await this.usersRepository.save(user)
+    if (
+      (!!updatedUser.email || !!updatedUser.phoneNumber) &&
+      !!updatedUser.gender &&
+      !!updatedUser.race &&
+      !!updatedUser.homeAddress &&
+      !!updatedUser.educationLevel &&
+      !!updatedUser.currentActivity &&
+      !!updatedUser.fieldOfStudy &&
+      !!updatedUser.southAfricanCitizen &&
+      !!updatedUser.documentId &&
+      !!updatedUser.countryOfOrigin
+    ) {
+      Object.assign(updatedUser, {
+        isProfileComplete: true
+      })
+      await this.usersRepository.save(updatedUser)
+    } else {
+      Object.assign(updatedUser, {
+        isProfileComplete: false
+      })
+      await this.usersRepository.save(updatedUser)
+    }
+    
   }
 
   async refreshToken(

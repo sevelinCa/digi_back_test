@@ -132,7 +132,7 @@ export class AuthController {
     await this.service.register(createUserDto);
     
     return {
-      message: "sign up is successfull, check your email to verify!!"
+      message: "sign up is successful, check your email to verify!!"
     }
   }
 
@@ -143,7 +143,7 @@ export class AuthController {
     await this.service.customerRegister(digifranchiseId, createUserDto);
     
     return {
-      message: "sign up is successfull, check your email to verify!!"
+      message: "sign up is successful, check your email to verify!!"
     }
   }
 
@@ -159,7 +159,7 @@ export class AuthController {
     await this.service.phoneCustomerRegister(digifranchiseId, phoneRegisterDto);
     
     return {
-      message: "sign up is successfull, check phone for otp"
+      message: "sign up is successful, check phone for otp"
     }
   }
 
@@ -281,7 +281,7 @@ export class AuthController {
     await this.service.update(request.user, updateUserProfileDto);
     
     return {
-      message: "Update is successfull"
+      message: "update is successful"
     }
   }
 
