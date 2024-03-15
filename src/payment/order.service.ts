@@ -95,4 +95,8 @@ export class OrderService {
       return this.orderRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
    }
 
+   async getOneOrder(orderId: string): Promise<OrderTable | null> {
+      return this.orderRepository.findOne({ where: { deleteAt: IsNull() } });
+   }
+
 }

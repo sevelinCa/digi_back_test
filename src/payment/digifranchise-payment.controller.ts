@@ -87,6 +87,14 @@ export class OrderController {
         return this.orderService.getAllOrders(userId);
     }
 
+    @ApiOperation({ summary: 'Get a single order by ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Order has been successfully retrieved.' })
+    @Get('get-one-order/:orderId')
+    async getOneOrder(@Param('orderId') orderId: string): Promise<OrderTable | null> {
+        return this.orderService.getOneOrder(orderId);
+    }
+
+
 }
 
 
