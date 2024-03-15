@@ -14,7 +14,9 @@ export class DigifranchiseServiceSeedService {
     ) { }
 
     async run() {
+        await this.seedCleanWheelz(); 
         await this.seedBodyRevamp();
+        await this.seedTrendifyMe(); 
         await this.seedInsightfulJourney();
         await this.seedSitNStay();
         await this.seedTidyPatch();
@@ -27,6 +29,79 @@ export class DigifranchiseServiceSeedService {
         await this.seedAquaShine(); 
     }
 
+    private async seedCleanWheelz() {
+        const check = await this.digifranchiseRepository.count({
+            where: { digifranchiseName: "Clean Wheelz" },
+        });
+    
+        if (check === 0) {
+            const digifranchiseId = this.digifranchiseRepository.create({
+                digifranchiseName: "Clean Wheelz",
+                description: "Clean Wheelz offers mobile car wash services to customers. The digifranchise offers the convenience of a car wash that comes to wherever they are.",
+                status: StatusEnum.active,
+            });
+    
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
+    
+            const cleanWheelzServices = [
+                {
+                    serviceName: 'Express Exterior Wash - Sedan, Small Bakkie, Hatchback',
+                    description: 'Express Exterior Wash - Sedan, Small Bakkie, Hatchback',
+                    unitPrice: '70'
+                },
+                {
+                    serviceName: 'Express Exterior Wash - SUV',
+                    description: 'Express Exterior Wash - SUV',
+                    unitPrice: '80'
+                },
+                {
+                    serviceName: 'Express Exterior Wash - Big Bakkie',
+                    description: 'Express Exterior Wash - Big Bakkie',
+                    unitPrice: '100'
+                },
+                {
+                    serviceName: 'Full Exterior Wash and Interior Detailing - Sedan, Small Bakkie, Hatchback',
+                    description: 'Full Exterior Wash and Interior Detailing - Sedan, Small Bakkie, Hatchback',
+                    unitPrice: '200'
+                },
+                {
+                    serviceName: 'Full Exterior Wash and Interior Detailing - SUV',
+                    description: 'Full Exterior Wash and Interior Detailing - SUV',
+                    unitPrice: '230'
+                },
+                {
+                    serviceName: 'Full Exterior Wash and Interior Detailing - Big Bakkie',
+                    description: 'Full Exterior Wash and Interior Detailing - Big Bakkie',
+                    unitPrice: '250'
+                },
+                {
+                    serviceName: 'Basic Exterior and Interior Bundle - Sedan, Small Bakkie, Hatchback',
+                    description: 'Basic Exterior and Interior Bundle - Sedan, Small Bakkie, Hatchback',
+                    unitPrice: '150'
+                },
+                {
+                    serviceName: 'Basic Exterior and Interior Bundle - SUV',
+                    description: 'Basic Exterior and Interior Bundle - SUV',
+                    unitPrice: '170'
+                },
+                {
+                    serviceName: 'Basic Exterior and Interior Bundle - Big Bakkie',
+                    description: 'Basic Exterior and Interior Bundle - Big Bakkie',
+                    unitPrice: '190'
+                },
+            ];
+    
+            for (const service of cleanWheelzServices) {
+                const serviceEntity = this.serviceRepository.create({
+                    ...service,
+                    digifranchiseId: savedDigifranchise,
+                });
+                await this.serviceRepository.save(serviceEntity);
+            }
+        }
+    }
+
+    
     private async seedBodyRevamp() {
         const check = await this.digifranchiseRepository.count({
             where: { digifranchiseName: "Body Revamp" },
@@ -89,6 +164,49 @@ export class DigifranchiseServiceSeedService {
         }
     }
 
+    private async seedTrendifyMe() {
+        const check = await this.digifranchiseRepository.count({
+            where: { digifranchiseName: "Trendify Me" },
+        });
+    
+        if (check === 0) {
+            const digifranchiseId = this.digifranchiseRepository.create({
+                digifranchiseName: "Trendify Me",
+                description: "Trendify Me connects individuals with Fashion Stylists to help them develop their own unique style, select clothing and accessories that suit their personality and body type, and create cohesive looks for various occasions.",
+                status: StatusEnum.active,
+            });
+    
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
+    
+            const trendifyMeServices = [
+                {
+                    serviceName: 'Fashion consultation',
+                    description: 'Fashion consultation - R100 for the 1st hour, R50 per additional hour or part thereof',
+                    unitPrice: '100'
+                },
+                {
+                    serviceName: 'Shopping guide - video call',
+                    description: 'Shopping guide - video call. R50 per hour',
+                    unitPrice: '50'
+                },
+                {
+                    serviceName: 'Shopping guide - in person',
+                    description: 'Shopping guide - in person. R100 for the 1st hour, R50 per additional hour + R200 travel',
+                    unitPrice: '100'
+                },
+            ];
+    
+            for (const service of trendifyMeServices) {
+                const serviceEntity = this.serviceRepository.create({
+                    ...service,
+                    digifranchiseId: savedDigifranchise,
+                });
+                await this.serviceRepository.save(serviceEntity);
+            }
+        }
+    }
+
+    
     private async seedInsightfulJourney() {
         const check = await this.digifranchiseRepository.count({
             where: { digifranchiseName: "Insightful Journey" },
