@@ -1,8 +1,12 @@
-import { Body, Controller, Delete, Get,Param,Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
-
+import { OrderService } from './order.service';
+import { Request } from 'express';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { CreateOrderTableDto, UpdateOrderTableDto } from './dto/order.dto';
+import { OrderTable } from './entities/order.entity';
 import { CreateRateDto, UpdateRateDto } from './dto/rate.dto';
 import { RateTable } from './entities/rate.entity';
 import { RateService } from './rate.service';
@@ -55,5 +59,34 @@ export class RateController {
     }
 }
 
+@ApiTags('Order')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'order', version: '1' })
+export class OrderController {
+    constructor(private readonly orderService: OrderService) { }
+
+    @ApiOperation({ summary: 'Create a new order' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
+    @ApiBody({ type: CreateOrderTableDto })
+    @Post('create-order/:productOrServiceId')
+    async createOrder(
+        @Req() req: Request,
+        @Param('productOrServiceId') productOrServiceId: string,
+        @Body() createOrderTableDto: CreateOrderTableDto,
+    ): Promise<OrderTable> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.createOrder(createOrderTableDto, userId, productOrServiceId);
+    }
+
+    @ApiOperation({ summary: 'Get all orders for a user' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been successfully retrieved.' })
+    @Get('get-all-order')
+    async getAllOrders(@Req() req: Request): Promise<OrderTable[]> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.getAllOrders(userId);
+    }
+
+}
 
 
