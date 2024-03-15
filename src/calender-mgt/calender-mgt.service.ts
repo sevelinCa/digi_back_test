@@ -10,6 +10,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import type { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
+import { CalenderEventCustomers } from './entities/calender-event-customer.entity';
 @Injectable()
 export class CalenderMgtService {
     constructor(
@@ -21,6 +22,9 @@ export class CalenderMgtService {
         private readonly userRepository: Repository<UserEntity>,
         @InjectRepository(CalenderEventOwner)
         private readonly eventOwnerRepository: Repository<CalenderEventOwner>,
+        @InjectRepository(CalenderEventCustomers)
+        private readonly calenderEventCustomersRepository: Repository<CalenderEventCustomers>,
+        
 
         @InjectRepository(CalenderBooking)
         private readonly bookingRepository: Repository<CalenderBooking>
@@ -189,5 +193,29 @@ export class CalenderMgtService {
         return this.bookingRepository.find({ where: { eventId: Equal(eventId), deleteAt: IsNull() } });
     }
 
+
+    async addCustomerToEvent(customerId: string, eventId: string): Promise<CalenderEventCustomers> {
+        const customer = await this.calenderEventCustomersRepository.findOne({where:{id:customerId}});
+        if (!customer) {
+          throw new NotFoundException(`Customer with ID ${customerId} not found.`);
+        }
+    
+        const event = await this.eventsRepository.findOne({where:{id:eventId}});
+        if (!event) {
+          throw new NotFoundException(`Event with ID ${eventId} not found.`);
+        }
+    
+        const newCalenderEventCustomer = this.calenderEventCustomersRepository.create({
+          customerId: customer,
+          eventId: event,
+        });
+    
+        return this.calenderEventCustomersRepository.save(newCalenderEventCustomer);
+     }
+    
+     async findAllCustomersForEvent(): Promise<CalenderEventCustomers[]> {
+        return this.calenderEventCustomersRepository.find({ where: { deleteAt: IsNull() } });
+     }
+    
 
 }

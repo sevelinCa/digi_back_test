@@ -10,9 +10,6 @@ export class CalenderEvents {
  @Column({ type: 'varchar', length: 255, nullable: false })
  title: string;
 
- @Column({ type: 'text', nullable: true })
- description: string;
-
  @Column({ type: 'timestamp', nullable: false })
  startTime: Date;
 
@@ -26,6 +23,9 @@ export class CalenderEvents {
  @ManyToOne(() => CalenderVenue, { onDelete: 'SET NULL' })
  @JoinColumn({ name: 'venueId' })
  venueId: CalenderVenue;
+
+ @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+ eventDate: Date;
 
  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
  createdAt: Date;

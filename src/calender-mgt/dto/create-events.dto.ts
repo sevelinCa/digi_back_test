@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsOptional, IsDate } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional } from "class-validator";
 
 
 export class CreateEventDto {
@@ -8,11 +8,6 @@ export class CreateEventDto {
     @IsNotEmpty()
     title: string;
 
-    @ApiProperty({ description: 'A description of the event', required: false, example: 'An annual tech conference' })
-    @IsOptional()
-    @IsString()
-    description?: string;
-
     @ApiProperty({ description: 'The start time of the event', type: Date, example: '2023-04-01T09:00:00Z' })
     @IsNotEmpty()
     startTime: Date;
@@ -20,6 +15,10 @@ export class CreateEventDto {
     @ApiProperty({ description: 'The end time of the event', type: Date, example: '2023-04-02T17:00:00Z' })
     @IsNotEmpty()
     endTime: Date;
+
+    @ApiProperty({ example: '2024-03-15T00:00:00Z' })
+    @IsNotEmpty()
+    eventDate: Date;
 }
 
 export class UpdateEventDto {
@@ -40,4 +39,8 @@ export class UpdateEventDto {
     @ApiProperty({ description: 'The end time of the event', type: Date, example: '2023-04-02T17:00:00Z' })
     @IsOptional()
     endTime: Date;
+
+    @ApiProperty({ example: '2024-03-15T00:00:00Z' })
+    @IsNotEmpty()
+    eventDate: Date;
 }
