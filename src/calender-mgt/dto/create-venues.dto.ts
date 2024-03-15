@@ -4,12 +4,12 @@ import { IsString, IsNotEmpty, IsOptional, IsInt } from 'class-validator';
 export class CreateVenueDto {
  @ApiProperty({ description: 'The name of the venue', example: 'Conference Hall 1' })
  @IsString()
- @IsNotEmpty()
- name: string;
+ @IsOptional() 
+ name?: string;
 
  @ApiProperty({ description: 'The location of the venue', example: '123 Main St, Anytown' })
  @IsString()
- @IsNotEmpty()
+ @IsNotEmpty() 
  location: string;
 
  @ApiProperty({ description: 'The capacity of the venue', required: false, example: 500 })
@@ -26,12 +26,12 @@ export class CreateVenueDto {
 export class UpdateVenueDto {
     @ApiProperty({ description: 'The name of the venue', example: 'Conference Hall 1' })
     @IsString()
-    @IsOptional()
-    name: string;
+    @IsOptional() 
+    name?: string;
    
     @ApiProperty({ description: 'The location of the venue', example: '123 Main St, Anytown' })
     @IsString()
-    @IsOptional()
+    @IsNotEmpty() 
     location: string;
    
     @ApiProperty({ description: 'The capacity of the venue', required: false, example: 500 })
@@ -43,7 +43,4 @@ export class UpdateVenueDto {
     @IsOptional()
     @IsString()
     description?: string;
-   }
-
-
-
+}

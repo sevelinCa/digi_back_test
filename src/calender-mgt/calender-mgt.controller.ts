@@ -12,6 +12,7 @@ import { Request } from 'express';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
+import type { CalenderEventCustomers } from './entities/calender-event-customer.entity';
 
 @ApiTags('Calender')
 @ApiBearerAuth()
@@ -216,8 +217,23 @@ export class CalenderMgtController {
     async getAllBookingsByEventId(@Param('eventId') eventId: string): Promise<CalenderBooking[]> {
         return this.calenderMgtService.getAllBookingsByEventId(eventId);
     }
-    
+}
 
+@ApiTags('Calendar Event Customers')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
+@Controller('calendar-event-customers')
+export class CalenderEventCustomersController {
+    constructor(private readonly calenderMgtService: CalenderMgtService) { }
 
-    
+    @ApiOperation({ summary: 'Add a customer to an event' })
+    @ApiResponse({ status: 201, description: 'The customer has been successfully added to the event.' })
+    @Post('add-customer-to-event/:customerId/:eventId')
+    async addCustomerToEvent(
+        @Param('customerId') customerId: string,
+        @Param('eventId') eventId: string,
+    ): Promise<CalenderEventCustomers> {
+        return this.calenderMgtService.addCustomerToEvent(customerId, eventId);
+    }
+
 }
