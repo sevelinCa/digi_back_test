@@ -109,4 +109,10 @@ export class OrderService {
    }
 
 
+   async deleteOrder(orderId: string): Promise<void> {
+      const result = await this.orderRepository.delete(orderId);
+      if (result.affected === 0) {
+         throw new NotFoundException(`Order with ID ${orderId} not found`);
+      }
+   }
 }
