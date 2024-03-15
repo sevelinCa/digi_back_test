@@ -38,4 +38,14 @@ export class RateService {
     return updatedRateTable;
  }
 
+ async deleteRateTable(id: string): Promise<void> {
+    const rateTable = await this.rateTableRepository.findOne({ where: { id } });
+    if (!rateTable) {
+      throw new NotFoundException(`RateTable with ID ${id} not found.`);
+    }
+    rateTable.deleteAt = new Date();
+    await this.rateTableRepository.save(rateTable);
+ }
+
+
 }
