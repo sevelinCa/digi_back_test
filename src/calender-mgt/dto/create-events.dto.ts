@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty, IsOptional } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsArray } from "class-validator";
 
 
 export class CreateEventDto {
@@ -19,6 +19,14 @@ export class CreateEventDto {
     @ApiProperty({ example: '2024-03-15T00:00:00Z' })
     @IsNotEmpty()
     eventDate: Date;
+
+    @ApiProperty({ 
+        description: 'An array of guest IDs', 
+        example: ['guest-id-123', 'guest-id-456'] 
+    })
+    @IsArray()
+    @IsOptional()
+    guestIds?: string[];
 }
 
 export class UpdateEventDto {
@@ -43,4 +51,11 @@ export class UpdateEventDto {
     @ApiProperty({ example: '2024-03-15T00:00:00Z' })
     @IsNotEmpty()
     eventDate: Date;
+
+    @ApiProperty({ description: 'An array of guest IDs', example: ['guest-id-123', 'guest-id-456'] })
+    @IsArray()
+    @IsOptional()
+    guestIds?: string[];
+
 }
+
