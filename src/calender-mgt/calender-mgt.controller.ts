@@ -243,4 +243,11 @@ export class CalenderEventCustomersController {
         return this.calenderMgtService.findAllCustomersForEvent();
     }
 
+    @ApiOperation({ summary: 'Retrieve a customer for an event by ID' })
+    @ApiResponse({ status: 200, description: 'The customer for an event has been successfully retrieved.' })
+    @Get('find-one-customer-for-event/:id')
+    async findOneCustomerForEvenet(@Param('id') id: string): Promise<CalenderEventCustomers | null> {
+        return this.calenderMgtService.findOneCustomerForEvenet(id);
+    }
+
 }

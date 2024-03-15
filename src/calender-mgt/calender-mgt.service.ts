@@ -217,5 +217,10 @@ export class CalenderMgtService {
         return this.calenderEventCustomersRepository.find({ where: { deleteAt: IsNull() } });
      }
     
+     async findOneCustomerForEvenet(id: string): Promise<CalenderEventCustomers | null> {
+        return this.calenderEventCustomersRepository.findOne({where: {id}});
+     }
+
+
 
 }
