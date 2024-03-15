@@ -22,6 +22,13 @@ export class RateController {
         return this.rateService.createRateTable(createRateDto);
     }
 
+    @ApiOperation({ summary: 'Get all rate tables' })
+    @ApiResponse({ status: 200, description: 'Rate tables have been successfully retrieved.' })
+    @Get('get-all-rates')
+    async getAllRateTables(): Promise<RateTable[]> {
+        return this.rateService.getAllRateTables();
+    }
+
 }
 
 

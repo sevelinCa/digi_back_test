@@ -16,4 +16,10 @@ export class RateService {
     const savedRateTable = await this.rateTableRepository.save(newRateTable);
     return savedRateTable;
  }
+ async getAllRateTables(): Promise<RateTable[]> {
+    return this.rateTableRepository.find({ where: { deleteAt: IsNull() } });
+}
+
+
+
 }
