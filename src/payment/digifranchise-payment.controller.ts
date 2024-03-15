@@ -47,6 +47,12 @@ export class RateController {
         return this.rateService.updateRateTable(rateId, updateRateDto);
     }
 
+    @ApiOperation({ summary: 'Delete a rate table by ID' })
+    @ApiResponse({ status: 204, description: 'Rate table has been successfully deleted.' })
+    @Delete('delete-rate/:rateId')
+    async deleteRateTable(@Param('rateId') rateId: string): Promise<void> {
+        return this.rateService.deleteRateTable(rateId);
+    }
 }
 
 
