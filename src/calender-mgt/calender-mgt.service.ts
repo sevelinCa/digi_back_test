@@ -213,6 +213,9 @@ export class CalenderMgtService {
         return this.calenderEventCustomersRepository.save(newCalenderEventCustomer);
      }
     
-
+     async findAllCustomersForEvent(): Promise<CalenderEventCustomers[]> {
+        return this.calenderEventCustomersRepository.find({ where: { deleteAt: IsNull() } });
+     }
+    
 
 }

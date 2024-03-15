@@ -236,4 +236,11 @@ export class CalenderEventCustomersController {
         return this.calenderMgtService.addCustomerToEvent(customerId, eventId);
     }
 
+    @ApiOperation({ summary: 'Retrieve all customers for an event' })
+    @ApiResponse({ status: 200, description: 'The list of customers for an event has been successfully retrieved.' })
+    @Get('find-all-customers-for-event')
+    async findAllCustomersForEvent(): Promise<CalenderEventCustomers[]> {
+        return this.calenderMgtService.findAllCustomersForEvent();
+    }
+
 }
