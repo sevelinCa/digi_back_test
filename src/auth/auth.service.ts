@@ -941,79 +941,6 @@ export class AuthService {
     userJwtPayload: JwtPayloadType,
     updateUserProfileDto: UserProfileDto,
   ): Promise<void> {
-    // if (userDto.password) {
-
-    //   if (!userDto.oldPassword) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           oldPassword: 'missingOldPassword',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   }
-
-    //   const currentUser = await this.usersService.findOne({
-    //     id: userJwtPayload.id,
-    //   });
-
-    //   if (!currentUser) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           user: 'userNotFound',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   }
-
-    //   if (!currentUser.password) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           oldPassword: 'incorrectOldPassword',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   }
-
-    //   const isValidOldPassword = await bcrypt.compare(
-    //     userDto.oldPassword,
-    //     currentUser.password,
-    //   );
-
-    //   if (!isValidOldPassword) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           oldPassword: 'incorrectOldPassword',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   } else {
-    //     await this.sessionService.softDelete({
-    //       user: {
-    //         id: currentUser.id,
-    //       },
-    //       excludeId: userJwtPayload.sessionId,
-    //     });
-    //   }
-    // }
-
-    // await this.usersService.update(userJwtPayload.id, userDto);
-
-    // return this.usersService.findOne({
-    //   id: userJwtPayload.id,
-    // });
-
     const user = await this.usersService.findOne({
       id: userJwtPayload.id,
     });
@@ -1087,13 +1014,19 @@ export class AuthService {
       countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
       criminalRecord: updateUserProfileDto?.criminalRecord,
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
-      crimes: updateUserProfileDto?.crimes,
-      isProfileComplete:
-        updateUserProfileDto.email !== null || updateUserProfileDto.phoneNumber !== null &&
-        updateUserProfileDto.gender !== null && updateUserProfileDto.race !== null &&
-        updateUserProfileDto.homeAddress !== null
-
+      crimes: updateUserProfileDto?.crimes
     })
+
+    if (
+      (user.email !== null || user.phoneNumber !== null) &&
+      user.gender !== null &&
+      user.race !== null &&
+      user.homeAddress
+    ) {
+      Object.assign(user, {
+        isProfileComplete: true
+      })
+    }
 
     await this.usersRepository.save(user)
   }
