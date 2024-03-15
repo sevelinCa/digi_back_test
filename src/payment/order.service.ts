@@ -99,4 +99,14 @@ export class OrderService {
       return this.orderRepository.findOne({ where: { deleteAt: IsNull() } });
    }
 
+   async updateOrder(orderId: string, updateOrderTableDto: UpdateOrderTableDto): Promise<OrderTable> {
+      const order = await this.orderRepository.findOne({ where: { id: orderId } });
+      if (!order) {
+         throw new NotFoundException(`Order with ID ${orderId} not found`);
+      }
+      this.orderRepository.merge(order, updateOrderTableDto);
+      return this.orderRepository.save(order);
+   }
+
+
 }

@@ -94,6 +94,16 @@ export class OrderController {
         return this.orderService.getOneOrder(orderId);
     }
 
+    @ApiOperation({ summary: 'Update an order by ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Order has been successfully updated.' })
+    @ApiBody({ type: UpdateOrderTableDto })
+    @Put('update-order/:orderId')
+    async updateOrder(
+        @Param('orderId') orderId: string,
+        @Body() updateOrderTableDto: UpdateOrderTableDto,
+    ): Promise<OrderTable> {
+        return this.orderService.updateOrder(orderId, updateOrderTableDto);
+    }
 
 }
 
