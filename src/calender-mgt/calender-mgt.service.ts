@@ -91,6 +91,11 @@ export class CalenderMgtService {
         });
     }
 
+    async GetAllEventWithTheirGuest(): Promise<CalenderEvents[]> {
+        return this.eventsRepository.find({
+            relations: ['guests'], 
+        });
+    }
 
     async getAllBookings(): Promise<CalenderBooking[]> {
         return this.bookingRepository.find({ where: { deleteAt: IsNull() } });

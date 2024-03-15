@@ -76,7 +76,10 @@ export class CalenderMgtController {
         return this.calenderMgtService.GetOneEventWithItsGuest(eventId);
     }
 
-
+    @Get('events/guests')
+    async getAllEventWithTheirGuest(): Promise<CalenderEvents[]> {
+        return this.calenderMgtService.GetAllEventWithTheirGuest();
+    }
     
     @ApiOperation({ summary: 'GET ALL - Retrieve all bookings' })
     @Get('bookings')
