@@ -941,79 +941,6 @@ export class AuthService {
     userJwtPayload: JwtPayloadType,
     updateUserProfileDto: UserProfileDto,
   ): Promise<void> {
-    // if (userDto.password) {
-
-    //   if (!userDto.oldPassword) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           oldPassword: 'missingOldPassword',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   }
-
-    //   const currentUser = await this.usersService.findOne({
-    //     id: userJwtPayload.id,
-    //   });
-
-    //   if (!currentUser) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           user: 'userNotFound',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   }
-
-    //   if (!currentUser.password) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           oldPassword: 'incorrectOldPassword',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   }
-
-    //   const isValidOldPassword = await bcrypt.compare(
-    //     userDto.oldPassword,
-    //     currentUser.password,
-    //   );
-
-    //   if (!isValidOldPassword) {
-    //     throw new HttpException(
-    //       {
-    //         status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //         errors: {
-    //           oldPassword: 'incorrectOldPassword',
-    //         },
-    //       },
-    //       HttpStatus.UNPROCESSABLE_ENTITY,
-    //     );
-    //   } else {
-    //     await this.sessionService.softDelete({
-    //       user: {
-    //         id: currentUser.id,
-    //       },
-    //       excludeId: userJwtPayload.sessionId,
-    //     });
-    //   }
-    // }
-
-    // await this.usersService.update(userJwtPayload.id, userDto);
-
-    // return this.usersService.findOne({
-    //   id: userJwtPayload.id,
-    // });
-
     const user = await this.usersService.findOne({
       id: userJwtPayload.id,
     });
@@ -1087,15 +1014,49 @@ export class AuthService {
       countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
       criminalRecord: updateUserProfileDto?.criminalRecord,
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
-      crimes: updateUserProfileDto?.crimes,
-      isProfileComplete:
-        updateUserProfileDto.email !== null || updateUserProfileDto.phoneNumber !== null &&
-        updateUserProfileDto.gender !== null && updateUserProfileDto.race !== null &&
-        updateUserProfileDto.homeAddress !== null
-
+      crimes: updateUserProfileDto?.crimes
     })
 
     await this.usersRepository.save(user)
+
+    const updatedUser = await this.usersService.findOne({
+      id: userJwtPayload.id,
+    });
+    if (!updatedUser) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            hash: `notFound`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (
+      (!!updatedUser.email || !!updatedUser.phoneNumber) &&
+      !!updatedUser.gender &&
+      !!updatedUser.race &&
+      !!updatedUser.homeAddress &&
+      !!updatedUser.educationLevel &&
+      !!updatedUser.currentActivity &&
+      !!updatedUser.fieldOfStudy &&
+      !!updatedUser.southAfricanCitizen &&
+      !!updatedUser.documentId &&
+      !!updatedUser.countryOfOrigin
+    ) {
+      Object.assign(updatedUser, {
+        isProfileComplete: true
+      })
+      await this.usersRepository.save(updatedUser)
+    } else {
+      Object.assign(updatedUser, {
+        isProfileComplete: false
+      })
+      await this.usersRepository.save(updatedUser)
+    }
+    
   }
 
   async refreshToken(
