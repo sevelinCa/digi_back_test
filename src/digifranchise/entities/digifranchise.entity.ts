@@ -9,6 +9,9 @@ export class Digifranchise {
   @Column({ type: 'varchar', length: 255, nullable: true })
   digifranchiseName: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  digifranchiseImg: string;
+
   @Column({ type: 'text', nullable: true })
   description: string;
 
