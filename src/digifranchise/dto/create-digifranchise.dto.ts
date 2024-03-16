@@ -9,6 +9,11 @@ export class CreateDigifranchiseDto {
   @IsString()
   digifranchiseName: string;
 
+  @ApiProperty({ example: 'Link to Digifranchise Image' })
+  @IsOptional()
+  @IsString()
+  digifranchiseImg: string;
+
   @ApiProperty({ example: 'Description of Digifranchise', required: false })
   @IsOptional()
   @IsString()
