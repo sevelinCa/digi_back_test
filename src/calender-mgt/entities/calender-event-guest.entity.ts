@@ -1,6 +1,6 @@
-import { CustomerManagement } from "src/digifranchise-mgt/entities/customer-management.entity";
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, Column } from "typeorm";
-import { CalenderEvents } from "./calender-events.entity";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { CalenderEvents } from './calender-events.entity';
+import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
 
 @Entity()
 export class CalenderEventGuest{
@@ -21,4 +21,3 @@ export class CalenderEventGuest{
  @Column({ type: 'timestamp', nullable: true })
  deleteAt: Date | null;
 }
-

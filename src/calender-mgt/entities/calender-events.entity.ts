@@ -1,38 +1,42 @@
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { CalenderVenue } from './calender-venues.entity';
+import { CalenderEventGuest } from './calender-event-guest.entity';
 
 @Entity()
 export class CalenderEvents {
- @PrimaryGeneratedColumn('uuid')
- id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
- @Column({ type: 'varchar', length: 255, nullable: false })
- title: string;
+    @Column({ type: 'varchar', length: 255, nullable: false })
+    title: string;
 
- @Column({ type: 'timestamp', nullable: false })
- startTime: Date;
+    @Column({ type: 'text', nullable: true })
+    description: string;
 
- @Column({ type: 'timestamp', nullable: false })
- endTime: Date;
+    @Column({ type: 'timestamp', nullable: false })
+    startTime: Date;
 
- @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
- @JoinColumn({ name: 'userId' })
- userId: UserEntity;
+    @Column({ type: 'timestamp', nullable: false })
+    endTime: Date;
 
- @ManyToOne(() => CalenderVenue, { onDelete: 'SET NULL' })
- @JoinColumn({ name: 'venueId' })
- venueId: CalenderVenue;
+    @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'userId' })
+    userId: UserEntity;
 
- @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
- eventDate: Date;
+    @ManyToOne(() => CalenderVenue, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'venueId' })
+    venueId: CalenderVenue;
 
- @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
- createdAt: Date;
+    @OneToMany(() => CalenderEventGuest, guest => guest.eventId)
+    guests: CalenderEventGuest[];
 
- @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
- updatedAt: Date;
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
 
- @Column({ type: 'timestamp', nullable: true })
- deleteAt: Date | null;
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deleteAt: Date | null;
 }

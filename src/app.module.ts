@@ -111,6 +111,7 @@ import { DigifranchisePaymentModule } from './payment/digifranchise-payment.modu
     FilesModule,
     DigifranchiseMgtModule,
     DigifranchiseSubscriptionModule,
+    DigifranchisePaymentModule
   ],
 })
 export class AppModule { }

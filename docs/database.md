@@ -57,7 +57,7 @@
 
    ```bash
    npm run migration:generate -- src/database/migrations/CreatePostTable
-   npm run migration:generate -- src/database/migrations/addOrderTable
+   npm run migration:generate -- src/database/migrations/AddGuestsColumnToEvent
       
        ```
 
