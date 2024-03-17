@@ -136,7 +136,7 @@ export class CustomerManagementController {
     @ApiOperation({ summary: 'Create a new customer ' })
     @ApiResponse({ status: 201, description: 'The customer  has been successfully created.' })
     @ApiBody({ type: CreateCustomerManagementDto })
-    @Post('create-customer')
+    @Post('create-customer/:digifranchiseId')
     async createCustomer(
         @Req() req: Request,
         @Param('digifranchiseId') digifranchiseId: string,

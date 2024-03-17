@@ -33,7 +33,7 @@ export class CalenderMgtController {
     @ApiResponse({ status: HttpStatus.OK, description: 'You have created Venue.' })
     @ApiBody({ type: CreateEventDto })
 
-    @Post('create-event')
+    @Post('create-event/:venueId')
     async createEvent(
         @Req() req: Request,
         @Param('venueId') venueId: string,
@@ -52,7 +52,7 @@ export class CalenderMgtController {
     async getOneEventWithItsGuest(@Param('eventId') eventId: string): Promise<CalenderEvents | null> {
         return this.calenderMgtService.GetOneEventWithItsGuest(eventId);
     }
-    
+
     @ApiOperation({ summary: 'CREATE - Record - Booking', })
     @ApiResponse({ status: HttpStatus.OK, description: 'You have recorded a new booking.' })
     @ApiBody({ type: CreateBookingDto })
