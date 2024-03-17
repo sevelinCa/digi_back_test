@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
-import type { CalenderEventCustomers } from './entities/calender-event-customer.entity';
+import type { CalenderEventGuest } from './entities/calender-event-guest.entity';
 
 @ApiTags('Calender')
 @ApiBearerAuth()
@@ -43,6 +43,16 @@ export class CalenderMgtController {
         return this.calenderMgtService.createEvent(userId, venueId, createEventDto);
     }
 
+    @Get('events/guests')
+    async getAllEventWithTheirGuest(): Promise<CalenderEvents[]> {
+        return this.calenderMgtService.GetAllEventWithTheirGuest();
+    }
+
+    @Get('events/:eventId/guests')
+    async getOneEventWithItsGuest(@Param('eventId') eventId: string): Promise<CalenderEvents | null> {
+        return this.calenderMgtService.GetOneEventWithItsGuest(eventId);
+    }
+    
     @ApiOperation({ summary: 'CREATE - Record - Booking', })
     @ApiResponse({ status: HttpStatus.OK, description: 'You have recorded a new booking.' })
     @ApiBody({ type: CreateBookingDto })
@@ -70,16 +80,6 @@ export class CalenderMgtController {
         return this.calenderMgtService.getAllEvents();
     }
 
-
-    @Get('events/:eventId/guests')
-    async getOneEventWithItsGuest(@Param('eventId') eventId: string): Promise<CalenderEvents | null> {
-        return this.calenderMgtService.GetOneEventWithItsGuest(eventId);
-    }
-
-    @Get('events/guests')
-    async getAllEventWithTheirGuest(): Promise<CalenderEvents[]> {
-        return this.calenderMgtService.GetAllEventWithTheirGuest();
-    }
     
     @ApiOperation({ summary: 'GET ALL - Retrieve all bookings' })
     @Get('bookings')
@@ -227,14 +227,7 @@ export class CalenderMgtController {
     async getAllBookingsByEventId(@Param('eventId') eventId: string): Promise<CalenderBooking[]> {
         return this.calenderMgtService.getAllBookingsByEventId(eventId);
     }
-}
 
-@ApiTags('Calendar Event Customers')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
-@Controller('calendar-event-customers')
-export class CalenderEventCustomersController {
-    constructor(private readonly calenderMgtService: CalenderMgtService) { }
 
     @ApiOperation({ summary: 'Add a customer to an event' })
     @ApiResponse({ status: 201, description: 'The customer has been successfully added to the event.' })
@@ -242,22 +235,32 @@ export class CalenderEventCustomersController {
     async addCustomerToEvent(
         @Param('customerId') customerId: string,
         @Param('eventId') eventId: string,
-    ): Promise<CalenderEventCustomers> {
+    ): Promise<CalenderEventGuest> {
         return this.calenderMgtService.addCustomerToEvent(customerId, eventId);
     }
 
     @ApiOperation({ summary: 'Retrieve all customers for an event' })
     @ApiResponse({ status: 200, description: 'The list of customers for an event has been successfully retrieved.' })
     @Get('find-all-customers-for-event')
-    async findAllCustomersForEvent(): Promise<CalenderEventCustomers[]> {
+    async findAllCustomersForEvent(): Promise<CalenderEventGuest[]> {
         return this.calenderMgtService.findAllCustomersForEvent();
     }
 
     @ApiOperation({ summary: 'Retrieve a customer for an event by ID' })
     @ApiResponse({ status: 200, description: 'The customer for an event has been successfully retrieved.' })
     @Get('find-one-customer-for-event/:id')
-    async findOneCustomerForEvenet(@Param('id') id: string): Promise<CalenderEventCustomers | null> {
+    async findOneCustomerForEvenet(@Param('id') id: string): Promise<CalenderEventGuest | null> {
         return this.calenderMgtService.findOneCustomerForEvenet(id);
     }
 
+    @ApiOperation({ summary: 'Remove a customer from an event' })
+    @ApiResponse({ status: 204, description: 'The customer has been successfully removed from the event.' })
+    @Delete('remove-customer-from-event/:id')
+    async removeCustomerFromEvent(@Param('id') id: string): Promise<void> {
+        return this.calenderMgtService.removeCustomerFromEvent(id);
+    }
 }
+
+
+
+
