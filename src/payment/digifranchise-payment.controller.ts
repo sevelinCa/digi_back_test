@@ -11,7 +11,7 @@ import { CreateRateDto, UpdateRateDto } from './dto/rate.dto';
 import { RateTable } from './entities/rate.entity';
 import { RateService } from './rate.service';
 
-@ApiTags('rate')
+@ApiTags('Tax Rate')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'rate', version: '1' })

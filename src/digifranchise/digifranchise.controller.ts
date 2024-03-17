@@ -84,6 +84,17 @@ export class DigifranchiseController {
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
+@ApiOperation({ summary: 'GET - Retrieve a single Digifranchise owned by the user by its ID' })
+@ApiResponse({ status: HttpStatus.OK, description: 'The Digifranchise owned by the user has been successfully retrieved.' })
+@ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'The Digifranchise owned by the user was not found.' })
+@Get('get-one-owned-digifranchise/:digifranchiseId')
+@HttpCode(HttpStatus.OK)
+async findOneOwnedDigifranchise(@Req() req: Request, @Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseOwner | null> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseService.findOneOwnedDigifranchiseByUserId(userId, digifranchiseId);
+}
+
+  @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET - Retrieve Digifranchise by ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Digifranchise has been successfully retrieved.' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Digifranchise not found.' })

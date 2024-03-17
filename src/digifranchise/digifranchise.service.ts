@@ -148,12 +148,19 @@ export class DigifranchiseService {
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
-      where: { userId },
-      relations: ['digifranchise'],
+        where: { userId },
+        relations: ['digifranchise', 'digifranchiseGeneralInfo'], 
     });
     return ownershipRecords;
-  }
+}
 
+async findOneOwnedDigifranchiseByUserId(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner | null> {
+  const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne({
+      where: { userId, digifranchiseId },
+      relations: ['digifranchise', 'digifranchiseGeneralInfo'], 
+  });
+  return ownershipRecord || null;
+}
   async createSubDigifranchiseServiceOffered(
     createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
     userId: string,

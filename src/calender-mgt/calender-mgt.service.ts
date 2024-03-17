@@ -76,14 +76,14 @@ export class CalenderMgtService {
 
     async GetAllEventWithTheirGuest(): Promise<CalenderEvents[]> {
         return this.eventsRepository.find({
-            relations: ['guests'],
+            relations: ['guests', 'guests.customerId'], // Include the related CustomerManagement entities
         });
     }
-
+    
     async GetOneEventWithItsGuest(eventId: string): Promise<CalenderEvents | null> {
         return this.eventsRepository.findOne({
             where: { id: eventId },
-            relations: ['guests'],
+            relations: ['guests', 'guests.customerId'], // Include the related CustomerManagement entities
         });
     }
 
