@@ -318,11 +318,11 @@ async findOneOwnedDigifranchiseByUserId(userId: string, digifranchiseId: string)
       throw new NotFoundException('digifranchise is without phone number')
     }
 
-    Object.assign(digifranchiseGeneralInfo, { digifranchisePublished: true })
+    Object.assign(digifranchiseGeneralInfo, { digifranchisePublished: false })
     this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo)
 
     return {
-      message: 'your digifranchise has been published successfully'
+      message: 'your digifranchise has been unpublished successfully'
     }
   }
 }
