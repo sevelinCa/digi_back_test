@@ -30,7 +30,7 @@ export class CalenderMgtService {
         private readonly customerManagementRepository: Repository<CustomerManagement>,
         @InjectRepository(CalenderBooking)
         private readonly bookingRepository: Repository<CalenderBooking>,
-        private readonly mailerService: MailerService,
+        // private readonly mailerService: MailerService,
 
     ) { }
 
