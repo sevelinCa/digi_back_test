@@ -18,6 +18,7 @@ import { CustomerSubscriptionService } from 'src/digifranchise-subscription/cust
 import { DigifranchiseSubscriptionModule } from 'src/digifranchise-subscription/digifranchise-subscription.module';
 import { CustomerSubscription } from 'src/digifranchise-subscription/entities/customer-subscription.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
     SmsModule,
     DigifranchiseSubscriptionModule,
     JwtModule.register({}),
-    TypeOrmModule.forFeature([UserEntity, CustomerSubscription, Digifranchise])
+    TypeOrmModule.forFeature([UserEntity, CustomerSubscription, Digifranchise,DigifranchiseOwner])
   ],
   controllers: [AuthController],
   providers: [

@@ -193,7 +193,7 @@ export class AuthService {
     const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
 
     getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-      if (subscription.digifranchiseId.id === digifranchiseId) {
+      if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
         return
       } else {
         await this.customerSubscription.createSubscription(user.id, digifranchiseId)
@@ -326,7 +326,7 @@ export class AuthService {
         const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
 
         getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-          if (subscription.digifranchiseId.id === digifranchiseId) {
+          if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
             return
           } else {
             await this.customerSubscription.createSubscription(user.id, digifranchiseId)
@@ -731,7 +731,7 @@ export class AuthService {
     const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
 
     getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-      if (subscription.digifranchiseId.id === digifranchiseId) {
+      if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
         return
       } else {
         await this.customerSubscription.createSubscription(user.id, digifranchiseId)
