@@ -1,5 +1,6 @@
 
 import { InjectRepository } from "@nestjs/typeorm";
+import { DigifranchiseServiceCategory } from "src/digifranchise/entities/digifranchise-service-category.entity";
 import { DigifranchiseServiceOffered } from "src/digifranchise/entities/digifranchise-service.entity";
 import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 import { StatusEnum } from "src/statuses/statuses.enum";
@@ -11,6 +12,8 @@ export class DigifranchiseServiceSeedService {
         private digifranchiseRepository: Repository<Digifranchise>,
         @InjectRepository(DigifranchiseServiceOffered)
         private serviceRepository: Repository<DigifranchiseServiceOffered>,
+        @InjectRepository(DigifranchiseServiceCategory)
+        private serviceCategoryRepository: Repository<DigifranchiseServiceCategory>,
     ) { }
 
     async run() {
@@ -45,50 +48,35 @@ export class DigifranchiseServiceSeedService {
     
             const cleanWheelzServices = [
                 {
-                    serviceName: 'Express Exterior Wash - Sedan, Small Bakkie, Hatchback',
+                    serviceName: 'Express Exterior Wash',
                     description: 'Express Exterior Wash - Sedan, Small Bakkie, Hatchback',
-                    unitPrice: '70'
+                    unitPrice: '',
+                    serviceCategory: [
+                        { serviceCategoryName: 'Normal', unitPrice: '70', description: '' },
+                        { serviceCategoryName: 'SUV', unitPrice: '80', description: '' },
+                        { serviceCategoryName: 'Big Bakkie', unitPrice: '100', description: '' }
+                    ]
                 },
                 {
-                    serviceName: 'Express Exterior Wash - SUV',
-                    description: 'Express Exterior Wash - SUV',
-                    unitPrice: '80'
-                },
-                {
-                    serviceName: 'Express Exterior Wash - Big Bakkie',
-                    description: 'Express Exterior Wash - Big Bakkie',
-                    unitPrice: '100'
-                },
-                {
-                    serviceName: 'Full Exterior Wash and Interior Detailing - Sedan, Small Bakkie, Hatchback',
+                    serviceName: 'Full Exterior Wash and Interior Detailing',
                     description: 'Full Exterior Wash and Interior Detailing - Sedan, Small Bakkie, Hatchback',
-                    unitPrice: '200'
+                    unitPrice: '',
+                    serviceCategory: [
+                        { serviceCategoryName: 'Normal', unitPrice: '200', description: '' },
+                        { serviceCategoryName: 'SUV', unitPrice: '230', description: '' },
+                        { serviceCategoryName: 'Big Bakkie', unitPrice: '250', description: '' }
+                    ]
                 },
                 {
-                    serviceName: 'Full Exterior Wash and Interior Detailing - SUV',
-                    description: 'Full Exterior Wash and Interior Detailing - SUV',
-                    unitPrice: '230'
-                },
-                {
-                    serviceName: 'Full Exterior Wash and Interior Detailing - Big Bakkie',
-                    description: 'Full Exterior Wash and Interior Detailing - Big Bakkie',
-                    unitPrice: '250'
-                },
-                {
-                    serviceName: 'Basic Exterior and Interior Bundle - Sedan, Small Bakkie, Hatchback',
+                    serviceName: 'Basic Exterior and Interior Bundle',
                     description: 'Basic Exterior and Interior Bundle - Sedan, Small Bakkie, Hatchback',
-                    unitPrice: '150'
-                },
-                {
-                    serviceName: 'Basic Exterior and Interior Bundle - SUV',
-                    description: 'Basic Exterior and Interior Bundle - SUV',
-                    unitPrice: '170'
-                },
-                {
-                    serviceName: 'Basic Exterior and Interior Bundle - Big Bakkie',
-                    description: 'Basic Exterior and Interior Bundle - Big Bakkie',
-                    unitPrice: '190'
-                },
+                    unitPrice: '',
+                    serviceCategory: [
+                        { serviceCategoryName: 'Normal', unitPrice: '150', description: '' },
+                        { serviceCategoryName: 'SUV', unitPrice: '170', description: '' },
+                        { serviceCategoryName: 'Big Bakkie', unitPrice: '190', description: '' }
+                    ]
+                }
             ];
     
             for (const service of cleanWheelzServices) {
@@ -97,10 +85,17 @@ export class DigifranchiseServiceSeedService {
                     digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
-            }
+        
+                for (const category of service.serviceCategory) {
+                    const categoryEntity = this.serviceCategoryRepository.create({
+                        ...category,
+                        service: serviceEntity, 
+                    });
+                    await this.serviceCategoryRepository.save(categoryEntity);
+                }
         }
     }
-
+}
     
     private async seedBodyRevamp() {
         const check = await this.digifranchiseRepository.count({
