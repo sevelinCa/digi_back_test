@@ -80,7 +80,12 @@ export class CalenderMgtService {
         });
     }
     
-
+    async GetOneEventWithItsGuest(eventId: string): Promise<CalenderEvents | null> {
+        return this.eventsRepository.findOne({
+            where: { id: eventId },
+            relations: ['guests', 'guests.customerId', 'venueId'], 
+        });
+    }
 
     async recordBooking(userId: string, eventId: string, createBookingDto: CreateBookingDto): Promise<CalenderBooking> {
 
