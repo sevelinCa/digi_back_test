@@ -17,13 +17,13 @@ export class CustomerSubscriptionController {
 
     @ApiOperation({ summary: 'CREATE - Create a new subscription' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'A new subscription has been successfully created.' })
-    @Post('create-subscription/:digifranchiseId')
+    @Post('create-subscription/:digifranchiseOwnedId')
     async createSubscription(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('digifranchiseOwnedId') digifranchiseOwnedId: string,
     ): Promise<CustomerSubscription> {
         const userId = (req.user as UserEntity).id;
-        return this.subscriptionService.createSubscription(userId, digifranchiseId);
+        return this.subscriptionService.createSubscription(userId, digifranchiseOwnedId);
     }
 
     @ApiOperation({ summary: 'GET ALL - Retrieve all subscriptions' })

@@ -5,30 +5,32 @@ import { checkIfUserExists } from "src/helper/FindByFunctions";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { Repository, IsNull, Equal } from "typeorm";
 import { CustomerSubscription } from "./entities/customer-subscription.entity";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
 @Injectable()
 export class CustomerSubscriptionService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-        @InjectRepository(Digifranchise)
-        private readonly digifranchiseRepository: Repository<Digifranchise>,
+        @InjectRepository(DigifranchiseOwner)
+        private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
         @InjectRepository(CustomerSubscription)
         private readonly customerSubscriptionRepository: Repository<CustomerSubscription>,
     ) { }
 
-    async createSubscription(userId: string, digifranchiseId: string): Promise<CustomerSubscription> {
+
+    async createSubscription(userId: string, digifranchiseOwnerId: string): Promise<CustomerSubscription> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
         }
-        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
+        const digifranchise = await this.digifranchiseOwnerRepository.findOne({ where: { id: digifranchiseOwnerId } })
         if (!digifranchise) {
             throw new HttpException('Digifranchise not exist', HttpStatus.NOT_FOUND);
         }
 
         const existingSubscription = await this.customerSubscriptionRepository.findOne({
-            where: { userId: Equal(user.id), digifranchiseId: Equal(digifranchise.id) }
+            where: { userId: Equal(user.id), digifranchiseOwnerId: Equal(digifranchise.id) }
         });
         if (existingSubscription) {
             throw new HttpException('User is already subscribed to this digifranchise', HttpStatus.CONFLICT);
@@ -36,7 +38,7 @@ export class CustomerSubscriptionService {
 
         const newSubscription = this.customerSubscriptionRepository.create({
             userId: user,
-            digifranchiseId: digifranchise
+            digifranchiseOwnerId: digifranchise
         });
         const savedSubscription = await this.customerSubscriptionRepository.save(newSubscription);
         return savedSubscription;
@@ -57,7 +59,7 @@ export class CustomerSubscriptionService {
 
     async getSubscribersByDigifranchiseId(digifranchiseId: string): Promise<CustomerSubscription[]> {
         return this.customerSubscriptionRepository.find({
-            where: { digifranchiseId: Equal(digifranchiseId), deleteAt: IsNull() },
+            where: { digifranchiseOwnerId: Equal(digifranchiseId), deleteAt: IsNull() },
         });
     }
 }

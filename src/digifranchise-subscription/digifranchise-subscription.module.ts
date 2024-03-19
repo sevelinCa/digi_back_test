@@ -5,6 +5,7 @@ import { CustomerSubscriptionService } from './customer-subscription.service';
 import { CustomerSubscriptionController } from './customer-subscription.controller';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 
 @Module({
@@ -13,7 +14,8 @@ import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
       [
         CustomerSubscription,
         UserEntity,
-        Digifranchise
+        Digifranchise,
+        DigifranchiseOwner
       ]),
   ],
   providers: [CustomerSubscriptionService],
