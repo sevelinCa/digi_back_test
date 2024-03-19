@@ -33,28 +33,25 @@ export class UpdateEventDto {
     @ApiProperty({ description: 'The title of the event', example: 'Tech Conference' })
     @IsString()
     @IsOptional()
-    title: string;
-
-    @ApiProperty({ description: 'A description of the event', required: false, example: 'An annual tech conference' })
-    @IsOptional()
-    @IsString()
-    description?: string;
+    title?: string;
 
     @ApiProperty({ description: 'The start time of the event', type: Date, example: '2023-04-01T09:00:00Z' })
     @IsOptional()
-    startTime: Date;
+    startTime?: Date;
 
     @ApiProperty({ description: 'The end time of the event', type: Date, example: '2023-04-02T17:00:00Z' })
     @IsOptional()
-    endTime: Date;
+    endTime?: Date;
 
     @ApiProperty({ example: '2024-03-15T00:00:00Z' })
-    @IsNotEmpty()
-    eventDate: Date;
+    @IsOptional()
+    eventDate?: Date;
 
-    @ApiProperty({ description: 'An array of guest IDs', example: ['guest-id-123', 'guest-id-456'] })
+    @ApiProperty({ 
+        description: 'An array of guest IDs', 
+        example: ['guest-id-123', 'guest-id-456'] 
+    })
     @IsArray()
     @IsOptional()
     guestIds?: string[];
-
 }
