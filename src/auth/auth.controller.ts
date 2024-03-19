@@ -149,8 +149,8 @@ export class AuthController {
 
   @Post('email/digifranchise-customer/login')
   @HttpCode(HttpStatus.OK)
-  async loginCustomerEmail(@Query('digifranchiseId') digifranchiseId: string, @Body() createUserDto: AuthRegisterLoginDto) {
-    await this.service.customerEmailLogin(digifranchiseId, createUserDto);
+  async loginCustomerEmail(@Query('digifranchiseId') digifranchiseId: string, @Body() dto: AuthEmailLoginDto) {
+    await this.service.customerEmailLogin(digifranchiseId, dto);
   }
 
   @Post('phone/digifranchise-customer/register')
