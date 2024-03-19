@@ -92,11 +92,10 @@ export class OrderService {
   }
 
    async getAllOrders(userId: string): Promise<OrderTable[]> {
-      return this.orderRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
-   }
-
-   async getOneOrder(orderId: string): Promise<OrderTable | null> {
-      return this.orderRepository.findOne({ where: { deleteAt: IsNull() } });
+      return this.orderRepository.find({ 
+        where: { userId: Equal(userId), deleteAt: IsNull() }, 
+        relations: ['userId', 'productId', 'serviceId']
+    });
    }
 
    async updateOrder(orderId: string, updateOrderTableDto: UpdateOrderTableDto): Promise<OrderTable> {
