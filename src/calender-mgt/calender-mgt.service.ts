@@ -12,6 +12,7 @@ import { CalenderBooking } from './entities/calender-bookings.entity';
 import type { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 import { CalenderEventGuest } from './entities/calender-event-guest.entity';
 import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
+import type { MailerService } from 'src/mailer/mailer.service';
 @Injectable()
 export class CalenderMgtService {
     constructor(
@@ -28,7 +29,9 @@ export class CalenderMgtService {
         @InjectRepository(CustomerManagement)
         private readonly customerManagementRepository: Repository<CustomerManagement>,
         @InjectRepository(CalenderBooking)
-        private readonly bookingRepository: Repository<CalenderBooking>
+        private readonly bookingRepository: Repository<CalenderBooking>,
+        private readonly mailerService: MailerService,
+
     ) { }
 
 

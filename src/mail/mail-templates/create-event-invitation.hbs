@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Invitation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello {{customerName}},</h1>
+        <p>You have been added as a guest to the following event:</p>
+        <ul>
+            <li>Event Name: {{eventName}}</li>
+            <li>Date: {{eventDate}}</li>
+            <li>Location: {{eventLocation}}</li>
+        </ul>
+        <p>Please confirm your attendance by clicking the link below:</p>
+        <a href="{{confirmationLink}}">Confirm Attendance</a>
+        <p>Best regards,</p>
+        <p>Your Event Organizer</p>
+    </div>
+</body>
+</html>
