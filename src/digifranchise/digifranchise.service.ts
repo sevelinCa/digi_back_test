@@ -114,13 +114,12 @@ export class DigifranchiseService {
   }
 
   async findAllServiceOfferedByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
-    return await this.digifranchiseServiceOfferedRepository.find({
-      where: {
-        digifranchiseId: Equal(digifranchiseId),
-        userId: IsNull(),
-      },
-    });
-  }
+    return await this.digifranchiseServiceOfferedRepository.createQueryBuilder('service')
+        .leftJoinAndSelect('service.serviceCategories', 'category', 'category.serviceId = service.id')
+        .where('service.digifranchiseId = :digifranchiseId', { digifranchiseId })
+        .andWhere('service.userId IS NULL')
+        .getMany();
+}
 
   async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string): Promise<any> {
     const servicesOffered = await this.digifranchiseServiceOfferedRepository.find({
