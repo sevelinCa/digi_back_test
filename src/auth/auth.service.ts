@@ -738,7 +738,6 @@ export class AuthService {
       }
     })
 
-
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
       role: user.role,
