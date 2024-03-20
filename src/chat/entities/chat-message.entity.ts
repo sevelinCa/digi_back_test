@@ -1,37 +1,40 @@
-// import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-// import {
-//   Entity,
-//   PrimaryGeneratedColumn,
-//   Column,
-//   CreateDateColumn,
-//   JoinColumn,
-//   ManyToOne,
-//   UpdateDateColumn,
-// } from 'typeorm';
-// import { ChatSession } from './chat-session.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  JoinColumn,
+  ManyToOne,
+  UpdateDateColumn,
+} from 'typeorm';
+import { ChatRoom } from './chat-room.entity';
 
-// @Entity()
-// export class ChatMessage {
-//   @PrimaryGeneratedColumn('uuid')
-//   id: string;
+@Entity()
+export class ChatMessage {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-//   @ManyToOne(() => UserEntity)
-//   @JoinColumn({ name: 'senderId' })
-//   senderId: UserEntity;
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'senderId' })
+  senderId: UserEntity;
 
-//   @ManyToOne(() => ChatSession)
-//   @JoinColumn({ name: 'senderId' })
-//   chatSession: ChatSession;
+  @ManyToOne(() => ChatRoom)
+  @JoinColumn({ name: 'ChatRoomId' })
+  chatRoomId: ChatRoom;
 
-//   @Column()
-//   content: string;
+  @Column()
+  messageBody: string;
   
-//   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-//   createdAt: Date;
+  @Column({ default: false })
+  read: boolean;
 
-//   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-//   updatedAt: Date;
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
-//   @Column({ type: 'timestamp', nullable: true })
-//   deleteAt: Date | null;
-// }
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  deleteAt: Date | null;
+}
