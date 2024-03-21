@@ -545,7 +545,23 @@ export class AuthService {
       );
     }
 
-    await this.smsService.sendOTP(dto.phoneNumber)
+    if (user) {
+      try {
+        await this.smsService.sendOTP(dto.phoneNumber)
+      } catch (error) {
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            errors: {
+              phoneNumber: 'failed to send SMS',
+              message: 'user has been created but unable to SMS at this time'
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
+
   }
 
   async phoneCustomerRegister(digifranchiseId: string, dto: AuthPhoneRegisterDto) {
@@ -591,9 +607,23 @@ export class AuthService {
       );
     }
 
-    await this.customerSubscription.createSubscription(user.id, digifranchiseId)
-
-    await this.smsService.sendOTP(dto.phoneNumber)
+    if (user) {
+      try {
+        await this.smsService.sendOTP(dto.phoneNumber)
+        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+      } catch (error) {
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            errors: {
+              phoneNumber: 'failed to send SMS',
+              message: 'user has been created but unable to SMS at this time'
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+    }
   }
 
   async phoneLogin(dto: AuthPhoneLoginDto): Promise<LoginResponseType> {
