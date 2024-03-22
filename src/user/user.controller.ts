@@ -9,7 +9,6 @@ import { RoleEnum } from 'src/roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 
-// @ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 export class UserController {

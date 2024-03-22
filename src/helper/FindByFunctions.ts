@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { User } from '../users/domain/user';
 import { UserNotFoundException } from 'src/middlewares/accounting.exceptions';
 import { Expense } from 'src/accounting/entities/expense.entity';
@@ -7,11 +7,12 @@ import { Income } from 'src/accounting/entities/income.entity';
 import { Deposit } from 'src/accounting/entities/deposit.entity';
 import { Funding } from 'src/accounting/entities/funding.entity';
 import { OperatingParameters } from 'src/accounting/entities/operationParamenters.entity';
-import type { Inventory } from 'src/inventory/entities/inventory.entity';
-import type { Asset } from 'src/asset-mgt/entities/asset.entity';
-import type { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import type { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { Inventory } from 'src/inventory/entities/inventory.entity';
+import { Asset } from 'src/asset-mgt/entities/asset.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { RoleEnum } from 'src/roles/roles.enum';
 
 export async function findUserById(
   userRepository: Repository<User>,
@@ -46,7 +47,7 @@ export async function getDigifranchiseById(
   DigifranchiseRepository: Repository<Digifranchise>,
   digifranchiseId: string,
 ): Promise<Digifranchise | null> {
-  const digifranchise = await DigifranchiseRepository.findOne({where:{id: digifranchiseId}});
+  const digifranchise = await DigifranchiseRepository.findOne({ where: { id: digifranchiseId } });
   return digifranchise || null;
 }
 
@@ -125,4 +126,15 @@ export async function checkIfDigifranchiseExists(
 ): Promise<boolean> {
   const digifranchise = await digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
   return !!digifranchise;
+}
+
+export async function findAdminID(): Promise<string> {
+  const admin = await this.userRepository.findOne({
+    where: { role: Equal(RoleEnum.digifranchise_super_admin) }
+  });
+  if (!admin) {
+    throw new Error('Admin user not found');
+  }
+  console.log('AAAAAAAAAAAAAAAAAAA', admin)
+  return admin.id;
 }

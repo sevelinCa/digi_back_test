@@ -375,7 +375,7 @@ export class AuthService {
       criminalRecord: null,
       policeClearenceCertificate: null,
       crimes: null,
-      isProfileComplete: false
+      isProfileComplete: false,
     });
 
     const hash = await this.jwtService.signAsync(

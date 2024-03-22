@@ -23,10 +23,8 @@ export class UserService {
 
   async createProfile(
     userJwtPayload: JwtPayloadType,
-    // userId: string,
     createUserProfileDto: UserProfileDto,
   ) {
-    // let userId: User['id'];
 
     const user = await this.usersService.findOne({
       id: userJwtPayload.id,
@@ -86,6 +84,7 @@ export class UserService {
       email: createUserProfileDto?.email,
       firstName: createUserProfileDto?.firstName,
       lastName: createUserProfileDto?.lastName,
+      dateOfBirth: createUserProfileDto?.dateOfBirth,
       idImage: createUserProfileDto?.idImage,
       gender: createUserProfileDto?.gender,
       race: createUserProfileDto?.race,
@@ -192,6 +191,7 @@ export class UserService {
       email: updateUserProfileDto?.email,
       firstName: updateUserProfileDto?.firstName,
       lastName: updateUserProfileDto?.lastName,
+      dateOfBirth: updateUserProfileDto?.dateOfBirth,
       idImage: updateUserProfileDto?.idImage,
       gender: updateUserProfileDto?.gender,
       race: updateUserProfileDto?.race,

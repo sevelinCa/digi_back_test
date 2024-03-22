@@ -20,6 +20,7 @@ export class CreateUserDto {
   @IsEmail()
   phoneNumber: string | null;
 
+
   @ApiProperty()
   @MinLength(6)
   password?: string;
@@ -85,4 +86,7 @@ export class CreateUserDto {
   crimes: Crimes[] | null;
 
   isProfileComplete: boolean;
+
+  dateOfBirth?: Date; 
+
 }

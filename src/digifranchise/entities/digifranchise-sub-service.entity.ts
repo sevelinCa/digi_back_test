@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { DigifranchiseServiceOffered } from './digifranchise-service.entity';
+import { DigifranchiseServiceOffered } from './digifranchise-service-offered.entity';
 
 @Entity()
 export class DigifranchiseSubServices {

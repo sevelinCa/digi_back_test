@@ -4,7 +4,7 @@ import { DigifranchiseService } from './digifranchise.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
-import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
+import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
 import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { DigifranchiseGeneralInfoService } from './digifranchise-general-information.service';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';

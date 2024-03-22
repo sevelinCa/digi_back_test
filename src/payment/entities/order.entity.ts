@@ -1,5 +1,5 @@
 import { DigifranchiseProduct } from 'src/digifranchise/entities/digifranchise-product.entity';
-import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service.entity';
+import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import {
     Entity,

@@ -121,6 +121,10 @@ export class UserProfileDto {
   @IsOptional()
   @IsString()
   lastName: string;
+  
+  @ApiProperty({ example: '2024-03-15' })
+  @IsNotEmpty()
+  dateOfBirth: Date;
 
   @ApiProperty({
     example: 'MALE',

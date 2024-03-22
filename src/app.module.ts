@@ -42,7 +42,7 @@ import { FilesModule } from './files/files.module';
 import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.module';
 import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/digifranchise-subscription.module';
 import { DigifranchisePaymentModule } from './payment/digifranchise-payment.module';
-import { ChatModule } from './chat/chat.module';
+// import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -113,7 +113,7 @@ import { ChatModule } from './chat/chat.module';
     DigifranchiseMgtModule,
     DigifranchiseSubscriptionModule,
     DigifranchisePaymentModule,
-    ChatModule
+    // ChatModule
   ],
 })
 export class AppModule { }

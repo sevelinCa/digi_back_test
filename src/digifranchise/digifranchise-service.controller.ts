@@ -7,7 +7,7 @@ import { RoleEnum } from 'src/roles/roles.enum';
 import { DigifranchiseService } from './digifranchise.service';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
-import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
+import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
 import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';
 import { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
 

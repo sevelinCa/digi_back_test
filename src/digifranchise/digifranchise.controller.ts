@@ -10,7 +10,7 @@ import { Request } from 'express';
 import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
 import { Digifranchise } from './entities/digifranchise.entity';
-import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
+import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
 import { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 import { DigifranchiseGeneralInfoService } from './digifranchise-general-information.service';
 import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';

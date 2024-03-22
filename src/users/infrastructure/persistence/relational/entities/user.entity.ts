@@ -85,6 +85,9 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @Column({ type: String, nullable: true })
   lastName: string | null;
 
+  @Column({ type: 'date', nullable: true })
+  dateOfBirth?: Date;
+
   // @ManyToOne(() => FileEntity, {
   //   eager: true,
   // })
@@ -102,7 +105,7 @@ export class UserEntity extends EntityRelationalHelper implements User {
 
 
 
-// ***********************************************************
+  // ***********************************************************
 
 
   @Index()
