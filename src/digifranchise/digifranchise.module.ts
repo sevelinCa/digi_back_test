@@ -26,6 +26,8 @@ import { DigifranchiseComplianceInfoController } from './digifranchise-complianc
 import { DigifranchiseProfessionalMembershipController } from './digifranchise-professional-membership.controller';
 import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-product.entity';
 import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned-service-offered.entity';
+import { DigifranchiseOwnedServiceAndProductService } from './digifranchise-owned-service-and-product.service';
+import { DigifranchiseOwnedServiceController, DigifranchiseOwnedProductController } from './digifranchise-owned-service-and-product.controller';
 
 @Module({
   imports: [
@@ -53,7 +55,9 @@ import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned
     DigifranchiseGeneralInfoController,
     DigifranchiseComplianceInfoController,
     DigifranchiseProfessionalMembershipController,
-    DigifranchiseWebController
+    DigifranchiseWebController,
+    DigifranchiseOwnedServiceController,
+    DigifranchiseOwnedProductController,
   ],
   providers: [
     DigifranchiseService,
@@ -61,6 +65,7 @@ import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned
     DigifranchiseComplianceInfoService,
     DigifranchiseProfessionalBodyMembershipService,
     ProductService,
+    DigifranchiseOwnedServiceAndProductService,
   ]
 })
 export class DigifranchiseModule { }
