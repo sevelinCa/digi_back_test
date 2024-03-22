@@ -47,4 +47,18 @@ export class DigifranchiseOwnedServiceAndProductService {
       where: { deleteAt: IsNull() },
     });
  }
+
+ async selectOwnedProduct(ownerdProductId: string): Promise<DigifranchiseOwnedProduct> {
+  const ownedProduct = await this.digifranchiseOwnedProductRepository.findOne({
+    where: { id: ownerdProductId },
+  });
+
+  if (!ownedProduct) {
+    throw new Error('Product not found');
+  }
+
+  ownedProduct.isSelected = !ownedProduct.isSelected;
+
+  return this.digifranchiseOwnedProductRepository.save(ownedProduct);
+}
 }

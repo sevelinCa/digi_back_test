@@ -49,5 +49,28 @@ export class DigifranchiseOwnedServiceController {
  async getAllServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
     return this.digifranchiseOwnedServiceAndProductService.getAllServices();
  }
- 
+
+}
+
+
+@ApiTags('Owned Digifranchise - Product')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'owned', version: '1' })
+export class DigifranchiseOwnedProductController {
+ constructor(
+    private readonly digifranchiseOwnedServiceAndProductService: DigifranchiseOwnedServiceAndProductService,
+ ) {}
+
+ @ApiOperation({ summary: 'CREATE - Select owned Product' })
+ @ApiResponse({ status: HttpStatus.OK, description: 'Product Selected Successfull.' })
+ @Post('select-owned-product/:ownerdProductId')
+ @HttpCode(HttpStatus.OK)
+ async selectOwnedProduct(
+   @Param('ownerdProductId') ownerdProductId: string,
+ ): Promise<DigifranchiseOwnedProduct> {
+
+   return this.digifranchiseOwnedServiceAndProductService.selectOwnedProduct(ownerdProductId);
+ }
+
 }
