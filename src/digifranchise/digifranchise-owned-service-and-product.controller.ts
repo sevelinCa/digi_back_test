@@ -34,4 +34,12 @@ export class DigifranchiseOwnedServiceController {
       return this.digifranchiseOwnedServiceAndProductService.getAllSelectedServices();
    }
 
+ @ApiOperation({ summary: 'GET ALL - Retrieve all not Selected services' })
+ @ApiResponse({ status: HttpStatus.OK, description: 'All not Selected services  have been successfully retrieved.' })
+ @Get('all-not-selected-services')
+ @HttpCode(HttpStatus.OK)
+ async getAllNotSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
+    return this.digifranchiseOwnedServiceAndProductService.getAllNotSelectedServices();
+ }
+
 }
