@@ -13,6 +13,9 @@ import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-infor
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
 import { ProductService } from './product.service';
+import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-product.entity';
+import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned-service-offered.entity';
+import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 
 @Injectable()
 export class DigifranchiseService {
@@ -33,7 +36,15 @@ export class DigifranchiseService {
     @InjectRepository(DigifranchiseSubServices)
     private readonly digifranchiseSubServiceOfferedRepository: Repository<DigifranchiseSubServices>,
     @InjectRepository(DigifranchiseProfessionalBodyMembership)
-    private readonly digifranchiseProfessionalBodyMembershipRepository: Repository<DigifranchiseProfessionalBodyMembership>
+    private readonly digifranchiseProfessionalBodyMembershipRepository: Repository<DigifranchiseProfessionalBodyMembership>,
+
+    @InjectRepository(DigifranchiseOwnedProduct)
+    private digifranchiseOwnedProductRepository: Repository<DigifranchiseOwnedProduct>,
+    @InjectRepository(DigifranchiseOwnedServiceOffered)
+    private digifranchiseOwnedServiceOfferedRepository: Repository<DigifranchiseOwnedServiceOffered>,
+    @InjectRepository(DigifranchiseProduct)
+    private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
+
   ) { }
 
   async createDigifranchise(createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
@@ -45,64 +56,146 @@ export class DigifranchiseService {
     return await this.digifranchiseRepository.find();
   }
 
+  // async ownDigifranchise(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
+  //   const existingOwnership = await this.digifranchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
+  //   if (existingOwnership) {
+  //     throw new Error('User already own this digifranchise');
+  //   }
+
+  //   const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
+  //   if (!digifranchiseExists) {
+  //     throw new Error('Digifranchise not found');
+  //   }
+
+  //   const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
+  //   if (!digifranchise) {
+  //     throw new Error('Digifranchise not found');
+  //   }
+  //   const newFranchiseOwner = this.digifranchiseOwnershipRepository.create({
+  //     userId,
+  //     digifranchiseId: digifranchiseId,
+  //     digifranchise: digifranchise,
+  //   });
+
+  //   const savedFranchiseOwner = await this.digifranchiseOwnershipRepository.save(newFranchiseOwner)
+
+  //   const createGeneralInfoInstance = this.digifranchiseGeneralInfoRepository.create({
+  //     digifranchiseName: '',
+  //     ownedDigifranchiseId: savedFranchiseOwner.id,
+  //     facebookHandle: '',
+  //     tiktokHandle: '',
+  //     instagramHandle: '',
+  //     xHandle: '',
+  //     connectNumber: '',
+  //     address: '',
+  //     otherMobileNumber: '',
+  //     aboutCompany: '',
+  //     location: ''
+  //   })
+  //   await this.digifranchiseGeneralInfoRepository.save(createGeneralInfoInstance)
+
+  //   const createComplianceInfoInstance = this.digifranchiseComplianceInfoRepository.create({
+  //     ownedDigifranchiseId: savedFranchiseOwner.id,
+  //     companyRegisterationNumber: '',
+  //     taxNumber: '',
+  //     taxClearencePin: '',
+  //     taxClearenceExpiration: '',
+  //     coidaRegisteration: '',
+  //     vatNumber: '',
+  //     uifRegistration: '',
+  //     workMansCompensation: '',
+  //     sdlNumber: '',
+  //     otherComplianceDocs: []
+  //   })
+  //   await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
+
+  //   return savedFranchiseOwner;
+  // }
+
   async ownDigifranchise(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
     const existingOwnership = await this.digifranchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
     if (existingOwnership) {
-      throw new Error('User already own this digifranchise');
+       throw new Error('User already own this digifranchise');
     }
-
+   
     const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
     if (!digifranchiseExists) {
-      throw new Error('Digifranchise not found');
+       throw new Error('Digifranchise not found');
     }
-
+   
     const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
     if (!digifranchise) {
-      throw new Error('Digifranchise not found');
+       throw new Error('Digifranchise not found');
     }
+   
     const newFranchiseOwner = this.digifranchiseOwnershipRepository.create({
-      userId,
-      digifranchiseId: digifranchiseId,
-      digifranchise: digifranchise,
+       userId,
+       digifranchiseId: digifranchiseId,
+       digifranchise: digifranchise,
     });
-
-    const savedFranchiseOwner = await this.digifranchiseOwnershipRepository.save(newFranchiseOwner)
-
-
-    // create general information instance
+   
+    const savedFranchiseOwner = await this.digifranchiseOwnershipRepository.save(newFranchiseOwner);
+   
+    // Fetch all products related to the digifranchise
+    const products = await this.digifranchiseProductRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
+    // Fetch all services related to the digifranchise
+    const services = await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
+   
+    // Create and save DigifranchiseOwnedProduct for each product
+    for (const product of products) {
+       const ownedProduct = this.digifranchiseOwnedProductRepository.create({
+         productName: product.productName,
+         description: product.description,
+         unitPrice: product.unitPrice,
+         ownedDigifranchiseId: savedFranchiseOwner,
+       });
+       await this.digifranchiseOwnedProductRepository.save(ownedProduct);
+    }
+   
+    // Create and save DigifranchiseOwnedServiceOffered for each service
+    for (const service of services) {
+       const ownedService = this.digifranchiseOwnedServiceOfferedRepository.create({
+         serviceName: service.serviceName,
+         description: service.description,
+         unitPrice: service.unitPrice,
+         ownedDigifranchiseId: savedFranchiseOwner,
+       });
+       await this.digifranchiseOwnedServiceOfferedRepository.save(ownedService);
+    }
+   
+    // The rest of your function remains unchanged...
     const createGeneralInfoInstance = this.digifranchiseGeneralInfoRepository.create({
-      digifranchiseName: '',
-      ownedDigifranchiseId: savedFranchiseOwner.id,
-      facebookHandle: '',
-      tiktokHandle: '',
-      instagramHandle: '',
-      xHandle: '',
-      connectNumber: '',
-      address: '',
-      otherMobileNumber: '',
-      aboutCompany: '',
-      location: ''
-    })
-    await this.digifranchiseGeneralInfoRepository.save(createGeneralInfoInstance)
-
-    // create compliance Information
+       digifranchiseName: '',
+       ownedDigifranchiseId: savedFranchiseOwner.id,
+       facebookHandle: '',
+       tiktokHandle: '',
+       instagramHandle: '',
+       xHandle: '',
+       connectNumber: '',
+       address: '',
+       otherMobileNumber: '',
+       aboutCompany: '',
+       location: ''
+    });
+    await this.digifranchiseGeneralInfoRepository.save(createGeneralInfoInstance);
+   
     const createComplianceInfoInstance = this.digifranchiseComplianceInfoRepository.create({
-      ownedDigifranchiseId: savedFranchiseOwner.id,
-      companyRegisterationNumber: '',
-      taxNumber: '',
-      taxClearencePin: '',
-      taxClearenceExpiration: '',
-      coidaRegisteration: '',
-      vatNumber: '',
-      uifRegistration: '',
-      workMansCompensation: '',
-      sdlNumber: '',
-      otherComplianceDocs: []
-    })
-    await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance)
-
+       ownedDigifranchiseId: savedFranchiseOwner.id,
+       companyRegisterationNumber: '',
+       taxNumber: '',
+       taxClearencePin: '',
+       taxClearenceExpiration: '',
+       coidaRegisteration: '',
+       vatNumber: '',
+       uifRegistration: '',
+       workMansCompensation: '',
+       sdlNumber: '',
+       otherComplianceDocs: []
+    });
+    await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance);
+   
     return savedFranchiseOwner;
-  }
+   }
 
   async getDigifranchiseByDigifranchiseId(digifranchiseId: string): Promise<Digifranchise> {
     const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });

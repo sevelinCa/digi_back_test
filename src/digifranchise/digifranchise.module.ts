@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import {  DigifranchiseController } from './digifranchise.controller';
+import { DigifranchiseController } from './digifranchise.controller';
 import { DigifranchiseService } from './digifranchise.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
@@ -24,6 +24,8 @@ import { DigifranchiseProductController } from './digifranchise-product.controll
 import { DigifranchiseGeneralInfoController } from './digifranchise-general-info.controller';
 import { DigifranchiseComplianceInfoController } from './digifranchise-compliance-info.controller';
 import { DigifranchiseProfessionalMembershipController } from './digifranchise-professional-membership.controller';
+import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-product.entity';
+import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned-service-offered.entity';
 
 @Module({
   imports: [
@@ -39,7 +41,9 @@ import { DigifranchiseProfessionalMembershipController } from './digifranchise-p
       DigifranchiseComplianceInfo,
       DigifranchiseProfessionalBodyMembership,
       ProfessionalBodyEntity,
-      Accreditation
+      Accreditation,
+      DigifranchiseOwnedProduct,
+      DigifranchiseOwnedServiceOffered
     ]),
   ],
   controllers: [
@@ -52,11 +56,11 @@ import { DigifranchiseProfessionalMembershipController } from './digifranchise-p
     DigifranchiseWebController
   ],
   providers: [
-    DigifranchiseService, 
-    DigifranchiseGeneralInfoService, 
+    DigifranchiseService,
+    DigifranchiseGeneralInfoService,
     DigifranchiseComplianceInfoService,
     DigifranchiseProfessionalBodyMembershipService,
     ProductService,
   ]
 })
-export class DigifranchiseModule {}
+export class DigifranchiseModule { }
