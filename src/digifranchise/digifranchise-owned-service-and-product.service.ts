@@ -68,4 +68,9 @@ export class DigifranchiseOwnedServiceAndProductService {
     });
   }
 
+  async getAllNotSelectedProducts(): Promise<DigifranchiseOwnedProduct[]> {
+    return this.digifranchiseOwnedProductRepository.find({
+      where: { isSelected: false, deleteAt: IsNull() },
+    });
+ }
 }
