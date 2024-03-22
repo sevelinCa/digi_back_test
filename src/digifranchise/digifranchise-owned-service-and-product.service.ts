@@ -29,10 +29,6 @@ export class DigifranchiseOwnedServiceAndProductService {
     return this.digifranchiseOwnedServiceOffered.save(ownedService);
  }
 
- async getAllSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
-  return this.digifranchiseOwnedServiceOffered.find({
-    where: { isSelected: true, deleteAt: IsNull() },
-  });
-}
+ 
 
 }
