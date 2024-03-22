@@ -6,16 +6,16 @@ import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-produc
 
 @Injectable()
 export class DigifranchiseOwnedServiceAndProductService {
- constructor(
+  constructor(
     @InjectRepository(DigifranchiseOwnedServiceOffered)
     private readonly digifranchiseOwnedServiceOffered: Repository<DigifranchiseOwnedServiceOffered>,
 
     @InjectRepository(DigifranchiseOwnedProduct)
     private readonly digifranchiseOwnedProductRepository: Repository<DigifranchiseOwnedProduct>,
 
- ) {}
+  ) { }
 
- async selectOwnedService(ownerdServiceId: string): Promise<DigifranchiseOwnedServiceOffered> {
+  async selectOwnedService(ownerdServiceId: string): Promise<DigifranchiseOwnedServiceOffered> {
     const ownedService = await this.digifranchiseOwnedServiceOffered.findOne({
       where: { id: ownerdServiceId },
     });
@@ -27,12 +27,20 @@ export class DigifranchiseOwnedServiceAndProductService {
     ownedService.isSelected = !ownedService.isSelected;
 
     return this.digifranchiseOwnedServiceOffered.save(ownedService);
- }
+  }
 
   async getAllSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
     return this.digifranchiseOwnedServiceOffered.find({
       where: { isSelected: true, deleteAt: IsNull() },
     });
- }
+  }
+
+
+  async getAllNotSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
+    return this.digifranchiseOwnedServiceOffered.find({
+      where: { isSelected: false, deleteAt: IsNull() },
+    });
+  }
+
 
 }
