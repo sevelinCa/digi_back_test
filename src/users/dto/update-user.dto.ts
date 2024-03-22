@@ -33,6 +33,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   lastName?: string | null;
 
+  @ApiProperty({ example: '2024-03-15' })
+  @IsOptional()
+  dateOfBirth: Date;
+  
   // @ApiProperty({ type: FileDto })
   // @IsOptional()
   // photo?: FileDto | null;

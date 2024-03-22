@@ -1,7 +1,7 @@
 
 import { InjectRepository } from "@nestjs/typeorm";
 import { DigifranchiseServiceCategory } from "src/digifranchise/entities/digifranchise-service-category.entity";
-import { DigifranchiseServiceOffered } from "src/digifranchise/entities/digifranchise-service.entity";
+import { DigifranchiseServiceOffered } from "src/digifranchise/entities/digifranchise-service-offered.entity";
 import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 import { StatusEnum } from "src/statuses/statuses.enum";
 import { Repository } from "typeorm";
