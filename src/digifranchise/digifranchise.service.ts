@@ -4,7 +4,7 @@ import { Equal, IsNull, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
-import { DigifranchiseServiceOffered } from './entities/digifranchise-service.entity';
+import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
 import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
 import type { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
 import type { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
