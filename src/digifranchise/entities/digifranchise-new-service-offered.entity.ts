@@ -2,9 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Up
 import { Digifranchise } from './digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseServiceCategory } from './digifranchise-service-category.entity';
+import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 
 @Entity()
-export class DigifranchiseServiceOffered {
+export class DigifranchiseNewServiceOffered {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -16,17 +17,23 @@ export class DigifranchiseServiceOffered {
     @JoinColumn({ name: 'userId' })
     userId: UserEntity | null;
 
-    @Column({type: 'text'})
+    @Column({ type: 'text' })
     serviceName: string;
-    
+
     @Column({ type: 'text' })
     description: string;
 
     @Column({ type: 'varchar', length: 255 })
     unitPrice: string;
 
-    @OneToMany(() => DigifranchiseServiceCategory, category => category.service) 
-    serviceCategories: DigifranchiseServiceCategory[]; 
+    @OneToMany(() => DigifranchiseServiceCategory, category => category.service)
+    serviceCategories: DigifranchiseServiceCategory[];
+
+    @Column({ type: 'boolean', default: false })
+    isSelected: boolean;
+
+    @OneToMany(() => DigifranchiseGalleryImage, image => image.service)
+    galleryImages: DigifranchiseGalleryImage[];
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

@@ -48,8 +48,6 @@
 
      @Column()
      body: string;
-
-     // Here any fields that you need
    }
    ```
 
@@ -57,7 +55,8 @@
 
    ```bash
    npm run migration:generate -- src/database/migrations/CreatePostTable
-   npm run migration:generate -- src/database/migrations/
+   npm run migration:generate -- src/database/migrations/DigifranchiseNewProductAndServiceColumn
+   
       
        ```
 

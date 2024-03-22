@@ -41,7 +41,6 @@ export class CustomerManagementService {
         return savedCustomer;
     }
 
-
     async getAllCustomer(userId: string): Promise<CustomerManagement[]> {
         return this.customerManagementRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
     }
@@ -49,8 +48,6 @@ export class CustomerManagementService {
     async getOneCustomerById(customerId: string): Promise<CustomerManagement | null> {
         return this.customerManagementRepository.findOne({ where: { id: customerId, deleteAt: IsNull() } });
     }
-
-
 
     async updateCustomer(customerId: string, updateCustomerManagementDto: UpdateCustomerManagementDto): Promise<CustomerManagement> {
         const customer = await this.customerManagementRepository.findOne({ where: { id: customerId, deleteAt: IsNull() } });

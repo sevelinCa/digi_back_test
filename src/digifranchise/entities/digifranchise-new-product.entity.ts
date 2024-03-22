@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
 import { Digifranchise } from './digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 
 @Entity()
 export class DigifranchiseNewProduct {
@@ -15,14 +16,20 @@ export class DigifranchiseNewProduct {
   @JoinColumn({ name: 'userId' })
   userId: UserEntity | null;
 
-  @Column({type: 'text'})
+  @Column({ type: 'text' })
   productName: string;
-  
+
   @Column({ type: 'text' })
   description: string;
 
   @Column({ type: 'varchar', length: 255 })
   unitPrice: string;
+
+  @Column({ type: 'boolean', default: false })
+  isSelected: boolean;
+
+  @OneToMany(() => DigifranchiseGalleryImage, image => image.product)
+  galleryImages: DigifranchiseGalleryImage[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

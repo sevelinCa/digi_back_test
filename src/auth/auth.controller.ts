@@ -31,7 +31,6 @@ import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
 import { UserProfileDto } from 'src/user/dto/user.profile.dto';
 import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { GoogleCreateUserDto } from './dto/google-create-user.dto';
-import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
 import { PhoneForgotPasswordDto } from './dto/auth-phone-forgot-password.dto';
 import { PhoneRestPasswordDto } from './dto/auth-phone-reset-password.dto';
 

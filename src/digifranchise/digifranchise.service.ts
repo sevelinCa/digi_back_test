@@ -6,10 +6,9 @@ import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
 import { checkIfDigifranchiseExists } from 'src/helper/FindByFunctions';
-import type { CreateDigifranchiseServiceOfferedDto, UpdateDigifranchiseServiceOfferedDto } from './dto/create-digifranchiseServiceOffered.dto';
-import type { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
+import { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceDto } from './dto/create-digifranchise-SubServiceOffered.dto';
 import { DigifranchiseSubServices } from './entities/digifranchise-sub-service.entity';
-import type { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
+import { CreateDigifranchiseDto } from './dto/create-digifranchise.dto';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
@@ -115,11 +114,11 @@ export class DigifranchiseService {
 
   async findAllServiceOfferedByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.createQueryBuilder('service')
-        .leftJoinAndSelect('service.serviceCategories', 'category', 'category.serviceId = service.id')
-        .where('service.digifranchiseId = :digifranchiseId', { digifranchiseId })
-        .andWhere('service.userId IS NULL')
-        .getMany();
-}
+      .leftJoinAndSelect('service.serviceCategories', 'category', 'category.serviceId = service.id')
+      .where('service.digifranchiseId = :digifranchiseId', { digifranchiseId })
+      .andWhere('service.userId IS NULL')
+      .getMany();
+  }
 
   async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string): Promise<any> {
     const servicesOffered = await this.digifranchiseServiceOfferedRepository.find({
@@ -147,19 +146,19 @@ export class DigifranchiseService {
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
-        where: { userId },
-        relations: ['digifranchise', 'digifranchiseGeneralInfo'], 
+      where: { userId },
+      relations: ['digifranchise', 'digifranchiseGeneralInfo'],
     });
     return ownershipRecords;
-}
+  }
 
-async findOneOwnedDigifranchiseByUserId(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner | null> {
-  const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne({
+  async findOneOwnedDigifranchiseByUserId(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner | null> {
+    const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne({
       where: { userId, digifranchiseId },
-      relations: ['digifranchise', 'digifranchiseGeneralInfo'], 
-  });
-  return ownershipRecord || null;
-}
+      relations: ['digifranchise', 'digifranchiseGeneralInfo'],
+    });
+    return ownershipRecord || null;
+  }
   async createSubDigifranchiseServiceOffered(
     createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
     userId: string,
