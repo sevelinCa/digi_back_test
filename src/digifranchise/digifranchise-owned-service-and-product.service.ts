@@ -42,5 +42,9 @@ export class DigifranchiseOwnedServiceAndProductService {
     });
   }
 
-
+  async getAllServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
+    return this.digifranchiseOwnedServiceOffered.find({
+      where: { deleteAt: IsNull() },
+    });
+ }
 }
