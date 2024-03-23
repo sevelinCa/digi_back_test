@@ -123,7 +123,7 @@ export class UserProfileDto {
   lastName: string;
   
   @ApiProperty({ example: '2024-03-15' })
-  @IsNotEmpty()
+  @IsOptional()
   dateOfBirth: Date;
 
   @ApiProperty({

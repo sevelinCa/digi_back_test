@@ -20,8 +20,4 @@ export class AuthPhoneRegisterDto {
   @ApiProperty({ example: 'Doe' })
   @IsNotEmpty()
   lastName: string;
-
-  @ApiProperty({ example: '2024-03-15' })
-  @IsNotEmpty()
-  dateOfBirth: Date;
 }
