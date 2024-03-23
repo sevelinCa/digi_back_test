@@ -83,6 +83,7 @@ export class User {
   firstName: string | null;
   lastName: string | null;
   // photo?: FileType | null;
+  dateOfBirth?: Date | null;
   role?: Role | null;
   status?: Status;
   createdAt: Date;

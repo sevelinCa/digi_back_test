@@ -86,7 +86,7 @@ export class UserEntity extends EntityRelationalHelper implements User {
   lastName: string | null;
 
   @Column({ type: 'date', nullable: true })
-  dateOfBirth?: Date;
+  dateOfBirth?: Date | null;
 
   // @ManyToOne(() => FileEntity, {
   //   eager: true,
