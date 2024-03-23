@@ -13,6 +13,9 @@ export class User {
   email: string | null;
 
   @Expose({ groups: ['me', 'admin'] })
+  dateOfBirth?: Date | null;
+
+  @Expose({ groups: ['me', 'admin'] })
   phoneNumber: string | null;
 
   @Exclude({ toPlainOnly: true })
@@ -83,7 +86,6 @@ export class User {
   firstName: string | null;
   lastName: string | null;
   // photo?: FileType | null;
-  dateOfBirth?: Date | null;
   role?: Role | null;
   status?: Status;
   createdAt: Date;
