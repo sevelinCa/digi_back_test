@@ -86,6 +86,7 @@ export class UserEntity extends EntityRelationalHelper implements User {
   lastName: string | null;
 
   @Column({ type: 'date', nullable: true })
+  @Expose({ groups: ['me', 'admin'] })
   dateOfBirth?: Date | null;
 
   // @ManyToOne(() => FileEntity, {
