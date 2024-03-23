@@ -1039,6 +1039,7 @@ export class AuthService {
       qualifications: updateUserProfileDto?.qualifications,
       professionalBody: updateUserProfileDto?.professionalBody,
       southAfricanCitizen: updateUserProfileDto?.southAfricanCitizen,
+      dateOfBirth: updateUserProfileDto?.dateOfBirth,
       documentId: updateUserProfileDto?.documentId,
       countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
       criminalRecord: updateUserProfileDto?.criminalRecord,
