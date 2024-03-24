@@ -182,7 +182,7 @@ export class DigifranchiseService {
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
       where: { userId },
-      relations: ['digifranchise', 'digifranchiseGeneralInfo'],
+      relations: ['digifranchise', 'digifranchiseGeneralInfo', 'digifranchiseComplianceInfo'],
     });
     return ownershipRecords;
   }
