@@ -9,12 +9,13 @@ import { RateService } from './rate.service';
 import { RateTable } from './entities/rate.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
+import { DigifranchiseServiceCategory } from 'src/digifranchise/entities/digifranchise-service-category.entity';
 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      OrderTable, UserEntity, DigifranchiseProduct, RateTable, DigifranchiseProduct, DigifranchiseServiceOffered, Digifranchise
+      OrderTable, UserEntity, DigifranchiseProduct, RateTable,DigifranchiseServiceCategory, DigifranchiseProduct, DigifranchiseServiceOffered, Digifranchise
     ]),
   ],
   providers: [OrderService, RateService],
