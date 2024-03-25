@@ -295,7 +295,74 @@ export class DigifranchiseService {
     await this.digifranchiseSubServiceOfferedRepository.remove(serviceOffered);
   }
 
+  async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
 
+    const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
+      where: [
+        { connectNumber: phoneNumber },
+        { otherMobileNumber: phoneNumber }
+      ]
+    })
+
+    if (!getDigifranchiseGeneralInfoByPhone) {
+      throw new NotFoundException('digifranchise not found')
+    }
+
+    if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
+      throw new NotFoundException('digifranchise not yet published')
+    }
+
+    const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({
+      where: { id: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
+    })
+
+    if (!getDigifranchiseInformation) {
+      throw new NotFoundException('digifranchise not found')
+    }
+
+    const getComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({
+      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
+    })
+
+    const getProfessionalBodyMemberships = await this.digifranchiseProfessionalBodyMembershipRepository.find({
+      where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
+    })
+
+    const digifranchise = await this.digifranchiseRepository.findOne({
+      where: { id: getDigifranchiseInformation.digifranchiseId }
+    })
+
+    const digifranchiseOwner = await this.userRepository.findOne({
+      where: { id: getDigifranchiseInformation.userId }
+    })
+
+    const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId)
+    const digifranchiseServices = await this.findAllServiceOfferedByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
+
+    const ownedServices = await this.digifranchiseOwnedServiceOfferedRepository.find({
+      where: { ownedDigifranchiseId: Equal(getDigifranchiseInformation.id) },
+      relations: ['ownedServiceCategories', 'galleryImages', 'subServices'], 
+     });
+     
+console.log('==== >OWned Service ====>', ownedServices)
+
+     const ownedProducts = await this.digifranchiseOwnedProductRepository.find({
+      where: { ownedDigifranchiseId: Equal(getDigifranchiseInformation.id) },
+      relations: ['subProducts','galleryImages'], 
+     });
+    return {
+      digifranchiseInfo: digifranchise,
+      ownerInfo: digifranchiseOwner,
+      generalInfo: getDigifranchiseGeneralInfoByPhone,
+      complainceInfo: getComplianceInfo,
+      professionalBodiesInfo: getProfessionalBodyMemberships,
+      products: digifranchiseProducts,
+      services: digifranchiseServices,
+      ownedServices: ownedServices, 
+      ownedProducts: ownedProducts, 
+    
+    }
+  }
 
 
 
