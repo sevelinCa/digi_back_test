@@ -1,29 +1,23 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { DigifranchiseServiceOffered } from './digifranchise-service-offered.entity';
 import { DigifranchiseOwnedServiceOffered } from './digifranchise-owned-service-offered.entity';
 
 @Entity()
-export class DigifranchiseSubServices {
+export class DigifranchiseOwnedServiceCategory {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => DigifranchiseOwnedServiceOffered)
-    @JoinColumn({ name: 'ownedServiceId' })
-    ownedServiceId: DigifranchiseOwnedServiceOffered;
-
-    @ManyToOne(() => UserEntity, { nullable: true })
-    @JoinColumn({ name: 'userId' })
-    userId: UserEntity | null;
-
-    @Column({type: 'text'})
-    serviceName: string;
-    
-    @Column({ type: 'text' })
-    description: string;
+    @Column({ type: 'varchar', length: 255 })
+    serviceCategoryName: string;
 
     @Column({ type: 'varchar', length: 255 })
     unitPrice: string;
+
+    @Column({ type: 'text' })
+    description: string;
+
+    @ManyToOne(() => DigifranchiseOwnedServiceOffered, ownedService => ownedService.ownedServiceCategories) 
+    @JoinColumn({ name: 'ownedServiceId' }) 
+    ownedService: DigifranchiseOwnedServiceOffered;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
@@ -34,5 +28,3 @@ export class DigifranchiseSubServices {
     @Column({ type: 'timestamp', nullable: true })
     deleteAt: Date | null;
 }
-
-

@@ -28,6 +28,9 @@ import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-produc
 import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned-service-offered.entity';
 import { DigifranchiseOwnedServiceAndProductService } from './digifranchise-owned-service-and-product.service';
 import { DigifranchiseOwnedServiceController, DigifranchiseOwnedProductController } from './digifranchise-owned-service-and-product.controller';
+import { DigifranchiseOwnedServiceCategory } from './entities/digifranchise-owned-service-category.entity';
+import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
+import { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
 
 @Module({
   imports: [
@@ -45,7 +48,10 @@ import { DigifranchiseOwnedServiceController, DigifranchiseOwnedProductControlle
       ProfessionalBodyEntity,
       Accreditation,
       DigifranchiseOwnedProduct,
-      DigifranchiseOwnedServiceOffered
+      DigifranchiseOwnedServiceOffered,
+      DigifranchiseOwnedServiceCategory,
+      DigifranchiseGalleryImage,
+      DigifranchiseServiceCategory
     ]),
   ],
   controllers: [

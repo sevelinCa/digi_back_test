@@ -1,8 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseServiceCategory } from './digifranchise-service-category.entity';
 import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 import { DigifranchiseOwner } from './digifranchise-ownership.entity';
+import { DigifranchiseSubServices } from './digifranchise-sub-service.entity';
+import { DigifranchiseOwnedServiceCategory } from './digifranchise-owned-service-category.entity';
 
 @Entity()
 export class DigifranchiseOwnedServiceOffered {
@@ -13,9 +14,8 @@ export class DigifranchiseOwnedServiceOffered {
     @JoinColumn({ name: 'ownedDigifranchiseId' })
     ownedDigifranchiseId: DigifranchiseOwner;
 
-    @ManyToOne(() => UserEntity, { nullable: true })
-    @JoinColumn({ name: 'userId' })
-    userId: UserEntity | null;
+    @OneToMany(() => DigifranchiseSubServices, subService => subService.ownedServiceId, { nullable: true })
+    subServices: DigifranchiseSubServices[];
 
     @Column({ type: 'text' })
     serviceName: string;
@@ -26,8 +26,8 @@ export class DigifranchiseOwnedServiceOffered {
     @Column({ type: 'varchar', length: 255 })
     unitPrice: string;
 
-    @OneToMany(() => DigifranchiseServiceCategory, category => category.service)
-    serviceCategories: DigifranchiseServiceCategory[];
+    @OneToMany(() => DigifranchiseOwnedServiceCategory, category => category.ownedService)
+    ownedServiceCategories: DigifranchiseOwnedServiceCategory[];
 
     @Column({ type: 'boolean', default: false })
     isSelected: boolean;

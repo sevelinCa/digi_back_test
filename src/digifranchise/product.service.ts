@@ -47,7 +47,7 @@ export class ProductService {
     const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
       const subProducts = await this.digifranchiseSubProductRepository.find({
         where: {
-          productId: Equal(product.id),
+          ownedProductId: Equal(product.id),
         },
       });
 
@@ -79,7 +79,7 @@ export class ProductService {
     const newDigifranchiseSubProduct = this.digifranchiseSubProductRepository.create({
       ...createDigifranchiseSubProductDto,
       userId: user,
-      productId: Service,
+      ownedProductId: Service,
     });
 
     return this.digifranchiseSubProductRepository.save(newDigifranchiseSubProduct);
