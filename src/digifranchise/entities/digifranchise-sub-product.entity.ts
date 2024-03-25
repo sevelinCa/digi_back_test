@@ -1,15 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
-import { DigifranchiseProduct } from './digifranchise-product.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { DigifranchiseOwnedProduct } from './digifranchise-owned-product.entity';
 
 @Entity()
 export class DigifranchiseSubProduct {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => DigifranchiseProduct)
-  @JoinColumn({ name: 'productId' })
-  productId: DigifranchiseProduct;
+  @ManyToOne(() => DigifranchiseOwnedProduct)
+  @JoinColumn({ name: 'ownedProductId' })
+  ownedProductId: DigifranchiseOwnedProduct;
 
   @ManyToOne(() => UserEntity, { nullable: true })
   @JoinColumn({ name: 'userId' })
