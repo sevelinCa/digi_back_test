@@ -31,6 +31,9 @@ import { DigifranchiseOwnedServiceController, DigifranchiseOwnedProductControlle
 import { DigifranchiseOwnedServiceCategory } from './entities/digifranchise-owned-service-category.entity';
 import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
 import { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
+import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
+import { DigifranchiseImagesService } from './digifranchise-images.service';
+import { DigifranchiseImagesController } from './digifranchise-images.controller';
 
 @Module({
   imports: [
@@ -51,7 +54,8 @@ import { DigifranchiseServiceCategory } from './entities/digifranchise-service-c
       DigifranchiseOwnedServiceOffered,
       DigifranchiseOwnedServiceCategory,
       DigifranchiseGalleryImage,
-      DigifranchiseServiceCategory
+      DigifranchiseServiceCategory,
+      DigifranchiseSelectProductOrServiceTable,
     ]),
   ],
   controllers: [
@@ -64,7 +68,8 @@ import { DigifranchiseServiceCategory } from './entities/digifranchise-service-c
     DigifranchiseWebController,
     DigifranchiseOwnedServiceController,
     DigifranchiseOwnedProductController,
-  ],
+    DigifranchiseImagesController,
+      ],
   providers: [
     DigifranchiseService,
     DigifranchiseGeneralInfoService,
@@ -72,6 +77,7 @@ import { DigifranchiseServiceCategory } from './entities/digifranchise-service-c
     DigifranchiseProfessionalBodyMembershipService,
     ProductService,
     DigifranchiseOwnedServiceAndProductService,
+    DigifranchiseImagesService,
   ]
 })
 export class DigifranchiseModule { }

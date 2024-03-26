@@ -131,12 +131,12 @@ export class DigifranchiseService {
       }
   
       const serviceGalleryImages = await this.digifranchiseGalleryImageRepository.find({
-        where: { service: Equal(service.id) },
+        where: { digifranchiseServiceId: Equal(service.id) },
       });
       for (const image of serviceGalleryImages) {
         const ownedServiceGalleryImage = this.digifranchiseGalleryImageRepository.create({
           imageUrl: image.imageUrl,
-          service: ownedService,
+          digifranchiseServiceId: ownedService,
         });
         await this.digifranchiseGalleryImageRepository.save(ownedServiceGalleryImage);
       }

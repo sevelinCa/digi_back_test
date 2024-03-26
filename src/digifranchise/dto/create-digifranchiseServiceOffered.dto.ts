@@ -44,6 +44,12 @@ export class CreateDigifranchiseServiceOfferedDto {
     @ValidateNested({ each: true })
     @Type(() => ServiceCategoryDto)
     serviceCategories?: ServiceCategoryDto[]; 
+
+    @ApiProperty({ type: [String], example: ['http://example.com/image1.jpg', 'http://example.com/image2.jpg'] })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    serviceGalleryImages?: string[];
 }
 
 export class UpdateDigifranchiseServiceOfferedDto {
@@ -71,4 +77,10 @@ export class UpdateDigifranchiseServiceOfferedDto {
     @ValidateNested({ each: true })
     @Type(() => ServiceCategoryDto)
     serviceCategories?: ServiceCategoryDto[]; 
+
+    @ApiProperty({ type: [String], example: ['http://example.com/image1.jpg', 'http://example.com/image2.jpg'] })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    serviceGalleryImages?: string[];
 }

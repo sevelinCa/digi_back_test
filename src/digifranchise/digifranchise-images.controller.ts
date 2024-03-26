@@ -1,0 +1,28 @@
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiTags, ApiBearerAuth, ApiResponse, ApiBody, ApiOperation } from '@nestjs/swagger';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { DigifranchiseImagesService } from './digifranchise-images.service';
+import { CreateDigifranchiseGalleryImageDto, UpdateDigifranchiseGalleryImageDto } from './dto/create-digifranchise-image.dto';
+import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
+
+@ApiTags('Digifranchise - Image')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'digifranchise-images', version: '1' })
+export class DigifranchiseImagesController {
+    constructor(private readonly digifranchiseImagesService: DigifranchiseImagesService) { }
+
+    @ApiOperation({ summary: 'CREATE - Create a new image' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'A new image has been successfully created.' })
+    @ApiBody({ type: CreateDigifranchiseGalleryImageDto })
+    @Post('create-image/:digifranchiseServiceId/:digifranchiseProductId')
+    async createImage(
+        @Param('digifranchiseServiceId') digifranchiseServiceId: string,
+        @Param('digifranchiseProductId') digifranchiseProductId: string,
+        @Body() createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto,
+    ): Promise<DigifranchiseGalleryImage> {
+        return this.digifranchiseImagesService.createImage(digifranchiseServiceId, digifranchiseProductId, createDigifranchiseGalleryImageDto);
+    }
+
+}

@@ -32,7 +32,7 @@ export class DigifranchiseOwnedServiceOffered {
     @Column({ type: 'boolean', default: false })
     isSelected: boolean;
 
-    @OneToMany(() => DigifranchiseGalleryImage, image => image.service)
+    @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseServiceId)
     galleryImages: DigifranchiseGalleryImage[];
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
