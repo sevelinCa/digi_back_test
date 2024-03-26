@@ -72,11 +72,11 @@ export class DigifranchiseOwnedServiceAndProductService {
     return this.digifranchiseOwnedProductRepository.find({
       where: { isSelected: false, deleteAt: IsNull() },
     });
- }
+  }
 
- async getAllProducts(): Promise<DigifranchiseOwnedProduct[]> {
-  return this.digifranchiseOwnedProductRepository.find({
-    where: { deleteAt: IsNull() },
-  });
-}
+  async getAllProducts(): Promise<DigifranchiseOwnedProduct[]> {
+    return this.digifranchiseOwnedProductRepository.find({
+      where: { deleteAt: IsNull() },
+    });
+  }
 }

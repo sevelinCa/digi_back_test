@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddImageColumnInProductAndService1711475691459 implements MigrationInterface {
-    name = 'AddImageColumnInProductAndService1711475691459'
+export class AddImageColumnInProductAndService1711487133240 implements MigrationInterface {
+    name = 'AddImageColumnInProductAndService1711487133240'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" DROP CONSTRAINT "FK_ff2a3f51ce0717048e6ef290076"`);
@@ -15,10 +15,12 @@ export class AddImageColumnInProductAndService1711475691459 implements Migration
         await queryRunner.query(`ALTER TABLE "customer_subscription" DROP COLUMN "digifranchiseOwnerId"`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" ADD "digifranchiseServiceId" uuid`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" ADD "digifranchiseProductId" uuid`);
+        await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" ADD "digifranchiseOwnedId" uuid`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" ADD "digifranchiseOwnerId" uuid`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" ADD "digifranchiseId" uuid`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" ADD CONSTRAINT "FK_2f7e6c72ac59db3b9e5e702a556" FOREIGN KEY ("digifranchiseServiceId") REFERENCES "digifranchise_service_offered"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" ADD CONSTRAINT "FK_b421043cbc4ef6382596af55390" FOREIGN KEY ("digifranchiseProductId") REFERENCES "digifranchise_product"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" ADD CONSTRAINT "FK_68c771d0efb4ca7a15b96d217b0" FOREIGN KEY ("digifranchiseOwnedId") REFERENCES "digifranchise_owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" ADD CONSTRAINT "FK_b4059529c205d91c7d138685b55" FOREIGN KEY ("digifranchiseOwnerId") REFERENCES "digifranchise_owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" ADD CONSTRAINT "FK_e54de4b7aba4853d8f0c5540b84" FOREIGN KEY ("digifranchiseId") REFERENCES "digifranchise"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "digifranchise_select_product_or_service_table" ADD CONSTRAINT "FK_e232e52f79d56cb9ff9ed0dac00" FOREIGN KEY ("ownerDigifranchiseId") REFERENCES "digifranchise_owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -32,10 +34,12 @@ export class AddImageColumnInProductAndService1711475691459 implements Migration
         await queryRunner.query(`ALTER TABLE "digifranchise_select_product_or_service_table" DROP CONSTRAINT "FK_e232e52f79d56cb9ff9ed0dac00"`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" DROP CONSTRAINT "FK_e54de4b7aba4853d8f0c5540b84"`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" DROP CONSTRAINT "FK_b4059529c205d91c7d138685b55"`);
+        await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" DROP CONSTRAINT "FK_68c771d0efb4ca7a15b96d217b0"`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" DROP CONSTRAINT "FK_b421043cbc4ef6382596af55390"`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" DROP CONSTRAINT "FK_2f7e6c72ac59db3b9e5e702a556"`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" DROP COLUMN "digifranchiseId"`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" DROP COLUMN "digifranchiseOwnerId"`);
+        await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" DROP COLUMN "digifranchiseOwnedId"`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" DROP COLUMN "digifranchiseProductId"`);
         await queryRunner.query(`ALTER TABLE "digifranchise_gallery_image" DROP COLUMN "digifranchiseServiceId"`);
         await queryRunner.query(`ALTER TABLE "customer_subscription" ADD "digifranchiseOwnerId" uuid`);
