@@ -36,4 +36,13 @@ export class DigifranchiseImagesController {
         return this.digifranchiseImagesService.updateImage(imageId, updateDigifranchiseGalleryImageDto);
     }
 
+    @ApiOperation({ summary: 'DELETE - Delete an image' })
+    @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'The image has been successfully deleted.' })
+    @Delete('delete-image/:imageId')
+    async deleteImage(
+        @Param('imageId') imageId: string,
+    ): Promise<void> {
+        return this.digifranchiseImagesService.deleteImage(imageId);
+    }
+
 }

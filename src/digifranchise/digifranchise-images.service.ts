@@ -50,4 +50,12 @@ export class DigifranchiseImagesService {
         return this.digifranchiseImageshipRepository.save(updatedImage);
     }
 
+    async deleteImage(imageId: string): Promise<void> {
+        const existingImage = await this.digifranchiseImageshipRepository.findOne({ where: { id: imageId } });
+        if (!existingImage) {
+            throw new Error('Image not found');
+        }
+        await this.digifranchiseImageshipRepository.delete(imageId);
+    }
+
 }
