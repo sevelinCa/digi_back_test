@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from "typeorm";
 import { DigifranchiseServiceOffered } from "./digifranchise-service-offered.entity";
 import { DigifranchiseProduct } from "./digifranchise-product.entity";
+import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
 
 @Entity()
 export class DigifranchiseGalleryImage {
@@ -17,7 +18,11 @@ export class DigifranchiseGalleryImage {
  @ManyToOne(() => DigifranchiseProduct, product => product.productGalleryImages, { nullable: true })
  @JoinColumn({ name: 'digifranchiseProductId' }) 
  digifranchiseProductId: DigifranchiseProduct | null;
-  
+
+ @ManyToOne(() => DigifranchiseOwner, ownedItem => ownedItem.ownedDigifranchise, { nullable: true })
+ @JoinColumn({ name: 'digifranchiseOwnedId' }) 
+ digifranchiseOwnedId: DigifranchiseOwner | null;
+
  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
  createdAt: Date;
 

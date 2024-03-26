@@ -18,10 +18,11 @@ export class DigifranchiseImagesController {
     @ApiBody({ type: CreateDigifranchiseGalleryImageDto })
     @Post('create-service-image/:digifranchiseServiceId')
     async createDigifrachiseServiceImage(
+        @Param('digifranchiseOwnedId') digifranchiseOwnedId: string,
         @Param('digifranchiseServiceId') digifranchiseServiceId: string,
         @Body() createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto,
     ): Promise<DigifranchiseGalleryImage> {
-        return this.digifranchiseImagesService.createDigifrachiseServiceImage(digifranchiseServiceId, createDigifranchiseGalleryImageDto);
+        return this.digifranchiseImagesService.createDigifrachiseServiceImage(digifranchiseOwnedId, digifranchiseServiceId, createDigifranchiseGalleryImageDto);
     }
 
     @ApiOperation({ summary: 'CREATE - Create a new product image' })
@@ -29,10 +30,11 @@ export class DigifranchiseImagesController {
     @ApiBody({ type: CreateDigifranchiseGalleryImageDto })
     @Post('create-product-image/:digifranchiseProductId')
     async createDigifrachiseProductImage(
+        @Param('digifranchiseOwnedId') digifranchiseOwnedId: string,
         @Param('digifranchiseProductId') digifranchiseProductId: string,
         @Body() createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto,
     ): Promise<DigifranchiseGalleryImage> {
-        return this.digifranchiseImagesService.createDigifrachiseProductImage(digifranchiseProductId, createDigifranchiseGalleryImageDto);
+        return this.digifranchiseImagesService.createDigifrachiseProductImage(digifranchiseOwnedId, digifranchiseProductId, createDigifranchiseGalleryImageDto);
     }
 
     @ApiOperation({ summary: 'UPDATE - Update an existing image' })

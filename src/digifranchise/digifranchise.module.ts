@@ -34,6 +34,8 @@ import { DigifranchiseServiceCategory } from './entities/digifranchise-service-c
 import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
 import { DigifranchiseImagesService } from './digifranchise-images.service';
 import { DigifranchiseImagesController } from './digifranchise-images.controller';
+import { DigifranchiseSelectItemService } from './digifranchise-select-item.service';
+import { DigifranchiseSelectItemController } from './digifranchise-select-item.controller';
 
 @Module({
   imports: [
@@ -69,6 +71,7 @@ import { DigifranchiseImagesController } from './digifranchise-images.controller
     DigifranchiseOwnedServiceController,
     DigifranchiseOwnedProductController,
     DigifranchiseImagesController,
+    DigifranchiseSelectItemController,
       ],
   providers: [
     DigifranchiseService,
@@ -78,6 +81,7 @@ import { DigifranchiseImagesController } from './digifranchise-images.controller
     ProductService,
     DigifranchiseOwnedServiceAndProductService,
     DigifranchiseImagesService,
+    DigifranchiseSelectItemService,
   ]
 })
 export class DigifranchiseModule { }

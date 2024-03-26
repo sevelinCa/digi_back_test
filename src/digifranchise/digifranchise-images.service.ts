@@ -5,6 +5,8 @@ import { CreateDigifranchiseGalleryImageDto, type UpdateDigifranchiseGalleryImag
 import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
+import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
+import { Console } from 'console';
 
 @Injectable()
 export class DigifranchiseImagesService {
@@ -15,30 +17,46 @@ export class DigifranchiseImagesService {
         private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
         @InjectRepository(DigifranchiseGalleryImage)
         private digifranchiseImageshipRepository: Repository<DigifranchiseGalleryImage>,
+        @InjectRepository(DigifranchiseOwner)
+        private ownedDigifranchisepRepository: Repository<DigifranchiseOwner>,
     ) { }
 
-    async createDigifrachiseServiceImage(digifranchiseServiceId: string,createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
+    async createDigifrachiseServiceImage(digifranchiseOwnedId: string, digifranchiseServiceId: string, createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
 
-        const existingService = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: Equal(digifranchiseServiceId) } });
+        const existingService = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: digifranchiseServiceId } });
         if (!existingService) {
             throw new Error('Digifranchise service  not exist');
         }
+        const ownedDigifrachise = await this.ownedDigifranchisepRepository.findOne({ where: { id: digifranchiseOwnedId } });
+        if (!ownedDigifrachise) {
+            throw new Error('Owned Digifranchise not exist');
+        }
+
+
         const newDigifranchiseImage = this.digifranchiseImageshipRepository.create({
             ...createDigifranchiseGalleryImageDto,
             digifranchiseServiceId: existingService,
+            digifranchiseOwnedId: ownedDigifrachise,
         });
 
         return this.digifranchiseImageshipRepository.save(newDigifranchiseImage);
     }
 
-    async createDigifrachiseProductImage(digifranchiseProductId: string, createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
-        const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: Equal(digifranchiseProductId) } });
+    async createDigifrachiseProductImage(digifranchiseOwnedId: string, digifranchiseProductId: string, createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
+
+        const ownedDigifrachise = await this.ownedDigifranchisepRepository.findOne({ where: { id: digifranchiseOwnedId } });
+        if (!ownedDigifrachise) {
+            throw new Error('Digifranchise not owned');
+        }
+
+        const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: digifranchiseProductId } });
         if (!existingProduct) {
             throw new Error('Digifranchise product not exist');
         }
         const newDigifranchiseImage = this.digifranchiseImageshipRepository.create({
             ...createDigifranchiseGalleryImageDto,
             digifranchiseProductId: existingProduct,
+            digifranchiseOwnedId: ownedDigifrachise,
         });
 
         return this.digifranchiseImageshipRepository.save(newDigifranchiseImage);
