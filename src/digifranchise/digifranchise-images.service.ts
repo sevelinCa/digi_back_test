@@ -17,11 +17,7 @@ export class DigifranchiseImagesService {
         private digifranchiseImageshipRepository: Repository<DigifranchiseGalleryImage>,
     ) { }
 
-    async createImage(digifranchiseServiceId: string, digifranchiseProductId: string, createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
-        const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: Equal(digifranchiseProductId) } });
-        if (!existingProduct) {
-            throw new Error('Digifranchise product not exist');
-        }
+    async createDigifrachiseServiceImage(digifranchiseServiceId: string,createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
 
         const existingService = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: Equal(digifranchiseServiceId) } });
         if (!existingService) {
@@ -29,8 +25,20 @@ export class DigifranchiseImagesService {
         }
         const newDigifranchiseImage = this.digifranchiseImageshipRepository.create({
             ...createDigifranchiseGalleryImageDto,
-            digifranchiseProductId: existingProduct,
             digifranchiseServiceId: existingService,
+        });
+
+        return this.digifranchiseImageshipRepository.save(newDigifranchiseImage);
+    }
+
+    async createDigifrachiseProductImage(digifranchiseProductId: string, createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
+        const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: Equal(digifranchiseProductId) } });
+        if (!existingProduct) {
+            throw new Error('Digifranchise product not exist');
+        }
+        const newDigifranchiseImage = this.digifranchiseImageshipRepository.create({
+            ...createDigifranchiseGalleryImageDto,
+            digifranchiseProductId: existingProduct,
         });
 
         return this.digifranchiseImageshipRepository.save(newDigifranchiseImage);

@@ -22,9 +22,7 @@ export class ProductService {
     private readonly digifranchiseProductRepository: Repository<DigifranchiseProduct>,
     @InjectRepository(DigifranchiseSubProduct)
     private readonly digifranchiseSubProductRepository: Repository<DigifranchiseSubProduct>
-
   ) { }
-
 
   async findAllProductByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseProduct[]> {
     return await this.digifranchiseProductRepository.find({
@@ -32,9 +30,9 @@ export class ProductService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
+      relations: ['digifranchiseId', 'userId', 'productGalleryImages'], 
     });
   }
-
 
   async getProductsAndSubProductsById(digifranchiseId: string): Promise<any> {
     const productsOffered = await this.digifranchiseProductRepository.find({
@@ -42,6 +40,7 @@ export class ProductService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
+      relations: ['digifranchiseId', 'userId', 'productGalleryImages'], 
     });
 
     const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
@@ -96,7 +95,6 @@ export class ProductService {
     }
     return product;
   }
-
 
   async updateSubProduct(
     userId: string,
