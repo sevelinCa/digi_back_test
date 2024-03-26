@@ -57,5 +57,7 @@ export class DigifranchiseImagesService {
         }
         await this.digifranchiseImageshipRepository.delete(imageId);
     }
-
+    async getAllImages(): Promise<DigifranchiseGalleryImage[]> {
+        return this.digifranchiseImageshipRepository.find({ where: { deleteAt: IsNull() } });
+    }
 }

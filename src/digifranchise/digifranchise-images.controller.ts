@@ -45,4 +45,10 @@ export class DigifranchiseImagesController {
         return this.digifranchiseImagesService.deleteImage(imageId);
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve all images' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All images have been successfully retrieved.' })
+    @Get('get-all-images')
+    async getAllImages(): Promise<DigifranchiseGalleryImage[]> {
+        return this.digifranchiseImagesService.getAllImages();
+    }
 }
