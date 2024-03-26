@@ -43,6 +43,7 @@ import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.mo
 import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/digifranchise-subscription.module';
 import { DigifranchisePaymentModule } from './payment/digifranchise-payment.module';
 // import { ChatModule } from './chat/chat.module';
+import { EnquiryMessageModule } from './enquiry-message/enquiry-message.module';
 
 @Module({
   imports: [
@@ -113,6 +114,7 @@ import { DigifranchisePaymentModule } from './payment/digifranchise-payment.modu
     DigifranchiseMgtModule,
     DigifranchiseSubscriptionModule,
     DigifranchisePaymentModule,
+    EnquiryMessageModule,
     // ChatModule
   ],
 })

@@ -344,8 +344,6 @@ export class DigifranchiseService {
       relations: ['ownedServiceCategories', 'galleryImages', 'subServices'], 
      });
      
-console.log('==== >OWned Service ====>', ownedServices)
-
      const ownedProducts = await this.digifranchiseOwnedProductRepository.find({
       where: { ownedDigifranchiseId: Equal(getDigifranchiseInformation.id) },
       relations: ['subProducts','galleryImages'], 
@@ -363,9 +361,6 @@ console.log('==== >OWned Service ====>', ownedServices)
     
     }
   }
-
-
-
 
   async publishDigifranchiseWeb(digifranchiseId: string): Promise<any> {
     const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({

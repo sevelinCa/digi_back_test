@@ -33,70 +33,8 @@ export class OrderService {
 
    ) { }
 
-//    async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceId: string): Promise<OrderTable> {
-//       const user = await checkIfUserExists(this.userRepository, userId);
-//       if (!user) {
-//           throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
-//       }
-  
-//       let productOrService;
-//       let productOrServiceType;
-  
-//       productOrService = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceId } });
-//       if (productOrService) {
-//           productOrServiceType = 'product';
-//       } else {
-//           productOrService = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceId } });
-//           if (productOrService) {
-//               productOrServiceType = 'service';
-//           }
-//       }
-  
-//       if (!productOrService) {
-//           throw new HttpException('Product or service does not exist', HttpStatus.NOT_FOUND);
-//       }
-  
-//       const franchise = await this.digifranchiseRepository.findOne({ where: { id: productOrService.franchiseId } });
-//       if (!franchise) {
-//           throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
-//       }
-  
-//       const vatRateRecord = await this.rateTableRepository.findOne({
-//           where: { rateName: 'VAT', deleteAt: IsNull() },
-//       });
-  
-//       if (!vatRateRecord) {
-//           throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
-//       }
-  
-//       const vatRate = vatRateRecord.rateNumber;
-  
-//       let unitPrice;
-//       if (productOrServiceType === 'product') {
-//           unitPrice = productOrService.unitPrice;
-//       } else {
-//           unitPrice = productOrService.unitPrice;
-//       }
-  
-//       const quantity = createOrderTableDto.quantity;
-//       const totalAmount = Number(unitPrice) * Number(quantity);
-//       const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
-  
-//       const newOrder = this.orderRepository.create({
-//         ...createOrderTableDto,
-//         userId: user,
-//         productId: productOrServiceType === 'product' ? productOrService : null,
-//         serviceId: productOrServiceType === 'service' ? productOrService : null,
-//         unitPrice: unitPrice,
-//         vatAmount: vatAmount,
-//         totalAmount,
-//     });
-  
-//       const savedOrder = await this.orderRepository.save(newOrder);
-//       return savedOrder;
-//   }
 
-async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceId: string): Promise<OrderTable> {
+async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceOrCategoryId: string): Promise<OrderTable> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
         throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
@@ -106,11 +44,11 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
     let productOrServiceType;
     let serviceCategory;
 
-    productOrService = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceId } });
+    productOrService = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
     if (productOrService) {
         productOrServiceType = 'product';
     } else {
-        serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({ where: { id: productOrServiceId } });
+        serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
         console.log('Service Category:', serviceCategory); 
 
         if (serviceCategory) {
@@ -119,7 +57,7 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
 
             productOrServiceType = 'service';
         } else {
-            productOrService = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceId } });
+            productOrService = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
             if (productOrService) {
                 productOrServiceType = 'service';
             }

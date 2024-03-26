@@ -69,14 +69,14 @@ export class OrderController {
     @ApiOperation({ summary: 'Create a new order' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
     @ApiBody({ type: CreateOrderTableDto })
-    @Post('create-order/:productOrServiceId')
+    @Post('create-order/:productOrServiceOrCategoryId')
     async createOrder(
         @Req() req: Request,
-        @Param('productOrServiceId') productOrServiceId: string,
+        @Param('productOrServiceOrCategoryId') productOrServiceOrCategoryId: string,
         @Body() createOrderTableDto: CreateOrderTableDto,
     ): Promise<OrderTable> {
         const userId = (req.user as UserEntity).id;
-        return this.orderService.createOrder(createOrderTableDto, userId, productOrServiceId);
+        return this.orderService.createOrder(createOrderTableDto, userId, productOrServiceOrCategoryId);
     }
 
     @ApiOperation({ summary: 'Get all orders for a user' })
