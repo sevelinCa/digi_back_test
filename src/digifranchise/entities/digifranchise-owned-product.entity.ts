@@ -27,7 +27,7 @@ export class DigifranchiseOwnedProduct {
   @Column({ type: 'boolean', default: false })
   isSelected: boolean;
 
-  @OneToMany(() => DigifranchiseGalleryImage, image => image.product)
+  @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseProductId)
   galleryImages: DigifranchiseGalleryImage[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

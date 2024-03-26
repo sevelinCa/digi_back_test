@@ -40,35 +40,35 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
         throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
     }
 
-    let productOrService;
-    let productOrServiceType;
+    let productOrServiceOrCategory;
+    let productOrServiceOrCategoryType;
     let serviceCategory;
 
-    productOrService = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
-    if (productOrService) {
-        productOrServiceType = 'product';
+    productOrServiceOrCategory = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
+    if (productOrServiceOrCategory) {
+        productOrServiceOrCategoryType = 'product';
     } else {
         serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
         console.log('Service Category:', serviceCategory); 
 
         if (serviceCategory) {
-            productOrService = await this.digifranchiseServiceRepository.findOne({ where: { id: serviceCategory.serviceId } });
-            console.log('Associated Service:', productOrService); 
+            productOrServiceOrCategory = await this.digifranchiseServiceRepository.findOne({ where: { id: serviceCategory.serviceId } });
+            console.log('Associated Service:', productOrServiceOrCategory); 
 
-            productOrServiceType = 'service';
+            productOrServiceOrCategoryType = 'service';
         } else {
-            productOrService = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
-            if (productOrService) {
-                productOrServiceType = 'service';
+            productOrServiceOrCategory = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
+            if (productOrServiceOrCategory) {
+                productOrServiceOrCategoryType = 'service';
             }
         }
     }
 
-    if (!productOrService) {
+    if (!productOrServiceOrCategory) {
         throw new HttpException('Product or service does not exist', HttpStatus.NOT_FOUND);
     }
 
-    const franchise = await this.digifranchiseRepository.findOne({ where: { id: productOrService.franchiseId } });
+    const franchise = await this.digifranchiseRepository.findOne({ where: { id: productOrServiceOrCategory.franchiseId } });
     if (!franchise) {
         throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
     }
@@ -84,10 +84,10 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
     const vatRate = vatRateRecord.rateNumber;
 
     let unitPrice;
-    if (productOrServiceType === 'product') {
-        unitPrice = productOrService.unitPrice;
+    if (productOrServiceOrCategoryType === 'product') {
+        unitPrice = productOrServiceOrCategory.unitPrice;
     } else {
-        unitPrice = productOrService.unitPrice;
+        unitPrice = productOrServiceOrCategory.unitPrice;
     }
 
     const quantity = createOrderTableDto.quantity;
@@ -97,8 +97,8 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
     const newOrder = this.orderRepository.create({
         ...createOrderTableDto,
         userId: user,
-        productId: productOrServiceType === 'product' ? productOrService : null,
-        serviceId: productOrServiceType === 'service' ? productOrService : null,
+        productId: productOrServiceOrCategoryType === 'product' ? productOrServiceOrCategory : null,
+        serviceId: productOrServiceOrCategoryType === 'service' ? productOrServiceOrCategory : null,
         unitPrice: unitPrice,
         vatAmount: vatAmount,
         totalAmount,
@@ -107,6 +107,7 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
     const savedOrder = await this.orderRepository.save(newOrder);
     return savedOrder;
 }
+
 
    async getAllOrders(userId: string): Promise<OrderTable[]> {
       return this.orderRepository.find({ 

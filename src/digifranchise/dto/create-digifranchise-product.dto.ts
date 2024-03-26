@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateDigifranchiseProductdDto {
     @ApiProperty({ example: 'Phone Training Sessions 1-on-1' })
@@ -16,6 +16,12 @@ export class CreateDigifranchiseProductdDto {
     @IsNotEmpty()
     @IsString()
     unitPrice: string;
+
+    @ApiProperty({ type: [String], example: ['http://example.com/image1.jpg', 'http://example.com/image2.jpg'] })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    productGalleryImages?: string[];
 }
 
 export class UpdateDigifranchiseProductDto {
@@ -33,4 +39,10 @@ export class UpdateDigifranchiseProductDto {
     @IsOptional()
     @IsString()
     unitPrice: string;
+
+    @ApiProperty({ type: [String], example: ['http://example.com/image1.jpg', 'http://example.com/image2.jpg'] })
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    productGalleryImages?: string[];
 }
