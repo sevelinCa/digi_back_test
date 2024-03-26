@@ -36,4 +36,18 @@ export class DigifranchiseImagesService {
         return this.digifranchiseImageshipRepository.save(newDigifranchiseImage);
     }
 
+    async updateImage(imageId: string, updateDigifranchiseGalleryImageDto: UpdateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
+        const existingImage = await this.digifranchiseImageshipRepository.findOne({ where: { id: imageId } });
+        if (!existingImage) {
+            throw new Error('Image not found');
+        }
+
+        const updatedImage = this.digifranchiseImageshipRepository.create({
+            ...existingImage,
+            ...updateDigifranchiseGalleryImageDto,
+        });
+
+        return this.digifranchiseImageshipRepository.save(updatedImage);
+    }
+
 }

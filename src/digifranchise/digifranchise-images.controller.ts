@@ -25,4 +25,15 @@ export class DigifranchiseImagesController {
         return this.digifranchiseImagesService.createImage(digifranchiseServiceId, digifranchiseProductId, createDigifranchiseGalleryImageDto);
     }
 
+    @ApiOperation({ summary: 'UPDATE - Update an existing image' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'The image has been successfully updated.' })
+    @ApiBody({ type: UpdateDigifranchiseGalleryImageDto })
+    @Put('update-image/:imageId')
+    async updateImage(
+        @Param('imageId') imageId: string,
+        @Body() updateDigifranchiseGalleryImageDto: UpdateDigifranchiseGalleryImageDto,
+    ): Promise<DigifranchiseGalleryImage> {
+        return this.digifranchiseImagesService.updateImage(imageId, updateDigifranchiseGalleryImageDto);
+    }
+
 }
