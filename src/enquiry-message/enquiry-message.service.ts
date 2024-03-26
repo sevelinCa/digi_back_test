@@ -1,0 +1,7 @@
+
+
+@Injectable()
+export class EnquiryMessageService {
+
+
+}
