@@ -38,6 +38,9 @@ export class OrderTable {
     @Column({ type: 'integer' })
     quantity: number;
 
+    @Column({ type: 'integer' })
+    orderNumber: number;
+
     @Column({ type: 'varchar', length: 255 })
     unitPrice: string;
 
