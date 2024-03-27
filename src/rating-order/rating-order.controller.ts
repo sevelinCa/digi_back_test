@@ -27,4 +27,11 @@ export class RatingOrderController {
         return this.ratingOrderService.createRatingOrder(userId, orderId, createRatingOrderDto); 
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve all rating orders' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All rating orders retrieved successfully.' })
+    @Get('get-all-ratings')
+    async getAllRatingOrders(): Promise<RatingOrderTable[]> {
+        return this.ratingOrderService.getAllRatingOrders();
+    }
+
 }
