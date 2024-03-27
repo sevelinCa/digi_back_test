@@ -42,5 +42,11 @@ export class RatingOrderService {
         return await this.ratingOrderRepository.find();
     }
 
- 
+    async getRatingOrderById(orderId: string): Promise<RatingOrderTable> {
+        const ratingOrder = await this.ratingOrderRepository.findOne({ where: { id:orderId } });
+        if (!ratingOrder) {
+            throw new NotFoundException(`Rating order with ID ${orderId} not found`);
+        }
+        return ratingOrder;
+    }
 }
