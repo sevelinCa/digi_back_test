@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
-import type { CalenderEventGuest } from './entities/calender-event-guest.entity';
+import  { CalenderEventGuest } from './entities/calender-event-guest.entity';
 
 @ApiTags('Calender')
 @ApiBearerAuth()
