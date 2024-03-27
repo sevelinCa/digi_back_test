@@ -183,13 +183,6 @@ export class DigifranchiseService {
     return digifranchise;
   }
 
-  // async findAllServiceOfferedByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
-  //   return await this.digifranchiseServiceOfferedRepository.createQueryBuilder('service')
-  //     .leftJoinAndSelect('service.serviceCategories', 'category', 'category.serviceId = service.id')
-  //     .where('service.digifranchiseId = :digifranchiseId', { digifranchiseId })
-  //     .andWhere('service.userId IS NULL')
-  //     .getMany();
-  // }
 
   async findAllServiceOfferedByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.find({
