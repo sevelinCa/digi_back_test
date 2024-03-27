@@ -153,6 +153,17 @@ export class DigifranchiseOptionEndpoint {
     return serviceOffered;
   }
 
-
+  @Get('product/:productId')
+@HttpCode(HttpStatus.OK)
+@ApiOperation({ summary: 'GET - Retrieve a product by its ID' })
+@ApiResponse({ status: HttpStatus.OK, description: 'Product has been successfully retrieved.' })
+@ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found.' })
+async getDigifranchiseProductById(@Param('productId') productId: string): Promise<DigifranchiseProduct> {
+ const product = await this.digifranchiseService.getDigifranchiseProductById(productId);
+ if (!product) {
+    throw new NotFoundException(`DigifranchiseProduct with ID ${productId} not found`);
+ }
+ return product;
+}
 
 }

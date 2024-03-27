@@ -431,4 +431,15 @@ export class DigifranchiseService {
     return serviceOffered;
    }
 
+   async getDigifranchiseProductById(productId: string): Promise<DigifranchiseProduct> {
+    const product = await this.digifranchiseProductRepository.findOne({
+      where:{id: productId},
+      relations: ['digifranchiseId','productGalleryImages','userId'], 
+
+    });
+    if (!product) {
+       throw new NotFoundException(`DigifranchiseServiceOffered with service Id ${productId} not found`);
+    }
+    return product;
+   }
 }
