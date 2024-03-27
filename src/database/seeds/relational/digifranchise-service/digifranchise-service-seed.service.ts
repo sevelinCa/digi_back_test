@@ -115,7 +115,7 @@ export class DigifranchiseServiceSeedService {
                 {
                     serviceName: 'Live Training Sessions',
                     description: 'Live Training Sessions Description',
-                    unitPrice: '100',
+                    unitPrice: '',
                     serviceCategory: [
                         { serviceCategoryName: 'One Person', unitPrice: '100', description: 'Description text here' },
                         { serviceCategoryName: 'Group', unitPrice: '50', description: 'Description text here' }
@@ -124,7 +124,7 @@ export class DigifranchiseServiceSeedService {
                 {
                     serviceName: 'Personal Training Sessions',
                     description: 'Personal Training Sessions Description',
-                    unitPrice: '100',
+                    unitPrice: '',
                     serviceCategory: [
                         { serviceCategoryName: 'One Person', unitPrice: '200', description: 'Description text here' },
                         { serviceCategoryName: 'Group', unitPrice: '100', description: 'Description text here' }
@@ -393,7 +393,7 @@ export class DigifranchiseServiceSeedService {
                 {
                     serviceName: 'Zip repair and replacement',
                     description: 'Zip repair and replacement - Description',
-                    unitPrice: '100',
+                    unitPrice: '',
                     serviceCategory: [
                         { serviceCategoryName: 'Trousers and skirts', unitPrice: '100', description: 'Description text here' },
                         { serviceCategoryName: 'Jeans, dresses and short jackets', unitPrice: '110', description: 'Description text here' },
@@ -403,7 +403,7 @@ export class DigifranchiseServiceSeedService {
                 {
                     serviceName: 'Alterations',
                     description: 'Alterations - Description',
-                    unitPrice: '110',
+                    unitPrice: '',
                     serviceCategory: [
                         { serviceCategoryName: 'Lengthening and shortening', unitPrice: '100', description: 'Description text here' },
                         { serviceCategoryName: 'Resize Up or Down', unitPrice: '110', description: 'Description text here' },
