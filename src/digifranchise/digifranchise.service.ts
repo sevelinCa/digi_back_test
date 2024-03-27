@@ -223,7 +223,7 @@ export class DigifranchiseService {
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
       where: { userId },
-      relations: ['digifranchise', 'digifranchiseGeneralInfo'],
+      relations: ['digifranchise', 'digifranchiseGeneralInfo', 'digifranchiseComplianceInfo'],
     });
     return ownershipRecords;
   }
@@ -408,4 +408,16 @@ export class DigifranchiseService {
       message: 'your digifranchise has been unpublished successfully'
     }
   }
+
+  async getDigifranchiseServiceCategoryById(serviceCategoryById: string): Promise<DigifranchiseServiceCategory> {
+    const category = await this.digifranchiseServiceCategoryRepository.findOne({
+      where:{id:serviceCategoryById},
+      relations: ['service'],    });
+    if (!category) {
+       throw new NotFoundException(`DigifranchiseServiceCategory with ID ${serviceCategoryById} not found`);
+    }
+    return category;
+   }
+
+
 }

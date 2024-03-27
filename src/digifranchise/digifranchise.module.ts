@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DigifranchiseController } from './digifranchise.controller';
+import { DigifranchiseController, DigifranchiseOptionEndpoint } from './digifranchise.controller';
 import { DigifranchiseService } from './digifranchise.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
@@ -72,6 +72,7 @@ import { DigifranchiseSelectItemController } from './digifranchise-select-item.c
     DigifranchiseOwnedProductController,
     DigifranchiseImagesController,
     DigifranchiseSelectItemController,
+    DigifranchiseOptionEndpoint
       ],
   providers: [
     DigifranchiseService,
