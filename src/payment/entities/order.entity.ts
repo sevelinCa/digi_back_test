@@ -11,6 +11,8 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 
+
+
 export enum OrderStatus {
     PENDING = 'PENDING',
     PROCESSING = 'PROCESSING',
@@ -59,6 +61,34 @@ export class OrderTable {
 
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
     vatAmount: number | null;
+
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deleteAt: Date | null;
+}
+
+@Entity()
+export class OrderBasicInfo {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @ManyToOne(() => OrderTable, { nullable: true })
+    @JoinColumn({ name: 'orderId' })
+    orderId: OrderTable | null;
+
+    @Column({ type: 'text' })
+    fullNames: string;
+
+    @Column({ type: 'text' })
+    contactDetails: string;
+
+    @Column({ type: 'text' })
+    address: string;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

@@ -8,7 +8,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { CreateOrderTableDto, UpdateOrderTableDto } from './dto/order.dto';
 import { OrderTable } from './entities/order.entity';
 import { CreateRateDto, UpdateRateDto } from './dto/rate.dto';
-import { RateTable } from './entities/rate.entity';
+import { RateTable } from './entities/tax-rate.entity';
 import { RateService } from './rate.service';
 
 @ApiTags('Tax Rate')
