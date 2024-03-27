@@ -29,4 +29,8 @@ export class EnquiryMessageService {
         const savedEquiry = await this.enquiriesRepository.save(newEquiry);
         return savedEquiry;
     }
+
+    async getAllEnquiries(): Promise<EnquiriesTable[]> {
+        return await this.enquiriesRepository.find();
+    }
 }
