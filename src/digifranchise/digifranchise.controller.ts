@@ -140,5 +140,19 @@ export class DigifranchiseOptionEndpoint {
     return category;
   }
 
+  @Get('service-offered/:serviceOfferedId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'GET - Retrieve a service offered by its ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Service offered has been successfully retrieved.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Service offered not found.' })
+  async getDigifranchiseServiceOfferedById(@Param('serviceOfferedId') serviceOfferedId: string): Promise<DigifranchiseServiceOffered> {
+    const serviceOffered = await this.digifranchiseService.getDigifranchiseServiceOfferedById(serviceOfferedId);
+    if (!serviceOffered) {
+      throw new NotFoundException(`DigifranchiseServiceOffered with service Id ${serviceOfferedId} not found`);
+    }
+    return serviceOffered;
+  }
+
+
 
 }
