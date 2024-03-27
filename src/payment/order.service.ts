@@ -6,7 +6,7 @@ import { OrderTable } from './entities/order.entity';
 import { checkIfUserExists } from 'src/helper/FindByFunctions';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseProduct } from 'src/digifranchise/entities/digifranchise-product.entity';
-import { RateTable } from './entities/rate.entity';
+import { RateTable } from './entities/tax-rate.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
 import { DigifranchiseServiceCategory } from 'src/digifranchise/entities/digifranchise-service-category.entity';

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { RateTable } from './entities/rate.entity';
+import { RateTable } from './entities/tax-rate.entity';
 import { CreateRateDto, UpdateRateDto } from './dto/rate.dto';
 
 @Injectable()

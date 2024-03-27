@@ -44,7 +44,7 @@ import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/di
 import { DigifranchisePaymentModule } from './payment/digifranchise-payment.module';
 // import { ChatModule } from './chat/chat.module';
 import { EnquiryMessageModule } from './enquiry-message/enquiry-message.module';
-import { RatingOrderModule } from './rating-order/rating-order.module';
+import { RatingOrderModule } from './rating/rating-order.module';
 
 @Module({
   imports: [

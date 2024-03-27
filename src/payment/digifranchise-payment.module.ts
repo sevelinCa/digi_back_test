@@ -6,7 +6,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DigifranchiseProduct } from 'src/digifranchise/entities/digifranchise-product.entity';
 import { RateService } from './rate.service';
-import { RateTable } from './entities/rate.entity';
+import { RateTable } from './entities/tax-rate.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
 import { DigifranchiseServiceCategory } from 'src/digifranchise/entities/digifranchise-service-category.entity';
