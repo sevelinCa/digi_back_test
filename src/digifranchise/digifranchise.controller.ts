@@ -27,6 +27,7 @@ import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance
 import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-professional-body-membership.service';
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
 import { AddProfessionalMembershipDto } from './dto/add-digifranchise-professional-membership.dto';
+import type { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -83,15 +84,15 @@ export class DigifranchiseController {
     return this.digifranchiseService.findAllOwnedDigifranchiseByUserId(userId);
   }
 
-@Roles(RoleEnum.digifranchise_super_admin)
-@ApiOperation({ summary: 'GET - Retrieve a single Digifranchise owned by the user by its ID' })
-@ApiResponse({ status: HttpStatus.OK, description: 'The Digifranchise owned by the user has been successfully retrieved.' })
-@Get('get-one-owned-digifranchise/:digifranchiseId')
-@HttpCode(HttpStatus.OK)
-async findOneOwnedDigifranchise(@Req() req: Request, @Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseOwner | null> {
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: 'GET - Retrieve a single Digifranchise owned by the user by its ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'The Digifranchise owned by the user has been successfully retrieved.' })
+  @Get('get-one-owned-digifranchise/:digifranchiseId')
+  @HttpCode(HttpStatus.OK)
+  async findOneOwnedDigifranchise(@Req() req: Request, @Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseOwner | null> {
     const userId = (req.user as UserEntity).id;
     return this.digifranchiseService.findOneOwnedDigifranchiseByUserId(userId, digifranchiseId);
-}
+  }
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET - Retrieve Digifranchise by ID' })
@@ -99,11 +100,11 @@ async findOneOwnedDigifranchise(@Req() req: Request, @Param('digifranchiseId') d
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Digifranchise not found.' })
   @Get('get-one-digifranchise/:digifranchiseId')
   async getDigifranchiseByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<Digifranchise> {
-     const digifranchiseOwner = await this.digifranchiseService.getDigifranchiseByDigifranchiseId(digifranchiseId);
-     if (!digifranchiseOwner) {
-       throw new NotFoundException('Digifranchise not found');
-     }
-     return digifranchiseOwner;
+    const digifranchiseOwner = await this.digifranchiseService.getDigifranchiseByDigifranchiseId(digifranchiseId);
+    if (!digifranchiseOwner) {
+      throw new NotFoundException('Digifranchise not found');
+    }
+    return digifranchiseOwner;
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -115,4 +116,29 @@ async findOneOwnedDigifranchise(@Req() req: Request, @Param('digifranchiseId') d
   async createDigifranchise(@Body() createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
     return this.digifranchiseService.createDigifranchise(createDigifranchiseDto);
   }
+}
+
+@ApiTags('Digifranchise Optional - Endpoint')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'digifranchise-optional-endpoint', version: '1' })
+export class DigifranchiseOptionEndpoint {
+  constructor(
+    private readonly digifranchiseService: DigifranchiseService,
+  ) { }
+
+  @Get('service-category/:serviceCategoryId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'GET - Retrieve a service category by its ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Service category has been successfully retrieved.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Service category not found.' })
+  async getDigifranchiseServiceCategoryById(@Param('serviceCategoryId') serviceCategoryId: string): Promise<DigifranchiseServiceCategory> {
+    const category = await this.digifranchiseService.getDigifranchiseServiceCategoryById(serviceCategoryId);
+    if (!category) {
+      throw new NotFoundException(`DigifranchiseServiceCategory with ID ${serviceCategoryId} not found`);
+    }
+    return category;
+  }
+
+
 }
