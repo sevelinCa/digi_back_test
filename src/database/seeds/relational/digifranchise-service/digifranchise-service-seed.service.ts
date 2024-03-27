@@ -113,40 +113,23 @@ export class DigifranchiseServiceSeedService {
 
             const bodyRevampServices = [
                 {
-                    serviceName: 'Live Training Sessions 1-on-1',
-                    description: 'Live Training Sessions',
-                    unitPrice: '100',
+                    serviceName: 'Live Training Sessions',
+                    description: 'Live Training Sessions Description',
+                    unitPrice: '',
+                    serviceCategory: [
+                        { serviceCategoryName: 'One Person', unitPrice: '100', description: 'Description text here' },
+                        { serviceCategoryName: 'Group', unitPrice: '50', description: 'Description text here' }
+                    ]
                 },
                 {
-                    serviceName: 'Live Training Sessions 1-on-1',
-                    description: 'Live Training Sessions',
-                    unitPrice: '100'
-                },
-                {
-                    serviceName: 'Live Training Sessions Group (2-5)',
-                    description: 'Live Training Sessions',
-                    unitPrice: '50'
-                },
-                {
-                    serviceName: 'Personal Training Sessions 1-on-1',
-                    description: 'Personal Training Sessions',
-                    unitPrice: '200'
-                },
-                {
-                    serviceName: 'Personal Training Sessions Group (2-5)',
-                    description: 'Personal Training Sessions',
-                    unitPrice: '100'
-                },
-                {
-                    serviceName: 'Custom Exercise Plans',
-                    description: 'Custom Exercise Plans',
-                    unitPrice: '250'
-                },
-                {
-                    serviceName: 'Exercise Channel Subscription - 30 days',
-                    description: 'Exercise Channel Subscription - 30 days',
-                    unitPrice: '50'
-                },
+                    serviceName: 'Personal Training Sessions',
+                    description: 'Personal Training Sessions Description',
+                    unitPrice: '',
+                    serviceCategory: [
+                        { serviceCategoryName: 'One Person', unitPrice: '200', description: 'Description text here' },
+                        { serviceCategoryName: 'Group', unitPrice: '100', description: 'Description text here' }
+                    ]
+                }
             ];
 
             for (const service of bodyRevampServices) {
@@ -155,6 +138,13 @@ export class DigifranchiseServiceSeedService {
                     digifranchiseId: savedDigifranchise,
                 });
                 await this.serviceRepository.save(serviceEntity);
+                for (const category of service.serviceCategory) {
+                    const categoryEntity = this.serviceCategoryRepository.create({
+                        ...category,
+                        service: serviceEntity, 
+                    });
+                    await this.serviceCategoryRepository.save(categoryEntity);
+                }
             }
         }
     }
@@ -387,13 +377,13 @@ export class DigifranchiseServiceSeedService {
 
     private async seedStitched4U() {
         const check = await this.digifranchiseRepository.count({
-            where: { digifranchiseName: "Stitched  4 U" },
+            where: { digifranchiseName: "Stitched 4 U" },
         });
     
-        if (check ===   0) {
+        if (check === 0) {
             const digifranchiseId = this.digifranchiseRepository.create({
-                digifranchiseName: "Stitched  4 U",
-                description: "Stitched  4 U offers a range of clothing alteration and repair services.",
+                digifranchiseName: "Stitched 4 U",
+                description: "Stitched 4 U offers a range of clothing alteration and repair services.",
                 status: StatusEnum.active,
             });
     
@@ -401,45 +391,37 @@ export class DigifranchiseServiceSeedService {
     
             const stitched4UServices = [
                 {
-                    serviceName: 'Zip repair and replacement - Trousers and skirts',
-                    description: 'Zip repair and replacement - Trousers and skirts',
-                    unitPrice: '100'
+                    serviceName: 'Zip repair and replacement',
+                    description: 'Zip repair and replacement - Description',
+                    unitPrice: '',
+                    serviceCategory: [
+                        { serviceCategoryName: 'Trousers and skirts', unitPrice: '100', description: 'Description text here' },
+                        { serviceCategoryName: 'Jeans, dresses and short jackets', unitPrice: '110', description: 'Description text here' },
+                        { serviceCategoryName: 'Long jackets and cushions', unitPrice: '120', description: 'Description text here' }
+                    ]
                 },
                 {
-                    serviceName: 'Zip repair and replacement - Jeans, dresses and short jackets',
-                    description: 'Zip repair and replacement - Jeans, dresses and short jackets',
-                    unitPrice: '110'
-                },
-                {
-                    serviceName: 'Zip repair and replacement - Long jackets and cushions',
-                    description: 'Zip repair and replacement - Long jackets and cushions',
-                    unitPrice: '120'
-                },
-                {
-                    serviceName: 'Alterations - Lengthening and shortening',
-                    description: 'Alterations - Lengthening and shortening',
-                    unitPrice: '110'
-                },
-                {
-                    serviceName: 'Alterations - Resize up or down',
-                    description: 'Alterations - Resize up or down',
-                    unitPrice: '120'
-                },
-                {
-                    serviceName: 'Non-clothing alterations',
-                    description: 'Non-clothing alterations',
-                    unitPrice: '120'
+                    serviceName: 'Alterations',
+                    description: 'Alterations - Description',
+                    unitPrice: '',
+                    serviceCategory: [
+                        { serviceCategoryName: 'Lengthening and shortening', unitPrice: '100', description: 'Description text here' },
+                        { serviceCategoryName: 'Resize Up or Down', unitPrice: '110', description: 'Description text here' },
+                        { serviceCategoryName: 'Non-clothing alterations', unitPrice: '120', description: 'Description text here' }
+                    ]
                 },
                 {
                     serviceName: 'Patching',
-                    description: 'Patching',
-                    unitPrice: '65'
+                    description: 'Patchting Description text here',
+                    unitPrice: '65',
+                    serviceCategory: []
                 },
                 {
                     serviceName: 'Button replacement',
-                    description: 'Button replacement',
-                    unitPrice: '20'
-                },
+                    description: 'Button replacement Description here',
+                    unitPrice: '20',
+                    serviceCategory: []
+                }
             ];
     
             for (const service of stitched4UServices) {
@@ -447,7 +429,14 @@ export class DigifranchiseServiceSeedService {
                     ...service,
                     digifranchiseId: savedDigifranchise,
                 });
-                await this.serviceRepository.save(serviceEntity);
+                await this.serviceRepository.save(serviceEntity)
+                for (const category of service.serviceCategory) {
+                    const categoryEntity = this.serviceCategoryRepository.create({
+                        ...category,
+                        service: serviceEntity, 
+                    });
+                    await this.serviceCategoryRepository.save(categoryEntity);
+                }
             }
         }
     }
