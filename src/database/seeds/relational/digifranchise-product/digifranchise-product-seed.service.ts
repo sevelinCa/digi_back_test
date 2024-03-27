@@ -39,8 +39,13 @@ export class DigifranchiseProductSeedService {
         const bodyRevampProduct = [
             {
                 productName: 'Custom Exercise Plans',
-                description: 'Custom Exercise Plans',
+                description: 'Custom Exercise Plan description',
                 unitPrice: '250'
+            },
+            {
+                productName: 'Exercise Channel Subscription',
+                description: 'Exercise Channel Subscription Description',
+                unitPrice: '50'
             }
         ];
     
