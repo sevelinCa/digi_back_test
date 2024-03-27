@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -24,5 +24,13 @@ export class EnquiryMessageController {
     ): Promise<EnquiriesTable> {
         return this.enquiryMessageService.createEquiry(createEnquiriesTableDto, digifranchiseOwnedId);
     }
+
+    @ApiOperation({ summary: 'GET - Retrieve all enquiries' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All enquiries retrieved successfully.' })
+    @Get('enquiries')
+    async getAllEnquiries(): Promise<EnquiriesTable[]> {
+        return this.enquiryMessageService.getAllEnquiries();
+    }
+
 }
 
