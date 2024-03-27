@@ -38,4 +38,9 @@ export class RatingOrderService {
         return await this.ratingOrderRepository.save(newRatingOrder);
     }
 
+    async getAllRatingOrders(): Promise<RatingOrderTable[]> {
+        return await this.ratingOrderRepository.find();
+    }
+
+ 
 }
