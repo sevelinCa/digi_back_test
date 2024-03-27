@@ -419,5 +419,16 @@ export class DigifranchiseService {
     return category;
    }
 
+   async getDigifranchiseServiceOfferedById(serviceOfferedId: string): Promise<DigifranchiseServiceOffered> {
+    const serviceOffered = await this.digifranchiseServiceOfferedRepository.findOne({
+      where:{id: serviceOfferedId},
+      relations: ['digifranchiseId','serviceCategories','serviceGalleryImages','userId'], 
+
+    });
+    if (!serviceOffered) {
+       throw new NotFoundException(`DigifranchiseServiceOffered with service Id ${serviceOfferedId} not found`);
+    }
+    return serviceOffered;
+   }
 
 }
