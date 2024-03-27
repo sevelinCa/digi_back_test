@@ -44,7 +44,7 @@ import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/di
 import { DigifranchisePaymentModule } from './payment/digifranchise-payment.module';
 // import { ChatModule } from './chat/chat.module';
 import { EnquiryMessageModule } from './enquiry-message/enquiry-message.module';
-import { DigifranchiseItemReviewModule } from './digifranchise-item-review/digifranchise-item-review.module';
+import { RatingOrderModule } from './rating-order/rating-order.module';
 
 @Module({
   imports: [
@@ -116,7 +116,7 @@ import { DigifranchiseItemReviewModule } from './digifranchise-item-review/digif
     DigifranchiseSubscriptionModule,
     DigifranchisePaymentModule,
     EnquiryMessageModule,
-    DigifranchiseItemReviewModule,
+    RatingOrderModule,
     // ChatModule
   ],
 })

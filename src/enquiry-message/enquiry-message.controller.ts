@@ -32,5 +32,13 @@ export class EnquiryMessageController {
         return this.enquiryMessageService.getAllEnquiries();
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve a single enquiry by ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Enquiry retrieved successfully.' })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Enquiry not found.' })
+    @Get('enquiries/:enquiryId')
+    async getEnquiryById(@Param('enquiryId') enquiryId: string): Promise<EnquiriesTable> {
+        return this.enquiryMessageService.getEnquiryById(enquiryId);
+    }
+
 }
 
