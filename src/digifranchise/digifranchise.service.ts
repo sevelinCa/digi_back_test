@@ -190,7 +190,7 @@ export class DigifranchiseService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId', 'userId', 'serviceGalleryImages'], 
+      relations: ['digifranchiseId','serviceCategories', 'userId', 'serviceGalleryImages'], 
     });
   }
 
@@ -200,7 +200,7 @@ export class DigifranchiseService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId', 'userId', 'serviceGalleryImages'], 
+      relations: ['digifranchiseId','serviceCategories', 'userId', 'serviceGalleryImages'], 
 
     });
 
