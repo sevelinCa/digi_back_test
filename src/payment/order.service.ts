@@ -34,6 +34,89 @@ export class OrderService {
    ) { }
 
 
+// async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceOrCategoryId: string): Promise<OrderTable> {
+//     const user = await checkIfUserExists(this.userRepository, userId);
+//     if (!user) {
+//         throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+//     }
+
+//     let productOrServiceOrCategory;
+//     let productOrServiceOrCategoryType;
+//     let serviceCategory;
+
+//     productOrServiceOrCategory = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
+//     if (productOrServiceOrCategory) {
+//         productOrServiceOrCategoryType = 'product';
+//     } else {
+//         serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
+//         console.log('Service Category:', serviceCategory); 
+
+//         if (serviceCategory) {
+//             productOrServiceOrCategory = await this.digifranchiseServiceRepository.findOne({ where: { id: serviceCategory.serviceId } });
+//             console.log('Associated Service:', productOrServiceOrCategory); 
+
+//             productOrServiceOrCategoryType = 'service';
+//         } else {
+//             productOrServiceOrCategory = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
+//             if (productOrServiceOrCategory) {
+//                 productOrServiceOrCategoryType = 'service';
+//             }
+//         }
+//     }
+
+//     if (!productOrServiceOrCategory) {
+//         throw new HttpException('Product or service does not exist', HttpStatus.NOT_FOUND);
+//     }
+
+//     const franchise = await this.digifranchiseRepository.findOne({ where: { id: productOrServiceOrCategory.franchiseId } });
+//     if (!franchise) {
+//         throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
+//     }
+
+//     const vatRateRecord = await this.rateTableRepository.findOne({
+//         where: { rateName: 'VAT', deleteAt: IsNull() },
+//     });
+    
+
+//     if (!vatRateRecord) {
+//         throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
+//     }
+
+//     const vatRate = vatRateRecord.rateNumber;
+
+//     let unitPrice;
+//     if (productOrServiceOrCategoryType === 'product') {
+//         unitPrice = productOrServiceOrCategory.unitPrice;
+//     } else {
+//         unitPrice = productOrServiceOrCategory.unitPrice;
+//     }
+
+//     const quantity = createOrderTableDto.quantity;
+//     const totalAmount = Number(unitPrice) * Number(quantity);
+//     const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
+    
+//     const lastOrder = await this.orderRepository.find({
+//         order: { orderNumber: 'DESC' },
+//         take: 1, // Limit the results to 1
+//     });
+    
+//     const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
+
+//     const newOrder = this.orderRepository.create({
+//         ...createOrderTableDto,
+//         userId: user,
+//         productId: productOrServiceOrCategoryType === 'product' ? productOrServiceOrCategory : null,
+//         serviceId: productOrServiceOrCategoryType === 'service' ? productOrServiceOrCategory : null,
+//         unitPrice: unitPrice,
+//         vatAmount: vatAmount,
+//         totalAmount,
+//         orderNumber:nextOrderNumber,
+//     });
+
+//     const savedOrder = await this.orderRepository.save(newOrder);
+//     return savedOrder;
+// }
+
 async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceOrCategoryId: string): Promise<OrderTable> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
@@ -48,24 +131,16 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
     if (productOrServiceOrCategory) {
         productOrServiceOrCategoryType = 'product';
     } else {
-        serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
-        console.log('Service Category:', serviceCategory); 
-
-        if (serviceCategory) {
-            productOrServiceOrCategory = await this.digifranchiseServiceRepository.findOne({ where: { id: serviceCategory.serviceId } });
-            console.log('Associated Service:', productOrServiceOrCategory); 
-
+        serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({ 
+            where: { id: productOrServiceOrCategoryId }, 
+            relations: ['service'] 
+        });
+        if (serviceCategory && serviceCategory.service) {
+            productOrServiceOrCategory = serviceCategory.service;
             productOrServiceOrCategoryType = 'service';
         } else {
-            productOrServiceOrCategory = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
-            if (productOrServiceOrCategory) {
-                productOrServiceOrCategoryType = 'service';
-            }
+            throw new HttpException('Product or service does not exist', HttpStatus.NOT_FOUND);
         }
-    }
-
-    if (!productOrServiceOrCategory) {
-        throw new HttpException('Product or service does not exist', HttpStatus.NOT_FOUND);
     }
 
     const franchise = await this.digifranchiseRepository.findOne({ where: { id: productOrServiceOrCategory.franchiseId } });
@@ -86,13 +161,20 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
     let unitPrice;
     if (productOrServiceOrCategoryType === 'product') {
         unitPrice = productOrServiceOrCategory.unitPrice;
-    } else {
-        unitPrice = productOrServiceOrCategory.unitPrice;
+    } else if (productOrServiceOrCategoryType === 'service') {
+        unitPrice = serviceCategory.unitPrice;
     }
 
     const quantity = createOrderTableDto.quantity;
     const totalAmount = Number(unitPrice) * Number(quantity);
     const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
+
+    const lastOrder = await this.orderRepository.find({
+        order: { orderNumber: 'DESC' },
+        take: 1, 
+    });
+
+    const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
 
     const newOrder = this.orderRepository.create({
         ...createOrderTableDto,
@@ -102,13 +184,12 @@ async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, prod
         unitPrice: unitPrice,
         vatAmount: vatAmount,
         totalAmount,
+        orderNumber: nextOrderNumber,
     });
 
     const savedOrder = await this.orderRepository.save(newOrder);
     return savedOrder;
 }
-
-
    async getAllOrders(userId: string): Promise<OrderTable[]> {
       return this.orderRepository.find({ 
         where: { userId: Equal(userId), deleteAt: IsNull() }, 
