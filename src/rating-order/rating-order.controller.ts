@@ -34,4 +34,11 @@ export class RatingOrderController {
         return this.ratingOrderService.getAllRatingOrders();
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve a single rating order by ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Rating order retrieved successfully.' })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Rating order not found.' })
+    @Get(':ratingId')
+    async getRatingOrderById(@Param('ratingId') ratingId: string): Promise<RatingOrderTable> {
+        return this.ratingOrderService.getRatingOrderById(ratingId);
+    }
 }
