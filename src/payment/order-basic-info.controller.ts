@@ -21,4 +21,18 @@ export class OrderBasicInfoController {
         return this.orderBasicInfoService.createOrderBasicInfo(createOrderBasicInfo, orderId);
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve all order basic info' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All order basic info retrieved successfully.' })
+    @Get('all')
+    async getAllBasicInfo(): Promise<OrderBasicInfo[]> {
+        return this.orderBasicInfoService.getAllBasicInfo();
+    }
+
+    @ApiOperation({ summary: 'GET - Retrieve a single order basic info by its ID' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Order basic info retrieved successfully.' })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order basic info not found.' })
+    @Get(':basicInfoId')
+    async getBasicInfoById(@Param('basicInfoId') basicInfoId: string): Promise<OrderBasicInfo> {
+        return this.orderBasicInfoService.getBasicInfoId(basicInfoId);
+    }
 }
