@@ -9,8 +9,8 @@ import type { UserEntity } from 'src/users/infrastructure/persistence/relational
 import { CreateRatingOrderDto } from './dto/rating-order.dto';
 
 @ApiTags('Rating - order')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'rating-orders', version: '1' })
 export class RatingOrderController {
     constructor(private readonly ratingOrderService: RatingOrderService) { }

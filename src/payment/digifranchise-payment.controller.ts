@@ -12,8 +12,8 @@ import { RateTable } from './entities/tax-rate.entity';
 import { RateService } from './rate.service';
 
 @ApiTags('Tax Rate')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'rate', version: '1' })
 export class RateController {
     constructor(private readonly rateService: RateService) { }

@@ -17,7 +17,7 @@ export class OrderIssueTable {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToMany(() => OrderComplaintsTable, complaints => complaints.issue)
+    @OneToMany(() => OrderComplaintsTable, complaints => complaints.order)
     complaints: OrderComplaintsTable[]
 
     @ManyToOne(() => OrderTable, order => order.basicInfos)
@@ -52,7 +52,7 @@ export class OrderComplaintsTable {
 
     @ManyToOne(() => OrderIssueTable, issue=> issue.complaints)
     @JoinColumn({ name: 'issue' })
-    issue: OrderIssueTable[];
+    issue: OrderIssueTable;
 
     @Column({ type: 'text' })
     custom_issue_description: string;

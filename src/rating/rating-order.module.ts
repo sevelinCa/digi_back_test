@@ -5,6 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { RatingOrderTable } from './entities/rating-order.entity';
+import { OrderIssueService } from './order-issue.service';
+import { OrderIssueController } from './order-issue.controller';
+import { OrderComplaintsTable, OrderIssueTable } from './entities/Complaints.entity';
+
 
 @Module({
   imports: [
@@ -13,9 +17,11 @@ import { RatingOrderTable } from './entities/rating-order.entity';
         RatingOrderTable,
         UserEntity,
         OrderTable,
+        OrderIssueTable,
+        OrderComplaintsTable
       ]),
   ],
-  providers: [RatingOrderService],
-  controllers: [RatingOrderController]
+  providers: [RatingOrderService, OrderIssueService, ],
+  controllers: [RatingOrderController, OrderIssueController, ]
 })
 export class RatingOrderModule {}
