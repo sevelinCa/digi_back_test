@@ -8,7 +8,8 @@ import { RatingOrderTable } from './entities/rating-order.entity';
 import { OrderIssueService } from './order-issue.service';
 import { OrderIssueController } from './order-issue.controller';
 import { OrderComplaintsTable, OrderIssueTable } from './entities/Complaints.entity';
-
+import { OrderComplaintsService } from './order-complaints.service';
+import { OrderComplaintsController } from './order-complaints.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { OrderComplaintsTable, OrderIssueTable } from './entities/Complaints.ent
         OrderComplaintsTable
       ]),
   ],
-  providers: [RatingOrderService, OrderIssueService, ],
-  controllers: [RatingOrderController, OrderIssueController, ]
+  providers: [RatingOrderService, OrderIssueService, OrderComplaintsService],
+  controllers: [RatingOrderController, OrderIssueController, OrderComplaintsController]
 })
 export class RatingOrderModule {}
