@@ -31,4 +31,15 @@ export class OrderBasicInfoService {
     async getAllBasicInfo(): Promise<OrderBasicInfo[]> {
         return await this.orderBasicInfoRepository.find({ relations: ['order'] });
     }
+    
+    async getBasicInfoId(basicInfoId: string): Promise<OrderBasicInfo> {
+        const basicInfo = await this.orderBasicInfoRepository.findOne({ 
+            where: { id: basicInfoId },
+            relations: ['order'] 
+        });
+        if (!basicInfo) {
+            throw new HttpException('BasicInfo not found', HttpStatus.NOT_FOUND);
+        }
+        return basicInfo;
+    }
 }
