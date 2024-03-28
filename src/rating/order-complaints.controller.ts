@@ -25,4 +25,12 @@ export class OrderComplaintsController {
         return this.orderComplaintsService.createOrderComplaint(issueId, orderId, createOrderComplaintsDto);
     }
 
+
+    @ApiOperation({ summary: 'GET - Retrieve all order complaints' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All order complaints retrieved successfully.' })
+    @Get('all')
+    async getAllOrderComplaint(): Promise<OrderComplaintsTable[]> {
+        return this.orderComplaintsService.getAllOrderComplaint();
+    }
+
 }
