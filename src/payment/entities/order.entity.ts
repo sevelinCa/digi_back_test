@@ -1,5 +1,6 @@
 import { DigifranchiseProduct } from 'src/digifranchise/entities/digifranchise-product.entity';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
+import { OrderComplaintsTable, OrderIssueTable } from 'src/rating/entities/Complaints.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import {
     Entity,
@@ -9,6 +10,7 @@ import {
     JoinColumn,
     ManyToOne,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
 
 
@@ -32,6 +34,15 @@ export class OrderTable {
     @ManyToOne(() => DigifranchiseProduct, { nullable: true })
     @JoinColumn({ name: 'productId' })
     productId: DigifranchiseProduct | null;
+
+    @OneToMany(() => OrderBasicInfo, basicInfo => basicInfo.order)
+    basicInfos: OrderBasicInfo[];
+
+    @OneToMany(() => OrderComplaintsTable, complaints => complaints.order)
+    Complaints: OrderComplaintsTable[]
+
+    @OneToMany(() => OrderIssueTable, issue => issue.order)
+    issues: OrderIssueTable[]
 
     @ManyToOne(() => DigifranchiseServiceOffered, { nullable: true })
     @JoinColumn({ name: 'serviceId' })
@@ -77,9 +88,9 @@ export class OrderBasicInfo {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => OrderTable, { nullable: true })
-    @JoinColumn({ name: 'orderId' })
-    orderId: OrderTable | null;
+    @ManyToOne(() => OrderTable, order => order.basicInfos)
+    @JoinColumn({ name: 'order' })
+    order: OrderTable;
 
     @Column({ type: 'text' })
     fullNames: string;
