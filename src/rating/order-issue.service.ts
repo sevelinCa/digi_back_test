@@ -29,4 +29,10 @@ export class OrderIssueService {
         return savedOrderIssue;
     }
 
+    async getAllIssue(): Promise<OrderIssueTable[]> {
+        return await this.orderIssueRepository.find({
+            where: { deleteAt: IsNull() },
+            relations: ['order']
+        });
+    }
 }
