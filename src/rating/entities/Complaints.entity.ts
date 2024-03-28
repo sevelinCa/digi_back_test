@@ -1,5 +1,5 @@
 import { OrderTable } from 'src/payment/entities/order.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import {  } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -8,6 +8,7 @@ import {
     JoinColumn,
     ManyToOne,
     UpdateDateColumn,
+    OneToMany,
 } from 'typeorm';
 
 
@@ -16,9 +17,12 @@ export class OrderIssueTable {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => OrderTable, { nullable: true })
-    @JoinColumn({ name: 'orderId' })
-    orderId: OrderTable | null;
+    @OneToMany(() => OrderComplaintsTable, complaints => complaints.issue)
+    complaints: OrderComplaintsTable[]
+
+    @ManyToOne(() => OrderTable, order => order.basicInfos)
+    @JoinColumn({ name: 'order' })
+    order: OrderTable;
 
     @Column({ type: 'text' })
     issue_description: string;
@@ -36,19 +40,19 @@ export class OrderIssueTable {
     deleteAt: Date | null;
 }
 
-
 @Entity()
 export class OrderComplaintsTable {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => OrderTable, { nullable: true })
-    @JoinColumn({ name: 'orderId' })
-    orderId: OrderTable | null;
+   
+    @ManyToOne(() => OrderTable, order => order.basicInfos)
+    @JoinColumn({ name: 'order' })
+    order: OrderTable;
 
-    @ManyToOne(() => OrderIssueTable, { nullable: true })
-    @JoinColumn({ name: 'issueId' })
-    issueId: OrderIssueTable | null;
+    @ManyToOne(() => OrderIssueTable, issue=> issue.complaints)
+    @JoinColumn({ name: 'issue' })
+    issue: OrderIssueTable[];
 
     @Column({ type: 'text' })
     custom_issue_description: string;
