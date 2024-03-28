@@ -28,5 +28,7 @@ export class OrderBasicInfoService {
         return savedOrderBasicInfo;
     }
 
-
+    async getAllBasicInfo(): Promise<OrderBasicInfo[]> {
+        return await this.orderBasicInfoRepository.find({ relations: ['order'] });
+    }
 }
