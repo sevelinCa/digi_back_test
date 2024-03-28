@@ -25,4 +25,10 @@ export class OrderIssueController {
         return this.OrderIssueService.createOrderIssue(createOrderIssueDto, orderId);
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve all issue' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All issue retrieved successfully.' })
+    @Get('all')
+    async getAllIssue(): Promise<OrderIssueTable[]> {
+        return this.OrderIssueService.getAllIssue();
+    }
 }
