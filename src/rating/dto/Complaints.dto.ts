@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString, IsBoolean } from "class-validator";
 
-export class CreateOrderIssueTable {
+export class CreateOrderIssueDto {
     @ApiProperty({ example: 'Order issue description' })
     @IsNotEmpty()
     @IsString()
@@ -13,7 +13,7 @@ export class CreateOrderIssueTable {
     isSelected?: boolean;
 }
 
-export class UpdateOrderIssueTable {
+export class UpdateOrderIssueDto {
     @ApiProperty({ example: 'Updated order issue description', required: false })
     @IsOptional()
     @IsString()
@@ -25,7 +25,7 @@ export class UpdateOrderIssueTable {
     isSelected?: boolean;
 }
 
-export class CreateOrderComplaintsTable {
+export class CreateOrderComplaintsDto {
     @ApiProperty({ example: 'Custom issue description' })
     @IsNotEmpty()
     @IsString()
@@ -43,7 +43,7 @@ export class CreateOrderComplaintsTable {
 }
 
 
-export class UpdateOrderComplaintsTable {
+export class UpdateOrderComplaintsDto {
     @ApiProperty({ example: 'Updated custom issue description', required: false })
     @IsOptional()
     @IsString()

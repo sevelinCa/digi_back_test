@@ -8,8 +8,8 @@ import { CreateEnquiriesTableDto } from './dto/enquiries.dto';
 
 
 @ApiTags('Enquiry - message')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'enquiry', version: '1' })
 export class EnquiryMessageController {
     constructor(private readonly enquiryMessageService: EnquiryMessageService) { }

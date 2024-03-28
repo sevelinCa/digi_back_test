@@ -5,7 +5,7 @@ import { CreateOrderBasicInfo } from './dto/order.dto';
 import { OrderBasicInfo } from './entities/order.entity';
 
 @ApiTags('Order - Basic Info')
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller({ path: 'order-basic-info', version: '1' })
 export class OrderBasicInfoController {
     constructor(private readonly orderBasicInfoService: OrderBasicInfoService) { }
