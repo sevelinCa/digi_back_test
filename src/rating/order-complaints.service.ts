@@ -36,5 +36,10 @@ export class OrderComplaintsService {
         return await this.orderComplaintsRepository.save(newOrderComplaint);
     }
 
-
+    async getAllOrderComplaint(): Promise<OrderComplaintsTable[]> {
+        return await this.orderComplaintsRepository.find({
+            where: { deleteAt: IsNull() },
+            relations: ['order', 'issue']
+        });
+    }
 }
