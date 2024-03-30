@@ -52,6 +52,7 @@ export class DigifranchiseService {
   async findAllDigifranchise(): Promise<Digifranchise[]> {
     return await this.digifranchiseRepository.find();
   }
+  
   async ownDigifranchise(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
     const existingOwnership = await this.digifranchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
     if (existingOwnership) {
