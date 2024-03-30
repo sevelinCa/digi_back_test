@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsInt, Min, IsNumber, IsPositive, IsEnum, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsInt, Min, IsEnum, IsOptional, IsArray, IsString } from "class-validator";
 
 export enum OrderStatus {
     PENDING = 'PENDING',
@@ -7,36 +7,57 @@ export enum OrderStatus {
     SHIPPED = 'SHIPPED',
     DELIVERED = 'DELIVERED',
     CANCELLED = 'CANCELLED',
-   }
+}
+
 export class CreateOrderTableDto {
- @ApiProperty({ example: 1 })
- @IsInt()
- @Min(1)
- quantity: number;
+    @ApiProperty({ example: 1 })
+    @IsInt()
+    @Min(1)
+    quantity: number;
 
- @ApiProperty({ example: OrderStatus.PENDING, enum: OrderStatus })
- @IsEnum(OrderStatus)
- status: OrderStatus;
+    @ApiProperty({ example: OrderStatus.PENDING, enum: OrderStatus })
+    @IsEnum(OrderStatus)
+    status: OrderStatus;
 
- @ApiProperty({ example: '2024-03-15T00:00:00Z' })
- @IsNotEmpty()
- OrderDate: Date;
+    @ApiProperty({ example: '2024-03-15T00:00:00Z' })
+    @IsNotEmpty()
+    OrderDate: Date;
 
+    @ApiProperty({ 
+        example: [
+            { "Name": "Alex Smith", "Email": "alex.smith@example.com", "Address": "123 Main St, Anytown, AT 12345" },
+            { "AcademicLevel": "High School", "SubjectToBeTutored": "Mathematics", "Grade": "10" }
+        ], 
+        type: () => [Object] 
+    })
+    @IsArray()
+    orderAdditionalInfo: any[];
 }
 
 export class UpdateOrderTableDto {
- @ApiProperty({ example: 1, required: false })
- @IsOptional()
- @IsInt()
- @Min(1)
- quantity?: number;
+    @ApiProperty({ example: 1, required: false })
+    @IsOptional()
+    @IsInt()
+    @Min(1)
+    quantity?: number;
 
- @ApiProperty({ example: OrderStatus.PENDING, enum: OrderStatus, required: false })
- @IsOptional()
- @IsEnum(OrderStatus)
- status?: OrderStatus;
+    @ApiProperty({ example: OrderStatus.PENDING, enum: OrderStatus, required: false })
+    @IsOptional()
+    @IsEnum(OrderStatus)
+    status?: OrderStatus;
+
+    @ApiProperty({ 
+        example: [
+            { "Name": "Alex Smith", "Email": "alex.smith@example.com", "Address": "123 Main St, Anytown, AT 12345" },
+            { "AcademicLevel": "High School", "SubjectToBeTutored": "Mathematics", "Grade": "10" }
+        ], 
+        type: () => [Object], 
+        required: false 
+    })
+    @IsOptional()
+    @IsArray()
+    orderAdditionalInfo?: any[];
 }
-
 export class CreateOrderBasicInfo {
     @ApiProperty({ example: 'John Doe' })
     @IsNotEmpty()
