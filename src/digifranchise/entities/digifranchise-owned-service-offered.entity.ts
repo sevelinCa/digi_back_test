@@ -14,7 +14,7 @@ export class DigifranchiseOwnedServiceOffered {
     @JoinColumn({ name: 'ownedDigifranchiseId' })
     ownedDigifranchiseId: DigifranchiseOwner;
 
-    @OneToMany(() => DigifranchiseSubServices, subService => subService.ownedServiceId, { nullable: true })
+    @OneToMany(() => DigifranchiseSubServices, subService => subService.digifrachiseServiceId, { nullable: true })
     subServices: DigifranchiseSubServices[];
 
     @Column({ type: 'text' })

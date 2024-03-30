@@ -46,8 +46,6 @@ export class DigifranchiseService {
     @InjectRepository(DigifranchiseProduct)
     private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
 
-    // @InjectRepository(DigifranchiseOwnedServiceOffered)
-    // private readonly digifranchiseOwnedServiceOffered: Repository<DigifranchiseOwnedServiceOffered>,
     @InjectRepository(DigifranchiseOwnedProduct)
     private digifranchiseOwnedProductRepository: Repository<DigifranchiseOwnedProduct>,
 
@@ -207,7 +205,7 @@ export class DigifranchiseService {
     const servicesWithSubServices = await Promise.all(servicesOffered.map(async (service) => {
       const subServices = await this.digifranchiseSubServiceOfferedRepository.find({
         where: {
-          ownedServiceId: Equal(service.id),
+          digifrachiseServiceId: Equal(service.id),
         },
       });
 
@@ -238,14 +236,14 @@ export class DigifranchiseService {
   async createSubDigifranchiseServiceOffered(
     createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
     userId: string,
-    serviceId: string,
+    digifrachiseServiceId: string,
   ): Promise<DigifranchiseSubServices> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const Service = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: serviceId } });
+    const Service = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: digifrachiseServiceId } });
 
     if (!Service) {
       throw new NotFoundException('Service not found');
@@ -254,7 +252,7 @@ export class DigifranchiseService {
     const newDigifranchiseSubServiceOffered = this.digifranchiseSubServiceOfferedRepository.create({
       ...createDigifranchiseSubServiceOfferedDto,
       userId: user,
-      ownedServiceId: Service,
+      digifrachiseServiceId: Service,
     });
 
     return this.digifranchiseSubServiceOfferedRepository.save(newDigifranchiseSubServiceOffered);
