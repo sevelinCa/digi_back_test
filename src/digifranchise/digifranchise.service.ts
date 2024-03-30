@@ -19,7 +19,7 @@ import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
 import { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
 import { DigifranchiseOwnedServiceCategory } from './entities/digifranchise-owned-service-category.entity';
-
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 @Injectable()
 export class DigifranchiseService {
   constructor(
@@ -40,7 +40,7 @@ export class DigifranchiseService {
     private readonly digifranchiseSubServiceOfferedRepository: Repository<DigifranchiseSubServices>,
     @InjectRepository(DigifranchiseProfessionalBodyMembership)
     private readonly digifranchiseProfessionalBodyMembershipRepository: Repository<DigifranchiseProfessionalBodyMembership>,
- 
+
     @InjectRepository(DigifranchiseOwnedServiceOffered)
     private digifranchiseOwnedServiceOfferedRepository: Repository<DigifranchiseOwnedServiceOffered>,
     @InjectRepository(DigifranchiseProduct)
@@ -59,7 +59,7 @@ export class DigifranchiseService {
 
     @InjectRepository(DigifranchiseOwnedServiceCategory)
     private digifranchiseOwnedServiceCategoryRepository: Repository<DigifranchiseOwnedServiceCategory>,
- 
+
   ) { }
 
   async createDigifranchise(createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
@@ -73,40 +73,40 @@ export class DigifranchiseService {
   async ownDigifranchise(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner> {
     const existingOwnership = await this.digifranchiseOwnershipRepository.findOne({ where: { userId, digifranchiseId: Equal(digifranchiseId) } });
     if (existingOwnership) {
-       throw new Error('User already own this digifranchise');
+      throw new Error('User already own this digifranchise');
     }
-   
+
     const digifranchiseExists = await checkIfDigifranchiseExists(this.digifranchiseRepository, digifranchiseId);
     if (!digifranchiseExists) {
-       throw new Error('Digifranchise not found');
+      throw new Error('Digifranchise not found');
     }
-   
+
     const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
     if (!digifranchise) {
-       throw new Error('Digifranchise not found');
+      throw new Error('Digifranchise not found');
     }
-   
+
     const newFranchiseOwner = this.digifranchiseOwnershipRepository.create({
-       userId,
-       digifranchiseId: digifranchiseId,
-       digifranchise: digifranchise,
+      userId,
+      digifranchiseId: digifranchiseId,
+      digifranchise: digifranchise,
     });
-   
+
     const savedFranchiseOwner = await this.digifranchiseOwnershipRepository.save(newFranchiseOwner);
-   
+
     const products = await this.digifranchiseProductRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
     const services = await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
-   
+
     for (const product of products) {
-       const ownedProduct = this.digifranchiseOwnedProductRepository.create({
-         productName: product.productName,
-         description: product.description,
-         unitPrice: product.unitPrice,
-         ownedDigifranchiseId: savedFranchiseOwner,
-       });
-       await this.digifranchiseOwnedProductRepository.save(ownedProduct);
+      const ownedProduct = this.digifranchiseOwnedProductRepository.create({
+        productName: product.productName,
+        description: product.description,
+        unitPrice: product.unitPrice,
+        ownedDigifranchiseId: savedFranchiseOwner,
+      });
+      await this.digifranchiseOwnedProductRepository.save(ownedProduct);
     }
-   
+
     for (const service of services) {
       const ownedService = this.digifranchiseOwnedServiceOfferedRepository.create({
         serviceName: service.serviceName,
@@ -115,7 +115,7 @@ export class DigifranchiseService {
         ownedDigifranchiseId: savedFranchiseOwner,
       });
       await this.digifranchiseOwnedServiceOfferedRepository.save(ownedService);
-  
+
       // Create owned service categories for each service
       const serviceCategories = await this.digifranchiseServiceCategoryRepository.find({
         where: { service: Equal(service.id) },
@@ -129,7 +129,7 @@ export class DigifranchiseService {
         });
         await this.digifranchiseOwnedServiceCategoryRepository.save(ownedServiceCategory);
       }
-  
+
       const serviceGalleryImages = await this.digifranchiseGalleryImageRepository.find({
         where: { digifranchiseServiceId: Equal(service.id) },
       });
@@ -140,40 +140,40 @@ export class DigifranchiseService {
         });
         await this.digifranchiseGalleryImageRepository.save(ownedServiceGalleryImage);
       }
-   }
-   
+    }
+
     const createGeneralInfoInstance = this.digifranchiseGeneralInfoRepository.create({
-       digifranchiseName: '',
-       ownedDigifranchiseId: savedFranchiseOwner.id,
-       facebookHandle: '',
-       tiktokHandle: '',
-       instagramHandle: '',
-       xHandle: '',
-       connectNumber: '',
-       address: '',
-       otherMobileNumber: '',
-       aboutCompany: '',
-       location: ''
+      digifranchiseName: '',
+      ownedDigifranchiseId: savedFranchiseOwner.id,
+      facebookHandle: '',
+      tiktokHandle: '',
+      instagramHandle: '',
+      xHandle: '',
+      connectNumber: '',
+      address: '',
+      otherMobileNumber: '',
+      aboutCompany: '',
+      location: ''
     });
     await this.digifranchiseGeneralInfoRepository.save(createGeneralInfoInstance);
-   
+
     const createComplianceInfoInstance = this.digifranchiseComplianceInfoRepository.create({
-       ownedDigifranchiseId: savedFranchiseOwner.id,
-       companyRegisterationNumber: '',
-       taxNumber: '',
-       taxClearencePin: '',
-       taxClearenceExpiration: '',
-       coidaRegisteration: '',
-       vatNumber: '',
-       uifRegistration: '',
-       workMansCompensation: '',
-       sdlNumber: '',
-       otherComplianceDocs: []
+      ownedDigifranchiseId: savedFranchiseOwner.id,
+      companyRegisterationNumber: '',
+      taxNumber: '',
+      taxClearencePin: '',
+      taxClearenceExpiration: '',
+      coidaRegisteration: '',
+      vatNumber: '',
+      uifRegistration: '',
+      workMansCompensation: '',
+      sdlNumber: '',
+      otherComplianceDocs: []
     });
     await this.digifranchiseComplianceInfoRepository.save(createComplianceInfoInstance);
-   
+
     return savedFranchiseOwner;
-   }
+  }
 
   async getDigifranchiseByDigifranchiseId(digifranchiseId: string): Promise<Digifranchise> {
     const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
@@ -190,7 +190,7 @@ export class DigifranchiseService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId','serviceCategories', 'userId', 'serviceGalleryImages'], 
+      relations: ['digifranchiseId', 'serviceCategories', 'userId', 'serviceGalleryImages'],
     });
   }
 
@@ -200,7 +200,7 @@ export class DigifranchiseService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId','serviceCategories', 'userId', 'serviceGalleryImages'], 
+      relations: ['digifranchiseId', 'serviceCategories', 'userId', 'serviceGalleryImages'],
 
     });
 
@@ -348,7 +348,7 @@ export class DigifranchiseService {
       where: { ownedDigifranchiseId: Equal(getDigifranchiseInformation.id) },
       relations: ['ownedServiceCategories', 'galleryImages', 'subServices'], 
      });
-     
+
      const ownedProducts = await this.digifranchiseOwnedProductRepository.find({
       where: { ownedDigifranchiseId: Equal(getDigifranchiseInformation.id) },
       relations: ['subProducts','galleryImages'], 
@@ -363,7 +363,7 @@ export class DigifranchiseService {
       services: digifranchiseServices,
       ownedServices: ownedServices, 
       ownedProducts: ownedProducts, 
-    
+
     }
   }
 
@@ -411,35 +411,36 @@ export class DigifranchiseService {
 
   async getDigifranchiseServiceCategoryById(serviceCategoryById: string): Promise<DigifranchiseServiceCategory> {
     const category = await this.digifranchiseServiceCategoryRepository.findOne({
-      where:{id:serviceCategoryById},
-      relations: ['service'],    });
+      where: { id: serviceCategoryById },
+      relations: ['service'],
+    });
     if (!category) {
-       throw new NotFoundException(`DigifranchiseServiceCategory with ID ${serviceCategoryById} not found`);
+      throw new NotFoundException(`DigifranchiseServiceCategory with ID ${serviceCategoryById} not found`);
     }
     return category;
-   }
+  }
 
-   async getDigifranchiseServiceOfferedById(serviceOfferedId: string): Promise<DigifranchiseServiceOffered> {
+  async getDigifranchiseServiceOfferedById(serviceOfferedId: string): Promise<DigifranchiseServiceOffered> {
     const serviceOffered = await this.digifranchiseServiceOfferedRepository.findOne({
-      where:{id: serviceOfferedId},
-      relations: ['digifranchiseId','serviceCategories','serviceGalleryImages','userId'], 
+      where: { id: serviceOfferedId },
+      relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
 
     });
     if (!serviceOffered) {
-       throw new NotFoundException(`DigifranchiseServiceOffered with service Id ${serviceOfferedId} not found`);
+      throw new NotFoundException(`DigifranchiseServiceOffered with service Id ${serviceOfferedId} not found`);
     }
     return serviceOffered;
-   }
+  }
 
-   async getDigifranchiseProductById(productId: string): Promise<DigifranchiseProduct> {
+  async getDigifranchiseProductById(productId: string): Promise<DigifranchiseProduct> {
     const product = await this.digifranchiseProductRepository.findOne({
-      where:{id: productId},
-      relations: ['digifranchiseId','productGalleryImages','userId'], 
+      where: { id: productId },
+      relations: ['digifranchiseId', 'productGalleryImages', 'userId'],
 
     });
     if (!product) {
-       throw new NotFoundException(`DigifranchiseServiceOffered with service Id ${productId} not found`);
+      throw new NotFoundException(`DigifranchiseServiceOffered with service Id ${productId} not found`);
     }
     return product;
-   }
+  }
 }

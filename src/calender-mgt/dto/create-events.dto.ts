@@ -22,7 +22,7 @@ export class CreateEventDto {
 
     @ApiProperty({ 
         description: 'An array of guest IDs', 
-        example: ['guest-id-123', 'guest-id-456'] 
+        example: ['59cc0b11-0ad2-4a43-a251-92c525ed1913', '90bcabb1-eeca-4c28-bc4e-938efddc1275', '90bcabb1-eeca-4c28-bc4e-938efddc1275'] 
     })
     @IsArray()
     @IsOptional()
@@ -49,7 +49,7 @@ export class UpdateEventDto {
 
     @ApiProperty({ 
         description: 'An array of guest IDs', 
-        example: ['guest-id-123', 'guest-id-456'] 
+        example: ['59cc0b11-0ad2-4a43-a251-92c525ed1913', '90bcabb1-eeca-4c28-bc4e-938efddc1275', '90bcabb1-eeca-4c28-bc4e-938efddc1275'] 
     })
     @IsArray()
     @IsOptional()
