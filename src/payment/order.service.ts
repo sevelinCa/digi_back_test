@@ -33,32 +33,27 @@ export class OrderService {
 
     ) { }
 
-
-
     async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceOrCategoryId: string): Promise<OrderTable> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
         }
-    
+
         let productOrServiceOrCategory;
         let productOrServiceOrCategoryType;
-    
-        // Attempt to fetch a product
+
         productOrServiceOrCategory = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
         if (productOrServiceOrCategory) {
             productOrServiceOrCategoryType = 'product';
         } else {
-            // Attempt to fetch a service category
-            const serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({ 
-                where: { id: productOrServiceOrCategoryId }, 
-                relations: ['service'] 
+            const serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({
+                where: { id: productOrServiceOrCategoryId },
+                relations: ['service']
             });
             if (serviceCategory && serviceCategory.service) {
                 productOrServiceOrCategory = serviceCategory.service;
                 productOrServiceOrCategoryType = 'service';
             } else {
-                // Attempt to fetch a service offered
                 productOrServiceOrCategory = await this.digifranchiseServiceRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
                 if (productOrServiceOrCategory) {
                     productOrServiceOrCategoryType = 'service';
@@ -67,40 +62,40 @@ export class OrderService {
                 }
             }
         }
-    
+
         const franchise = await this.digifranchiseRepository.findOne({ where: { id: productOrServiceOrCategory.franchiseId } });
         if (!franchise) {
             throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
         }
-    
+
         const vatRateRecord = await this.rateTableRepository.findOne({
             where: { rateName: 'VAT', deleteAt: IsNull() },
         });
-    
+
         if (!vatRateRecord) {
             throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
         }
-    
+
         const vatRate = vatRateRecord.rateNumber;
-    
+
         let unitPrice;
         if (productOrServiceOrCategoryType === 'product') {
             unitPrice = productOrServiceOrCategory.unitPrice;
         } else if (productOrServiceOrCategoryType === 'service') {
             unitPrice = productOrServiceOrCategory.unitPrice;
         }
-    
+
         const quantity = createOrderTableDto.quantity;
         const totalAmount = Number(unitPrice) * Number(quantity);
         const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
-    
+
         const lastOrder = await this.orderRepository.find({
             order: { orderNumber: 'DESC' },
-            take: 1, 
+            take: 1,
         });
-    
+
         const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
-    
+
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
             userId: user,
@@ -111,15 +106,14 @@ export class OrderService {
             totalAmount,
             orderNumber: nextOrderNumber,
         });
-    
+
         const savedOrder = await this.orderRepository.save(newOrder);
         return savedOrder;
     }
 
-
     async getAllOrders(userId: string): Promise<OrderTable[]> {
         return this.orderRepository.find({
-            where: { userId: Equal(userId), deleteAt: IsNull() },
+            where: { userId: { id: Equal(userId) }, deleteAt: IsNull() },
             relations: ['userId', 'productId', 'serviceId']
         });
     }
@@ -131,7 +125,6 @@ export class OrderService {
         });
     }
 
-
     async updateOrder(orderId: string, updateOrderTableDto: UpdateOrderTableDto): Promise<OrderTable> {
         const order = await this.orderRepository.findOne({ where: { id: orderId } });
         if (!order) {
@@ -140,7 +133,6 @@ export class OrderService {
         this.orderRepository.merge(order, updateOrderTableDto);
         return this.orderRepository.save(order);
     }
-
 
     async deleteOrder(orderId: string): Promise<void> {
         const result = await this.orderRepository.delete(orderId);
