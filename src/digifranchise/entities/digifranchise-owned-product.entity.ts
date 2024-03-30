@@ -12,7 +12,7 @@ export class DigifranchiseOwnedProduct {
   @JoinColumn({ name: 'ownedDigifranchiseId' })
   ownedDigifranchiseId: DigifranchiseOwner;
   
-  @OneToMany(() => DigifranchiseSubProduct, subProduct => subProduct.ownedProductId, { nullable: true })
+  @OneToMany(() => DigifranchiseSubProduct, subProduct => subProduct.digifranchiseProductId, { nullable: true })
   subProducts: DigifranchiseSubProduct[];
 
   @Column({ type: 'text' })

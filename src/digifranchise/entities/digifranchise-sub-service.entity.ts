@@ -1,16 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseServiceOffered } from './digifranchise-service-offered.entity';
-import { DigifranchiseOwnedServiceOffered } from './digifranchise-owned-service-offered.entity';
 
 @Entity()
 export class DigifranchiseSubServices {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => DigifranchiseOwnedServiceOffered)
-    @JoinColumn({ name: 'ownedServiceId' })
-    ownedServiceId: DigifranchiseOwnedServiceOffered;
+    @ManyToOne(() => DigifranchiseServiceOffered)
+    @JoinColumn({ name: 'digifrachiseServiceId' })
+    digifrachiseServiceId: DigifranchiseServiceOffered;
 
     @ManyToOne(() => UserEntity, { nullable: true })
     @JoinColumn({ name: 'userId' })
