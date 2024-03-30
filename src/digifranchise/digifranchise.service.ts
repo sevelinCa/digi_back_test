@@ -13,13 +13,9 @@ import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-infor
 import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance-information.entity';
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
 import { ProductService } from './product.service';
-import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-product.entity';
-import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned-service-offered.entity';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
 import { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
-import { DigifranchiseOwnedServiceCategory } from './entities/digifranchise-owned-service-category.entity';
-import { parsePhoneNumberFromString } from 'libphonenumber-js';
 @Injectable()
 export class DigifranchiseService {
   constructor(
@@ -40,24 +36,12 @@ export class DigifranchiseService {
     private readonly digifranchiseSubServiceOfferedRepository: Repository<DigifranchiseSubServices>,
     @InjectRepository(DigifranchiseProfessionalBodyMembership)
     private readonly digifranchiseProfessionalBodyMembershipRepository: Repository<DigifranchiseProfessionalBodyMembership>,
-
-    @InjectRepository(DigifranchiseOwnedServiceOffered)
-    private digifranchiseOwnedServiceOfferedRepository: Repository<DigifranchiseOwnedServiceOffered>,
     @InjectRepository(DigifranchiseProduct)
     private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
-
-    @InjectRepository(DigifranchiseOwnedProduct)
-    private digifranchiseOwnedProductRepository: Repository<DigifranchiseOwnedProduct>,
-
     @InjectRepository(DigifranchiseServiceCategory)
     private digifranchiseServiceCategoryRepository: Repository<DigifranchiseServiceCategory>,
-
     @InjectRepository(DigifranchiseGalleryImage)
     private digifranchiseGalleryImageRepository: Repository<DigifranchiseGalleryImage>,
-
-    @InjectRepository(DigifranchiseOwnedServiceCategory)
-    private digifranchiseOwnedServiceCategoryRepository: Repository<DigifranchiseOwnedServiceCategory>,
-
   ) { }
 
   async createDigifranchise(createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
@@ -96,36 +80,33 @@ export class DigifranchiseService {
     const services = await this.digifranchiseServiceOfferedRepository.find({ where: { digifranchiseId: Equal(digifranchiseId) } });
 
     for (const product of products) {
-      const ownedProduct = this.digifranchiseOwnedProductRepository.create({
+      const ownedProduct = this.digifranchiseProductRepository.create({
         productName: product.productName,
         description: product.description,
         unitPrice: product.unitPrice,
-        ownedDigifranchiseId: savedFranchiseOwner,
       });
-      await this.digifranchiseOwnedProductRepository.save(ownedProduct);
+      await this.digifranchiseProductRepository.save(ownedProduct);
     }
 
     for (const service of services) {
-      const ownedService = this.digifranchiseOwnedServiceOfferedRepository.create({
+      const ownedService = this.digifranchiseServiceOfferedRepository.create({
         serviceName: service.serviceName,
         description: service.description,
         unitPrice: service.unitPrice,
-        ownedDigifranchiseId: savedFranchiseOwner,
       });
-      await this.digifranchiseOwnedServiceOfferedRepository.save(ownedService);
+      await this.digifranchiseServiceOfferedRepository.save(ownedService);
 
       // Create owned service categories for each service
       const serviceCategories = await this.digifranchiseServiceCategoryRepository.find({
         where: { service: Equal(service.id) },
       });
       for (const category of serviceCategories) {
-        const ownedServiceCategory = this.digifranchiseOwnedServiceCategoryRepository.create({
+        const ownedServiceCategory = this.digifranchiseServiceCategoryRepository.create({
           serviceCategoryName: category.serviceCategoryName,
           unitPrice: category.unitPrice,
           description: category.description,
-          ownedService: ownedService,
         });
-        await this.digifranchiseOwnedServiceCategoryRepository.save(ownedServiceCategory);
+        await this.digifranchiseServiceCategoryRepository.save(ownedServiceCategory);
       }
 
       const serviceGalleryImages = await this.digifranchiseGalleryImageRepository.find({
@@ -342,15 +323,7 @@ export class DigifranchiseService {
     const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId)
     const digifranchiseServices = await this.findAllServiceOfferedByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
 
-    const ownedServices = await this.digifranchiseOwnedServiceOfferedRepository.find({
-      where: { ownedDigifranchiseId: Equal(getDigifranchiseInformation.id) },
-      relations: ['ownedServiceCategories', 'galleryImages', 'subServices'], 
-     });
 
-     const ownedProducts = await this.digifranchiseOwnedProductRepository.find({
-      where: { ownedDigifranchiseId: Equal(getDigifranchiseInformation.id) },
-      relations: ['subProducts','galleryImages'], 
-     });
     return {
       digifranchiseInfo: digifranchise,
       ownerInfo: digifranchiseOwner,
@@ -359,8 +332,6 @@ export class DigifranchiseService {
       professionalBodiesInfo: getProfessionalBodyMemberships,
       products: digifranchiseProducts,
       services: digifranchiseServices,
-      ownedServices: ownedServices, 
-      ownedProducts: ownedProducts, 
 
     }
   }
