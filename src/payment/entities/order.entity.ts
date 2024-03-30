@@ -48,6 +48,9 @@ export class OrderTable {
     @JoinColumn({ name: 'serviceId' })
     serviceId: DigifranchiseServiceOffered | null;
 
+    @Column({ type: 'json', nullable: true })
+    orderAdditionalInfo: any[];
+
     @Column({ type: 'integer' })
     quantity: number;
 
