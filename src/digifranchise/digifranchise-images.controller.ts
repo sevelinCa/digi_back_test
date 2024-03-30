@@ -16,7 +16,7 @@ export class DigifranchiseImagesController {
     @ApiOperation({ summary: 'CREATE - Create a new service image' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'A new image has been successfully created.' })
     @ApiBody({ type: CreateDigifranchiseGalleryImageDto })
-    @Post('create-service-image/:digifranchiseServiceId')
+    @Post('create-service-image/:digifranchiseServiceId/:digifranchiseOwnedId')
     async createDigifrachiseServiceImage(
         @Param('digifranchiseOwnedId') digifranchiseOwnedId: string,
         @Param('digifranchiseServiceId') digifranchiseServiceId: string,
@@ -28,7 +28,7 @@ export class DigifranchiseImagesController {
     @ApiOperation({ summary: 'CREATE - Create a new product image' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'A new image has been successfully created.' })
     @ApiBody({ type: CreateDigifranchiseGalleryImageDto })
-    @Post('create-product-image/:digifranchiseProductId')
+    @Post('create-product-image/:digifranchiseProductId/:digifranchiseOwnedId')
     async createDigifrachiseProductImage(
         @Param('digifranchiseOwnedId') digifranchiseOwnedId: string,
         @Param('digifranchiseProductId') digifranchiseProductId: string,
