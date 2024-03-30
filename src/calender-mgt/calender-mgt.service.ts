@@ -40,7 +40,6 @@ export class CalenderMgtService {
         return this.venueRepository.save(newVenue);
     }
 
-
     async createEvent(userId: string, venueId: string, createEventDto: CreateEventDto): Promise<CalenderEvents> {
         const user = await checkIfUserExists(this.userRepository, userId)
         if (!user) {
@@ -116,8 +115,6 @@ export class CalenderMgtService {
     async getAllEvents(): Promise<CalenderEvents[]> {
         return this.eventsRepository.find({ where: { deleteAt: IsNull() } });
     }
-
-
 
     async getAllBookings(): Promise<CalenderBooking[]> {
         return this.bookingRepository.find({ where: { deleteAt: IsNull() } });
@@ -260,4 +257,16 @@ export class CalenderMgtService {
         await this.calenderEventGuestRepository.remove(calenderEventGuest);
     }
 
+    async removeGuestFromEvent(guestId: string, eventId: string): Promise<void> {
+        const guestEventAssociation = await this.calenderEventGuestRepository.findOne({
+            where: { id: guestId, eventId: { id: eventId } },
+        });
+    
+        if (!guestEventAssociation) {
+            throw new NotFoundException(`Guest with ID ${guestId} not found in the specified event.`);
+        }
+    
+        // Assuming you want to remove the association entirely
+        await this.calenderEventGuestRepository.remove(guestEventAssociation);
+    }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, NotFoundException, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -149,7 +149,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.updateEvent(eventId, updateEventDto);
     }
 
-    
+
     @ApiOperation({
         summary: 'UPDATE - Update booking by ID',
     })
@@ -260,6 +260,20 @@ export class CalenderMgtController {
     @Delete('remove-customer-from-event/:id')
     async removeCustomerFromEvent(@Param('id') id: string): Promise<void> {
         return this.calenderMgtService.removeCustomerFromEvent(id);
+    }
+
+    @ApiOperation({ summary: 'DELETE - Remove a guest from a specific event by ID' })
+    @ApiResponse({ status: 204, description: 'The guest has been successfully removed from the specified event.' })
+    @Delete('remove-guest-from-event/:guestId/events/:eventId')
+    async removeGuestFromEvent(@Param('guestId') guestId: string, @Param('eventId') eventId: string): Promise<void> {
+        try {
+            await this.calenderMgtService.removeGuestFromEvent(guestId, eventId);
+        } catch (error) {
+            if (error instanceof NotFoundException) {
+                throw new NotFoundException(error.message);
+            }
+            throw new InternalServerErrorException('An error occurred while removing the guest from the event.');
+        }
     }
 }
 
