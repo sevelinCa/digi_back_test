@@ -3,11 +3,11 @@ import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { type Repository, Equal, IsNull } from 'typeorm';
-import type { UpdateDigifranchiseProductDto } from './dto/create-digifranchise-product.dto';
+import {  Repository, Equal, IsNull } from 'typeorm';
+import  { UpdateDigifranchiseProductDto } from './dto/create-digifranchise-product.dto';
 import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
-import type { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
+import  { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
 
 @Injectable()
 export class ProductService {

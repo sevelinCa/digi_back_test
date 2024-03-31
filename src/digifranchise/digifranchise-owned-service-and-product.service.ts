@@ -1,82 +1,80 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
-import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned-service-offered.entity';
-import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-product.entity';
+// import { Injectable } from '@nestjs/common';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository, IsNull } from 'typeorm';
 
-@Injectable()
-export class DigifranchiseOwnedServiceAndProductService {
-  constructor(
-    @InjectRepository(DigifranchiseOwnedServiceOffered)
-    private readonly digifranchiseOwnedServiceOffered: Repository<DigifranchiseOwnedServiceOffered>,
+// @Injectable()
+// export class DigifranchiseOwnedServiceAndProductService {
+//   constructor(
+//     @InjectRepository(DigifranchiseOwnedServiceOffered)
+//     private readonly digifranchiseOwnedServiceOffered: Repository<DigifranchiseOwnedServiceOffered>,
 
-    @InjectRepository(DigifranchiseOwnedProduct)
-    private readonly digifranchiseOwnedProductRepository: Repository<DigifranchiseOwnedProduct>,
+//     @InjectRepository(DigifranchiseOwnedProduct)
+//     private readonly digifranchiseOwnedProductRepository: Repository<DigifranchiseOwnedProduct>,
 
-  ) { }
+//   ) { }
 
-  async selectOwnedService(ownerdServiceId: string): Promise<DigifranchiseOwnedServiceOffered> {
-    const ownedService = await this.digifranchiseOwnedServiceOffered.findOne({
-      where: { id: ownerdServiceId },
-    });
+//   async selectOwnedService(ownerdServiceId: string): Promise<DigifranchiseOwnedServiceOffered> {
+//     const ownedService = await this.digifranchiseOwnedServiceOffered.findOne({
+//       where: { id: ownerdServiceId },
+//     });
 
-    if (!ownedService) {
-      throw new Error('Service not found');
-    }
+//     if (!ownedService) {
+//       throw new Error('Service not found');
+//     }
 
-    ownedService.isSelected = !ownedService.isSelected;
+//     ownedService.isSelected = !ownedService.isSelected;
 
-    return this.digifranchiseOwnedServiceOffered.save(ownedService);
-  }
+//     return this.digifranchiseOwnedServiceOffered.save(ownedService);
+//   }
 
-  async getAllSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
-    return this.digifranchiseOwnedServiceOffered.find({
-      where: { isSelected: true, deleteAt: IsNull() },
-    });
-  }
+//   async getAllSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
+//     return this.digifranchiseOwnedServiceOffered.find({
+//       where: { isSelected: true, deleteAt: IsNull() },
+//     });
+//   }
 
 
-  async getAllNotSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
-    return this.digifranchiseOwnedServiceOffered.find({
-      where: { isSelected: false, deleteAt: IsNull() },
-    });
-  }
+//   async getAllNotSelectedServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
+//     return this.digifranchiseOwnedServiceOffered.find({
+//       where: { isSelected: false, deleteAt: IsNull() },
+//     });
+//   }
 
-  async getAllServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
-    return this.digifranchiseOwnedServiceOffered.find({
-      where: { deleteAt: IsNull() },
-    });
-  }
+//   async getAllServices(): Promise<DigifranchiseOwnedServiceOffered[]> {
+//     return this.digifranchiseOwnedServiceOffered.find({
+//       where: { deleteAt: IsNull() },
+//     });
+//   }
 
-  async selectOwnedProduct(ownerdProductId: string): Promise<DigifranchiseOwnedProduct> {
-    const ownedProduct = await this.digifranchiseOwnedProductRepository.findOne({
-      where: { id: ownerdProductId },
-    });
+//   async selectOwnedProduct(ownerdProductId: string): Promise<DigifranchiseOwnedProduct> {
+//     const ownedProduct = await this.digifranchiseOwnedProductRepository.findOne({
+//       where: { id: ownerdProductId },
+//     });
 
-    if (!ownedProduct) {
-      throw new Error('Product not found');
-    }
+//     if (!ownedProduct) {
+//       throw new Error('Product not found');
+//     }
 
-    ownedProduct.isSelected = !ownedProduct.isSelected;
+//     ownedProduct.isSelected = !ownedProduct.isSelected;
 
-    return this.digifranchiseOwnedProductRepository.save(ownedProduct);
-  }
+//     return this.digifranchiseOwnedProductRepository.save(ownedProduct);
+//   }
 
-  async getAllSelectedProducts(): Promise<DigifranchiseOwnedProduct[]> {
-    return this.digifranchiseOwnedProductRepository.find({
-      where: { isSelected: true, deleteAt: IsNull() },
-    });
-  }
+//   async getAllSelectedProducts(): Promise<DigifranchiseOwnedProduct[]> {
+//     return this.digifranchiseOwnedProductRepository.find({
+//       where: { isSelected: true, deleteAt: IsNull() },
+//     });
+//   }
 
-  async getAllNotSelectedProducts(): Promise<DigifranchiseOwnedProduct[]> {
-    return this.digifranchiseOwnedProductRepository.find({
-      where: { isSelected: false, deleteAt: IsNull() },
-    });
-  }
+//   async getAllNotSelectedProducts(): Promise<DigifranchiseOwnedProduct[]> {
+//     return this.digifranchiseOwnedProductRepository.find({
+//       where: { isSelected: false, deleteAt: IsNull() },
+//     });
+//   }
 
-  async getAllProducts(): Promise<DigifranchiseOwnedProduct[]> {
-    return this.digifranchiseOwnedProductRepository.find({
-      where: { deleteAt: IsNull() },
-    });
-  }
-}
+//   async getAllProducts(): Promise<DigifranchiseOwnedProduct[]> {
+//     return this.digifranchiseOwnedProductRepository.find({
+//       where: { deleteAt: IsNull() },
+//     });
+//   }
+// }

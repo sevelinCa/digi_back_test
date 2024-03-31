@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseProduct } from './digifranchise-product.entity';
+import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 
 @Entity()
 export class DigifranchiseSubProduct {
@@ -14,6 +15,10 @@ export class DigifranchiseSubProduct {
   @ManyToOne(() => UserEntity, { nullable: true })
   @JoinColumn({ name: 'userId' })
   userId: UserEntity | null;
+
+  @OneToMany(() => DigifranchiseGalleryImage, image => image.subProduct)
+  subProductGalleryImages: DigifranchiseGalleryImage[];
+
 
   @Column({type: 'text'})
   productName: string;

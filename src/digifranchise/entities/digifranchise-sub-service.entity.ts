@@ -1,6 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseServiceOffered } from './digifranchise-service-offered.entity';
+import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
+import { DigifranchiseSubServiceCategory } from './digifranchise-sub-service-category.entity';
 
 @Entity()
 export class DigifranchiseSubServices {
@@ -10,6 +12,12 @@ export class DigifranchiseSubServices {
     @ManyToOne(() => DigifranchiseServiceOffered)
     @JoinColumn({ name: 'digifrachiseServiceId' })
     digifrachiseServiceId: DigifranchiseServiceOffered;
+
+    @OneToMany(() => DigifranchiseSubServiceCategory, subCategory => subCategory.subService)
+    subServiceCategories: DigifranchiseSubServiceCategory[];
+
+    @OneToMany(() => DigifranchiseGalleryImage, image => image.subService)
+    subServiceGalleryImages: DigifranchiseGalleryImage[];
 
     @ManyToOne(() => UserEntity, { nullable: true })
     @JoinColumn({ name: 'userId' })

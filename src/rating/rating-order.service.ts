@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RatingOrderTable } from './entities/rating-order.entity';
-import type { CreateRatingOrderDto } from './dto/rating-order.dto';
+import  { CreateRatingOrderDto } from './dto/rating-order.dto';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { checkIfUserExists } from 'src/helper/FindByFunctions';
 import { use } from 'passport';

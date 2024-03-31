@@ -10,6 +10,8 @@ import { OrderIssueController } from './order-issue.controller';
 import { OrderComplaintsTable, OrderIssueTable } from './entities/Complaints.entity';
 import { OrderComplaintsService } from './order-complaints.service';
 import { OrderComplaintsController } from './order-complaints.controller';
+import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
+import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchise-sub-service.entity';
 
 @Module({
   imports: [
@@ -19,10 +21,12 @@ import { OrderComplaintsController } from './order-complaints.controller';
         UserEntity,
         OrderTable,
         OrderIssueTable,
-        OrderComplaintsTable
+        OrderComplaintsTable,
+        DigifranchiseSubProduct,
+        DigifranchiseSubServices,
       ]),
   ],
   providers: [RatingOrderService, OrderIssueService, OrderComplaintsService],
   controllers: [RatingOrderController, OrderIssueController, OrderComplaintsController]
 })
-export class RatingOrderModule {}
+export class RatingOrderModule { }

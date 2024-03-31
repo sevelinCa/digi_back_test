@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
-import type { CreateOrderBasicInfo } from './dto/order.dto';
+import  { Repository } from 'typeorm';
+import  { CreateOrderBasicInfo } from './dto/order.dto';
 import { OrderBasicInfo, OrderTable } from './entities/order.entity';
 
 @Injectable()

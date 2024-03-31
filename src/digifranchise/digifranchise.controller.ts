@@ -18,7 +18,7 @@ import { CreateDigifranchiseSubServiceOfferedDto, UpdateDigifranchiseSubServiceD
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { ProductService } from './product.service';
 import { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
-import type { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
+import { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 import { UpdateDigifranchiseGeneralInfoDto } from './dto/update-digifranchise-general-info.dto';
 import { UpdateDigifranchiseComplianceInfoDto } from './dto/update-digifranchise-compliance-info.dto';
@@ -27,7 +27,7 @@ import { DigifranchiseComplianceInfo } from './entities/digifranchise-compliance
 import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-professional-body-membership.service';
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
 import { AddProfessionalMembershipDto } from './dto/add-digifranchise-professional-membership.dto';
-import type { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
+import { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -154,16 +154,16 @@ export class DigifranchiseOptionEndpoint {
   }
 
   @Get('product/:productId')
-@HttpCode(HttpStatus.OK)
-@ApiOperation({ summary: 'GET - Retrieve a product by its ID' })
-@ApiResponse({ status: HttpStatus.OK, description: 'Product has been successfully retrieved.' })
-@ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found.' })
-async getDigifranchiseProductById(@Param('productId') productId: string): Promise<DigifranchiseProduct> {
- const product = await this.digifranchiseService.getDigifranchiseProductById(productId);
- if (!product) {
-    throw new NotFoundException(`DigifranchiseProduct with ID ${productId} not found`);
- }
- return product;
-}
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'GET - Retrieve a product by its ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Product has been successfully retrieved.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Product not found.' })
+  async getDigifranchiseProductById(@Param('productId') productId: string): Promise<DigifranchiseProduct> {
+    const product = await this.digifranchiseService.getDigifranchiseProductById(productId);
+    if (!product) {
+      throw new NotFoundException(`DigifranchiseProduct with ID ${productId} not found`);
+    }
+    return product;
+  }
 
 }

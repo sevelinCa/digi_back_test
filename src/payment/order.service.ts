@@ -10,6 +10,9 @@ import { RateTable } from './entities/tax-rate.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
 import { DigifranchiseServiceCategory } from 'src/digifranchise/entities/digifranchise-service-category.entity';
+import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
+import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchise-sub-service.entity';
+import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digifranchise-sub-service-category.entity';
 
 @Injectable()
 export class OrderService {
@@ -26,11 +29,15 @@ export class OrderService {
         private readonly rateTableRepository: Repository<RateTable>,
         @InjectRepository(Digifranchise)
         private readonly digifranchiseRepository: Repository<Digifranchise>,
-
         @InjectRepository(DigifranchiseServiceCategory)
         private readonly digifranchiseServiceCategoryRepository: Repository<DigifranchiseServiceCategory>,
 
-
+        @InjectRepository(DigifranchiseSubProduct)
+        private readonly digifranchiseSubProductRepository: Repository<DigifranchiseSubProduct>,
+        @InjectRepository(DigifranchiseSubServices)
+        private readonly digifranchiseSubServicesRepository: Repository<DigifranchiseSubServices>,
+        @InjectRepository(DigifranchiseSubServiceCategory)
+        private readonly digifranchiseServiceSubCategoryRepository: Repository<DigifranchiseSubServiceCategory>,
     ) { }
 
     async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceOrCategoryId: string): Promise<OrderTable> {
@@ -101,6 +108,86 @@ export class OrderService {
             userId: user,
             productId: productOrServiceOrCategoryType === 'product' ? productOrServiceOrCategory : null,
             serviceId: productOrServiceOrCategoryType === 'service' ? productOrServiceOrCategory : null,
+            unitPrice: unitPrice,
+            vatAmount: vatAmount,
+            totalAmount,
+            orderNumber: nextOrderNumber,
+        });
+
+        const savedOrder = await this.orderRepository.save(newOrder);
+        return savedOrder;
+    }
+
+    async createOrderForSubs(createOrderTableDto: CreateOrderTableDto, userId: string, subProductOrSubServiceOrSubCategoryId: string): Promise<OrderTable> {
+        const user = await checkIfUserExists(this.userRepository, userId);
+        if (!user) {
+            throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+        }
+
+        let subProductOrSubServiceOrSubCategory;
+        let subProductOrSubServiceOrSubCategoryType;
+
+        // Check for sub-product
+        subProductOrSubServiceOrSubCategory = await this.digifranchiseSubProductRepository.findOne({ where: { id: subProductOrSubServiceOrSubCategoryId } });
+        if (subProductOrSubServiceOrSubCategory) {
+            subProductOrSubServiceOrSubCategoryType = 'subProduct';
+        } else {
+            // Check for sub-service with relations
+            subProductOrSubServiceOrSubCategory = await this.digifranchiseSubServicesRepository.findOne({
+                where: { id: subProductOrSubServiceOrSubCategoryId },
+                relations: ['subService'] // Assuming 'subService' is the relation you need
+            });
+            if (subProductOrSubServiceOrSubCategory) {
+                subProductOrSubServiceOrSubCategoryType = 'subService';
+            } else {
+                // Check for sub-category
+                subProductOrSubServiceOrSubCategory = await this.digifranchiseServiceSubCategoryRepository.findOne({ where: { id: subProductOrSubServiceOrSubCategoryId } });
+                if (subProductOrSubServiceOrSubCategory) {
+                    subProductOrSubServiceOrSubCategoryType = 'subCategory';
+                } else {
+                    throw new HttpException('Sub-product, sub-service category, or sub-service offered does not exist', HttpStatus.NOT_FOUND);
+                }
+            }
+        }
+
+        const franchise = await this.digifranchiseRepository.findOne({ where: { id: subProductOrSubServiceOrSubCategory.franchiseId } });
+        if (!franchise) {
+            throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
+        }
+
+        const vatRateRecord = await this.rateTableRepository.findOne({
+            where: { rateName: 'VAT', deleteAt: IsNull() },
+        });
+
+        if (!vatRateRecord) {
+            throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
+        }
+
+        const vatRate = vatRateRecord.rateNumber;
+
+        let unitPrice;
+        if (subProductOrSubServiceOrSubCategoryType === 'subProduct') {
+            unitPrice = subProductOrSubServiceOrSubCategory.unitPrice;
+        } else if (subProductOrSubServiceOrSubCategoryType === 'subService') {
+            unitPrice = subProductOrSubServiceOrSubCategory.unitPrice;
+        }
+
+        const quantity = createOrderTableDto.quantity;
+        const totalAmount = Number(unitPrice) * Number(quantity);
+        const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
+
+        const lastOrder = await this.orderRepository.find({
+            order: { orderNumber: 'DESC' },
+            take: 1,
+        });
+
+        const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
+
+        const newOrder = this.orderRepository.create({
+            ...createOrderTableDto,
+            userId: user,
+            subProduct: subProductOrSubServiceOrSubCategoryType === 'subProduct' ? subProductOrSubServiceOrSubCategory.id : null,
+            subService: subProductOrSubServiceOrSubCategoryType === 'subService' ? subProductOrSubServiceOrSubCategory.id : null,
             unitPrice: unitPrice,
             vatAmount: vatAmount,
             totalAmount,

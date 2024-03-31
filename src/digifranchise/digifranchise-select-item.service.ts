@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { type Repository, IsNull } from 'typeorm';
+import {  Repository, IsNull } from 'typeorm';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
 import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
