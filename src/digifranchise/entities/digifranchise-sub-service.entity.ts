@@ -10,8 +10,8 @@ export class DigifranchiseSubServices {
     id: string;
 
     @ManyToOne(() => DigifranchiseServiceOffered)
-    @JoinColumn({ name: 'digifrachiseServiceId' })
-    digifrachiseServiceId: DigifranchiseServiceOffered;
+    @JoinColumn({ name: 'digifranchiseServiceId' })
+    digifranchiseServiceId: DigifranchiseServiceOffered;
 
     @OneToMany(() => DigifranchiseSubServiceCategory, subCategory => subCategory.subService)
     subServiceCategories: DigifranchiseSubServiceCategory[];
