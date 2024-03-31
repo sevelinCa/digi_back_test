@@ -186,9 +186,9 @@ export class DigifranchiseService {
     const servicesWithSubServices = await Promise.all(servicesOffered.map(async (service) => {
       const subServices = await this.digifranchiseSubServiceOfferedRepository.find({
         where: {
-          digifrachiseServiceId: Equal(service.id),
+           digifranchiseServiceId: Equal(service.id),
         },
-      });
+       });
 
       return {
         ...service,
@@ -217,14 +217,14 @@ export class DigifranchiseService {
   async createSubDigifranchiseServiceOffered(
     createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
     userId: string,
-    digifrachiseServiceId: string,
+    digifranchiseServiceId: string,
   ): Promise<DigifranchiseSubServices> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const Service = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: digifrachiseServiceId } });
+    const Service = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: digifranchiseServiceId } });
 
     if (!Service) {
       throw new NotFoundException('Service not found');
@@ -233,7 +233,7 @@ export class DigifranchiseService {
     const newDigifranchiseSubServiceOffered = this.digifranchiseSubServiceOfferedRepository.create({
       ...createDigifranchiseSubServiceOfferedDto,
       userId: user,
-      digifrachiseServiceId: Service,
+      digifranchiseServiceId: Service,
     });
 
     return this.digifranchiseSubServiceOfferedRepository.save(newDigifranchiseSubServiceOffered);
