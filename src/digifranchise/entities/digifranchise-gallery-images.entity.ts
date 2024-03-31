@@ -22,11 +22,11 @@ export class DigifranchiseGalleryImage {
     digifranchiseProductId: DigifranchiseProduct | null;
 
     @ManyToOne(() => DigifranchiseSubServices, service => service.subServiceGalleryImages, { nullable: true })
-    @JoinColumn({ name: 'subService' })
+    @JoinColumn({ name: 'subServiceId' }) 
     subService: DigifranchiseSubServices | null;
-
+    
     @ManyToOne(() => DigifranchiseSubProduct, product => product.subProductGalleryImages, { nullable: true })
-    @JoinColumn({ name: 'subService' })
+    @JoinColumn({ name: 'subProductId' }) 
     subProduct: DigifranchiseSubProduct | null;
 
     @ManyToOne(() => DigifranchiseOwner, ownedItem => ownedItem.ownedDigifranchise, { nullable: true })
