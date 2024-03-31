@@ -4,7 +4,7 @@ import { OrderTable } from 'src/payment/entities/order.entity';
 import { IsNull, Repository } from 'typeorm';
 import { CreateRatingOrderDto } from './dto/rating-order.dto';
 import { OrderComplaintsTable, OrderIssueTable } from './entities/Complaints.entity';
-import type { CreateOrderComplaintsDto } from './dto/Complaints.dto';
+import  { CreateOrderComplaintsDto } from './dto/Complaints.dto';
 
 @Injectable()
 export class OrderComplaintsService {

@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { ProductService } from './product.service';
 import { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
-import type { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
+import  { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
 
 @ApiTags('Digifranchise Product')
 @ApiBearerAuth()

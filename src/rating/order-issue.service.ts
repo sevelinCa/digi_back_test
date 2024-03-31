@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
 import { IsNull, type Repository } from 'typeorm';
-import type { CreateOrderIssueDto } from './dto/Complaints.dto';
+import  { CreateOrderIssueDto } from './dto/Complaints.dto';
 import { OrderIssueTable } from './entities/Complaints.entity';
 
 @Injectable()

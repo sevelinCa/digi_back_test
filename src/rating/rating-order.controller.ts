@@ -5,7 +5,7 @@ import { RolesGuard } from 'src/roles/roles.guard';
 import { RatingOrderService } from './rating-order.service';
 import { RatingOrderTable } from './entities/rating-order.entity';
 import { Request } from 'express';
-import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import  { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { CreateRatingOrderDto } from './dto/rating-order.dto';
 
 @ApiTags('Rating - order')

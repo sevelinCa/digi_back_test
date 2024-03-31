@@ -1,5 +1,7 @@
 import { DigifranchiseProduct } from 'src/digifranchise/entities/digifranchise-product.entity';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
+import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
+import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchise-sub-service.entity';
 import { OrderComplaintsTable, OrderIssueTable } from 'src/rating/entities/Complaints.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import {
@@ -35,6 +37,11 @@ export class OrderTable {
     @JoinColumn({ name: 'productId' })
     productId: DigifranchiseProduct | null;
 
+    @ManyToOne(() => DigifranchiseServiceOffered, { nullable: true })
+    @JoinColumn({ name: 'serviceId' })
+    serviceId: DigifranchiseServiceOffered | null;
+
+
     @OneToMany(() => OrderBasicInfo, basicInfo => basicInfo.order)
     basicInfos: OrderBasicInfo[];
 
@@ -44,9 +51,14 @@ export class OrderTable {
     @OneToMany(() => OrderIssueTable, issue => issue.order)
     issues: OrderIssueTable[]
 
-    @ManyToOne(() => DigifranchiseServiceOffered, { nullable: true })
-    @JoinColumn({ name: 'serviceId' })
-    serviceId: DigifranchiseServiceOffered | null;
+    @ManyToOne(() => DigifranchiseSubProduct, { nullable: true })
+    @JoinColumn({ name: 'subProduct' })
+    subProduct: DigifranchiseSubProduct | null;
+
+    @ManyToOne(() => DigifranchiseSubServices, { nullable: true })
+    @JoinColumn({ name: 'subService' })
+    subService: DigifranchiseSubServices | null;
+
 
     @Column({ type: 'json', nullable: true })
     orderAdditionalInfo: any[];

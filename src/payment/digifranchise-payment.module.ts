@@ -12,12 +12,26 @@ import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifran
 import { DigifranchiseServiceCategory } from 'src/digifranchise/entities/digifranchise-service-category.entity';
 import { OrderBasicInfoService } from './order-basic-info.service';
 import { OrderBasicInfoController } from './order-basic-info.controller';
+import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchise-sub-service.entity';
+import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
+import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digifranchise-sub-service-category.entity';
 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      OrderTable, UserEntity, DigifranchiseProduct,OrderBasicInfo, RateTable,DigifranchiseServiceCategory, DigifranchiseProduct, DigifranchiseServiceOffered, Digifranchise
+      OrderTable,
+      UserEntity,
+      DigifranchiseProduct,
+      OrderBasicInfo,
+      RateTable,
+      DigifranchiseServiceCategory,
+      DigifranchiseProduct,
+      DigifranchiseServiceOffered,
+      Digifranchise,
+      DigifranchiseSubServices,
+      DigifranchiseSubProduct,
+      DigifranchiseSubServiceCategory,
     ]),
   ],
   providers: [OrderService, RateService, OrderBasicInfoService],

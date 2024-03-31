@@ -24,11 +24,6 @@ import { DigifranchiseProductController } from './digifranchise-product.controll
 import { DigifranchiseGeneralInfoController } from './digifranchise-general-info.controller';
 import { DigifranchiseComplianceInfoController } from './digifranchise-compliance-info.controller';
 import { DigifranchiseProfessionalMembershipController } from './digifranchise-professional-membership.controller';
-import { DigifranchiseOwnedProduct } from './entities/digifranchise-owned-product.entity';
-import { DigifranchiseOwnedServiceOffered } from './entities/digifranchise-owned-service-offered.entity';
-import { DigifranchiseOwnedServiceAndProductService } from './digifranchise-owned-service-and-product.service';
-import { DigifranchiseOwnedServiceController, DigifranchiseOwnedProductController } from './digifranchise-owned-service-and-product.controller';
-import { DigifranchiseOwnedServiceCategory } from './entities/digifranchise-owned-service-category.entity';
 import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
 import { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
 import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
@@ -36,6 +31,7 @@ import { DigifranchiseImagesService } from './digifranchise-images.service';
 import { DigifranchiseImagesController } from './digifranchise-images.controller';
 import { DigifranchiseSelectItemService } from './digifranchise-select-item.service';
 import { DigifranchiseSelectItemController } from './digifranchise-select-item.controller';
+import { DigifranchiseSubServiceCategory } from './entities/digifranchise-sub-service-category.entity';
 
 @Module({
   imports: [
@@ -52,12 +48,12 @@ import { DigifranchiseSelectItemController } from './digifranchise-select-item.c
       DigifranchiseProfessionalBodyMembership,
       ProfessionalBodyEntity,
       Accreditation,
-      DigifranchiseOwnedProduct,
-      DigifranchiseOwnedServiceOffered,
-      DigifranchiseOwnedServiceCategory,
       DigifranchiseGalleryImage,
       DigifranchiseServiceCategory,
       DigifranchiseSelectProductOrServiceTable,
+      DigifranchiseSubServiceCategory,
+      DigifranchiseSubProduct
+
     ]),
   ],
   controllers: [
@@ -68,19 +64,16 @@ import { DigifranchiseSelectItemController } from './digifranchise-select-item.c
     DigifranchiseComplianceInfoController,
     DigifranchiseProfessionalMembershipController,
     DigifranchiseWebController,
-    DigifranchiseOwnedServiceController,
-    DigifranchiseOwnedProductController,
     DigifranchiseImagesController,
     DigifranchiseSelectItemController,
     DigifranchiseOptionEndpoint
-      ],
+  ],
   providers: [
     DigifranchiseService,
     DigifranchiseGeneralInfoService,
     DigifranchiseComplianceInfoService,
     DigifranchiseProfessionalBodyMembershipService,
     ProductService,
-    DigifranchiseOwnedServiceAndProductService,
     DigifranchiseImagesService,
     DigifranchiseSelectItemService,
   ]
