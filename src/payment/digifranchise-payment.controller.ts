@@ -111,6 +111,19 @@ export class OrderController {
     async deleteOrder(@Param('orderId') orderId: string): Promise<void> {
         return this.orderService.deleteOrder(orderId);
     }
+
+    @ApiOperation({ summary: 'Create a new order for subscriptions' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order for subscription has been successfully created.' })
+    @ApiBody({ type: CreateOrderTableDto })
+    @Post('create-order-for-subs/:subProductOrSubServiceOrSubCategoryId')
+    async createOrderForSubs(
+        @Req() req: Request,
+        @Body() createOrderTableDto: CreateOrderTableDto,
+        @Param('subProductOrSubServiceOrSubCategoryId') subProductOrSubServiceOrSubCategoryId: string,
+    ): Promise<OrderTable> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.createOrderForSubs(createOrderTableDto, userId, subProductOrSubServiceOrSubCategoryId);
+    }
 }
 
 

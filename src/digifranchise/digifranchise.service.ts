@@ -97,7 +97,6 @@ export class DigifranchiseService {
       });
       await this.digifranchiseServiceOfferedRepository.save(ownedService);
 
-      // Create owned service categories for each service
       const serviceCategories = await this.digifranchiseServiceCategoryRepository.find({
         where: { service: Equal(service.id) },
       });

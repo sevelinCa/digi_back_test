@@ -49,7 +49,9 @@ export class OrderService {
         let productOrServiceOrCategory;
         let productOrServiceOrCategoryType;
 
-        productOrServiceOrCategory = await this.digifranchiseProductRepository.findOne({ where: { id: productOrServiceOrCategoryId } });
+        productOrServiceOrCategory = await this.digifranchiseProductRepository.findOne({ 
+            where: { id: productOrServiceOrCategoryId } 
+        });
         if (productOrServiceOrCategory) {
             productOrServiceOrCategoryType = 'product';
         } else {
@@ -128,24 +130,25 @@ export class OrderService {
         let subProductOrSubServiceOrSubCategoryType;
 
         // Check for sub-product
-        subProductOrSubServiceOrSubCategory = await this.digifranchiseSubProductRepository.findOne({ where: { id: subProductOrSubServiceOrSubCategoryId } });
+        subProductOrSubServiceOrSubCategory = await this.digifranchiseSubProductRepository.findOne({ 
+            where: { id: subProductOrSubServiceOrSubCategoryId } 
+        });
         if (subProductOrSubServiceOrSubCategory) {
             subProductOrSubServiceOrSubCategoryType = 'subProduct';
         } else {
-            // Check for sub-service with relations
-            subProductOrSubServiceOrSubCategory = await this.digifranchiseSubServicesRepository.findOne({
+            const serviceSubCategory = await this.digifranchiseServiceSubCategoryRepository.findOne({
                 where: { id: subProductOrSubServiceOrSubCategoryId },
-                relations: ['subService'] // Assuming 'subService' is the relation you need
+                relations: ['subService']
             });
-            if (subProductOrSubServiceOrSubCategory) {
-                subProductOrSubServiceOrSubCategoryType = 'subService';
+            if (serviceSubCategory && serviceSubCategory.subService) {
+                subProductOrSubServiceOrSubCategory = serviceSubCategory.subService;
+                subProductOrSubServiceOrSubCategoryType = 'service';
             } else {
-                // Check for sub-category
-                subProductOrSubServiceOrSubCategory = await this.digifranchiseServiceSubCategoryRepository.findOne({ where: { id: subProductOrSubServiceOrSubCategoryId } });
+                subProductOrSubServiceOrSubCategory = await this.digifranchiseSubServicesRepository.findOne({ where: { id: subProductOrSubServiceOrSubCategoryId } });
                 if (subProductOrSubServiceOrSubCategory) {
-                    subProductOrSubServiceOrSubCategoryType = 'subCategory';
+                    subProductOrSubServiceOrSubCategoryType = 'service';
                 } else {
-                    throw new HttpException('Sub-product, sub-service category, or sub-service offered does not exist', HttpStatus.NOT_FOUND);
+                    throw new HttpException('Product, service category, or service offered does not exist', HttpStatus.NOT_FOUND);
                 }
             }
         }
