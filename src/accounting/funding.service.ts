@@ -4,9 +4,9 @@ import { Repository } from 'typeorm';
 import { Funding } from './entities/funding.entity';
 import { CreateFundingDto } from './dto/Create-DTOs/create-funding.dto';
 import { findFundingById } from 'src/helper/FindByFunctions';
-import { User } from 'src/users/domain/user';
-import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
+import  { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
 export class FundingService {
@@ -15,8 +15,8 @@ export class FundingService {
     private readonly fundingRepository: Repository<Funding>,
     @InjectRepository(DigifranchiseOwner)
     private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async createFunding(

@@ -45,6 +45,9 @@ import { DigifranchisePaymentModule } from './payment/digifranchise-payment.modu
 // import { ChatModule } from './chat/chat.module';
 import { EnquiryMessageModule } from './enquiry-message/enquiry-message.module';
 import { RatingOrderModule } from './rating/rating-order.module';
+import { AccountingModule } from './accounting/accounting.module';
+import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -103,10 +106,10 @@ import { RatingOrderModule } from './rating/rating-order.module';
     MailModule,
     MailerModule,
     HomeModule,
-    // AccountingModule,
+    AccountingModule,
     DigifranchiseModule,
-    // InventoryModule,
-    // AssetMgtModule,
+    InventoryModule,
+    AssetMgtModule,
     SmsModule,
     UserModule,
     ProfessionalBodiesModule,

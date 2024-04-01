@@ -23,7 +23,6 @@ import {
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { RolesGuard } from 'src/roles/roles.guard';
-import { User } from '../users/domain/user';
 import { Request } from 'express';
 import { CreateFixedExpenseDto } from './dto/Create-DTOs/create-fixed-expense.dto';
 import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
@@ -51,10 +50,11 @@ import { OperatingParameters } from './entities/operationParamenters.entity';
 import { OperatingParametersService } from './operating-parameters.service';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
-import type { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
-import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
-import type { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
+import  { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
+import  { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
+import  { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import type { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 
 @ApiTags('Admin - Fixed Expenses')
@@ -66,7 +66,7 @@ export class ManagerFixedExpensesController {
     private readonly managerFixedExpensesService: ManagerFixedExpensesService,
   ) {}
 
-  @Roles(RoleEnum.admin)
+  @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({
     summary: 'CREATE - Create Fixed Expense for MANAGER',
   })
@@ -142,7 +142,7 @@ export class ClientFixedExpensesController {
     @Body(new ValidationPipe())
     createFixedExpenseDto: CreateFixedExpenseDto,
   ): Promise<FixedExpenseCategory> {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     return this.clientFixedExpensesService.createFixedExpenses(
       createFixedExpenseDto,
       userId,
@@ -158,7 +158,7 @@ export class ClientFixedExpensesController {
     userSpecific: FixedExpenseCategory[];
     predefined: FixedExpenseCategory[];
   }> {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     return this.clientFixedExpensesService.getAllFixedExpensesCategories(
       userId,
     );
@@ -172,7 +172,7 @@ export class ClientFixedExpensesController {
     @Req() req: Request,
     @Param('id') id: string,
   ): Promise<FixedExpenseCategory> {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     return this.clientFixedExpensesService.getFixedExpenses(userId, id);
   }
 
@@ -185,7 +185,7 @@ export class ClientFixedExpensesController {
     @Param('id') id: string,
     @Body(new ValidationPipe()) updateData: CreateFixedExpenseDto,
   ): Promise<FixedExpenseCategory> {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     return this.clientFixedExpensesService.updateFixedExpenses(
       userId,
       id,
@@ -201,7 +201,7 @@ export class ClientFixedExpensesController {
     @Req() req: Request,
     @Param('id') id: string,
   ): Promise<void> {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     return this.clientFixedExpensesService.deleteFixedExpenses(userId, id);
   }
 }
@@ -225,7 +225,7 @@ export class ExpensesController {
     @Param('fixedExpenseId') fixedExpenseId: string,
     @Body() createExpenseDto: CreateExpenseDto,
   ) {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     const franchiseAccount = await getDigifranchiseAccountByUserId(
       this.DigifranchiseRepository,
       userId,
@@ -311,7 +311,7 @@ export class IncomesController {
   })
   @Post()
   async create(@Req() req: Request, @Body() createIncomeDto: CreateIncomeDto) {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     const franchiseAccount = await getDigifranchiseAccountByUserId(
       this.DigifranchiseRepository,
       userId,
@@ -394,7 +394,7 @@ export class FundingsController {
     @Req() req: Request,
     @Body() createFundingDto: CreateFundingDto,
   ) {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
@@ -480,7 +480,7 @@ export class DepositsController {
     @Req() req: Request,
     @Body() createDepositDto: CreateDepositDto,
   ) {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });
@@ -563,7 +563,7 @@ export class OperatingParametersController {
     @Req() req: Request,
     @Body() createOperatingParametersDto: CreateOperatingParametersDto,
   ) {
-    const userId = (req.user as User).id;
+    const userId = (req.user as UserEntity).id;
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
       where: { userId: userId },
     });

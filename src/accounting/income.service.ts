@@ -7,8 +7,8 @@ import {
   findIncomeById, getDigifranchiseAccountByUserId,
 } from 'src/helper/FindByFunctions';
 import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
-import { User } from 'src/users/domain/user';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
 export class IncomeService {
@@ -17,8 +17,8 @@ export class IncomeService {
     private readonly incomeRepository: Repository<Income>,
     @InjectRepository(DigifranchiseOwner)
     private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async createIncome(
