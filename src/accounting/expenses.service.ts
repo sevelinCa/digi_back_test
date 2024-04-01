@@ -10,8 +10,8 @@ import {
 } from 'src/helper/FindByFunctions';
 import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
 import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
-import { User } from 'src/users/domain/user';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
 export class ExpenseService {
@@ -20,8 +20,8 @@ export class ExpenseService {
     private readonly expenseRepository: Repository<Expense>,
     @InjectRepository(DigifranchiseOwner)
     private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     @InjectRepository(FixedExpenseCategory)
     private readonly fixedExpenseCategoryRepository: Repository<FixedExpenseCategory>,
   ) {}

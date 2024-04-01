@@ -15,19 +15,20 @@ import { Funding } from './entities/funding.entity';
 import { Income } from './entities/income.entity';
 import { OperatingParameters } from './entities/operationParamenters.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       FixedExpenseCategory,
-      User,
       Expense,
       DigifranchiseOwner,
       Income,
       Funding,
       Deposit,
       OperatingParameters,
+      UserEntity
     ]),
   ],
   controllers: [

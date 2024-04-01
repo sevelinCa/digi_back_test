@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Deposit } from './entities/deposit.entity';
 import { CreateDepositDto } from './dto/Create-DTOs/create-deposit.dto';
 import { findDepositById } from 'src/helper/FindByFunctions';
-import type { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
+import  { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
