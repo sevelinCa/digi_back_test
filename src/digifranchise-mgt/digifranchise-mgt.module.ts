@@ -20,8 +20,8 @@ import { InventoryManagement } from './entities/inventory-management.entity';
   imports: [
     TypeOrmModule.forFeature([AvailableManagement,Digifranchise, UserEntity, CustomerManagement, UnavailableManagement, SupplierManagement, StaffManagement, InventoryManagement ]),
   ],
-  providers: [AvailabilityManagementService, UnavailableManagementService, CustomerManagementService, SupplierManagementService, InventoryManagementService, StaffManagementService ],
-  controllers: [AvailabilityManagementController,UnavailableManagementController,CustomerManagementController,SupplierManagementController,StaffManagementController, InventoryManagementController]
+  providers: [AvailabilityManagementService, UnavailableManagementService, CustomerManagementService, SupplierManagementService, InventoryManagementService, StaffManagementService,  ],
+  controllers: [AvailabilityManagementController,UnavailableManagementController,CustomerManagementController,SupplierManagementController,StaffManagementController, InventoryManagementController, ]
 })
 export class DigifranchiseMgtModule {}
 
