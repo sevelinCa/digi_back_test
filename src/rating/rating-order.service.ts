@@ -63,4 +63,17 @@ export class RatingOrderService {
         }
         return ratingOrder;
     }
+
+    async getAverageRatingForDigifranchise(digifranchiseId: string): Promise<number> {
+        const result = await this.ratingOrderRepository
+          .createQueryBuilder('rating')
+          .select('AVG(rating.rating)', 'averageRating')
+          .innerJoin('rating.orderId', 'order')
+          .leftJoin('order.productId', 'product')
+          .leftJoin('order.serviceId', 'service')
+          .where('product.digifranchiseId = :digifranchiseId OR service.digifranchiseId = :digifranchiseId', { digifranchiseId })
+          .getRawOne();
+    
+        return result ? result.averageRating : 0;
+    }
 }
