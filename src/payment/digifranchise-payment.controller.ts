@@ -81,7 +81,7 @@ export class OrderController {
     @ApiOperation({ summary: 'Get all orders for a user' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been retrieved.' })
     @Get('get-all-order')
-    async getAllOrders(): Promise<OrderTable[]> {
+    async getAllOrders(): Promise<{ orders: OrderTable[], count: number }> {
         return this.orderService.getAllOrders();
     }
 
@@ -149,7 +149,7 @@ export class OrderController {
     @ApiBearerAuth()
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Get('get-all-order-with-auth')
-    async getAllOrdersWithAuth(@Req() req: Request): Promise<OrderTable[]> {
+    async getAllOrdersWithAuth(@Req() req: Request): Promise<{ orders: OrderTable[], count: number }> {
         const userId = (req.user as UserEntity).id;
         return this.orderService.getAllOrdersWithAuth(userId);
     }

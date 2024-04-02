@@ -32,6 +32,10 @@ import { DigifranchiseImagesController } from './digifranchise-images.controller
 import { DigifranchiseSelectItemService } from './digifranchise-select-item.service';
 import { DigifranchiseSelectItemController } from './digifranchise-select-item.controller';
 import { DigifranchiseSubServiceCategory } from './entities/digifranchise-sub-service-category.entity';
+import { DigifranchiseExpenseService } from './digifranchise-expense.service';
+import { DigifranchiseExpenseController } from './digifranchise-expense.controller';
+import { DigifranchiseExpense } from './entities/digifranchise-expense.entity';
+import { FixedExpenseCategory } from 'src/accounting/entities/fixedExpenseCategory.entity';
 
 @Module({
   imports: [
@@ -52,7 +56,9 @@ import { DigifranchiseSubServiceCategory } from './entities/digifranchise-sub-se
       DigifranchiseServiceCategory,
       DigifranchiseSelectProductOrServiceTable,
       DigifranchiseSubServiceCategory,
-      DigifranchiseSubProduct
+      DigifranchiseSubProduct,
+      DigifranchiseExpense,
+      FixedExpenseCategory
 
     ]),
   ],
@@ -66,7 +72,8 @@ import { DigifranchiseSubServiceCategory } from './entities/digifranchise-sub-se
     DigifranchiseWebController,
     DigifranchiseImagesController,
     DigifranchiseSelectItemController,
-    DigifranchiseOptionEndpoint
+    DigifranchiseOptionEndpoint,
+    DigifranchiseExpenseController
   ],
   providers: [
     DigifranchiseService,
@@ -76,6 +83,7 @@ import { DigifranchiseSubServiceCategory } from './entities/digifranchise-sub-se
     ProductService,
     DigifranchiseImagesService,
     DigifranchiseSelectItemService,
+    DigifranchiseExpenseService,
   ]
 })
 export class DigifranchiseModule { }

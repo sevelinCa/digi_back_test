@@ -278,12 +278,12 @@ export class OrderService {
     }
 
 
-
-    async getAllOrders(): Promise<OrderTable[]> {
-        return this.orderRepository.find({
-            where: {deleteAt: IsNull() },
+    async getAllOrders(): Promise<{ orders: OrderTable[], count: number }> {
+        const orders = await this.orderRepository.find({
+            where: { deleteAt: IsNull() },
             relations: ['userId', 'productId', 'serviceId']
         });
+        return { orders, count: orders.length };
     }
 
     async getOneOrder(orderId: string): Promise<OrderTable | null> {
@@ -314,10 +314,13 @@ export class OrderService {
         });
     }
 
-    async getAllOrdersWithAuth(userId: string): Promise<OrderTable[]> {
-        return this.orderRepository.find({
+    async getAllOrdersWithAuth(userId: string): Promise<{ orders: OrderTable[], count: number }> {
+        const orders = await this.orderRepository.find({
             where: { userId: { id: Equal(userId) }, deleteAt: IsNull() },
             relations: ['userId', 'productId', 'serviceId']
         });
+        return { orders, count: orders.length };
     }
+
+    
 }
