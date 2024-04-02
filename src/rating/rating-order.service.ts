@@ -19,7 +19,21 @@ export class RatingOrderService {
         private readonly orderpository: Repository<OrderTable>,
     ) { }
 
-    async createRatingOrder(userId: string, orderId: string, createRatingOrderDto: CreateRatingOrderDto): Promise<RatingOrderTable> {
+    async createRatingOrder(orderId: string, createRatingOrderDto: CreateRatingOrderDto): Promise<RatingOrderTable> {
+
+        const order = await this.orderpository.findOne({ where: { id: orderId } })
+        if (!order) {
+            throw new Error('Order does not exist')
+        }
+
+        const newRatingOrder = this.ratingOrderRepository.create({
+            ...createRatingOrderDto,
+            orderId: order,
+        });
+        return await this.ratingOrderRepository.save(newRatingOrder);
+    }
+
+    async createRatingOrderWithAuth(userId: string, orderId: string, createRatingOrderDto: CreateRatingOrderDto): Promise<RatingOrderTable> {
         const user = await this.userRepository.findOne({ where: { id: userId } })
         if (!user) {
             throw new Error('User does not exist')
