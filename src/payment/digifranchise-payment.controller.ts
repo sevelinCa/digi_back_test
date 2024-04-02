@@ -60,8 +60,8 @@ export class RateController {
 }
 
 @ApiTags('Order')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'order', version: '1' })
 export class OrderController {
     constructor(private readonly orderService: OrderService) { }

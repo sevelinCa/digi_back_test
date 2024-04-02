@@ -119,8 +119,8 @@ export class DigifranchiseController {
 }
 
 @ApiTags('Digifranchise Optional - Endpoint')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'digifranchise-optional-endpoint', version: '1' })
 export class DigifranchiseOptionEndpoint {
   constructor(
