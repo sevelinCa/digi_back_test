@@ -33,7 +33,13 @@ export class DigifranchiseGeneralInfo {
   address: string
 
   @Column()
+  connectNumberWithOutCountryCode: string
+
+  @Column()
   connectNumber: string
+
+  @Column()
+  otherMobileNumberWithOutCountryCode: string
 
   @Column()
   otherMobileNumber: string

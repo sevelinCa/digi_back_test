@@ -128,8 +128,10 @@ export class DigifranchiseService {
       tiktokHandle: '',
       instagramHandle: '',
       xHandle: '',
+      connectNumberWithOutCountryCode: '',
       connectNumber: '',
       address: '',
+      otherMobileNumberWithOutCountryCode: '',
       otherMobileNumber: '',
       aboutCompany: '',
       location: ''
@@ -283,8 +285,8 @@ export class DigifranchiseService {
 
     const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
       where: [
-        { connectNumber: phoneNumber },
-        { otherMobileNumber: phoneNumber }
+        { connectNumberWithOutCountryCode: phoneNumber },
+        { otherMobileNumberWithOutCountryCode: phoneNumber }
       ]
     })
 

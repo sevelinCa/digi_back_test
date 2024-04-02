@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
 import { UpdateDigifranchiseGeneralInfoDto } from './dto/update-digifranchise-general-info.dto';
+import { isValidPhoneNumber, removeCountryCode } from 'src/utils/phone-number-validation';
 
 @Injectable()
 export class DigifranchiseGeneralInfoService {
@@ -32,15 +33,36 @@ export class DigifranchiseGeneralInfoService {
     }
 
     if (
-      (digifranchiseGeneralInfo.connectNumber !== dto.connectNumber || 
+      (digifranchiseGeneralInfo.connectNumber !== dto.connectNumber ||
         digifranchiseGeneralInfo.otherMobileNumber !== dto.connectNumber) &&
-        digifranchiseGeneralInfo.digifranchisePublished
+      digifranchiseGeneralInfo.digifranchisePublished
+    ) {
+      throw new ConflictException(
+        "to update phone numbers for digifranchise, please first unpublish the current version, make the necessary changes, and then republish."
+      )
+    }
+
+    if (dto.connectNumber.trim() !== '') {
+      if (
+        !isValidPhoneNumber(dto.connectNumber)
       ) {
         throw new ConflictException(
-          "to update phone numbers for digifranchise, please first unpublish the current version, make the necessary changes, and then republish."
+          "please include country code"
         )
       }
-    
+    }
+
+    if (dto.otherMobileNumber.trim() !== '') {
+      if (!isValidPhoneNumber(dto.otherMobileNumber)) {
+        throw new ConflictException(
+          "please include country code"
+        )
+      }
+    }
+
+    const connectNumberWithoutCC = removeCountryCode(dto.connectNumber)
+    const otherMobileWithoutCC = removeCountryCode(dto.otherMobileNumber)
+
     digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
     digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle
     digifranchiseGeneralInfo.tiktokHandle = dto.tiktokHandle
@@ -52,8 +74,12 @@ export class DigifranchiseGeneralInfoService {
     digifranchiseGeneralInfo.aboutCompany = dto.aboutCompany
     digifranchiseGeneralInfo.location = dto.location
 
+    Object.assign(digifranchiseGeneralInfo, { connectNumberWithOutCountryCode: connectNumberWithoutCC })
+    Object.assign(digifranchiseGeneralInfo, { otherMobileNumberWithOutCountryCode: otherMobileWithoutCC })
+
     this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo)
 
     return digifranchiseGeneralInfo
+
   }
 }
