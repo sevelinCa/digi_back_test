@@ -34,5 +34,14 @@ export class DigifranchiseExpenseController {
         return this.digifranchiseExpenseService.getAllDigifranchiseExpenses();
     }
 
-
+    @ApiOperation({ summary: 'UPDATE - Update a digifranchise expense' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'The expense has been successfully updated.' })
+    @ApiBody({ type: UpdateDigifranchiseExpenseDto })
+    @Put('update-expense/:expenseId')
+    async updateDigifranchiseExpense(
+        @Param('expenseId') expenseId: string,
+        @Body() updateDigifranchiseExpenseDto: UpdateDigifranchiseExpenseDto,
+    ): Promise<DigifranchiseExpense> {
+        return this.digifranchiseExpenseService.updateDigifranchiseExpense( expenseId,updateDigifranchiseExpenseDto );
+    }
 }

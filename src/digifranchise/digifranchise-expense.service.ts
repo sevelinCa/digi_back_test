@@ -51,4 +51,15 @@ export class DigifranchiseExpenseService {
         return this.digifranchiseExpenseRepository.find();
     }
 
+
+    async updateDigifranchiseExpense(expnseId: string, updateDigifranchiseExpenseDto: UpdateDigifranchiseExpenseDto): Promise<DigifranchiseExpense> {
+        const expense = await this.digifranchiseExpenseRepository.findOne({where:{id:expnseId}});
+        if (!expense) {
+            throw new NotFoundException(`Expense with expnseId ${expnseId} not found`);
+        }
+
+        Object.assign(expense, updateDigifranchiseExpenseDto);
+
+        return this.digifranchiseExpenseRepository.save(expense);
+    }
 }
