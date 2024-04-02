@@ -30,6 +30,63 @@ export class DigifranchiseServiceSeedService {
         await this.seedBeautyAndBest();
         await this.seedCropMinder();
         await this.seedAquaShine(); 
+        await this.seedFrienderly();
+
+    }
+
+    private async seedFrienderly() {
+        const check = await this.digifranchiseRepository.count({
+            where: { digifranchiseName: "Frienderly" },
+        });
+    
+        if (check === 0) {
+            const digifranchiseId = this.digifranchiseRepository.create({
+                digifranchiseName: "Frienderly",
+                description: "Frienderly offers companion care to the elderly. The services are offered within specific areas. Customers can request a free 30-min introductory conversation.",
+                status: StatusEnum.active,
+            });
+    
+            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
+    
+            const frienderlyServices = [
+                {
+                    serviceName: 'Games for Seniors',
+                    description: 'Games for Seniors - R150 per hour per companion. Group size 5 - 20.',
+                    unitPrice: '150',
+                    serviceCategory: [
+                        { serviceCategoryName: 'Group Games', unitPrice: '150', description: 'Group size 5 - 20' },
+                    ]
+                },
+                {
+                    serviceName: 'Individual Companion Care',
+                    description: 'Individual Companion Care - R175 per hour. Up to 2 elderly people. Activities - reading, conversation, in-home games, painting, scribing.',
+                    unitPrice: '175',
+                    serviceCategory: [
+                        { serviceCategoryName: 'Reading', unitPrice: '175', description: 'Reading' },
+                        { serviceCategoryName: 'Conversation', unitPrice: '175', description: 'Conversation' },
+                        { serviceCategoryName: 'In-home Games', unitPrice: '175', description: 'In-home Games' },
+                        { serviceCategoryName: 'Painting', unitPrice: '175', description: 'Painting' },
+                        { serviceCategoryName: 'Scribing', unitPrice: '175', description: 'Scribing' },
+                    ]
+                },
+            ];
+    
+            for (const service of frienderlyServices) {
+                const serviceEntity = this.serviceRepository.create({
+                    ...service,
+                    digifranchiseId: savedDigifranchise,
+                });
+                await this.serviceRepository.save(serviceEntity);
+    
+                for (const category of service.serviceCategory) {
+                    const categoryEntity = this.serviceCategoryRepository.create({
+                        ...category,
+                        service: serviceEntity, 
+                    });
+                    await this.serviceCategoryRepository.save(categoryEntity);
+                }
+            }
+        }
     }
 
     private async seedCleanWheelz() {
