@@ -281,15 +281,34 @@ export class OrderService {
     async getAllOrders(): Promise<{ orders: OrderTable[], count: number }> {
         const orders = await this.orderRepository.find({
             where: { deleteAt: IsNull() },
-            relations: ['userId', 'productId', 'serviceId']
+            relations: [
+                'userId', 
+                'productId', 
+                'productId.productGalleryImages', 
+                'serviceId', 
+                'serviceId.serviceGalleryImages' 
+            ]
         });
         return { orders, count: orders.length };
     }
 
+    // async getOneOrder(orderId: string): Promise<OrderTable | null> {
+    //     return this.orderRepository.findOne({
+    //         where: { id: orderId, deleteAt: IsNull() },
+    //         relations: ['userId', 'productId', 'serviceId']
+    //     });
+    // }
+
     async getOneOrder(orderId: string): Promise<OrderTable | null> {
         return this.orderRepository.findOne({
             where: { id: orderId, deleteAt: IsNull() },
-            relations: ['userId', 'productId', 'serviceId']
+            relations: [
+                'userId', 
+                'productId', 
+                'productId.productGalleryImages', 
+                'serviceId', 
+                'serviceId.serviceGalleryImages' 
+            ]
         });
     }
 
@@ -317,10 +336,15 @@ export class OrderService {
     async getAllOrdersWithAuth(userId: string): Promise<{ orders: OrderTable[], count: number }> {
         const orders = await this.orderRepository.find({
             where: { userId: { id: Equal(userId) }, deleteAt: IsNull() },
-            relations: ['userId', 'productId', 'serviceId']
+            relations: [
+                'userId', 
+                'productId', 
+                'productId.productGalleryImages', 
+                'serviceId', 
+                'serviceId.serviceGalleryImages' 
+            ]
         });
         return { orders, count: orders.length };
     }
 
-    
 }
