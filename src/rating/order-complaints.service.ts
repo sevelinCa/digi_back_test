@@ -18,20 +18,15 @@ export class OrderComplaintsService {
         private readonly orderIssuepository: Repository<OrderIssueTable>,
     ) { }
 
-    async createOrderComplaint(issueId: string, orderId: string, createOrderComplaintsDto: CreateOrderComplaintsDto): Promise<OrderComplaintsTable> {
+    async createOrderComplaint(orderId: string, createOrderComplaintsDto: CreateOrderComplaintsDto): Promise<OrderComplaintsTable> {
         const order = await this.orderpository.findOne({ where: { id: orderId } })
         if (!order) {
             throw new Error('Order does not exist')
         }
 
-        const issue = await this.orderIssuepository.findOne({ where: { id: issueId } })
-        if (!issue) {
-            throw new Error('Issue does not exist')
-        }
         const newOrderComplaint = this.orderComplaintsRepository.create({
             ...createOrderComplaintsDto,
             order: order,
-            issue: issue
         });
         return await this.orderComplaintsRepository.save(newOrderComplaint);
     }
@@ -39,7 +34,7 @@ export class OrderComplaintsService {
     async getAllOrderComplaint(): Promise<OrderComplaintsTable[]> {
         return await this.orderComplaintsRepository.find({
             where: { deleteAt: IsNull() },
-            relations: ['order', 'issue']
+            relations: ['order']
         });
     }
 }
