@@ -225,6 +225,10 @@ export class OrderService {
             }
         }
 
+        if (!productOrServiceOrCategory) {
+            throw new HttpException('Product, service category, or service offered does not exist', HttpStatus.NOT_FOUND);
+        }
+        
         const franchise = await this.digifranchiseRepository.findOne({ where: { id: productOrServiceOrCategory.franchiseId } });
         if (!franchise) {
             throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);

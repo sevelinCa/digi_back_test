@@ -129,9 +129,11 @@ export class OrderController {
         return this.orderService.getOrderByOrderNumber(orderNumber);
     }
 
-    @ApiOperation({ summary: 'Create a new order' })
+    @ApiOperation({ summary: 'Create a new order with auth' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
     @ApiBody({ type: CreateOrderTableDto })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Post('create-order-auth/:productOrServiceOrCategoryId')
     async createOrderWithAuth(
         @Req() req: Request,
