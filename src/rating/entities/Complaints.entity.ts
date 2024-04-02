@@ -30,6 +30,9 @@ export class OrderIssueTable {
     @Column({ type: 'boolean', default: false })
     isSelected: boolean;
 
+    @Column({ type: 'json', nullable: true })
+    orderAdditionalInfo: any[];
+
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 
@@ -50,12 +53,8 @@ export class OrderComplaintsTable {
     @JoinColumn({ name: 'order' })
     order: OrderTable;
 
-    @ManyToOne(() => OrderIssueTable, issue=> issue.complaints)
-    @JoinColumn({ name: 'issue' })
-    issue: OrderIssueTable;
-
-    @Column({ type: 'text' })
-    custom_issue_description: string;
+    @Column({ type: 'json', nullable: true })
+    issues: any[];
 
     @Column({ type: 'text' })
     additional_information:string;

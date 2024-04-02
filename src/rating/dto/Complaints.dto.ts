@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString, IsBoolean } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsBoolean, IsArray } from "class-validator";
 
 export class CreateOrderIssueDto {
     @ApiProperty({ example: 'Order issue description' })
@@ -25,37 +25,50 @@ export class UpdateOrderIssueDto {
     isSelected?: boolean;
 }
 
-export class CreateOrderComplaintsDto {
-    @ApiProperty({ example: 'Custom issue description' })
-    @IsNotEmpty()
-    @IsString()
-    custom_issue_description: string;
 
-    @ApiProperty({ example: 'Additional information' })
-    @IsNotEmpty()
+export class CreateOrderComplaintsDto {
+    @ApiProperty({
+        example: [
+            { "Name": "This is the issue 1" },
+            { "Name": "This is the issue 2" },
+        ],
+        type: () => [Object]
+    })
+    @IsArray()
+    @IsOptional()
+    issues: any[];
+
+    @ApiProperty({ example: 'Additional information about the complaint' })
     @IsString()
+    @IsOptional()
     additional_information: string;
 
     @ApiProperty({ example: true })
-    @IsOptional()
     @IsBoolean()
-    refund_requested?: boolean;
+    @IsOptional()
+    refund_requested: boolean;
 }
 
 
 export class UpdateOrderComplaintsDto {
-    @ApiProperty({ example: 'Updated custom issue description', required: false })
+    @ApiProperty({
+        example: [
+            { "Name": "This is the updated issue 1" },
+            { "Name": "This is the updated issue 2" },
+        ],
+        type: () => [Object]
+    })
+    @IsArray()
     @IsOptional()
-    @IsString()
-    custom_issue_description?: string;
+    issues: any[];
 
-    @ApiProperty({ example: 'Updated additional information', required: false })
-    @IsOptional()
+    @ApiProperty({ example: 'Updated additional information about the complaint', required: false })
     @IsString()
+    @IsOptional()
     additional_information?: string;
 
     @ApiProperty({ example: false, required: false })
-    @IsOptional()
     @IsBoolean()
+    @IsOptional()
     refund_requested?: boolean;
 }

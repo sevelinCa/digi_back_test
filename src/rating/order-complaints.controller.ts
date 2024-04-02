@@ -20,9 +20,8 @@ export class OrderComplaintsController {
     @Post('rating-order-complain')
     async createRatingOrder(
         @Body() createOrderComplaintsDto: CreateOrderComplaintsDto,
-        @Param('issueId') issueId: string,
         @Query('orderId') orderId: string): Promise<OrderComplaintsTable> {
-        return this.orderComplaintsService.createOrderComplaint(issueId, orderId, createOrderComplaintsDto);
+        return this.orderComplaintsService.createOrderComplaint(orderId, createOrderComplaintsDto);
     }
 
 
