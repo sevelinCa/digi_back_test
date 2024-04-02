@@ -81,9 +81,8 @@ export class OrderController {
     @ApiOperation({ summary: 'Get all orders for a user' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been successfully retrieved.' })
     @Get('get-all-order')
-    async getAllOrders(@Req() req: Request): Promise<OrderTable[]> {
-        const userId = (req.user as UserEntity).id;
-        return this.orderService.getAllOrders(userId);
+    async getAllOrders(): Promise<OrderTable[]> {
+        return this.orderService.getAllOrders();
     }
 
     @ApiOperation({ summary: 'Get a single order by ID' })

@@ -195,9 +195,9 @@ export class OrderService {
 
 
 
-    async getAllOrders(userId: string): Promise<OrderTable[]> {
+    async getAllOrders(): Promise<OrderTable[]> {
         return this.orderRepository.find({
-            where: { userId: { id: Equal(userId) }, deleteAt: IsNull() },
+            where: {deleteAt: IsNull() },
             relations: ['userId', 'productId', 'serviceId']
         });
     }
