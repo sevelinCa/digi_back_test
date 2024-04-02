@@ -42,26 +42,30 @@ export class DigifranchiseGeneralInfoService {
       )
     }
 
-    if (dto.connectNumber.trim() !== '') {
-      if (
-        !isValidPhoneNumber(dto.connectNumber)
-      ) {
-        throw new ConflictException(
-          "please include country code"
-        )
+    if (dto.connectNumber !== undefined) {
+      if (dto.connectNumber.trim() !== '') {
+        if (
+          !isValidPhoneNumber(dto.connectNumber)
+        ) {
+          throw new ConflictException(
+            "please include country code"
+          )
+        }
       }
     }
 
-    if (dto.otherMobileNumber.trim() !== '') {
-      if (!isValidPhoneNumber(dto.otherMobileNumber)) {
-        throw new ConflictException(
-          "please include country code"
-        )
+    if (dto.otherMobileNumber !== undefined) {
+      if (dto.otherMobileNumber.trim() !== '') {
+        if (!isValidPhoneNumber(dto.otherMobileNumber)) {
+          throw new ConflictException(
+            "please include country code"
+          )
+        }
       }
     }
 
-    const connectNumberWithoutCC = removeCountryCode(dto.connectNumber)
-    const otherMobileWithoutCC = removeCountryCode(dto.otherMobileNumber)
+    const connectNumberWithoutCC = dto.connectNumber !== undefined ? removeCountryCode(dto.connectNumber) : ''
+    const otherMobileWithoutCC = dto.otherMobileNumber !== undefined ? removeCountryCode(dto.otherMobileNumber): ''
 
     digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
     digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle
