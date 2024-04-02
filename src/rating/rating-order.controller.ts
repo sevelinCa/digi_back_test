@@ -53,4 +53,13 @@ export class RatingOrderController {
     async getRatingOrderById(@Param('ratingId') ratingId: string): Promise<RatingOrderTable> {
         return this.ratingOrderService.getRatingOrderById(ratingId);
     }
+
+    @ApiOperation({ summary: 'GET - Digifranchise rating avairage' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Rating  retrieved successfully.' })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Rating digifrachise not found.' })
+    @Get(':id/average-rating')
+    async getAverageRatingForDigifranchise(@Param('id') digifranchiseId: string): Promise<number> {
+        return this.ratingOrderService.getAverageRatingForDigifranchise(digifranchiseId);
+    }
+
 }

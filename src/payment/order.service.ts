@@ -292,12 +292,6 @@ export class OrderService {
         return { orders, count: orders.length };
     }
 
-    // async getOneOrder(orderId: string): Promise<OrderTable | null> {
-    //     return this.orderRepository.findOne({
-    //         where: { id: orderId, deleteAt: IsNull() },
-    //         relations: ['userId', 'productId', 'serviceId']
-    //     });
-    // }
 
     async getOneOrder(orderId: string): Promise<OrderTable | null> {
         return this.orderRepository.findOne({
