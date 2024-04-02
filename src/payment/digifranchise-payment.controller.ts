@@ -75,7 +75,7 @@ export class OrderController {
         @Param('productOrServiceOrCategoryId') productOrServiceOrCategoryId: string,
         @Body() createOrderTableDto: CreateOrderTableDto,
     ): Promise<OrderTable> {
-        return this.orderService.createOrder(createOrderTableDto,productOrServiceOrCategoryId);
+        return this.orderService.createOrder(createOrderTableDto, productOrServiceOrCategoryId);
     }
 
     @ApiOperation({ summary: 'Get all orders for a user' })
@@ -120,6 +120,14 @@ export class OrderController {
         @Param('subProductOrSubServiceOrSubCategoryId') subProductOrSubServiceOrSubCategoryId: string,
     ): Promise<OrderTable> {
         return this.orderService.createOrderForSubs(createOrderTableDto, subProductOrSubServiceOrSubCategoryId);
+    }
+
+    @ApiOperation({ summary: 'GET - Retrieve an order by its order number' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Order retrieved successfully.' })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order not found.' })
+    @Get('get-order-by-number/:orderNumber')
+    async getOrderByOrderNumber(@Param('orderNumber') orderNumber: number): Promise<OrderTable | null> {
+        return this.orderService.getOrderByOrderNumber(orderNumber);
     }
 }
 
