@@ -313,4 +313,11 @@ export class OrderService {
             where: { orderNumber: orderNumber },
         });
     }
+
+    async getAllOrdersWithAuth(userId: string): Promise<OrderTable[]> {
+        return this.orderRepository.find({
+            where: { userId: { id: Equal(userId) }, deleteAt: IsNull() },
+            relations: ['userId', 'productId', 'serviceId']
+        });
+    }
 }

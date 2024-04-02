@@ -143,6 +143,16 @@ export class OrderController {
         const userId = (req.user as UserEntity).id;
         return this.orderService.createOrderWithAuth(createOrderTableDto, userId, productOrServiceOrCategoryId);
     }
+
+    @ApiOperation({ summary: 'Get all orders for a user' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been successfully retrieved.' })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Get('get-all-order-with-auth')
+    async getAllOrdersWithAuth(@Req() req: Request): Promise<OrderTable[]> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.getAllOrdersWithAuth(userId);
+    }
 }
 
 
