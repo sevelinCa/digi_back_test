@@ -40,14 +40,14 @@ export class OrderService {
         private readonly digifranchiseServiceSubCategoryRepository: Repository<DigifranchiseSubServiceCategory>,
     ) { }
 
-    async createOrder(createOrderTableDto: CreateOrderTableDto,productOrServiceOrCategoryId: string): Promise<OrderTable> {
+    async createOrder(createOrderTableDto: CreateOrderTableDto, productOrServiceOrCategoryId: string): Promise<OrderTable> {
 
 
         let productOrServiceOrCategory;
         let productOrServiceOrCategoryType;
 
-        productOrServiceOrCategory = await this.digifranchiseProductRepository.findOne({ 
-            where: { id: productOrServiceOrCategoryId } 
+        productOrServiceOrCategory = await this.digifranchiseProductRepository.findOne({
+            where: { id: productOrServiceOrCategoryId }
         });
         if (productOrServiceOrCategory) {
             productOrServiceOrCategoryType = 'product';
@@ -120,9 +120,9 @@ export class OrderService {
 
         let subProductOrSubServiceOrSubCategory;
         let subProductOrSubServiceOrSubCategoryType;
-    
-        subProductOrSubServiceOrSubCategory = await this.digifranchiseSubProductRepository.findOne({ 
-            where: { id: subProductOrSubServiceOrSubCategoryId } 
+
+        subProductOrSubServiceOrSubCategory = await this.digifranchiseSubProductRepository.findOne({
+            where: { id: subProductOrSubServiceOrSubCategoryId }
         });
         if (subProductOrSubServiceOrSubCategory) {
             subProductOrSubServiceOrSubCategoryType = 'subProduct';
@@ -145,40 +145,40 @@ export class OrderService {
                 }
             }
         }
-    
+
         const franchise = await this.digifranchiseRepository.findOne({ where: { id: subProductOrSubServiceOrSubCategory.franchiseId } });
         if (!franchise) {
             throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
         }
-    
+
         const vatRateRecord = await this.rateTableRepository.findOne({
             where: { rateName: 'VAT', deleteAt: IsNull() },
         });
-    
+
         if (!vatRateRecord) {
             throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
         }
-    
+
         const vatRate = vatRateRecord.rateNumber;
-    
+
         let unitPrice;
         if (subProductOrSubServiceOrSubCategoryType === 'subProduct') {
             unitPrice = subProductOrSubServiceOrSubCategory.unitPrice;
         } else if (subProductOrSubServiceOrSubCategoryType === 'subService') {
             unitPrice = subProductOrSubServiceOrSubCategory.unitPrice;
         }
-    
+
         const quantity = createOrderTableDto.quantity;
         const totalAmount = Number(unitPrice) * Number(quantity);
         const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
-    
+
         const lastOrder = await this.orderRepository.find({
             order: { orderNumber: 'DESC' },
             take: 1,
         });
-    
+
         const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
-    
+
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
             subProduct: subProductOrSubServiceOrSubCategoryType === 'subProduct' ? subProductOrSubServiceOrSubCategory.id : null,
@@ -188,7 +188,7 @@ export class OrderService {
             totalAmount,
             orderNumber: nextOrderNumber,
         });
-    
+
         const savedOrder = await this.orderRepository.save(newOrder);
         return savedOrder;
     }
@@ -223,5 +223,10 @@ export class OrderService {
         if (result.affected === 0) {
             throw new NotFoundException(`Order with ID ${orderId} not found`);
         }
+    }
+    async getOrderByOrderNumber(orderNumber: number): Promise<OrderTable | null> {
+        return this.orderRepository.findOne({
+            where: { orderNumber: orderNumber },
+        });
     }
 }
