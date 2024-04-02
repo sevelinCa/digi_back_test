@@ -79,7 +79,7 @@ export class OrderController {
     }
 
     @ApiOperation({ summary: 'Get all orders for a user' })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been successfully retrieved.' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been retrieved.' })
     @Get('get-all-order')
     async getAllOrders(): Promise<OrderTable[]> {
         return this.orderService.getAllOrders();
