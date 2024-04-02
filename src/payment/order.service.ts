@@ -40,11 +40,8 @@ export class OrderService {
         private readonly digifranchiseServiceSubCategoryRepository: Repository<DigifranchiseSubServiceCategory>,
     ) { }
 
-    async createOrder(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceOrCategoryId: string): Promise<OrderTable> {
-        const user = await checkIfUserExists(this.userRepository, userId);
-        if (!user) {
-            throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
-        }
+    async createOrder(createOrderTableDto: CreateOrderTableDto,productOrServiceOrCategoryId: string): Promise<OrderTable> {
+
 
         let productOrServiceOrCategory;
         let productOrServiceOrCategoryType;
@@ -107,7 +104,6 @@ export class OrderService {
 
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
-            userId: user,
             productId: productOrServiceOrCategoryType === 'product' ? productOrServiceOrCategory : null,
             serviceId: productOrServiceOrCategoryType === 'service' ? productOrServiceOrCategory : null,
             unitPrice: unitPrice,
@@ -120,30 +116,23 @@ export class OrderService {
         return savedOrder;
     }
 
-    async createOrderForSubs(createOrderTableDto: CreateOrderTableDto, userId: string, subProductOrSubServiceOrSubCategoryId: string): Promise<OrderTable> {
-        const user = await checkIfUserExists(this.userRepository, userId);
-        if (!user) {
-            throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
-        }
-    
+    async createOrderForSubs(createOrderTableDto: CreateOrderTableDto, subProductOrSubServiceOrSubCategoryId: string): Promise<OrderTable> {
+
         let subProductOrSubServiceOrSubCategory;
         let subProductOrSubServiceOrSubCategoryType;
     
-        // Check for sub-product
         subProductOrSubServiceOrSubCategory = await this.digifranchiseSubProductRepository.findOne({ 
             where: { id: subProductOrSubServiceOrSubCategoryId } 
         });
         if (subProductOrSubServiceOrSubCategory) {
             subProductOrSubServiceOrSubCategoryType = 'subProduct';
         } else {
-            // Check for sub-service
             subProductOrSubServiceOrSubCategory = await this.digifranchiseSubServicesRepository.findOne({
                 where: { id: subProductOrSubServiceOrSubCategoryId },
             });
             if (subProductOrSubServiceOrSubCategory) {
                 subProductOrSubServiceOrSubCategoryType = 'subService';
             } else {
-                // Check for sub-service category
                 const serviceSubCategory = await this.digifranchiseServiceSubCategoryRepository.findOne({
                     where: { id: subProductOrSubServiceOrSubCategoryId },
                     relations: ['subService']
@@ -192,7 +181,6 @@ export class OrderService {
     
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
-            userId: user,
             subProduct: subProductOrSubServiceOrSubCategoryType === 'subProduct' ? subProductOrSubServiceOrSubCategory.id : null,
             subService: subProductOrSubServiceOrSubCategoryType === 'subService' ? subProductOrSubServiceOrSubCategory.id : null,
             unitPrice: unitPrice,

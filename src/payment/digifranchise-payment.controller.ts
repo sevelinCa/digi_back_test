@@ -75,8 +75,7 @@ export class OrderController {
         @Param('productOrServiceOrCategoryId') productOrServiceOrCategoryId: string,
         @Body() createOrderTableDto: CreateOrderTableDto,
     ): Promise<OrderTable> {
-        const userId = (req.user as UserEntity).id;
-        return this.orderService.createOrder(createOrderTableDto, userId, productOrServiceOrCategoryId);
+        return this.orderService.createOrder(createOrderTableDto,productOrServiceOrCategoryId);
     }
 
     @ApiOperation({ summary: 'Get all orders for a user' })
@@ -117,12 +116,10 @@ export class OrderController {
     @ApiBody({ type: CreateOrderTableDto })
     @Post('create-order-for-subs/:subProductOrSubServiceOrSubCategoryId')
     async createOrderForSubs(
-        @Req() req: Request,
         @Body() createOrderTableDto: CreateOrderTableDto,
         @Param('subProductOrSubServiceOrSubCategoryId') subProductOrSubServiceOrSubCategoryId: string,
     ): Promise<OrderTable> {
-        const userId = (req.user as UserEntity).id;
-        return this.orderService.createOrderForSubs(createOrderTableDto, userId, subProductOrSubServiceOrSubCategoryId);
+        return this.orderService.createOrderForSubs(createOrderTableDto, subProductOrSubServiceOrSubCategoryId);
     }
 }
 
