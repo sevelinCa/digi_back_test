@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DigifranchiseExpense } from './entities/digifranchise-expense.entity';
-import { CreateDigifranchiseExpenseDto } from './dto/create-digifranchise-expense.dto';
+import { CreateDigifranchiseExpenseDto, type UpdateDigifranchiseExpenseDto } from './dto/create-digifranchise-expense.dto';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { FixedExpenseCategory } from 'src/accounting/entities/fixedExpenseCategory.entity';
 
@@ -21,6 +21,7 @@ export class DigifranchiseExpenseService {
         createDigifranchiseExpenseDto: CreateDigifranchiseExpenseDto,
         ownedDigifranchiseId: string,
         fixedExpenseCategoryId: string,
+        
     ): Promise<DigifranchiseExpense> {
         const franchise = await this.DigifranchiseOwnerRepository.findOne({
             where: { id: ownedDigifranchiseId }
@@ -44,4 +45,10 @@ export class DigifranchiseExpenseService {
 
         return this.digifranchiseExpenseRepository.save(newDigifranchiseExpense);
     }
+
+
+    async getAllDigifranchiseExpenses(): Promise<DigifranchiseExpense[]> {
+        return this.digifranchiseExpenseRepository.find();
+    }
+
 }

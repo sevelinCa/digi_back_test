@@ -1,8 +1,8 @@
-import { Body, Controller, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import  { DigifranchiseExpenseService } from './digifranchise-expense.service';
-import { CreateDigifranchiseExpenseDto } from './dto/create-digifranchise-expense.dto';
-import  { DigifranchiseExpense } from './entities/digifranchise-expense.entity';
+import { DigifranchiseExpenseService } from './digifranchise-expense.service';
+import { CreateDigifranchiseExpenseDto, UpdateDigifranchiseExpenseDto } from './dto/create-digifranchise-expense.dto';
+import { DigifranchiseExpense } from './entities/digifranchise-expense.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 
@@ -24,6 +24,15 @@ export class DigifranchiseExpenseController {
         @Param('fixedExpenseCategoryId') fixedExpenseCategoryId: string,
         @Body() createDigifranchiseExpenseDto: CreateDigifranchiseExpenseDto,
     ): Promise<DigifranchiseExpense> {
-        return this.digifranchiseExpenseService.createDigifranchiseExpense(createDigifranchiseExpenseDto,ownedDigifranchiseId, fixedExpenseCategoryId);
+        return this.digifranchiseExpenseService.createDigifranchiseExpense(createDigifranchiseExpenseDto, ownedDigifranchiseId, fixedExpenseCategoryId);
     }
+
+    @ApiOperation({ summary: 'GET - Fetch all digifranchise expenses' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All expenses have been successfully retrieved.' })
+    @Get()
+    async getAllDigifranchiseExpenses(): Promise<DigifranchiseExpense[]> {
+        return this.digifranchiseExpenseService.getAllDigifranchiseExpenses();
+    }
+
+
 }

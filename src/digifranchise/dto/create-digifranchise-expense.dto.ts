@@ -39,6 +39,6 @@ export class UpdateDigifranchiseExpenseDto {
  purchaseDone?: boolean;
 
  @ApiProperty({ example: '2024-03-15T00:00:00Z' })
- @IsNotEmpty()
+ @IsOptional()
  puchaseDate: Date;
 }
