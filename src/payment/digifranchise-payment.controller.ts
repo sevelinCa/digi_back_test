@@ -128,6 +128,21 @@ export class OrderController {
     async getOrderByOrderNumber(@Param('orderNumber') orderNumber: number): Promise<OrderTable | null> {
         return this.orderService.getOrderByOrderNumber(orderNumber);
     }
+
+    @ApiOperation({ summary: 'Create a new order with auth' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
+    @ApiBody({ type: CreateOrderTableDto })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Post('create-order-auth/:productOrServiceOrCategoryId')
+    async createOrderWithAuth(
+        @Req() req: Request,
+        @Param('productOrServiceOrCategoryId') productOrServiceOrCategoryId: string,
+        @Body() createOrderTableDto: CreateOrderTableDto,
+    ): Promise<OrderTable> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.createOrderWithAuth(createOrderTableDto, userId, productOrServiceOrCategoryId);
+    }
 }
 
 
