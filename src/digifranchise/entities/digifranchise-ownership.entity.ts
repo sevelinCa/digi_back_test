@@ -1,8 +1,9 @@
+import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, OneToMany } from 'typeorm';
-import { Digifranchise } from './digifranchise.entity';
 import { DigifranchiseGeneralInfo } from './digifranchise-general-information.entity';
 import { DigifranchiseComplianceInfo } from './digifranchise-compliance-information.entity';
 import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
+import { DigifranchiseExpense } from './digifranchise-expense.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -26,7 +27,11 @@ export class DigifranchiseOwner {
   digifranchiseComplianceInfo: DigifranchiseComplianceInfo;
 
   @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseOwnedId)
-  ownedDigifranchise: DigifranchiseGalleryImage[];
+  digifranchiseGalleryImage: DigifranchiseGalleryImage[];
+
+
+  @OneToMany(() => DigifranchiseExpense, ownedFranchise => ownedFranchise.ownedDigifranchise)
+  digifranchiseExpense: DigifranchiseExpense[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

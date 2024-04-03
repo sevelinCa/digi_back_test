@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { DigifranchiseExpense } from 'src/digifranchise/entities/digifranchise-expense.entity';
 
 @Entity()
 export class FixedExpenseCategory {
@@ -12,6 +13,9 @@ export class FixedExpenseCategory {
   @ManyToOne(() => UserEntity, { nullable: true })
   @JoinColumn({ name: 'userId' })
   userId: UserEntity | null;
+
+  @OneToMany(() => DigifranchiseExpense, expenseCateogry => expenseCateogry.fixedExpenseCategory)
+  digifranchiseExpense: DigifranchiseExpense[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

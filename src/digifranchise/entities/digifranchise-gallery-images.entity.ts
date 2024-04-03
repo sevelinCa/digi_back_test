@@ -29,7 +29,7 @@ export class DigifranchiseGalleryImage {
     @JoinColumn({ name: 'subProductId' }) 
     subProduct: DigifranchiseSubProduct | null;
 
-    @ManyToOne(() => DigifranchiseOwner, ownedItem => ownedItem.ownedDigifranchise, { nullable: true })
+    @ManyToOne(() => DigifranchiseOwner, ownedItem => ownedItem.digifranchiseGalleryImage, { nullable: true })
     @JoinColumn({ name: 'digifranchiseOwnedId' })
     digifranchiseOwnedId: DigifranchiseOwner | null;
 
