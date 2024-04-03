@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { DigifranchiseExpense } from './entities/digifranchise-expense.entity';
 import { CreateDigifranchiseExpenseDto, type UpdateDigifranchiseExpenseDto } from './dto/create-digifranchise-expense.dto';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
@@ -48,7 +48,15 @@ export class DigifranchiseExpenseService {
 
 
     async getAllDigifranchiseExpenses(): Promise<DigifranchiseExpense[]> {
-        return this.digifranchiseExpenseRepository.find();
+        return this.digifranchiseExpenseRepository.find({
+            where: { deleteAt: IsNull() },
+            relations: [
+                'DigifranchiseOwner', 
+                'FixedExpenseCategory', 
+                'DigifranchiseOwner.DigifranchiseGalleryImage', 
+                'DigifranchiseOwner.Digifranchise' 
+            ]
+        });;
     }
 
 
