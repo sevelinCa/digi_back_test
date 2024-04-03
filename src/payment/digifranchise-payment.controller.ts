@@ -167,7 +167,20 @@ export class OrderController {
         return this.orderService.createOrderByCategory(createOrderTableDto, serviceCategoryId);
     }
 
-
+    @ApiOperation({ summary: 'Create a new order with auth' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
+    @ApiBody({ type: CreateOrderTableDto })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Post('create-order-serviceCategory-auth/:serviceCategoryId')
+    async createOrderByCategoryWithAuth(
+        @Req() req: Request,
+        @Param('serviceCategoryId') serviceCategoryId: string,
+        @Body() createOrderTableDto: CreateOrderTableDto,
+    ): Promise<OrderTable> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.createOrderByCategoryWithAuth(createOrderTableDto, userId, serviceCategoryId);
+    }
 }
 
 
