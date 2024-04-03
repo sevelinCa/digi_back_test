@@ -383,7 +383,7 @@ export class DigifranchiseService {
   async getDigifranchiseServiceCategoryById(serviceCategoryById: string): Promise<DigifranchiseServiceCategory> {
     const category = await this.digifranchiseServiceCategoryRepository.findOne({
       where: { id: serviceCategoryById },
-      relations: ['service'],
+      relations: ['service','service.serviceGalleryImages'],
     });
     if (!category) {
       throw new NotFoundException(`DigifranchiseServiceCategory with ID ${serviceCategoryById} not found`);
