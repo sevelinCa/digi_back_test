@@ -39,8 +39,8 @@ export class DigifranchiseExpenseService {
 
         const newDigifranchiseExpense = this.digifranchiseExpenseRepository.create({
             ...createDigifranchiseExpenseDto,
-            ownedDigifranchiseId: franchise,
-            fixedExpenseCategoryId: fixedExpenseCategory,
+            ownedDigifranchise: franchise,
+            fixedExpenseCategory: fixedExpenseCategory,
         });
 
         return this.digifranchiseExpenseRepository.save(newDigifranchiseExpense);
@@ -51,14 +51,13 @@ export class DigifranchiseExpenseService {
         return this.digifranchiseExpenseRepository.find({
             where: { deleteAt: IsNull() },
             relations: [
-                'DigifranchiseOwner', 
-                'FixedExpenseCategory', 
-                'DigifranchiseOwner.DigifranchiseGalleryImage', 
-                'DigifranchiseOwner.Digifranchise' 
-            ]
-        });;
+                'ownedDigifranchise', 
+                'fixedExpenseCategory', 
+                'ownedDigifranchise.digifranchiseGalleryImage', 
+                'ownedDigifranchise.digifranchise' 
+               ]
+        });
     }
-
 
     async updateDigifranchiseExpense(expnseId: string, updateDigifranchiseExpenseDto: UpdateDigifranchiseExpenseDto): Promise<DigifranchiseExpense> {
         const expense = await this.digifranchiseExpenseRepository.findOne({where:{id:expnseId}});

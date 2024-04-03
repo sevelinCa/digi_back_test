@@ -129,7 +129,11 @@ export class DigifranchiseServiceSeedService {
                     description: 'Personal Training Sessions Description',
                     unitPrice: '',
                     serviceCategory: [
-                        { serviceCategoryName: 'One Person', unitPrice: '200', description: 'Description text here' },
+                        { 
+                            serviceCategoryName: 'One Person', 
+                            unitPrice: '200', 
+                            description: 'Description text here' },
+                            
                         { serviceCategoryName: 'Group', unitPrice: '100', description: 'Description text here' }
                     ]
                 }

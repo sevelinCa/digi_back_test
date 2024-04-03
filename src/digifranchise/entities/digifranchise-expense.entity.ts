@@ -15,13 +15,13 @@ export class DigifranchiseExpense {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => DigifranchiseOwner)
-  @JoinColumn({ name: 'ownedDigifranchiseId' })
-  ownedDigifranchiseId: DigifranchiseOwner;
-
-  @ManyToOne(() => FixedExpenseCategory)
-  @JoinColumn({ name: 'fixedExpenseId' })
-  fixedExpenseCategoryId: FixedExpenseCategory;
+  @ManyToOne(() => DigifranchiseOwner,ownedFranchise => ownedFranchise.digifranchiseExpense)
+  @JoinColumn({ name: 'ownedDigifranchise' })
+  ownedDigifranchise: DigifranchiseOwner;
+  
+  @ManyToOne(() => FixedExpenseCategory, expenseCategory => expenseCategory.digifranchiseExpense)
+  @JoinColumn({ name: 'fixedExpense' })
+  fixedExpenseCategory: FixedExpenseCategory;
 
   @Column({ type: 'integer' })
   quantity: number;
