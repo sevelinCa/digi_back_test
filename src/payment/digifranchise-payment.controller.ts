@@ -69,13 +69,13 @@ export class OrderController {
     @ApiOperation({ summary: 'Create a new order' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
     @ApiBody({ type: CreateOrderTableDto })
-    @Post('create-order/:productOrServiceOrCategoryId')
+    @Post('create-order/:productOrServiceId')
     async createOrder(
         @Req() req: Request,
-        @Param('productOrServiceOrCategoryId') productOrServiceOrCategoryId: string,
+        @Param('productOrServiceId') productOrServiceId: string,
         @Body() createOrderTableDto: CreateOrderTableDto,
     ): Promise<OrderTable> {
-        return this.orderService.createOrder(createOrderTableDto, productOrServiceOrCategoryId);
+        return this.orderService.createOrder(createOrderTableDto, productOrServiceId);
     }
 
     @ApiOperation({ summary: 'Get all orders for a user' })
@@ -153,6 +153,21 @@ export class OrderController {
         const userId = (req.user as UserEntity).id;
         return this.orderService.getAllOrdersWithAuth(userId);
     }
+
+
+
+    @ApiOperation({ summary: 'Create a new order with-service category' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
+    @ApiBody({ type: CreateOrderTableDto })
+    @Post('create-order-with-serviceCategory/:serviceCategoryId')
+    async createOrderByCategory(
+        @Param('serviceCategoryId') serviceCategoryId: string,
+        @Body() createOrderTableDto: CreateOrderTableDto,
+    ): Promise<OrderTable> {
+        return this.orderService.createOrderByCategory(createOrderTableDto, serviceCategoryId);
+    }
+
+
 }
 
 
