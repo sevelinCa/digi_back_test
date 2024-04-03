@@ -389,5 +389,66 @@ export class OrderService {
         return savedOrder;
     }
 
+    async createOrderByCategoryWithAuth(createOrderTableDto: CreateOrderTableDto,userId: string, serviceCategoryId: string): Promise<OrderTable> {
+        const user = await checkIfUserExists(this.userRepository, userId);
+        if (!user) {
+            throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+        }
+
+        let serviceCategory;
+        let serviceOffered;
+
+        serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({
+            where: { id: serviceCategoryId },
+            relations: ['service']
+        });
+
+        if (!serviceCategory) {
+            throw new HttpException('Service category does not exist', HttpStatus.NOT_FOUND);
+        }
+
+        serviceOffered = serviceCategory.service;
+
+        const unitPrice = serviceCategory.unitPrice;
+
+        const franchise = await this.digifranchiseRepository.findOne({ where: { id: serviceOffered.digifranchiseId } });
+        if (!franchise) {
+            throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
+        }
+
+        const vatRateRecord = await this.rateTableRepository.findOne({
+            where: { rateName: 'VAT', deleteAt: IsNull() },
+        });
+
+        if (!vatRateRecord) {
+            throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
+        }
+
+        const vatRate = vatRateRecord.rateNumber;
+        const quantity = createOrderTableDto.quantity;
+        const totalAmount = Number(unitPrice) * Number(quantity);
+        const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
+
+        const lastOrder = await this.orderRepository.find({
+            order: { orderNumber: 'DESC' },
+            take: 1,
+        });
+
+        const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
+
+        const newOrder = this.orderRepository.create({
+            ...createOrderTableDto,
+            userId: user,
+            serviceId: serviceOffered,
+            unitPrice: unitPrice,
+            vatAmount: vatAmount,
+            totalAmount,
+            orderNumber: nextOrderNumber,
+        });
+
+        const savedOrder = await this.orderRepository.save(newOrder);
+        return savedOrder;
+    }
+
 
 }
