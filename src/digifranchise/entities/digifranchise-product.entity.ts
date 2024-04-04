@@ -21,7 +21,7 @@ export class DigifranchiseProduct {
   productGalleryImages: DigifranchiseGalleryImage[];
 
   @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.franchiseProduct)
-  selectItem: DigifranchiseSelectProductOrServiceTable[];
+  selectedItem: DigifranchiseSelectProductOrServiceTable[];
 
   @Column({type: 'text'})
   productName: string;

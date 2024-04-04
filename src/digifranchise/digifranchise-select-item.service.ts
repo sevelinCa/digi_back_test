@@ -64,20 +64,30 @@ export class DigifranchiseSelectItemService {
   }
 
   async selectOrUnselectProduct(digifranchiseOwnedId: string, digifranchiseProductId: string, userId: string): Promise<DigifranchiseSelectProductOrServiceTable> {
+    console.log(`Attempting to select or unselect product with ownedId: ${digifranchiseOwnedId}, productId: ${digifranchiseProductId}, userId: ${userId}`);
+
+    // Check if the product exists
     const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: digifranchiseProductId } });
+    console.log(`Product found: ${existingProduct ? 'Yes' : 'No'}`);
     if (!existingProduct) {
       throw new NotFoundException('Digifranchise product not found');
     }
 
+    // Check if the owned franchise exists
     const ownedDigifranchise = await this.ownedDigifranchisepRepository.findOne({ where: { id: digifranchiseOwnedId } });
+    console.log(`Owned franchise found: ${ownedDigifranchise ? 'Yes' : 'No'}`);
     if (!ownedDigifranchise) {
       throw new NotFoundException('Owned Digifranchise not found');
     }
 
+    // Check if the user exists
     const user = await this.userRepository.findOne({ where: { id: userId } });
+    console.log(`User found: ${user ? 'Yes' : 'No'}`);
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    // Check if the selection already exists
     const existingSelection = await this.digifranchiseSelectItemRepository.findOne({
       where: {
         ownerDigifranchise: Equal(digifranchiseOwnedId),
@@ -85,23 +95,30 @@ export class DigifranchiseSelectItemService {
         userId: Equal(userId),
       },
     });
+    console.log(`Existing selection found: ${existingSelection ? 'Yes' : 'No'}`);
 
-    let newSelection: DigifranchiseSelectProductOrServiceTable | undefined;
+    let newSelection;
     if (!existingSelection) {
+      // If the selection does not exist, create a new one
       newSelection = this.digifranchiseSelectItemRepository.create({
         ownerDigifranchise: ownedDigifranchise,
         franchiseProduct: existingProduct,
         userId: user,
         isSelected: true
       });
+      console.log('Creating new selection');
     } else {
+      // If the selection exists, toggle the isSelected flag
       existingSelection.isSelected = !existingSelection.isSelected;
       newSelection = existingSelection;
+      console.log('Toggling selection');
     }
 
-    return this.digifranchiseSelectItemRepository.save(newSelection);
-  }
-
+    // Save the new or updated selection
+    const savedSelection = await this.digifranchiseSelectItemRepository.save(newSelection);
+    console.log('Selection saved successfully');
+    return savedSelection;
+}
   async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
     return this.digifranchiseSelectItemRepository.find({
       where: { isSelected: true, deleteAt: IsNull() },
@@ -109,7 +126,7 @@ export class DigifranchiseSelectItemService {
         'ownerDigifranchise',
         'digifranchiseService',
         'digifranchiseService.serviceGalleryImages',
-        'digifranchiseService.selectItem',
+        'digifranchiseService.selectedItem',
         'digifranchiseService.serviceCategories',
         'franchiseProduct.productGalleryImages',
       ],
@@ -123,13 +140,12 @@ export class DigifranchiseSelectItemService {
       'ownerDigifranchise',
       'digifranchiseService',
       'digifranchiseService.serviceGalleryImages',
-      'digifranchiseService.selectItem',
+      'digifranchiseService.selectedItem',
       'digifranchiseService.serviceCategories',
       'franchiseProduct.productGalleryImages',
     ],
   });
 }
-
 
 }
 
