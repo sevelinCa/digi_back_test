@@ -1,4 +1,4 @@
-import { Controller, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { DigifranchiseSelectServiceService, DigifranchiseSelectProductService } from './digifranchise-select-item.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -27,6 +27,13 @@ export class DigifranchiseSelectItemServiceController {
         const userId = (req.user as UserEntity).id;
         return this.digifranchiseSelectServiceService.selectOrUnselectService(ownerDigifranchiseId, digifranchiseServiceId, userId);
     }
+
+    @ApiOperation({ summary: 'Retrieve all selected services' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All selected services retrieved successfully.', type: [DigifranchiseSelectProductOrServiceTable] })
+    @Get('get-all-select-services')
+    async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+        return this.digifranchiseSelectServiceService.getAllSelectedServices();
+    }
 }
 
 @ApiTags('Digifranchise - SELECT PRODUCT')
@@ -49,5 +56,12 @@ export class DigifranchiseSelectItemProductController {
         const userId = (req.user as UserEntity).id;
         return this.digifranchiseSelectProductService.selectOrUnselectProduct(digifranchiseOwnedId, digifranchiseProductId, userId);
     }
+
+    // @ApiOperation({ summary: 'Retrieve all selected services' })
+    // @ApiResponse({ status: HttpStatus.OK, description: 'All selected services retrieved successfully.', type: [DigifranchiseSelectProductOrServiceTable] })
+    // @Get()
+    // async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+    //     return this.digifranchiseSelectProductService.getAllSelectedServices();
+    // }
 }
 
