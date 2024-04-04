@@ -17,7 +17,7 @@ export class DigifranchiseSelectItemController {
 
 
     @ApiOperation({ summary: 'SELECT - Check or Uncheck service', })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Service selected.' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Service checked.' })
     @Post('select-service/:ownerDigifranchiseId/:digifranchiseServiceId')
     async selectOrUnselectService(
         @Req() req: Request,
@@ -30,7 +30,7 @@ export class DigifranchiseSelectItemController {
 
 
     @ApiOperation({ summary: 'SELECT - Check or Uncheck product', })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Product selected.' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Product checked.' })
     @Post('select-product/:digifranchiseOwnedId/:digifranchiseProductId')
     async selectOrUnselectProduct(
         @Req() req: Request,
