@@ -8,13 +8,13 @@ export class DigifranchiseSelectProductOrServiceTable {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => DigifranchiseOwner, { nullable: true })
-    @JoinColumn({ name: 'ownerDigifranchiseId' })
-    ownerDigifranchiseId: DigifranchiseOwner | null;
+    @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.selectItem)
+    @JoinColumn({ name: 'ownerDigifranchise' })
+    ownerDigifranchise: DigifranchiseOwner | null;
 
-    @ManyToOne(() => DigifranchiseServiceOffered, { nullable: true })
-    @JoinColumn({ name: 'digifranchiseServiceId' })
-    digifranchiseServiceId: DigifranchiseServiceOffered | null;
+    @ManyToOne(() => DigifranchiseServiceOffered, service  => service.selectItem)
+    @JoinColumn({ name: 'digifranchiseService' })
+    digifranchiseService: DigifranchiseServiceOffered;
 
     @ManyToOne(() => UserEntity, { nullable: true })
     @JoinColumn({ name: 'userId' })

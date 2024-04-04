@@ -42,6 +42,17 @@ export class AvailabilityManagementController {
         return this.availabilityManagementService.createAvailability(userId, digifranchiseId, createAvailabilityManagementDto);
     }
 
+    @ApiOperation({ summary: 'CREATE - Create - Availability Not Auth', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'You have created Availability.' })
+    @ApiBody({ type: CreateAvailabilityManagementDto })
+    @Post('create-availability-no-auth/:digifranchiseId')
+    async createAvailabilityNoAuth(
+        @Req() req: Request,
+        @Param('digifranchiseId') digifranchiseId: string,
+        @Body() createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
+        return this.availabilityManagementService.createAvailabilityNoAuth(digifranchiseId, createAvailabilityManagementDto);
+    }
+
     @ApiOperation({ summary: 'GET - Get All Availabilities', })
     @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all .' })
     @Get('get-all-')
@@ -341,4 +352,25 @@ export class InventoryManagementController {
     async deleteInventory(@Param('inventoryId') inventoryId: string): Promise<void> {
         return this.inventoryManagementService.deleteInventory(inventoryId);
     }
+}
+
+
+@ApiTags('Availability Management NOT AUTH')
+// @ApiBearerAuth()
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'availability-without-auth', version: '1' })
+export class AvailabilityNoAuthManagementController {
+    constructor(private readonly availabilityManagementService: AvailabilityManagementService) { }
+
+    @ApiOperation({ summary: 'CREATE - Create - Availability Not Auth', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'You have created Availability no auth.' })
+    @ApiBody({ type: CreateAvailabilityManagementDto })
+    @Post('create-availability-no-auth/:digifranchiseId')
+    async createAvailabilityNoAuth(
+        @Req() req: Request,
+        @Param('digifranchiseId') digifranchiseId: string,
+        @Body() createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
+        return this.availabilityManagementService.createAvailabilityNoAuth(digifranchiseId, createAvailabilityManagementDto);
+    }
+
 }

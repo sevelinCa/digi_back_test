@@ -4,6 +4,7 @@ import { DigifranchiseGeneralInfo } from './digifranchise-general-information.en
 import { DigifranchiseComplianceInfo } from './digifranchise-compliance-information.entity';
 import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 import { DigifranchiseExpense } from './digifranchise-expense.entity';
+import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select-product-service.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -32,6 +33,10 @@ export class DigifranchiseOwner {
 
   @OneToMany(() => DigifranchiseExpense, ownedFranchise => ownedFranchise.ownedDigifranchise)
   digifranchiseExpense: DigifranchiseExpense[];
+
+
+  @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.ownerDigifranchise)
+  selectItem: DigifranchiseSelectProductOrServiceTable[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
