@@ -292,5 +292,12 @@ export class CalenderMgtVenueNoAutController {
         return this.calenderMgtService.createVenue(createVenueDto);
     }
 
+    @ApiOperation({ summary: 'GET ALL - Retrieve all venues' })
+    @Get('venues')
+    async getAllVenues(): Promise<CalenderVenue[]> {
+        return this.calenderMgtService.getAllVenues();
+    }
+
+
 }
 
