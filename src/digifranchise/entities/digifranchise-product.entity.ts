@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Up
 import { Digifranchise } from './digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
+import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select-product-service.entity';
 
 @Entity()
 export class DigifranchiseProduct {
@@ -18,6 +19,9 @@ export class DigifranchiseProduct {
 
   @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseProductId)
   productGalleryImages: DigifranchiseGalleryImage[];
+
+  @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.franchiseProduct)
+  selectItem: DigifranchiseSelectProductOrServiceTable[];
 
   @Column({type: 'text'})
   productName: string;

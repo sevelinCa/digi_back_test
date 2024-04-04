@@ -18,13 +18,13 @@ export class DigifranchiseSelectItemController {
 
     @ApiOperation({ summary: 'SELECT - Check or Uncheck item', })
     @ApiResponse({ status: HttpStatus.OK, description: 'Item selected.' })
-    @Post('select-item/:ownerDigifranchise/:digifranchiseService')
+    @Post('select-item/:ownerDigifranchiseId/:digifranchiseServiceId')
     async selectOrUnselectService(
         @Req() req: Request,
-        @Param('ownerDigifranchise') ownerDigifranchise: string,
-        @Param('digifranchiseService') digifranchiseService: string,
+        @Param('ownerDigifranchiseId') ownerDigifranchiseId: string,
+        @Param('digifranchiseServiceId') digifranchiseServiceId: string,
     ): Promise<DigifranchiseSelectProductOrServiceTable> {
         const userId = (req.user as UserEntity).id;
-        return this.digifranchiseSelectItemService.selectOrUnselectService(userId, ownerDigifranchise, digifranchiseService);
+        return this.digifranchiseSelectItemService.selectOrUnselectService(ownerDigifranchiseId, digifranchiseServiceId, userId);
     }
 }
