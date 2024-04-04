@@ -53,12 +53,13 @@ export class AvailabilityManagementController {
         return this.availabilityManagementService.createAvailabilityNoAuth(digifranchiseId, createAvailabilityManagementDto);
     }
 
-    @ApiOperation({ summary: 'GET - Get All Availabilities', })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all .' })
-    @Get('get-all-')
-    async getAllAvailability(): Promise<AvailableManagement[]> {
-        return this.availabilityManagementService.getAllAvailability();
-    }
+@ApiOperation({ summary: 'GET - Get All Availabilities for a User', })
+@ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all availabilities for the user.' })
+@Get('get-all-availabilities/:userId')
+async getAllAvailability(@Req() req: Request, @Param('userId') userId: string): Promise<AvailableManagement[]> {
+
+    return this.availabilityManagementService.getAllAvailability(userId);
+}
 
     @ApiOperation({ summary: 'GET - Get Availability by ID', })
     @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved availability by ID.' })
@@ -371,6 +372,14 @@ export class AvailabilityNoAuthManagementController {
         @Param('digifranchiseId') digifranchiseId: string,
         @Body() createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
         return this.availabilityManagementService.createAvailabilityNoAuth(digifranchiseId, createAvailabilityManagementDto);
+    }
+
+
+    @ApiOperation({ summary: 'GET - Get All Availabilities', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all .' })
+    @Get('get-all-availability-without-auth')
+    async getAllAvailability(): Promise<AvailableManagement[]> {
+        return this.availabilityManagementService.getAllAvailabilityNotAuth();
     }
 
 }
