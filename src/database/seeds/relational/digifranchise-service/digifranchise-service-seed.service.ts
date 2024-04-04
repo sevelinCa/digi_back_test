@@ -23,13 +23,11 @@ export class DigifranchiseServiceSeedService {
         await this.seedInsightfulJourney();
         await this.seedSitNStay();
         await this.seedTidyPatch();
-        await this.seedFlair();
         await this.seedStitched4U();
         await this.seedLearnerHub();
         await this.seedCollectify();
         await this.seedBeautyAndBest();
         await this.seedCropMinder();
-        await this.seedAquaShine(); 
         await this.seedFrienderly();
     }
 
@@ -340,48 +338,6 @@ export class DigifranchiseServiceSeedService {
         }
     }
     
-    private async seedFlair() {
-        const check = await this.digifranchiseRepository.count({
-            where: { digifranchiseName: "Flair" },
-        });
-    
-        if (check ===  0) {
-            const digifranchiseId = this.digifranchiseRepository.create({
-                digifranchiseName: "Flair",
-                description: "Flair provides fashion consultation and shopping guide services.",
-                status: StatusEnum.active,
-            });
-    
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
-    
-            const flairServices = [
-                {
-                    serviceName: 'Fashion consultation',
-                    description: 'Fashion consultation',
-                    unitPrice: '100'
-                },
-                {
-                    serviceName: 'Shopping guide - video call',
-                    description: 'Shopping guide - video call',
-                    unitPrice: '50'
-                },
-                {
-                    serviceName: 'Shopping guide - in person',
-                    description: 'Shopping guide - in person',
-                    unitPrice: '100'
-                },
-            ];
-    
-            for (const service of flairServices) {
-                const serviceEntity = this.serviceRepository.create({
-                    ...service,
-                    digifranchiseId: savedDigifranchise,
-                });
-                await this.serviceRepository.save(serviceEntity);
-            }
-        }
-    }
-
     private async seedStitched4U() {
         const check = await this.digifranchiseRepository.count({
             where: { digifranchiseName: "Stitched 4 U" },
@@ -646,77 +602,7 @@ export class DigifranchiseServiceSeedService {
         }
     }
 
-    private async seedAquaShine() {
-        const check = await this.digifranchiseRepository.count({
-            where: { digifranchiseName: "Aqua Shine" },
-        });
-    
-        if (check ===   0) {
-            const digifranchiseId = this.digifranchiseRepository.create({
-                digifranchiseName: "Aqua Shine",
-                description: "Aqua Shine offers car washing and detailing services.",
-                status: StatusEnum.active,
-            });
-    
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
-    
-            const aquaShineServices = [
-                {
-                    serviceName: 'Express Exterior Wash - Sedan, Small Bakkie, Hatchback',
-                    description: 'Express Exterior Wash - Sedan, Small Bakkie, Hatchback',
-                    unitPrice: '70'
-                },
-                {
-                    serviceName: 'Express Exterior Wash - SUV',
-                    description: 'Express Exterior Wash - SUV',
-                    unitPrice: '80'
-                },
-                {
-                    serviceName: 'Express Exterior Wash - Big Bakkie',
-                    description: 'Express Exterior Wash - Big Bakkie',
-                    unitPrice: '100'
-                },
-                {
-                    serviceName: 'Full Exterior Wash and Interior Detailing - Sedan, Small Bakkie, Hatchback',
-                    description: 'Full Exterior Wash and Interior Detailing - Sedan, Small Bakkie, Hatchback',
-                    unitPrice: '200'
-                },
-                {
-                    serviceName: 'Full Exterior Wash and Interior Detailing - SUV',
-                    description: 'Full Exterior Wash and Interior Detailing - SUV',
-                    unitPrice: '230'
-                },
-                {
-                    serviceName: 'Full Exterior Wash and Interior Detailing - Big Bakkie',
-                    description: 'Full Exterior Wash and Interior Detailing - Big Bakkie',
-                    unitPrice: '250'
-                },
-                {
-                    serviceName: 'Basic Exterior and Interior Bundle - Sedan, Small Bakkie, Hatchback',
-                    description: 'Basic Exterior and Interior Bundle - Sedan, Small Bakkie, Hatchback',
-                    unitPrice: '150'
-                },
-                {
-                    serviceName: 'Basic Exterior and Interior Bundle - SUV',
-                    description: 'Basic Exterior and Interior Bundle - SUV',
-                    unitPrice: '170'
-                },
-                {
-                    serviceName: 'Basic Exterior and Interior Bundle - Big Bakkie',
-                    description: 'Basic Exterior and Interior Bundle - Big Bakkie',
-                    unitPrice: '190'
-                },
-            ];
-    
-            for (const service of aquaShineServices) {
-                const serviceEntity = this.serviceRepository.create({
-                    ...service,
-                    digifranchiseId: savedDigifranchise,
-                });
-                await this.serviceRepository.save(serviceEntity);
-            }
-        }
-    }
+
 
     private async seedFrienderly() {
         const check = await this.digifranchiseRepository.count({
