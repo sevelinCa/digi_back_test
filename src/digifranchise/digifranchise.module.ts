@@ -29,13 +29,13 @@ import { DigifranchiseServiceCategory } from './entities/digifranchise-service-c
 import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
 import { DigifranchiseImagesService } from './digifranchise-images.service';
 import { DigifranchiseImagesController } from './digifranchise-images.controller';
-import { DigifranchiseSelectProductService, DigifranchiseSelectServiceService } from './digifranchise-select-item.service';
 import { DigifranchiseSubServiceCategory } from './entities/digifranchise-sub-service-category.entity';
 import { DigifranchiseExpenseService } from './digifranchise-expense.service';
 import { DigifranchiseExpenseController } from './digifranchise-expense.controller';
 import { DigifranchiseExpense } from './entities/digifranchise-expense.entity';
 import { FixedExpenseCategory } from 'src/accounting/entities/fixedExpenseCategory.entity';
-import { DigifranchiseSelectItemServiceController, DigifranchiseSelectItemProductController } from './digifranchise-select-item.controller';
+import { DigifranchiseSelectItemService } from './digifranchise-select-item.service';
+import { DigifranchiseSelectItemController } from './digifranchise-select-item.controller';
 
 @Module({
   imports: [
@@ -74,8 +74,7 @@ import { DigifranchiseSelectItemServiceController, DigifranchiseSelectItemProduc
     DigifranchiseImagesController,
     DigifranchiseOptionEndpoint,
     DigifranchiseExpenseController,
-    DigifranchiseSelectItemServiceController,
-    DigifranchiseSelectItemProductController
+    DigifranchiseSelectItemController
 
   ],
   providers: [
@@ -86,8 +85,8 @@ import { DigifranchiseSelectItemServiceController, DigifranchiseSelectItemProduc
     ProductService,
     DigifranchiseImagesService,
     DigifranchiseExpenseService,
-    DigifranchiseSelectServiceService,
-    DigifranchiseSelectProductService,
+    DigifranchiseSelectItemService
+
   ]
 })
 export class DigifranchiseModule { }

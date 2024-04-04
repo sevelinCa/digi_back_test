@@ -8,7 +8,7 @@ import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
-export class DigifranchiseSelectServiceService {
+export class DigifranchiseSelectItemService {
   constructor(
     @InjectRepository(DigifranchiseOwner)
     private ownedDigifranchisepRepository: Repository<DigifranchiseOwner>,
@@ -16,6 +16,8 @@ export class DigifranchiseSelectServiceService {
     private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(DigifranchiseProduct)
+    private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
     @InjectRepository(DigifranchiseSelectProductOrServiceTable)
     private digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>,
 
@@ -61,38 +63,6 @@ export class DigifranchiseSelectServiceService {
     return this.digifranchiseSelectItemRepository.save(newSelection);
   }
 
-
-  async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { isSelected: true, deleteAt: IsNull() },
-      relations: [
-        'ownerDigifranchise',
-        'digifranchiseService',
-        'digifranchiseService.serviceGalleryImages',
-        'digifranchiseService.selectItem',
-        'digifranchiseService.serviceCategories',
-      ],
-    });
- }
-
-
-}
-
-
-@Injectable()
-export class DigifranchiseSelectProductService {
-  constructor(
-    @InjectRepository(DigifranchiseOwner)
-    private ownedDigifranchisepRepository: Repository<DigifranchiseOwner>,
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-    @InjectRepository(DigifranchiseProduct)
-    private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
-    @InjectRepository(DigifranchiseSelectProductOrServiceTable)
-    private digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>,
-
-  ) { }
-
   async selectOrUnselectProduct(digifranchiseOwnedId: string, digifranchiseProductId: string, userId: string): Promise<DigifranchiseSelectProductOrServiceTable> {
     const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: digifranchiseProductId } });
     if (!existingProduct) {
@@ -132,5 +102,36 @@ export class DigifranchiseSelectProductService {
     return this.digifranchiseSelectItemRepository.save(newSelection);
   }
 
+  async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+    return this.digifranchiseSelectItemRepository.find({
+      where: { isSelected: true, deleteAt: IsNull() },
+      relations: [
+        'ownerDigifranchise',
+        'digifranchiseService',
+        'digifranchiseService.serviceGalleryImages',
+        'digifranchiseService.selectItem',
+        'digifranchiseService.serviceCategories',
+        'franchiseProduct.productGalleryImages',
+      ],
+    });
+ }
+
+ async getAllUnSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+  return this.digifranchiseSelectItemRepository.find({
+    where: { isSelected: false, deleteAt: IsNull() },
+    relations: [
+      'ownerDigifranchise',
+      'digifranchiseService',
+      'digifranchiseService.serviceGalleryImages',
+      'digifranchiseService.selectItem',
+      'digifranchiseService.serviceCategories',
+      'franchiseProduct.productGalleryImages',
+    ],
+  });
+}
+
 
 }
+
+
+
