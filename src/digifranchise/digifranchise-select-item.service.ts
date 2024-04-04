@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, Equal } from 'typeorm';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { DigifranchiseServiceOffered } from './entities/digifranchise-service-offered.entity';
 import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
@@ -10,69 +10,65 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 @Injectable()
 export class DigifranchiseSelectItemService {
   constructor(
+    @InjectRepository(DigifranchiseOwner)
+    private ownedDigifranchisepRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(DigifranchiseServiceOffered)
     private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
-    @InjectRepository(DigifranchiseOwner)
-    private ownedDigifranchiseRepository: Repository<DigifranchiseOwner>,
+
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
 
+
+    @InjectRepository(DigifranchiseProduct)
+    private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
+
+    
     @InjectRepository(DigifranchiseSelectProductOrServiceTable)
     private digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>,
 
   ) { }
 
 
-  async selectOrUnselectService(ownerDigifranchise: string, digifranchiseService: string, userId: string): Promise<DigifranchiseSelectProductOrServiceTable> {
-
-    const existingService = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: digifranchiseService } });
-    
-    console.log(' ====> SERVICE ID ' + JSON.stringify(existingService))
-
+  async selectOrUnselectService(digifranchiseOwnedId: string, digifranchiseServiceId: string, userId: string): Promise<DigifranchiseSelectProductOrServiceTable> {
+    const existingService = await this.digifranchiseServiceOfferedRepository.findOne({ where: { id: digifranchiseServiceId } });
     if (!existingService) {
-      throw new HttpException('Service not found', HttpStatus.NOT_FOUND);
-     }
-
-    const ownedDigifranchise = await this.ownedDigifranchiseRepository.findOne({ where: { id: ownerDigifranchise } });
-   
-    console.log(' ====> OWNED DIGIFRANCHISE ' + JSON.stringify(ownedDigifranchise))
-   
-    if (!ownedDigifranchise) {
-      throw new HttpException('Digifranchise service not exist', HttpStatus.NOT_FOUND);
+      throw new NotFoundException('Digifranchise service not found');
     }
 
+    const ownedDigifranchise = await this.ownedDigifranchisepRepository.findOne({ where: { id: digifranchiseOwnedId } });
+    if (!ownedDigifranchise) {
+      throw new NotFoundException('Owned Digifranchise not found');
+    }
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    console.log(' ====> USER ' + JSON.stringify(user))
     if (!user) {
-      throw new Error('User not exist');
+      throw new NotFoundException('User not found');
     }
-
-    let existingSelection = await this.digifranchiseSelectItemRepository.findOne({
+    const existingSelection = await this.digifranchiseSelectItemRepository.findOne({
       where: {
-        ownerDigifranchise: ownedDigifranchise,
-        digifranchiseService: existingService,
-        deleteAt: IsNull()
-      }
+        ownerDigifranchise: Equal(digifranchiseOwnedId),
+        digifranchiseService: Equal(digifranchiseServiceId),
+        userId: Equal(userId),
+      },
     });
 
-    if (existingSelection) {
-      existingSelection.isSelected = !existingSelection.isSelected;
-      const updatedSelection = await this.digifranchiseSelectItemRepository.save(existingSelection);
-      return updatedSelection;
-    } else {
-      const newSelection = this.digifranchiseSelectItemRepository.create({
+    let newSelection;
+    if (!existingSelection) {
+      newSelection = this.digifranchiseSelectItemRepository.create({
         ownerDigifranchise: ownedDigifranchise,
         digifranchiseService: existingService,
         userId: user,
-        isSelected: true,
+        isSelected: true
       });
-      const savedSelection = await this.digifranchiseSelectItemRepository.save(newSelection);
-      return savedSelection;
+    } else {
+      existingSelection.isSelected = !existingSelection.isSelected;
+      newSelection = existingSelection;
     }
+    
+    return this.digifranchiseSelectItemRepository.save(newSelection);
   }
 
-
+  
   async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
     return this.digifranchiseSelectItemRepository.find({
       where: { isSelected: true, deleteAt: IsNull() },

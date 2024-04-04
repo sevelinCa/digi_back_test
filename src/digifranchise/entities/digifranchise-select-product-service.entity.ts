@@ -1,3 +1,4 @@
+import { DigifranchiseProduct } from 'src/digifranchise/entities/digifranchise-product.entity';
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
@@ -15,6 +16,11 @@ export class DigifranchiseSelectProductOrServiceTable {
     @ManyToOne(() => DigifranchiseServiceOffered, service  => service.selectItem)
     @JoinColumn({ name: 'digifranchiseService' })
     digifranchiseService: DigifranchiseServiceOffered;
+
+    @ManyToOne(() => DigifranchiseProduct, product  => product.selectItem)
+    @JoinColumn({ name: 'franchiseProduct' })
+    franchiseProduct: DigifranchiseProduct;
+
 
     @ManyToOne(() => UserEntity, { nullable: true })
     @JoinColumn({ name: 'userId' })

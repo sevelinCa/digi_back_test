@@ -11,14 +11,15 @@ import { Console } from 'console';
 @Injectable()
 export class DigifranchiseImagesService {
     constructor(
-        @InjectRepository(DigifranchiseServiceOffered)
-        private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
         @InjectRepository(DigifranchiseProduct)
         private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
         @InjectRepository(DigifranchiseGalleryImage)
         private digifranchiseImageshipRepository: Repository<DigifranchiseGalleryImage>,
         @InjectRepository(DigifranchiseOwner)
         private ownedDigifranchisepRepository: Repository<DigifranchiseOwner>,
+        @InjectRepository(DigifranchiseServiceOffered)
+        private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
+        
     ) { }
 
     async createDigifrachiseServiceImage(digifranchiseOwnedId: string, digifranchiseServiceId: string, createDigifranchiseGalleryImageDto: CreateDigifranchiseGalleryImageDto): Promise<DigifranchiseGalleryImage> {
