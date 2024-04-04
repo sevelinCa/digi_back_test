@@ -26,26 +26,7 @@ export class AvailabilityManagementService {
     ) { }
 
 
-    async createAvailabilit(userId: string, digifranchiseId: string, createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
-        const user = await checkIfUserExists(this.userRepository, userId);
-        if (!user) {
-            throw new Error('User does not exist');
-        }
 
-        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
-        if (!digifranchise) {
-            throw new Error('Digifranchise does not exist')
-        }
-
-        const newAvailability = this.availabilityRepository.create({
-            ...createAvailabilityManagementDto,
-            userId: user,
-            digifranchiseId: digifranchise
-        });
-
-        const savedAvailability = await this.availabilityRepository.save(newAvailability);
-        return savedAvailability;
-    }
 
     async createAvailability(userId: string, digifranchiseId: string, createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
@@ -69,6 +50,32 @@ export class AvailabilityManagementService {
         // Create and save UnavailableManagement
         const newUnavailableManagement = this.unavailableManagementRepository.create({
           userId: user,
+          digifranchiseId: digifranchise,
+          AvailableManagementId: savedAvailability,
+          unavailableTime: createAvailabilityManagementDto.unavailableTime, // Assuming this field is part of the DTO
+        });
+    
+        await this.unavailableManagementRepository.save(newUnavailableManagement);
+    
+        return savedAvailability;
+     }
+
+     async createAvailabilityNoAuth(digifranchiseId: string, createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
+
+        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
+        if (!digifranchise) {
+          throw new Error('Digifranchise does not exist')
+        }
+    
+        const newAvailability = this.availabilityRepository.create({
+          ...createAvailabilityManagementDto,
+          digifranchiseId: digifranchise
+        });
+    
+        const savedAvailability = await this.availabilityRepository.save(newAvailability);
+    
+        // Create and save UnavailableManagement
+        const newUnavailableManagement = this.unavailableManagementRepository.create({
           digifranchiseId: digifranchise,
           AvailableManagementId: savedAvailability,
           unavailableTime: createAvailabilityManagementDto.unavailableTime, // Assuming this field is part of the DTO

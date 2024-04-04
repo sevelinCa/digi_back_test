@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { AvailableManagement } from './entities/available-management.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { AvailabilityManagementController, CustomerManagementController, InventoryManagementController, StaffManagementController, SupplierManagementController, UnavailableManagementController } from './digifranchise-mgt.controller';
+import { AvailabilityManagementController, AvailabilityNoAuthManagementController, CustomerManagementController, InventoryManagementController, StaffManagementController, SupplierManagementController, UnavailableManagementController } from './digifranchise-mgt.controller';
 import { UnavailableManagementService } from './unavailability-management.service';
 import { UnavailableManagement } from './entities/unavailable-management.entity';
 import { CustomerManagementService } from './customer-management.service';
@@ -21,7 +21,7 @@ import { InventoryManagement } from './entities/inventory-management.entity';
     TypeOrmModule.forFeature([AvailableManagement,Digifranchise, UserEntity, CustomerManagement, UnavailableManagement, SupplierManagement, StaffManagement, InventoryManagement ]),
   ],
   providers: [AvailabilityManagementService, UnavailableManagementService, CustomerManagementService, SupplierManagementService, InventoryManagementService, StaffManagementService,  ],
-  controllers: [AvailabilityManagementController,UnavailableManagementController,CustomerManagementController,SupplierManagementController,StaffManagementController, InventoryManagementController, ]
+  controllers: [AvailabilityManagementController,AvailabilityNoAuthManagementController,UnavailableManagementController,CustomerManagementController,SupplierManagementController,StaffManagementController, InventoryManagementController, ]
 })
 export class DigifranchiseMgtModule {}
 
