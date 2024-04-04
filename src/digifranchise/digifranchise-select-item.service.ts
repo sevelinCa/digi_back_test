@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, Equal } from 'typeorm';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
@@ -57,47 +57,25 @@ export class DigifranchiseSelectServiceService {
       existingSelection.isSelected = !existingSelection.isSelected;
       newSelection = existingSelection;
     }
-    
+
     return this.digifranchiseSelectItemRepository.save(newSelection);
   }
 
-  
+
   async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
     return this.digifranchiseSelectItemRepository.find({
       where: { isSelected: true, deleteAt: IsNull() },
+      relations: [
+        'ownerDigifranchise',
+        'digifranchiseService',
+        'digifranchiseService.serviceGalleryImages',
+        'digifranchiseService.selectItem',
+        'digifranchiseService.serviceCategories',
+      ],
     });
-  }
+ }
 
 
-  async getAllNotSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { isSelected: false, deleteAt: IsNull() },
-    });
-  }
-
-  async getAllServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { deleteAt: IsNull() },
-    });
-  }
-
-  async getAllSelectedProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { isSelected: true, deleteAt: IsNull() },
-    });
-  }
-
-  async getAllNotSelectedProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { isSelected: false, deleteAt: IsNull() },
-    });
-  }
-
-  async getAllProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { deleteAt: IsNull() },
-    });
-  }
 }
 
 
@@ -118,57 +96,41 @@ export class DigifranchiseSelectProductService {
   async selectOrUnselectProduct(digifranchiseOwnedId: string, digifranchiseProductId: string, userId: string): Promise<DigifranchiseSelectProductOrServiceTable> {
     const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: digifranchiseProductId } });
     if (!existingProduct) {
-       throw new NotFoundException('Digifranchise product not found');
+      throw new NotFoundException('Digifranchise product not found');
     }
-   
+
     const ownedDigifranchise = await this.ownedDigifranchisepRepository.findOne({ where: { id: digifranchiseOwnedId } });
     if (!ownedDigifranchise) {
-       throw new NotFoundException('Owned Digifranchise not found');
+      throw new NotFoundException('Owned Digifranchise not found');
     }
-   
+
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-       throw new NotFoundException('User not found');
+      throw new NotFoundException('User not found');
     }
     const existingSelection = await this.digifranchiseSelectItemRepository.findOne({
-       where: {
-         ownerDigifranchise: Equal(digifranchiseOwnedId),
-         franchiseProduct: Equal(digifranchiseProductId),
-         userId: Equal(userId),
-       },
+      where: {
+        ownerDigifranchise: Equal(digifranchiseOwnedId),
+        franchiseProduct: Equal(digifranchiseProductId),
+        userId: Equal(userId),
+      },
     });
-   
+
     let newSelection: DigifranchiseSelectProductOrServiceTable | undefined;
     if (!existingSelection) {
-       newSelection = this.digifranchiseSelectItemRepository.create({
-         ownerDigifranchise: ownedDigifranchise,
-         franchiseProduct: existingProduct,
-         userId: user,
-         isSelected: true
-       });
+      newSelection = this.digifranchiseSelectItemRepository.create({
+        ownerDigifranchise: ownedDigifranchise,
+        franchiseProduct: existingProduct,
+        userId: user,
+        isSelected: true
+      });
     } else {
-       existingSelection.isSelected = !existingSelection.isSelected;
-       newSelection = existingSelection;
+      existingSelection.isSelected = !existingSelection.isSelected;
+      newSelection = existingSelection;
     }
-   
+
     return this.digifranchiseSelectItemRepository.save(newSelection);
-   }
-
-  async getAllSelectedProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { isSelected: true, deleteAt: IsNull() },
-    });
   }
 
-  async getAllNotSelectedProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { isSelected: false, deleteAt: IsNull() },
-    });
-  }
 
-  async getAllProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-    return this.digifranchiseSelectItemRepository.find({
-      where: { deleteAt: IsNull() },
-    });
-  }
 }
