@@ -279,4 +279,18 @@ export class CalenderMgtController {
 
 
 
+@ApiTags('Calender - VENUE NO AUTH')
+@Controller({ path: 'calender-venue-no-auth', version: '1' })
+export class CalenderMgtVenueNoAutController {
+    constructor(private readonly calenderMgtService: CalenderMgtService) { }
+
+    @ApiOperation({ summary: 'CREATE - Create - Venue', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'You have created Venue.' })
+    @ApiBody({ type: CreateVenueDto })
+    @Post('create-venue')
+    async createVenue(@Body() createVenueDto: CreateVenueDto): Promise<CalenderVenue> {
+        return this.calenderMgtService.createVenue(createVenueDto);
+    }
+
+}
 

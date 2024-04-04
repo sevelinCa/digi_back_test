@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CalenderMgtService } from './calender-mgt.service';
-import { CalenderMgtController } from './calender-mgt.controller';
+import { CalenderMgtController, CalenderMgtVenueNoAutController } from './calender-mgt.controller';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
 import { CalenderEvents } from './entities/calender-events.entity';
@@ -23,6 +23,6 @@ import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-mana
     ]),
   ],
   providers: [CalenderMgtService],
-  controllers: [CalenderMgtController]
+  controllers: [CalenderMgtController, CalenderMgtVenueNoAutController]
 })
 export class CalenderMgtModule { }
