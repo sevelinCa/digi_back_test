@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, Equal } from 'typeorm';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
@@ -8,21 +8,14 @@ import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
-export class DigifranchiseSelectItemService {
+export class DigifranchiseSelectServiceService {
   constructor(
     @InjectRepository(DigifranchiseOwner)
     private ownedDigifranchisepRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(DigifranchiseServiceOffered)
     private readonly digifranchiseServiceOfferedRepository: Repository<DigifranchiseServiceOffered>,
-
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-
-
-    @InjectRepository(DigifranchiseProduct)
-    private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
-
-    
     @InjectRepository(DigifranchiseSelectProductOrServiceTable)
     private digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>,
 
@@ -87,6 +80,79 @@ export class DigifranchiseSelectItemService {
       where: { deleteAt: IsNull() },
     });
   }
+
+  async getAllSelectedProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+    return this.digifranchiseSelectItemRepository.find({
+      where: { isSelected: true, deleteAt: IsNull() },
+    });
+  }
+
+  async getAllNotSelectedProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+    return this.digifranchiseSelectItemRepository.find({
+      where: { isSelected: false, deleteAt: IsNull() },
+    });
+  }
+
+  async getAllProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+    return this.digifranchiseSelectItemRepository.find({
+      where: { deleteAt: IsNull() },
+    });
+  }
+}
+
+
+@Injectable()
+export class DigifranchiseSelectProductService {
+  constructor(
+    @InjectRepository(DigifranchiseOwner)
+    private ownedDigifranchisepRepository: Repository<DigifranchiseOwner>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    @InjectRepository(DigifranchiseProduct)
+    private digifranchiseProductRepository: Repository<DigifranchiseProduct>,
+    @InjectRepository(DigifranchiseSelectProductOrServiceTable)
+    private digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>,
+
+  ) { }
+
+  async selectOrUnselectProduct(digifranchiseOwnedId: string, digifranchiseProductId: string, userId: string): Promise<DigifranchiseSelectProductOrServiceTable> {
+    const existingProduct = await this.digifranchiseProductRepository.findOne({ where: { id: digifranchiseProductId } });
+    if (!existingProduct) {
+       throw new NotFoundException('Digifranchise product not found');
+    }
+   
+    const ownedDigifranchise = await this.ownedDigifranchisepRepository.findOne({ where: { id: digifranchiseOwnedId } });
+    if (!ownedDigifranchise) {
+       throw new NotFoundException('Owned Digifranchise not found');
+    }
+   
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+       throw new NotFoundException('User not found');
+    }
+    const existingSelection = await this.digifranchiseSelectItemRepository.findOne({
+       where: {
+         ownerDigifranchise: Equal(digifranchiseOwnedId),
+         franchiseProduct: Equal(digifranchiseProductId),
+         userId: Equal(userId),
+       },
+    });
+   
+    let newSelection: DigifranchiseSelectProductOrServiceTable | undefined;
+    if (!existingSelection) {
+       newSelection = this.digifranchiseSelectItemRepository.create({
+         ownerDigifranchise: ownedDigifranchise,
+         franchiseProduct: existingProduct,
+         userId: user,
+         isSelected: true
+       });
+    } else {
+       existingSelection.isSelected = !existingSelection.isSelected;
+       newSelection = existingSelection;
+    }
+   
+    return this.digifranchiseSelectItemRepository.save(newSelection);
+   }
 
   async getAllSelectedProducts(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
     return this.digifranchiseSelectItemRepository.find({

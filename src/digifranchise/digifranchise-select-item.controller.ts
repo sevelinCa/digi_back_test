@@ -1,5 +1,5 @@
 import { Controller, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
-import { DigifranchiseSelectItemService } from './digifranchise-select-item.service';
+import { DigifranchiseSelectServiceService, DigifranchiseSelectProductService } from './digifranchise-select-item.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -7,13 +7,13 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
 import { Request } from 'express';
 
-@ApiTags('Digifranchise - SELECT ITEM')
+@ApiTags('Digifranchise - SELECT SERVICE')
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'select-item', version: '1' })
-export class DigifranchiseSelectItemController {
+@Controller({ path: 'select-service', version: '1' })
+export class DigifranchiseSelectItemServiceController {
 
-    constructor(private readonly digifranchiseSelectItemService: DigifranchiseSelectItemService) { }
+    constructor(private readonly digifranchiseSelectServiceService: DigifranchiseSelectServiceService) { }
 
 
     @ApiOperation({ summary: 'SELECT - Check or Uncheck item', })
@@ -25,6 +25,29 @@ export class DigifranchiseSelectItemController {
         @Param('digifranchiseServiceId') digifranchiseServiceId: string,
     ): Promise<DigifranchiseSelectProductOrServiceTable> {
         const userId = (req.user as UserEntity).id;
-        return this.digifranchiseSelectItemService.selectOrUnselectService(ownerDigifranchiseId, digifranchiseServiceId, userId);
+        return this.digifranchiseSelectServiceService.selectOrUnselectService(ownerDigifranchiseId, digifranchiseServiceId, userId);
     }
 }
+
+@ApiTags('Digifranchise - SELECT PRODUCT')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller({ path: 'select-product', version: '1' })
+export class DigifranchiseSelectItemProductController {
+
+    constructor(private readonly digifranchiseSelectProductService: DigifranchiseSelectProductService) { }
+
+
+    @ApiOperation({ summary: 'SELECT - Check or Uncheck item', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Item selected.' })
+    @Post('select-item/:digifranchiseOwnedId/:digifranchiseProductId')
+    async selectOrUnselectProduct(
+        @Req() req: Request,
+        @Param('digifranchiseOwnedId') digifranchiseOwnedId: string,
+        @Param('digifranchiseProductId') digifranchiseProductId: string,
+    ): Promise<DigifranchiseSelectProductOrServiceTable> {
+        const userId = (req.user as UserEntity).id;
+        return this.digifranchiseSelectProductService.selectOrUnselectProduct(digifranchiseOwnedId, digifranchiseProductId, userId);
+    }
+}
+
