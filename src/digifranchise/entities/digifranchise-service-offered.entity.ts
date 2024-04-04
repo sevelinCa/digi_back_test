@@ -7,41 +7,41 @@ import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select
 
 @Entity()
 export class DigifranchiseServiceOffered {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ManyToOne(() => Digifranchise)
-    @JoinColumn({ name: 'digifranchiseId' })
-    digifranchiseId: Digifranchise;
+  @ManyToOne(() => Digifranchise)
+  @JoinColumn({ name: 'digifranchiseId' })
+  digifranchiseId: Digifranchise;
 
-    @ManyToOne(() => UserEntity, { nullable: true })
-    @JoinColumn({ name: 'userId' })
-    userId: UserEntity | null;
+  @ManyToOne(() => UserEntity, { nullable: true })
+  @JoinColumn({ name: 'userId' })
+  userId: UserEntity | null;
 
-    @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseServiceId)
-    serviceGalleryImages: DigifranchiseGalleryImage[];
+  @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseServiceId)
+  serviceGalleryImages: DigifranchiseGalleryImage[];
 
-    @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.digifranchiseService)
-  selectItem: DigifranchiseSelectProductOrServiceTable[];
-  
-    @Column({ type: 'text' })
-    serviceName: string;
+  @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.digifranchiseService, { nullable: true })
+  selectedItem: DigifranchiseSelectProductOrServiceTable[];
 
-    @Column({ type: 'text' })
-    description: string;
+  @Column({ type: 'text' })
+  serviceName: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    unitPrice: string;
+  @Column({ type: 'text' })
+  description: string;
 
-    @OneToMany(() => DigifranchiseServiceCategory, category => category.service)
-    serviceCategories: DigifranchiseServiceCategory[];
+  @Column({ type: 'varchar', length: 255 })
+  unitPrice: string;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+  @OneToMany(() => DigifranchiseServiceCategory, category => category.service)
+  serviceCategories: DigifranchiseServiceCategory[];
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
-    @Column({ type: 'timestamp', nullable: true })
-    deleteAt: Date | null;
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  deleteAt: Date | null;
 }

@@ -13,11 +13,11 @@ export class DigifranchiseSelectProductOrServiceTable {
     @JoinColumn({ name: 'ownerDigifranchise' })
     ownerDigifranchise: DigifranchiseOwner | null;
 
-    @ManyToOne(() => DigifranchiseServiceOffered, service  => service.selectItem)
+    @ManyToOne(() => DigifranchiseServiceOffered, service => service.selectedItem, { nullable: true })
     @JoinColumn({ name: 'digifranchiseService' })
-    digifranchiseService: DigifranchiseServiceOffered;
+    digifranchiseService: DigifranchiseServiceOffered | null;
 
-    @ManyToOne(() => DigifranchiseProduct, product  => product.selectItem)
+    @ManyToOne(() => DigifranchiseProduct, product  => product.selectedItem)
     @JoinColumn({ name: 'franchiseProduct' })
     franchiseProduct: DigifranchiseProduct;
 

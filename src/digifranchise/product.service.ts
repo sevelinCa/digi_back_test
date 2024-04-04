@@ -40,7 +40,7 @@ export class ProductService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId', 'userId', 'productGalleryImages'], 
+      relations: ['digifranchiseId', 'userId', 'productGalleryImages','selectedItem'], 
     });
 
     const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {

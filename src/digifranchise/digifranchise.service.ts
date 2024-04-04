@@ -181,7 +181,7 @@ export class DigifranchiseService {
         digifranchiseId: Equal(digifranchiseId),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId', 'serviceCategories', 'userId', 'serviceGalleryImages'],
+      relations: ['digifranchiseId', 'serviceCategories', 'userId', 'serviceGalleryImages','selectedItem'],
 
     });
 
