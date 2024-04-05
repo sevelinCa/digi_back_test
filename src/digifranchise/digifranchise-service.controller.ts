@@ -30,12 +30,16 @@ export class DigifranchiseServiceOfferedController {
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
-  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise service  by Digifranchise ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise service  by the specified Digifranchise ID have been successfully retrieved.' })
+  @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise service by Digifranchise ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise service by the specified Digifranchise ID have been successfully retrieved.' })
   @Get('get-all-services-with-subs/:digifranchiseId')
   @HttpCode(HttpStatus.OK)
-  async getServicesAndSubServicesByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseServiceOffered[]> {
-    return this.digifranchiseService.getServicesAndSubServicesByDigifranchiseId(digifranchiseId);
+  async getServicesAndSubServicesByDigifranchiseId(
+   @Req() req: Request,
+   @Param('digifranchiseId') digifranchiseId: string,
+  ): Promise<DigifranchiseServiceOffered[]> {
+   const userId = (req.user as UserEntity).id; // Assuming the user object is attached to the request and contains an 'id' property
+   return this.digifranchiseService.getServicesAndSubServicesByDigifranchiseId(digifranchiseId, userId);
   }
 
 
