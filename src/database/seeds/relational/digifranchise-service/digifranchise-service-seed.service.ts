@@ -20,13 +20,13 @@ export class DigifranchiseServiceSeedService {
         await this.seedCleanWheelz(); 
         await this.seedBodyRevamp();
         await this.seedTrendifyMe(); 
-        await this.seedInsightfulJourney();
+        // await this.seedInsightfulJourney();
         await this.seedSitNStay();
         await this.seedTidyPatch();
         await this.seedStitched4U();
         await this.seedLearnerHub();
         await this.seedCollectify();
-        await this.seedBeautyAndBest();
+        // await this.seedBeautyAndBest();
         await this.seedCropMinder();
         await this.seedFrienderly();
     }
@@ -197,57 +197,57 @@ export class DigifranchiseServiceSeedService {
     }
 
     
-    private async seedInsightfulJourney() {
-        const check = await this.digifranchiseRepository.count({
-            where: { digifranchiseName: "Insightful Journey" },
-        });
+    // private async seedInsightfulJourney() {
+    //     const check = await this.digifranchiseRepository.count({
+    //         where: { digifranchiseName: "Insightful Journey" },
+    //     });
 
-        if (check === 0) {
-            const digifranchiseId = this.digifranchiseRepository.create({
-                digifranchiseName: "Insightful Journey",
-                description: "Insightful Journey offers a range of mental health services, including counseling and therapy sessions designed to support individual and group needs.",
-                status: StatusEnum.active,
-            });
+    //     if (check === 0) {
+    //         const digifranchiseId = this.digifranchiseRepository.create({
+    //             digifranchiseName: "Insightful Journey",
+    //             description: "Insightful Journey offers a range of mental health services, including counseling and therapy sessions designed to support individual and group needs.",
+    //             status: StatusEnum.active,
+    //         });
 
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
+    //         const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
 
-            const insightfulJourneyServices = [
-                {
-                    serviceName: '1-on-1 Counselling',
-                    description: '1-on-1 Counselling',
-                    unitPrice: '150'
-                },
-                {
-                    serviceName: 'Play Therapy for Kids',
-                    description: 'Play Therapy for Kids',
-                    unitPrice: '120'
-                },
-                {
-                    serviceName: 'Group Counselling',
-                    description: 'Group Counselling',
-                    unitPrice: '90'
-                },
-                {
-                    serviceName: 'Meditation Sessions',
-                    description: 'Meditation Sessions',
-                    unitPrice: '80'
-                },
-                {
-                    serviceName: 'Mental Health Assessments',
-                    description: 'Mental Health Assessments',
-                    unitPrice: '200'
-                },
-            ];
+    //         const insightfulJourneyServices = [
+    //             {
+    //                 serviceName: '1-on-1 Counselling',
+    //                 description: '1-on-1 Counselling',
+    //                 unitPrice: '150'
+    //             },
+    //             {
+    //                 serviceName: 'Play Therapy for Kids',
+    //                 description: 'Play Therapy for Kids',
+    //                 unitPrice: '120'
+    //             },
+    //             {
+    //                 serviceName: 'Group Counselling',
+    //                 description: 'Group Counselling',
+    //                 unitPrice: '90'
+    //             },
+    //             {
+    //                 serviceName: 'Meditation Sessions',
+    //                 description: 'Meditation Sessions',
+    //                 unitPrice: '80'
+    //             },
+    //             {
+    //                 serviceName: 'Mental Health Assessments',
+    //                 description: 'Mental Health Assessments',
+    //                 unitPrice: '200'
+    //             },
+    //         ];
 
-            for (const service of insightfulJourneyServices) {
-                const serviceEntity = this.serviceRepository.create({
-                    ...service,
-                    digifranchiseId: savedDigifranchise,
-                });
-                await this.serviceRepository.save(serviceEntity);
-            }
-        }
-    }
+    //         for (const service of insightfulJourneyServices) {
+    //             const serviceEntity = this.serviceRepository.create({
+    //                 ...service,
+    //                 digifranchiseId: savedDigifranchise,
+    //             });
+    //             await this.serviceRepository.save(serviceEntity);
+    //         }
+    //     }
+    // }
 
     private async seedSitNStay() {
         const check = await this.digifranchiseRepository.count({
@@ -493,52 +493,52 @@ export class DigifranchiseServiceSeedService {
         }
     }
     
-    private async seedBeautyAndBest() {
-        const check = await this.digifranchiseRepository.count({
-            where: { digifranchiseName: "Beauty And Best" },
-        });
+    // private async seedBeautyAndBest() {
+    //     const check = await this.digifranchiseRepository.count({
+    //         where: { digifranchiseName: "Beauty And Best" },
+    //     });
     
-        if (check ===  0) {
-            const digifranchiseId = this.digifranchiseRepository.create({
-                digifranchiseName: "Beauty And Best",
-                description: "Beauty And Best provides beauty and grooming services.",
-                status: StatusEnum.active,
-            });
+    //     if (check ===  0) {
+    //         const digifranchiseId = this.digifranchiseRepository.create({
+    //             digifranchiseName: "Beauty And Best",
+    //             description: "Beauty And Best provides beauty and grooming services.",
+    //             status: StatusEnum.active,
+    //         });
     
-            const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
+    //         const savedDigifranchise = await this.digifranchiseRepository.save(digifranchiseId);
     
-            const beautyAndBestServices = [
-                {
-                    serviceName: 'Hairstyling',
-                    description: 'Hairstyling',
-                    unitPrice: '15'
-                },
-                {
-                    serviceName: 'Nail care',
-                    description: 'Nail care',
-                    unitPrice: '15'
-                },
-                {
-                    serviceName: 'Make-up application',
-                    description: 'Make-up application',
-                    unitPrice: '15'
-                },
-                {
-                    serviceName: 'Hair cuts',
-                    description: 'Hair cuts',
-                    unitPrice: '15'
-                },
-            ];
+    //         const beautyAndBestServices = [
+    //             {
+    //                 serviceName: 'Hairstyling',
+    //                 description: 'Hairstyling',
+    //                 unitPrice: '15'
+    //             },
+    //             {
+    //                 serviceName: 'Nail care',
+    //                 description: 'Nail care',
+    //                 unitPrice: '15'
+    //             },
+    //             {
+    //                 serviceName: 'Make-up application',
+    //                 description: 'Make-up application',
+    //                 unitPrice: '15'
+    //             },
+    //             {
+    //                 serviceName: 'Hair cuts',
+    //                 description: 'Hair cuts',
+    //                 unitPrice: '15'
+    //             },
+    //         ];
     
-            for (const service of beautyAndBestServices) {
-                const serviceEntity = this.serviceRepository.create({
-                    ...service,
-                    digifranchiseId: savedDigifranchise,
-                });
-                await this.serviceRepository.save(serviceEntity);
-            }
-        }
-    }
+    //         for (const service of beautyAndBestServices) {
+    //             const serviceEntity = this.serviceRepository.create({
+    //                 ...service,
+    //                 digifranchiseId: savedDigifranchise,
+    //             });
+    //             await this.serviceRepository.save(serviceEntity);
+    //         }
+    //     }
+    // }
     
     private async seedCropMinder() {
         const check = await this.digifranchiseRepository.count({
