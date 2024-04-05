@@ -305,5 +305,24 @@ export class CalenderMgtVenueNoAutController {
         return this.calenderMgtService.getVenueById(venueId);
     }
 
+    @ApiOperation({
+        summary: 'UPDATE - Update venue by ID',
+    })
+    @ApiBody({ type: UpdateVenueDto })
+    @Put('venues/:venueId')
+    async updateVenue(
+        @Param('venueId') venueId: string,
+        @Body() updateVenueDto: UpdateVenueDto
+    ): Promise<CalenderVenue> {
+        return this.calenderMgtService.updateVenue(venueId, updateVenueDto);
+    }
+
+    @ApiOperation({
+        summary: 'DELETE - Soft delete venue by ID',
+    })
+    @Delete('venues/:venueId')
+    async deleteVenue(@Param('venueId') venueId: string): Promise<void> {
+        return this.calenderMgtService.deleteVenue(venueId);
+    }
 }
 
