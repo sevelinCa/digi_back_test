@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Equal, IsNull, Not, Repository } from 'typeorm';
 import { CreateAvailabilityManagementDto, type UpdateAvailabilityManagementDto } from './dto/create-availability-management.dto';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { checkIfUserExists } from 'src/helper/FindByFunctions';
@@ -90,7 +90,7 @@ export class AvailabilityManagementService {
     }
 
     async getAllAvailability(userId: string): Promise<AvailableManagement[]> {
-        return this.availabilityRepository.find({ where: { id: userId, deleteAt: IsNull() } });
+        return this.availabilityRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
     }
 
 
