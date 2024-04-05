@@ -45,8 +45,9 @@ export class DigifranchiseSelectItemController {
     @ApiOperation({ summary: 'Retrieve all selected services' })
     @ApiResponse({ status: HttpStatus.OK, description: 'All selected services retrieved successfully.', type: [DigifranchiseSelectProductOrServiceTable] })
     @Get('get-all-select-services')
-    async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-        return this.digifranchiseSelectItemService.getAllSelectedServices();
+    async getAllSelectedServices(@Req() req: Request): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+        const userId = (req.user as UserEntity).id; 
+        return this.digifranchiseSelectItemService.getAllSelectedServices(userId);
     }
 
     @ApiOperation({ summary: 'Retrieve all unselected services' })
