@@ -119,20 +119,6 @@ export class DigifranchiseSelectItemService {
     console.log('Selection saved successfully');
     return savedSelection;
 }
-//   async getAllSelectedServices(): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-//     return this.digifranchiseSelectItemRepository.find({
-//       where: { isSelected: true, deleteAt: IsNull() },
-//       relations: [
-//         'ownerDigifranchise',
-//         'digifranchiseService',
-//         'digifranchiseService.serviceGalleryImages',
-//         'digifranchiseService.selectedItem',
-//         'digifranchiseService.serviceCategories',
-//         'franchiseProduct.productGalleryImages',
-//       ],
-//     });
-//  }
-
 async getAllSelectedServices(userId: string): Promise<DigifranchiseSelectProductOrServiceTable[]> {
   return this.digifranchiseSelectItemRepository.find({
      where: { 
