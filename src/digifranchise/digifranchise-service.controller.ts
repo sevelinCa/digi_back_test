@@ -38,7 +38,7 @@ export class DigifranchiseServiceOfferedController {
    @Req() req: Request,
    @Param('digifranchiseId') digifranchiseId: string,
   ): Promise<DigifranchiseServiceOffered[]> {
-   const userId = (req.user as UserEntity).id; // Assuming the user object is attached to the request and contains an 'id' property
+   const userId = (req.user as UserEntity).id; 
    return this.digifranchiseService.getServicesAndSubServicesByDigifranchiseId(digifranchiseId, userId);
   }
 
