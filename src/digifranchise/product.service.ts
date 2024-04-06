@@ -8,6 +8,8 @@ import  { UpdateDigifranchiseProductDto } from './dto/create-digifranchise-produ
 import { DigifranchiseOwner } from './entities/digifranchise-ownership.entity';
 import { Digifranchise } from './entities/digifranchise.entity';
 import  { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
+import { DigifranchiseGalleryImage } from './entities/digifranchise-gallery-images.entity';
+import { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
 
 @Injectable()
 export class ProductService {
@@ -21,7 +23,15 @@ export class ProductService {
     @InjectRepository(DigifranchiseProduct)
     private readonly digifranchiseProductRepository: Repository<DigifranchiseProduct>,
     @InjectRepository(DigifranchiseSubProduct)
-    private readonly digifranchiseSubProductRepository: Repository<DigifranchiseSubProduct>
+    private readonly digifranchiseSubProductRepository: Repository<DigifranchiseSubProduct>,
+    @InjectRepository(DigifranchiseSelectProductOrServiceTable)
+    private readonly digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>,
+    @InjectRepository(DigifranchiseGalleryImage)
+    private digifranchiseGalleryImageRepository: Repository<DigifranchiseGalleryImage>,
+    @InjectRepository(DigifranchiseOwner)
+    private digifranchiseOwnershipRepository: Repository<DigifranchiseOwner>,
+    
+
   ) { }
 
   async findAllProductByDigifranchiseId(digifranchiseId: string): Promise<DigifranchiseProduct[]> {
@@ -34,14 +44,50 @@ export class ProductService {
     });
   }
 
-  async getProductsAndSubProductsById(digifranchiseId: string): Promise<any> {
+  // async getProductsAndSubProductsById(digifranchiseId: string): Promise<any> {
+  //   const productsOffered = await this.digifranchiseProductRepository.find({
+  //     where: {
+  //       digifranchiseId: Equal(digifranchiseId),
+  //       userId: IsNull(),
+  //     },
+  //     relations: ['digifranchiseId', 'userId', 'productGalleryImages','selectedItem'], 
+  //   });
+
+  //   const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
+  //     const subProducts = await this.digifranchiseSubProductRepository.find({
+  //       where: {
+  //         digifranchiseProductId: Equal(product.id),
+  //       },
+  //     });
+
+  //     return {
+  //       ...product,
+  //       subProducts,
+  //     };
+  //   }));
+
+  //   return productsWithSubProducts;
+  // }
+  async getProductsAndSubProductsById(digifranchiseId: string, digifranchiseOwnerId:string): Promise<any> {
+    const owedFranchise = await this.digifranchiseOwnershipRepository.findOne({ where: { id: digifranchiseOwnerId } });
+    if (!owedFranchise) {
+       throw new Error('Owned digifranchise does not exist');
+    }
+   
+    const parentDigifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
+    if (!parentDigifranchise) {
+       throw new Error('Digifranchise does not exist');
+    }
+
+
+       
     const productsOffered = await this.digifranchiseProductRepository.find({
       where: {
-        digifranchiseId: Equal(digifranchiseId),
+        digifranchiseId: Equal(parentDigifranchise.id),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId', 'userId', 'productGalleryImages','selectedItem'], 
-    });
+      relations: ['digifranchiseId'],
+   });
 
     const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
       const subProducts = await this.digifranchiseSubProductRepository.find({
@@ -50,13 +96,29 @@ export class ProductService {
         },
       });
 
+      const productGalleryImages = await this.digifranchiseGalleryImageRepository.find({
+        where: {
+          digifranchiseProductId: Equal(product.id),
+          digifranchiseOwnedId: Equal(digifranchiseOwnerId),
+        },
+      });
+
+      const selectedProduct = await this.digifranchiseSelectItemRepository.find({
+        where: {
+          franchiseProduct: Equal(product.id),
+          ownerDigifranchise: Equal(digifranchiseOwnerId),
+        },
+      });
+
       return {
         ...product,
         subProducts,
+        productGalleryImages,
+        selectedProduct,
       };
     }));
 
-    return productsWithSubProducts;
+    return {productsWithSubProducts};
   }
 
   async createSubDigifranchiseProduct(
