@@ -4,6 +4,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import { DigifranchiseServiceCategory } from './digifranchise-service-category.entity';
 import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select-product-service.entity';
+import { DigifranchiseOwner } from './digifranchise-ownership.entity';
 
 @Entity()
 export class DigifranchiseServiceOffered {
@@ -17,6 +18,10 @@ export class DigifranchiseServiceOffered {
   @ManyToOne(() => UserEntity, { nullable: true })
   @JoinColumn({ name: 'userId' })
   userId: UserEntity | null;
+
+  @ManyToOne(() => DigifranchiseOwner, ownedItem => ownedItem.serviceOffered, { nullable: true })
+  @JoinColumn({ name: 'digifranchiseOwnedId' })
+  ownedFranchise: DigifranchiseOwner | null;
 
   @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseServiceId)
   serviceGalleryImages: DigifranchiseGalleryImage[];

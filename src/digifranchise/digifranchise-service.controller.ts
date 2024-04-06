@@ -32,14 +32,14 @@ export class DigifranchiseServiceOfferedController {
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise service by Digifranchise ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise service by the specified Digifranchise ID have been successfully retrieved.' })
-  @Get('get-all-services-with-subs/:digifranchiseId')
+  @Get('get-all-services-with-subs/:digifranchiseId/:digifranchiseOwnerId')
   @HttpCode(HttpStatus.OK)
   async getServicesAndSubServicesByDigifranchiseId(
    @Req() req: Request,
    @Param('digifranchiseId') digifranchiseId: string,
+   @Param('digifranchiseOwnerId') digifranchiseOwnerId: string,
   ): Promise<DigifranchiseServiceOffered[]> {
-   const userId = (req.user as UserEntity).id; 
-   return this.digifranchiseService.getServicesAndSubServicesByDigifranchiseId(digifranchiseId, userId);
+   return this.digifranchiseService.getServicesAndSubServicesByDigifranchiseId(digifranchiseId, digifranchiseOwnerId);
   }
 
 
