@@ -5,6 +5,7 @@ import { DigifranchiseComplianceInfo } from './digifranchise-compliance-informat
 import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 import { DigifranchiseExpense } from './digifranchise-expense.entity';
 import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select-product-service.entity';
+import { DigifranchiseServiceOffered } from './digifranchise-service-offered.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -29,6 +30,9 @@ export class DigifranchiseOwner {
 
   @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseOwnedId)
   digifranchiseGalleryImage: DigifranchiseGalleryImage[];
+
+  @OneToMany(() => DigifranchiseServiceOffered, service => service.ownedFranchise)
+  serviceOffered: DigifranchiseServiceOffered[];
 
 
   @OneToMany(() => DigifranchiseExpense, ownedFranchise => ownedFranchise.ownedDigifranchise)

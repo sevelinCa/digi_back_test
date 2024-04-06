@@ -48,6 +48,7 @@ import { RatingOrderModule } from './rating/rating-order.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { TrialFuncModule } from './trial-func/trial-func.module';
 
 @Module({
   imports: [
@@ -120,6 +121,7 @@ import { InventoryModule } from './inventory/inventory.module';
     DigifranchisePaymentModule,
     EnquiryMessageModule,
     RatingOrderModule,
+    TrialFuncModule,
     // ChatModule
   ],
 })
