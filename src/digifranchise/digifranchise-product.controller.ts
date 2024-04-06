@@ -32,10 +32,13 @@ export class DigifranchiseProductController {
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({ summary: 'GET ALL - Retrieve all Digifranchise products  by Digifranchise ID' })
   @ApiResponse({ status: HttpStatus.OK, description: 'All Digifranchise products  by the specified Digifranchise ID have been successfully retrieved.' })
-  @Get('get-all-products-with-subs/:digifranchiseId')
+  @Get('get-all-products-with-subs/:digifranchiseId/:digifranchiseOwnerId')
   @HttpCode(HttpStatus.OK)
-  async getProductsAndSubProductsById(@Param('digifranchiseId') digifranchiseId: string): Promise<DigifranchiseProduct[]> {
-    return this.productService.getProductsAndSubProductsById(digifranchiseId);
+  async getProductsAndSubProductsById(
+    @Param('digifranchiseId') digifranchiseId: string,
+    @Param('digifranchiseOwnerId') digifranchiseOwnerId: string,
+  ): Promise<DigifranchiseProduct[]> {
+    return this.productService.getProductsAndSubProductsById(digifranchiseId,digifranchiseOwnerId);
   }
 
 
