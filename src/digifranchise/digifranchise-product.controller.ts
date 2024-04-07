@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { DigifranchiseProduct } from './entities/digifranchise-product.entity';
 import { ProductService } from './product.service';
 import { CreateDigifranchiseSubProductDto, UpdateDigifranchiseSubProductDto } from './dto/create-digifranchise-SubProduct.dto';
-import  { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
+import { DigifranchiseSubProduct } from './entities/digifranchise-sub-product.entity';
 
 @ApiTags('Digifranchise Product')
 @ApiBearerAuth()
@@ -38,7 +38,7 @@ export class DigifranchiseProductController {
     @Param('digifranchiseId') digifranchiseId: string,
     @Param('digifranchiseOwnerId') digifranchiseOwnerId: string,
   ): Promise<DigifranchiseProduct[]> {
-    return this.productService.getProductsAndSubProductsById(digifranchiseId,digifranchiseOwnerId);
+    return this.productService.getProductsAndSubProductsById(digifranchiseId, digifranchiseOwnerId);
   }
 
 
@@ -52,10 +52,11 @@ export class DigifranchiseProductController {
     @Body() createDigifranchiseSubProductDto: CreateDigifranchiseSubProductDto,
     @Req() req: Request,
     @Param('productId') productId: string,
+    @Param('digifranchiseOwnerId') digifranchiseOwnerId: string,
   ): Promise<DigifranchiseSubProduct> {
     const userId = (req.user as UserEntity).id;
 
-    return this.productService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, productId);
+    return this.productService.createSubDigifranchiseProduct(createDigifranchiseSubProductDto, userId, productId, digifranchiseOwnerId);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)

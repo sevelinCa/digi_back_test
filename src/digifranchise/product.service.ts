@@ -67,6 +67,7 @@ export class ProductService {
       const subProducts = await this.digifranchiseSubProductRepository.find({
         where: {
           digifranchiseProductId: Equal(product.id),
+          digifranchiseOwnedId: Equal(digifranchiseOwnerId),
         },
       });
 
@@ -99,22 +100,28 @@ export class ProductService {
     createDigifranchiseSubProductDto: CreateDigifranchiseSubProductDto,
     userId: string,
     productId: string,
+    digifranchiseOwnerId: string,
   ): Promise<DigifranchiseSubProduct> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const Service = await this.digifranchiseProductRepository.findOne({ where: { id: productId } });
+    const product = await this.digifranchiseProductRepository.findOne({ where: { id: productId } });
 
-    if (!Service) {
-      throw new NotFoundException('Service not found');
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
-
+    const owedFranchise = await this.digifranchiseOwnershipRepository.findOne({ where: { id: digifranchiseOwnerId } });
+    if (!owedFranchise) {
+      throw new Error('Owned digifranchise does not exist');
+    }
     const newDigifranchiseSubProduct = this.digifranchiseSubProductRepository.create({
       ...createDigifranchiseSubProductDto,
       userId: user,
-      digifranchiseProductId: Service,
+      digifranchiseProductId: product,
+      digifranchiseOwnedId:owedFranchise
+
     });
 
     return this.digifranchiseSubProductRepository.save(newDigifranchiseSubProduct);
