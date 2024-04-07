@@ -47,16 +47,17 @@ export class DigifranchiseServiceOfferedController {
   @ApiOperation({ summary: 'CREATE - Create Sub Service' })
   @ApiResponse({ status: HttpStatus.OK, description: 'You have created subservice.' })
   @ApiBody({ type: CreateDigifranchiseSubServiceOfferedDto })
-  @Post('create-sub-service/:serviceId')
+  @Post('create-sub-service/:serviceId/:digifranchiseOwnerId')
   @HttpCode(HttpStatus.OK)
   async createSubDigifranchiseServiceOffered(
     @Body() createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
     @Req() req: Request,
     @Param('serviceId') serviceId: string,
+    @Param('digifranchiseOwnerId') digifranchiseOwnerId: string,
   ): Promise<DigifranchiseSubServices> {
     const userId = (req.user as UserEntity).id;
 
-    return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseSubServiceOfferedDto, userId, serviceId);
+    return this.digifranchiseService.createSubDigifranchiseServiceOffered(createDigifranchiseSubServiceOfferedDto, userId, serviceId,digifranchiseOwnerId);
   }
 
   @Roles(RoleEnum.digifranchise_super_admin)
