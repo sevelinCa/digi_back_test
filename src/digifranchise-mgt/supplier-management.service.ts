@@ -6,6 +6,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import {  Repository, IsNull } from 'typeorm';
 import { CreateSupplierManagementDto, UpdateSupplierManagementDto } from './dto/create-supplier-management.dto';
 import { SupplierManagement } from './entities/supplier-management.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class SupplierManagementService {
@@ -15,28 +16,28 @@ export class SupplierManagementService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-        @InjectRepository(Digifranchise)
-        private readonly digifranchiseRepository: Repository<Digifranchise>,
+        @InjectRepository(DigifranchiseOwner)
+        private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>,
         @InjectRepository(SupplierManagement)
         private readonly supplierManagementRepository: Repository<SupplierManagement>,
 
     ) { }
 
-    async createSupplier(userId: string, digifranchiseId: string, createSupplierManagementDto: CreateSupplierManagementDto): Promise<SupplierManagement> {
+    async createSupplier(userId: string, ownedFranchiseId: string, createSupplierManagementDto: CreateSupplierManagementDto): Promise<SupplierManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new Error('User does not exist');
         }
 
-        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
-        if (!digifranchise) {
-            throw new Error('Digifranchise does not exist')
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchiseId } })
+        if (!owned) {
+            throw new Error('owned does not exist')
         }
 
         const newSupplier = this.supplierManagementRepository.create({
             ...createSupplierManagementDto,
             userId: user,
-            digifranchiseId: digifranchise
+            ownedDigifranchise: owned
         });
 
         const savedSupplier = await this.supplierManagementRepository.save(newSupplier);

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, CreateDa
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { AvailableManagement } from './available-management.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 
 export class UnavailableTime {
@@ -19,9 +20,13 @@ export class UnavailableManagement {
   @JoinColumn({ name: 'userId' })
   userId: UserEntity;
 
-  @ManyToOne(() => Digifranchise)
-  @JoinColumn({ name: 'digifranchiseId' })
-  digifranchiseId: Digifranchise;
+  // @ManyToOne(() => Digifranchise)
+  // @JoinColumn({ name: 'digifranchiseId' })
+  // digifranchiseId: Digifranchise | null;
+
+  @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.unavailability)
+  @JoinColumn({ name: 'ownedDigifranchise' })
+  ownedDigifranchise: DigifranchiseOwner | null;
 
   @ManyToOne(() => AvailableManagement)
   @JoinColumn({ name: 'AvailableManagementId' })

@@ -1,3 +1,4 @@
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, JoinColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
@@ -10,11 +11,15 @@ export class StaffManagement {
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })
     userId: UserEntity;
-    
-    @ManyToOne(() => Digifranchise)
-    @JoinColumn({ name: 'digifranchiseId' })
-    digifranchiseId: Digifranchise;
-    
+        
+    // @ManyToOne(() => Digifranchise)
+    // @JoinColumn({ name: 'digifranchiseId' })
+    // digifranchiseId: Digifranchise | null;
+  
+    @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.staff)
+    @JoinColumn({ name: 'ownedDigifranchise' })
+    ownedDigifranchise: DigifranchiseOwner | null;
+
     @Column({ type: 'text' })
     image: string;
 

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, CreateDa
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Entity()
 export class SupplierManagement {
@@ -12,9 +13,13 @@ export class SupplierManagement {
  @JoinColumn({ name: 'userId' })
  userId: UserEntity;
 
- @ManyToOne(() => Digifranchise)
- @JoinColumn({ name: 'digifranchiseId' })
- digifranchiseId: Digifranchise;
+//  @ManyToOne(() => Digifranchise)
+//  @JoinColumn({ name: 'digifranchiseId' })
+//  digifranchiseId: Digifranchise | null;
+
+ @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.supplier)
+ @JoinColumn({ name: 'ownedDigifranchise' })
+ ownedDigifranchise: DigifranchiseOwner | null;
 
  @IsNotEmpty()
  @IsString()
