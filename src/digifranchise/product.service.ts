@@ -64,13 +64,17 @@ export class ProductService {
     });
 
     const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
+
       const subProducts = await this.digifranchiseSubProductRepository.find({
         where: {
           digifranchiseProductId: Equal(product.id),
           digifranchiseOwnedId: Equal(digifranchiseOwnerId),
         },
+        relations: ['digifranchiseOwnedId'],
       });
-
+      console.log("===== SUB PRODUCT : ", subProducts)
+      console.log("===== PRODUCT ID : ", product.id)
+      console.log("===== OWNED FRANCHISE : ", digifranchiseOwnerId)
       const productGalleryImages = await this.digifranchiseGalleryImageRepository.find({
         where: {
           digifranchiseProductId: Equal(product.id),
@@ -120,7 +124,7 @@ export class ProductService {
       ...createDigifranchiseSubProductDto,
       userId: user,
       digifranchiseProductId: product,
-      digifranchiseOwnedId:owedFranchise
+      digifranchiseOwnedId: owedFranchise
 
     });
 
