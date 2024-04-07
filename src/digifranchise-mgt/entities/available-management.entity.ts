@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 export class WeekDaysAndTimes {
   day: string;
@@ -35,9 +36,13 @@ export class AvailableManagement {
   @JoinColumn({ name: 'userId' })
   userId: UserEntity;
 
-  @ManyToOne(() => Digifranchise)
-  @JoinColumn({ name: 'digifranchiseId' })
-  digifranchiseId: Digifranchise;
+  // @ManyToOne(() => Digifranchise, { nullable: true })
+  // @JoinColumn({ name: 'digifranchiseId' })
+  // digifranchiseId: Digifranchise | null;
+
+  @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.availability)
+  @JoinColumn({ name: 'ownedDigifranchise' })
+  ownedDigifranchise: DigifranchiseOwner | null;
 
   @Column({ type: 'json' })
   weekDaysAndTimes: WeekDaysAndTimes[];

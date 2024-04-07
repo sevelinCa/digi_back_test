@@ -15,10 +15,11 @@ import { InventoryManagementService } from './inventory-management.service';
 import { StaffManagementService } from './staff-management.service';
 import { StaffManagement } from './entities/staff-management.entity';
 import { InventoryManagement } from './entities/inventory-management.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AvailableManagement,Digifranchise, UserEntity, CustomerManagement, UnavailableManagement, SupplierManagement, StaffManagement, InventoryManagement ]),
+    TypeOrmModule.forFeature([AvailableManagement,Digifranchise, DigifranchiseOwner,UserEntity, CustomerManagement, UnavailableManagement, SupplierManagement, StaffManagement, InventoryManagement ]),
   ],
   providers: [AvailabilityManagementService, UnavailableManagementService, CustomerManagementService, SupplierManagementService, InventoryManagementService, StaffManagementService,  ],
   controllers: [AvailabilityManagementController,AvailabilityNoAuthManagementController,UnavailableManagementController,CustomerManagementController,SupplierManagementController,StaffManagementController, InventoryManagementController, ]

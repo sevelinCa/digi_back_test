@@ -33,33 +33,40 @@ export class AvailabilityManagementController {
     @ApiOperation({ summary: 'CREATE - Create - Availability', })
     @ApiResponse({ status: HttpStatus.OK, description: 'You have created Availability.' })
     @ApiBody({ type: CreateAvailabilityManagementDto })
-    @Post('create-availability/:digifranchiseId')
+    @Post('create-availability/:ownedFranchiseId')
     async createAvailability(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.availabilityManagementService.createAvailability(userId, digifranchiseId, createAvailabilityManagementDto);
+        return this.availabilityManagementService.createAvailability(userId, ownedFranchiseId, createAvailabilityManagementDto);
     }
 
     @ApiOperation({ summary: 'CREATE - Create - Availability Not Auth', })
     @ApiResponse({ status: HttpStatus.OK, description: 'You have created Availability.' })
     @ApiBody({ type: CreateAvailabilityManagementDto })
-    @Post('create-availability-no-auth/:digifranchiseId')
+    @Post('create-availability-no-auth/:ownedFranchiseId')
     async createAvailabilityNoAuth(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
-        return this.availabilityManagementService.createAvailabilityNoAuth(digifranchiseId, createAvailabilityManagementDto);
+        return this.availabilityManagementService.createAvailabilityNoAuth(ownedFranchiseId, createAvailabilityManagementDto);
     }
 
-@ApiOperation({ summary: 'GET - Get All Availabilities for a User', })
-@ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all availabilities for the user.' })
-@Get('get-all-availabilities/:userId')
-async getAllAvailability(@Req() req: Request, @Param('userId') userId: string): Promise<AvailableManagement[]> {
+    @ApiOperation({ summary: 'GET - Get All Availabilities for a User', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all availabilities for the user.' })
+    @Get('get-all-availabilities/:userId')
+    async getAllAvailability(@Req() req: Request, @Param('userId') userId: string): Promise<AvailableManagement[]> {
 
-    return this.availabilityManagementService.getAllAvailability(userId);
-}
+        return this.availabilityManagementService.getAllAvailability(userId);
+    }
+
+    @ApiOperation({ summary: 'GET - Get All Availabilities for a Owned', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved all availabilities for the Owned.' })
+    @Get('get-all-availabilities-by-owner/:ownedFranchiseId')
+    async getAllAvailabilityByOwned(@Param('ownedFranchiseId') ownedFranchiseId: string): Promise<AvailableManagement[]> {
+        return this.availabilityManagementService.getAllAvailabilityByOwned(ownedFranchiseId);
+    }
 
     @ApiOperation({ summary: 'GET - Get Availability by ID', })
     @ApiResponse({ status: HttpStatus.OK, description: 'Retrieved availability by ID.' })
@@ -97,13 +104,13 @@ export class UnavailableManagementController {
     @ApiOperation({ summary: 'CREATE - Create Unavailable Management', })
     @ApiResponse({ status: HttpStatus.OK, description: 'You have created Unavailable Management.' })
     @ApiBody({ type: CreateUnavailableManagementDto })
-    @Post('create-unavailable-management/:digifranchiseId')
+    @Post('create-unavailable-management/:ownedFranchiseId')
     async createUnavailableManagement(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createUnavailableManagementDto: CreateUnavailableManagementDto): Promise<UnavailableManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.unavailableManagementService.createUnavailableManagement(userId, digifranchiseId, createUnavailableManagementDto);
+        return this.unavailableManagementService.createUnavailableManagement(userId, ownedFranchiseId, createUnavailableManagementDto);
     }
 
     @ApiOperation({ summary: 'GET - Get All Unavailable Management', })
@@ -148,13 +155,13 @@ export class CustomerManagementController {
     @ApiOperation({ summary: 'Create a new customer ' })
     @ApiResponse({ status: 201, description: 'The customer  has been successfully created.' })
     @ApiBody({ type: CreateCustomerManagementDto })
-    @Post('create-customer/:digifranchiseId')
+    @Post('create-customer/:ownedFranchiseId')
     async createCustomer(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createCustomerManagementDto: CreateCustomerManagementDto): Promise<CustomerManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.customerManagementService.createCustomer(userId, digifranchiseId, createCustomerManagementDto);
+        return this.customerManagementService.createCustomer(userId, ownedFranchiseId, createCustomerManagementDto);
     }
 
 
@@ -204,13 +211,13 @@ export class SupplierManagementController {
     @ApiOperation({ summary: 'Create a new supplier ' })
     @ApiResponse({ status: 201, description: 'The supplier  has been successfully created.' })
     @ApiBody({ type: CreateSupplierManagementDto })
-    @Post('create-supplier/:digifranchiseId')
+    @Post('create-supplier/:ownedFranchiseId')
     async createSupplier(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createSupplierManagementDto: CreateSupplierManagementDto): Promise<SupplierManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.supplierManagementService.createSupplier(userId, digifranchiseId, createSupplierManagementDto);
+        return this.supplierManagementService.createSupplier(userId, ownedFranchiseId, createSupplierManagementDto);
     }
 
 
@@ -258,13 +265,13 @@ export class StaffManagementController {
     @ApiOperation({ summary: 'Create a new staff ' })
     @ApiResponse({ status: 201, description: 'The staff  has been successfully created.' })
     @ApiBody({ type: CreateStaffManagementDto })
-    @Post('create-staff')
+    @Post('create-staff/:ownedFranchiseId')
     async createStaff(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createStaffManagementDto: CreateStaffManagementDto): Promise<StaffManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.staffManagementService.createStaff(userId, digifranchiseId, createStaffManagementDto);
+        return this.staffManagementService.createStaff(userId, ownedFranchiseId, createStaffManagementDto);
     }
 
 
@@ -312,13 +319,13 @@ export class InventoryManagementController {
     @ApiOperation({ summary: 'Create a new inventory ' })
     @ApiResponse({ status: 201, description: 'The inventory  has been successfully created.' })
     @ApiBody({ type: CreateInventoryManagementDto })
-    @Post('create-inventory/:digifranchiseId')
+    @Post('create-inventory/:ownedFranchiseId')
     async createInventory(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createInventoryManagementDto: CreateInventoryManagementDto): Promise<InventoryManagement> {
         const userId = (req.user as UserEntity).id;
-        return this.inventoryManagementService.createInventory(userId, digifranchiseId, createInventoryManagementDto);
+        return this.inventoryManagementService.createInventory(userId, ownedFranchiseId, createInventoryManagementDto);
     }
 
 
@@ -366,12 +373,12 @@ export class AvailabilityNoAuthManagementController {
     @ApiOperation({ summary: 'CREATE - Create - Availability Not Auth', })
     @ApiResponse({ status: HttpStatus.OK, description: 'You have created Availability no auth.' })
     @ApiBody({ type: CreateAvailabilityManagementDto })
-    @Post('create-availability-no-auth/:digifranchiseId')
+    @Post('create-availability-no-auth/:ownedFranchiseId')
     async createAvailabilityNoAuth(
         @Req() req: Request,
-        @Param('digifranchiseId') digifranchiseId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createAvailabilityManagementDto: CreateAvailabilityManagementDto): Promise<AvailableManagement> {
-        return this.availabilityManagementService.createAvailabilityNoAuth(digifranchiseId, createAvailabilityManagementDto);
+        return this.availabilityManagementService.createAvailabilityNoAuth(ownedFranchiseId, createAvailabilityManagementDto);
     }
 
 

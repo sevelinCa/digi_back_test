@@ -6,6 +6,7 @@ import { UserEntity } from 'src/users/infrastructure/persistence/relational/enti
 import {  Repository, IsNull } from 'typeorm';
 import  { CreateInventoryManagementDto, UpdateInventoryManagementDto } from './dto/create-inventory-management.dto';
 import { InventoryManagement } from './entities/inventory-management.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class InventoryManagementService {
@@ -13,28 +14,28 @@ export class InventoryManagementService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-        @InjectRepository(Digifranchise)
-        private readonly digifranchiseRepository: Repository<Digifranchise>,
+        @InjectRepository(DigifranchiseOwner)
+        private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>,
         @InjectRepository(InventoryManagement)
         private readonly inventoryManagementRepository: Repository<InventoryManagement>,
 
     ) { }
 
-    async createInventory(userId: string, digifranchiseId: string, createInventoryManagementDto: CreateInventoryManagementDto): Promise<InventoryManagement> {
+    async createInventory(userId: string, ownedFranchiseId: string, createInventoryManagementDto: CreateInventoryManagementDto): Promise<InventoryManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new Error('User does not exist');
         }
 
-        const digifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } })
-        if (!digifranchise) {
-            throw new Error('Digifranchise does not exist')
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchiseId } })
+        if (!owned) {
+            throw new Error('owned does not exist')
         }
 
         const newInventory = this.inventoryManagementRepository.create({
             ...createInventoryManagementDto,
             userId: user,
-            digifranchiseId: digifranchise
+            ownedDigifranchise: owned
         });
 
         const savedInventory = await this.inventoryManagementRepository.save(newInventory);

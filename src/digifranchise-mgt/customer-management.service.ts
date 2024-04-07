@@ -5,7 +5,8 @@ import { checkIfUserExists } from 'src/helper/FindByFunctions';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Repository, IsNull, Equal } from 'typeorm';
 import { CustomerManagement } from './entities/customer-management.entity';
-import { CreateCustomerManagementDto,  UpdateCustomerManagementDto } from './dto/create-customer-management.dto';
+import { CreateCustomerManagementDto, UpdateCustomerManagementDto } from './dto/create-customer-management.dto';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class CustomerManagementService {
@@ -14,27 +15,27 @@ export class CustomerManagementService {
     constructor(
         @InjectRepository(UserEntity)
         private readonly userRepository: Repository<UserEntity>,
-        @InjectRepository(Digifranchise)
-        private readonly digifranchiseRepository: Repository<Digifranchise>,
+        @InjectRepository(DigifranchiseOwner)
+        private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>,
         @InjectRepository(CustomerManagement)
         private readonly customerManagementRepository: Repository<CustomerManagement>,
 
     ) { }
 
-    async createCustomer(userId: string, digifranchiseId: string, createCustomerManagementDto: CreateCustomerManagementDto): Promise<CustomerManagement> {
+    async createCustomer(userId: string, ownedFranchiseId: string, createCustomerManagementDto: CreateCustomerManagementDto): Promise<CustomerManagement> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new Error('User does not exist');
         }
 
-        const digifranchise = await this.digifranchiseRepository.findOne({where:{id:digifranchiseId}})
-        if(!digifranchise){
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchiseId } })
+        if (!owned) {
             throw new Error('User does not exist')
         }
         const newCustomer = this.customerManagementRepository.create({
             ...createCustomerManagementDto,
             userId: user,
-            digifranchiseId: digifranchise,
+            ownedDigifranchise: owned,
         });
 
         const savedCustomer = await this.customerManagementRepository.save(newCustomer);
