@@ -89,7 +89,6 @@ export class ClientFixedExpensesService {
 
     const fixedExpense = this.fixedExpenseRepository.create({
       ...createFixedExpenseDto,
-      // userId: user,
     });
 
     return this.fixedExpenseRepository.save(fixedExpense);

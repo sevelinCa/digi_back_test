@@ -953,7 +953,6 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // user.password = password;
 
     Object.assign(user, { password: hashedPassword })
 

@@ -30,7 +30,6 @@ export class CalenderMgtService {
         private readonly customerManagementRepository: Repository<CustomerManagement>,
         @InjectRepository(CalenderBooking)
         private readonly bookingRepository: Repository<CalenderBooking>,
-        // private readonly mailerService: MailerService,
 
     ) { }
 
@@ -266,7 +265,6 @@ export class CalenderMgtService {
             throw new NotFoundException(`Guest with ID ${guestId} not found in the specified event.`);
         }
     
-        // Assuming you want to remove the association entirely
         await this.calenderEventGuestRepository.remove(guestEventAssociation);
     }
 }
