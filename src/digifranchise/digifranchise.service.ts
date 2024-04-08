@@ -235,9 +235,7 @@ export class DigifranchiseService {
        };
     }));
    
-    return {
-       servicesWithSubServices,
-    };
+    return servicesWithSubServices.flat();
    }
 
    async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {

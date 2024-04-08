@@ -72,9 +72,6 @@ export class ProductService {
         },
         relations: ['digifranchiseOwnedId'],
       });
-      console.log("===== SUB PRODUCT : ", subProducts)
-      console.log("===== PRODUCT ID : ", product.id)
-      console.log("===== OWNED FRANCHISE : ", digifranchiseOwnerId)
       const productGalleryImages = await this.digifranchiseGalleryImageRepository.find({
         where: {
           digifranchiseProductId: Equal(product.id),
@@ -97,7 +94,7 @@ export class ProductService {
       };
     }));
 
-    return { productsWithSubProducts };
+    return productsWithSubProducts.flat();
   }
 
   async createSubDigifranchiseProduct(
