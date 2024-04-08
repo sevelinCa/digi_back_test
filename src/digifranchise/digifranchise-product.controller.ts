@@ -46,7 +46,7 @@ export class DigifranchiseProductController {
   @ApiOperation({ summary: 'CREATE - Create Sub Product' })
   @ApiResponse({ status: HttpStatus.OK, description: 'You have created sub product.' })
   @ApiBody({ type: CreateDigifranchiseSubProductDto })
-  @Post('create-sub-product/:productId')
+  @Post('create-sub-product/:productId/:digifranchiseOwnerId')
   @HttpCode(HttpStatus.OK)
   async createSubDigifranchiseProduct(
     @Body() createDigifranchiseSubProductDto: CreateDigifranchiseSubProductDto,
