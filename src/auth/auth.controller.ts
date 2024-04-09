@@ -33,6 +33,7 @@ import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { GoogleCreateUserDto } from './dto/google-create-user.dto';
 import { PhoneForgotPasswordDto } from './dto/auth-phone-forgot-password.dto';
 import { PhoneRestPasswordDto } from './dto/auth-phone-reset-password.dto';
+import type { AuthForgotPasswordForWebSiteDto } from './dto/auth-forgot-password-on-webs.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -222,6 +223,13 @@ export class AuthController {
   ): Promise<void> {
     return this.service.forgotPassword(forgotPasswordDto.email);
   }
+
+  @Post('website/forgot/password')
+ async forgotPasswordForWebs(
+  @Body() forgotPasswordDto: AuthForgotPasswordForWebSiteDto
+): Promise<void> {
+    return this.service.forgotPasswordForWebs(forgotPasswordDto);
+ }
 
   @Post('reset/password')
   @HttpCode(HttpStatus.NO_CONTENT)

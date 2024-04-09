@@ -37,6 +37,8 @@ import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
 import { CustomerSubscriptionService } from 'src/digifranchise-subscription/customer-subscription.service';
 import { CustomerSubscription } from 'src/digifranchise-subscription/entities/customer-subscription.entity';
+import { AuthForgotPasswordForWebSiteDto } from './dto/auth-forgot-password-on-webs.dto';
+import { ForgotPasswordMailData } from 'forgot-password-mail-data.interface';
 
 @Injectable()
 export class AuthService {
@@ -852,6 +854,41 @@ export class AuthService {
     });
   }
 
+  async forgotPasswordForWebs(forgotPasswordDto: AuthForgotPasswordForWebSiteDto): Promise<void> {
+    const user = await this.usersService.findOne({ email: forgotPasswordDto.email });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'emailNotExists',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const hash = await this.jwtService.signAsync(
+      {
+        forgotUserId: user.id,
+      },
+      {
+        secret: this.configService.getOrThrow('auth.forgotSecret', { infer: true }),
+        expiresIn: this.configService.getOrThrow('auth.forgotExpires', { infer: true }),
+      },
+    );
+
+    await this.mailService.forgotPassword({
+      to: forgotPasswordDto.email,
+      data: {
+        hash,
+        websiteUrl: forgotPasswordDto.websiteURL,
+      } as ForgotPasswordMailData['data'],
+    });
+  }
+
+
   async forgotPasswordWithPhone(phoneNumber: string): Promise<any> {
     const user = await this.usersService.findOne({
       phoneNumber,
@@ -1085,7 +1122,7 @@ export class AuthService {
       })
       await this.usersRepository.save(updatedUser)
     }
-    
+
   }
 
   async refreshToken(
