@@ -184,6 +184,15 @@ export class OrderController {
         const userId = (req.user as UserEntity).id;
         return this.orderService.createOrderByCategoryWithAuth(createOrderTableDto, userId, serviceCategoryId);
     }
+
+@ApiOperation({ summary: 'Delete all orders' })
+@ApiResponse({ status: HttpStatus.OK, description: 'All orders have been successfully deleted.' })
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Delete('delete-all-orders')
+async deleteAllOrders(): Promise<void> {
+    return this.orderService.deleteAllOrders();
+}
 }
 
 
