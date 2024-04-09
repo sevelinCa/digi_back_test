@@ -491,4 +491,9 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
     }
 
 
+async deleteAllOrders(): Promise<void> {
+    await this.orderRepository.delete({});
+}
+
+
 }
