@@ -580,6 +580,19 @@ export class AuthService {
   }
 
   async phoneCustomerRegister(digifranchiseId: string, dto: AuthPhoneRegisterDto) {
+    const { phoneNumber } = dto;
+    const users = await this.usersService.findOne({ phoneNumber });
+    if (users) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          errors: {
+            message: 'Phone number already exists'
+          },
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
     const user = await this.usersService.create({
       ...dto,
       provider: AuthProvidersEnum.phone,
