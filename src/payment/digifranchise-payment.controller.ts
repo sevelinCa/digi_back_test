@@ -76,7 +76,7 @@ export class OrderController {
         @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createOrderTableDto: CreateOrderTableDto,
     ): Promise<OrderTable> {
-        return this.orderService.createOrder(createOrderTableDto, productOrServiceId,ownedFranchiseId);
+        return this.orderService.createOrder(createOrderTableDto, productOrServiceId, ownedFranchiseId);
     }
 
     @ApiOperation({ summary: 'Get all orders for a user' })
@@ -135,7 +135,7 @@ export class OrderController {
     @ApiBody({ type: CreateOrderTableDto })
     @ApiBearerAuth()
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    
+
     @Post('create-order-auth/:productOrServiceOrCategoryId/:ownedFranchiseId')
     async createOrderWithAuth(
         @Req() req: Request,
@@ -146,15 +146,17 @@ export class OrderController {
         return this.orderService.createOrderWithAuth(createOrderTableDto, userId, productOrServiceOrCategoryId, ownedFranchiseId);
     }
 
-    
     @ApiOperation({ summary: 'Get all orders for a user with authentication' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been successfully retrieved.' })
     @ApiBearerAuth()
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Get('get-all-order-with-auth/:ownedFranchiseId')
-    async getAllOrdersWithAuth(@Req() req: Request, @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
+    async getAllOrdersWithAuth(
+        @Req() req: Request,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+    ): Promise<{ orders: OrderTable[], count: number }> {
         const userId = (req.user as UserEntity).id;
-        return this.orderService.getAllOrdersWithAuth(userId, ownedDigifranchiseId);
+        return this.orderService.getAllOrdersWithAuth(userId, ownedFranchiseId);
     }
 
 
@@ -185,14 +187,14 @@ export class OrderController {
         return this.orderService.createOrderByCategoryWithAuth(createOrderTableDto, userId, serviceCategoryId);
     }
 
-@ApiOperation({ summary: 'Delete all orders' })
-@ApiResponse({ status: HttpStatus.OK, description: 'All orders have been successfully deleted.' })
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Delete('delete-all-orders')
-async deleteAllOrders(): Promise<void> {
-    return this.orderService.deleteAllOrders();
-}
+    @ApiOperation({ summary: 'Delete all orders' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All orders have been successfully deleted.' })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Delete('delete-all-orders')
+    async deleteAllOrders(): Promise<void> {
+        return this.orderService.deleteAllOrders();
+    }
 }
 
 
