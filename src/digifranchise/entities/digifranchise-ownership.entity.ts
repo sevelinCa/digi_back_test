@@ -13,6 +13,7 @@ import { UnavailableManagement } from 'src/digifranchise-mgt/entities/unavailabl
 import { CustomerSubscription } from 'src/digifranchise-mgt/entities/customer-subscription.entity';
 import { InventoryManagement } from 'src/digifranchise-mgt/entities/inventory-management.entity';
 import { DigifranchiseSubServices } from './digifranchise-sub-service.entity';
+import { OrderTable } from 'src/payment/entities/order.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -75,6 +76,11 @@ export class DigifranchiseOwner {
 
   @OneToMany(() => InventoryManagement, inventory => inventory.ownedDigifranchise)
   inventory: InventoryManagement[];
+
+  @OneToMany(() => OrderTable, orders => orders.ownedDigifranchise)
+  order: OrderTable[];
+
+  
 
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

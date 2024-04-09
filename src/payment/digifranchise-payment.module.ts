@@ -15,6 +15,7 @@ import { OrderBasicInfoController } from './order-basic-info.controller';
 import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchise-sub-service.entity';
 import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
 import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digifranchise-sub-service-category.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digi
       DigifranchiseSubServices,
       DigifranchiseSubProduct,
       DigifranchiseSubServiceCategory,
+      DigifranchiseOwner
     ]),
   ],
   providers: [OrderService, RateService, OrderBasicInfoService],
