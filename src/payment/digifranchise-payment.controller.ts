@@ -152,14 +152,10 @@ export class OrderController {
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Get('get-all-order-with-auth/:ownedFranchiseId')
     async getAllOrdersWithAuth(
-        @Req() req: Request,
         @Param('ownedFranchiseId') ownedFranchiseId: string,
     ): Promise<{ orders: OrderTable[], count: number }> {
-        const userId = (req.user as UserEntity).id;
-        return this.orderService.getAllOrdersWithAuth(userId, ownedFranchiseId);
+        return this.orderService.getAllOrdersWithAuth(ownedFranchiseId);
     }
-
-
 
     @ApiOperation({ summary: 'Create a new order with-service category' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
