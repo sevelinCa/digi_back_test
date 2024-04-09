@@ -122,7 +122,7 @@ export class OrderController {
         return this.orderService.createOrderForSubs(createOrderTableDto, subProductOrSubServiceOrSubCategoryId);
     }
 
-    @ApiOperation({ summary: 'GET - Retrieve an order by its order number' })
+    @ApiOperation({ summary: 'GET - Retrieve an order by its number' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Order retrieved successfully.' })
     @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order not found.' })
     @Get('get-order-by-number/:orderNumber')
