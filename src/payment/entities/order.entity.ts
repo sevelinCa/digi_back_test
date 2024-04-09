@@ -1,3 +1,4 @@
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { DigifranchiseProduct } from 'src/digifranchise/entities/digifranchise-product.entity';
 import { DigifranchiseServiceOffered } from 'src/digifranchise/entities/digifranchise-service-offered.entity';
 import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
@@ -59,7 +60,10 @@ export class OrderTable {
     @JoinColumn({ name: 'subService' })
     subService: DigifranchiseSubServices | null;
 
-
+    @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.order)
+    @JoinColumn({ name: 'ownedDigifranchise' })
+    ownedDigifranchise: DigifranchiseOwner | null;
+    
     @Column({ type: 'json', nullable: true })
     orderAdditionalInfo: any[];
 

@@ -69,20 +69,21 @@ export class OrderController {
     @ApiOperation({ summary: 'Create a new order' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
     @ApiBody({ type: CreateOrderTableDto })
-    @Post('create-order/:productOrServiceId')
+    @Post('create-order/:productOrServiceId/:ownedFranchiseId')
     async createOrder(
         @Req() req: Request,
         @Param('productOrServiceId') productOrServiceId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
         @Body() createOrderTableDto: CreateOrderTableDto,
     ): Promise<OrderTable> {
-        return this.orderService.createOrder(createOrderTableDto, productOrServiceId);
+        return this.orderService.createOrder(createOrderTableDto, productOrServiceId,ownedFranchiseId);
     }
 
     @ApiOperation({ summary: 'Get all orders for a user' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been retrieved.' })
     @Get('get-all-order')
-    async getAllOrders(): Promise<{ orders: OrderTable[], count: number }> {
-        return this.orderService.getAllOrders();
+    async getAllOrders(@Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
+        return this.orderService.getAllOrders(ownedDigifranchiseId);
     }
 
     @ApiOperation({ summary: 'Get a single order by ID' })
@@ -134,24 +135,26 @@ export class OrderController {
     @ApiBody({ type: CreateOrderTableDto })
     @ApiBearerAuth()
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Post('create-order-auth/:productOrServiceOrCategoryId')
+    
+    @Post('create-order-auth/:productOrServiceOrCategoryId/:ownedFranchiseId')
     async createOrderWithAuth(
         @Req() req: Request,
         @Param('productOrServiceOrCategoryId') productOrServiceOrCategoryId: string,
         @Body() createOrderTableDto: CreateOrderTableDto,
-    ): Promise<OrderTable> {
+        @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<OrderTable> {
         const userId = (req.user as UserEntity).id;
-        return this.orderService.createOrderWithAuth(createOrderTableDto, userId, productOrServiceOrCategoryId);
+        return this.orderService.createOrderWithAuth(createOrderTableDto, userId, productOrServiceOrCategoryId, ownedDigifranchiseId);
     }
 
-    @ApiOperation({ summary: 'Get all orders for a user' })
+    
+    @ApiOperation({ summary: 'Get all orders for a user with authentication' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been successfully retrieved.' })
     @ApiBearerAuth()
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Get('get-all-order-with-auth')
-    async getAllOrdersWithAuth(@Req() req: Request): Promise<{ orders: OrderTable[], count: number }> {
+    @Get('get-all-order-with-auth/:ownedFranchiseId')
+    async getAllOrdersWithAuth(@Req() req: Request, @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
         const userId = (req.user as UserEntity).id;
-        return this.orderService.getAllOrdersWithAuth(userId);
+        return this.orderService.getAllOrdersWithAuth(userId, ownedDigifranchiseId);
     }
 
 

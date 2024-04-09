@@ -13,6 +13,7 @@ import { DigifranchiseServiceCategory } from 'src/digifranchise/entities/digifra
 import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
 import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchise-sub-service.entity';
 import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digifranchise-sub-service-category.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class OrderService {
@@ -31,7 +32,9 @@ export class OrderService {
         private readonly digifranchiseRepository: Repository<Digifranchise>,
         @InjectRepository(DigifranchiseServiceCategory)
         private readonly digifranchiseServiceCategoryRepository: Repository<DigifranchiseServiceCategory>,
-
+        @InjectRepository(DigifranchiseOwner)
+        private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
+    
         @InjectRepository(DigifranchiseSubProduct)
         private readonly digifranchiseSubProductRepository: Repository<DigifranchiseSubProduct>,
         @InjectRepository(DigifranchiseSubServices)
@@ -40,7 +43,11 @@ export class OrderService {
         private readonly digifranchiseServiceSubCategoryRepository: Repository<DigifranchiseSubServiceCategory>,
     ) { }
 
-    async createOrder(createOrderTableDto: CreateOrderTableDto, productOrServiceId: string): Promise<OrderTable> {
+    async createOrder(
+        createOrderTableDto: CreateOrderTableDto, 
+        productOrServiceId: string,
+        ownedDigifranchiseId: string
+    ): Promise<OrderTable> {
         let productOrService;
         let productOrServiceType;
 
@@ -63,6 +70,9 @@ export class OrderService {
         if (!franchise) {
             throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
         }
+
+
+
 
         const vatRateRecord = await this.rateTableRepository.findOne({
             where: { rateName: 'VAT', deleteAt: IsNull() },
@@ -92,6 +102,15 @@ export class OrderService {
 
         const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
 
+
+        const owned = await this.digifranchiseOwnerRepository.findOne({
+            where: { id: Equal(ownedDigifranchiseId) },
+        });
+
+        if (!owned) {
+            throw new HttpException('Digifranchise owner not found', HttpStatus.NOT_FOUND);
+        }
+
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
             productId: productOrServiceType === 'product' ? productOrService : null,
@@ -100,6 +119,7 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            ownedDigifranchise: owned 
         });
 
         const savedOrder = await this.orderRepository.save(newOrder);
@@ -183,7 +203,11 @@ export class OrderService {
         return savedOrder;
     }
 
-    async createOrderWithAuth(createOrderTableDto: CreateOrderTableDto, userId: string, productOrServiceOrCategoryId: string): Promise<OrderTable> {
+    async createOrderWithAuth(
+        createOrderTableDto: CreateOrderTableDto, 
+        userId: string, 
+        productOrServiceOrCategoryId: string,
+        ownedDigifranchiseId: string): Promise<OrderTable> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
@@ -252,6 +276,14 @@ export class OrderService {
 
         const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
 
+
+        const owned = await this.digifranchiseOwnerRepository.findOne({
+            where: { id: Equal(ownedDigifranchiseId) },
+        });
+
+        if (!owned) {
+            throw new HttpException('Digifranchise owner not found', HttpStatus.NOT_FOUND);
+        }
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
             userId: user,
@@ -261,6 +293,7 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            ownedDigifranchise: owned 
         });
 
         const savedOrder = await this.orderRepository.save(newOrder);
@@ -268,19 +301,22 @@ export class OrderService {
     }
 
 
-    async getAllOrders(): Promise<{ orders: OrderTable[], count: number }> {
-        const orders = await this.orderRepository.find({
-            where: { deleteAt: IsNull() },
-            relations: [
-                'userId',
-                'productId',
-                'productId.productGalleryImages',
-                'serviceId',
-                'serviceId.serviceGalleryImages'
-            ]
-        });
-        return { orders, count: orders.length };
-    }
+async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
+    const orders = await this.orderRepository.find({
+        where: { 
+            deleteAt: IsNull(),
+            ownedDigifranchise: Equal(ownedDigifranchiseId) 
+        },
+        relations: [
+            'userId',
+            'productId',
+            'productId.productGalleryImages',
+            'serviceId',
+            'serviceId.serviceGalleryImages'
+        ]
+    });
+    return { orders, count: orders.length };
+}
 
 
     async getOneOrder(orderId: string): Promise<OrderTable | null> {
@@ -318,9 +354,13 @@ export class OrderService {
         });
     }
 
-    async getAllOrdersWithAuth(userId: string): Promise<{ orders: OrderTable[], count: number }> {
+    async getAllOrdersWithAuth(userId: string, ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
         const orders = await this.orderRepository.find({
-            where: { userId: { id: Equal(userId) }, deleteAt: IsNull() },
+            where: { 
+                userId: { id: Equal(userId) },
+                ownedDigifranchise: Equal(ownedDigifranchiseId), // Filter by ownedDigifranchiseId
+                deleteAt: IsNull()
+            },
             relations: [
                 'userId',
                 'productId',
