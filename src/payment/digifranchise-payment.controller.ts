@@ -140,10 +140,10 @@ export class OrderController {
     async createOrderWithAuth(
         @Req() req: Request,
         @Param('productOrServiceOrCategoryId') productOrServiceOrCategoryId: string,
-        @Body() createOrderTableDto: CreateOrderTableDto,
-        @Query('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<OrderTable> {
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+        @Body() createOrderTableDto: CreateOrderTableDto,): Promise<OrderTable> {
         const userId = (req.user as UserEntity).id;
-        return this.orderService.createOrderWithAuth(createOrderTableDto, userId, productOrServiceOrCategoryId, ownedDigifranchiseId);
+        return this.orderService.createOrderWithAuth(createOrderTableDto, userId, productOrServiceOrCategoryId, ownedFranchiseId);
     }
 
     
