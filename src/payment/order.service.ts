@@ -354,11 +354,11 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
         });
     }
 
-    async getAllOrdersWithAuth(userId: string, ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
+    async getAllOrdersWithAuth(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
+        console.log('===> OWNED', ownedDigifranchiseId)
         const orders = await this.orderRepository.find({
             where: { 
-                userId: { id: Equal(userId) },
-                ownedDigifranchise: Equal(ownedDigifranchiseId), // Filter by ownedDigifranchiseId
+                ownedDigifranchise: Equal(ownedDigifranchiseId), 
                 deleteAt: IsNull()
             },
             relations: [
