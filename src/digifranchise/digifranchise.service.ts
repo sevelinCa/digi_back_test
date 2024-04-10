@@ -189,94 +189,164 @@ export class DigifranchiseService {
   async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string, digifranchiseOwnerId: string): Promise<any> {
     const owedFranchise = await this.digifranchiseOwnershipRepository.findOne({ where: { id: digifranchiseOwnerId } });
     if (!owedFranchise) {
-       throw new Error('Owned digifranchise does not exist');
+      throw new Error('Owned digifranchise does not exist');
     }
-   
+
     const parentDigifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
     if (!parentDigifranchise) {
-       throw new Error('Digifranchise does not exist');
+      throw new Error('Digifranchise does not exist');
     }
-   
+
     const servicesOffered = await this.digifranchiseServiceOfferedRepository.find({
-       where: {
-         digifranchiseId: Equal(parentDigifranchise.id),
-         userId: IsNull(),
-       },
-       relations: ['digifranchiseId', 'serviceCategories'],
+      where: {
+        digifranchiseId: Equal(parentDigifranchise.id),
+        userId: IsNull(),
+      },
+      relations: ['digifranchiseId', 'serviceCategories'],
     });
-   
+
     const servicesWithSubServices = await Promise.all(servicesOffered.map(async (service) => {
-       const subServices = await this.digifranchiseSubServicesRepository.find({
-         where: { digifranchiseServiceId: Equal(service.id),
+      const subServices = await this.digifranchiseSubServicesRepository.find({
+        where: {
+          digifranchiseServiceId: Equal(service.id),
           digifranchiseOwnedId: Equal(digifranchiseOwnerId),
-          },
-         relations: ['subServiceCategories', 'subServiceGalleryImages'],
-       });
-   
-       const serviceGalleryImages = await this.digifranchiseGalleryImageRepository.find({
-         where: {
-           digifranchiseServiceId: Equal(service.id),
-           digifranchiseOwnedId: Equal(digifranchiseOwnerId),
-         },
-       });
-   
-       const selectedService = await this.digifranchiseSelectItemRepository.find({
-         where: {
-           digifranchiseService: Equal(service.id),
-           ownerDigifranchise: Equal(digifranchiseOwnerId),
-         },
-       });
-   
-       return {
-         ...service,
-         subServices,
-         serviceGalleryImages,
-         selectedService,
-       };
+        },
+        relations: ['subServiceCategories', 'subServiceGalleryImages'],
+      });
+
+      const serviceGalleryImages = await this.digifranchiseGalleryImageRepository.find({
+        where: {
+          digifranchiseServiceId: Equal(service.id),
+          digifranchiseOwnedId: Equal(digifranchiseOwnerId),
+        },
+      });
+
+      const selectedService = await this.digifranchiseSelectItemRepository.find({
+        where: {
+          digifranchiseService: Equal(service.id),
+          ownerDigifranchise: Equal(digifranchiseOwnerId),
+        },
+      });
+
+      return {
+        ...service,
+        subServices,
+        serviceGalleryImages,
+        selectedService,
+      };
     }));
-   
+
     return servicesWithSubServices.flat();
-   }
+  }
 
-   // =============
-   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<any[]> {
+  // =============
+  //  async findAllOwnedDigifranchiseByUserId(userId: string): Promise<any[]> {
+  //   const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
+  //      where: { userId },
+  //      relations: [
+  //        'digifranchise', 
+  //        'digifranchiseGeneralInfo', 
+  //        'digifranchiseComplianceInfo',
+  //        'digifranchiseGalleryImage',
+  //      ],
+  //   });
+
+  //   const results = await Promise.all(ownershipRecords.map(async (ownership) => {
+  //      const digifranchiseId = ownership.digifranchise.id;
+
+  //      const products = await this.digifranchiseProductRepository.find({
+  //        where: { digifranchiseId: Equal(digifranchiseId) },
+  //        relations: ['digifranchiseId', 'productGalleryImages', 'userId'],
+  //      });
+
+  //      const services = await this.digifranchiseServiceOfferedRepository.find({
+  //        where: { digifranchiseId: Equal(digifranchiseId) },
+  //        relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
+  //      });
+
+  //      return {
+  //        ...ownership,
+  //        digifranchise: {
+  //          ...ownership.digifranchise,
+  //          digifranchiseProduct: products,
+  //          digifranchiseServiceOffered: services,
+  //        },
+  //      };
+  //   }));
+
+  //   return results.flat();
+  //  }
+
+  async findAllOwnedDigifranchiseByUserId(userId: string): Promise<any[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
-       where: { userId },
-       relations: [
-         'digifranchise', 
-         'digifranchiseGeneralInfo', 
-         'digifranchiseComplianceInfo',
-         'digifranchiseGalleryImage',
-       ],
+      where: { userId },
+      relations: [
+        'digifranchise',
+        'digifranchiseGeneralInfo',
+        'digifranchiseComplianceInfo',
+        'digifranchiseGalleryImage',
+        'serviceOffered',
+        'productOffered',
+        "availability",
+        "unavailability",
+        "subscription",
+        "customer"
+      ],
     });
-   
-    const results = await Promise.all(ownershipRecords.map(async (ownership) => {
-       const digifranchiseId = ownership.digifranchise.id;
-   
-       const products = await this.digifranchiseProductRepository.find({
-         where: { digifranchiseId: Equal(digifranchiseId) },
-         relations: ['digifranchiseId', 'productGalleryImages', 'userId'],
-       });
-   
-       const services = await this.digifranchiseServiceOfferedRepository.find({
-         where: { digifranchiseId: Equal(digifranchiseId) },
-         relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
-       });
-   
-       return {
-         ...ownership,
-         digifranchise: {
-           ...ownership.digifranchise,
-           digifranchiseProduct: products,
-           digifranchiseServiceOffered: services,
-         },
-       };
-    }));
-   
-    return results.flat();
-   }
 
-// =========================
+    const results = await Promise.all(ownershipRecords.map(async (ownership) => {
+      const digifranchiseId = ownership.digifranchise.id;
+
+      const products = await this.digifranchiseProductRepository.find({
+        where: { digifranchiseId: Equal(digifranchiseId) },
+        relations: ['digifranchiseId', 'productGalleryImages', 'userId'],
+      });
+
+      const services = await this.digifranchiseServiceOfferedRepository.find({
+        where: { digifranchiseId: Equal(digifranchiseId) },
+        relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
+      });
+
+      const productsWithSelectedItem = await Promise.all(products.map(async (product) => {
+        const selectedItem = await this.digifranchiseSelectItemRepository.find({
+          where: {
+            franchiseProduct: Equal(product.id),
+            userId: Equal(userId),
+          },
+        });
+        return {
+          ...product,
+          selectedItem,
+        };
+      }));
+
+      const servicesWithSelectedItem = await Promise.all(services.map(async (service) => {
+        const selectedItem = await this.digifranchiseSelectItemRepository.find({
+          where: {
+            digifranchiseService: Equal(service.id),
+            userId: Equal(userId),
+          },
+        });
+        return {
+          ...service,
+          selectedItem,
+        };
+      }));
+
+      return {
+        ...ownership,
+        digifranchise: {
+          ...ownership.digifranchise,
+          digifranchiseProduct: productsWithSelectedItem,
+          digifranchiseServiceOffered: servicesWithSelectedItem,
+        },
+      };
+    }));
+
+    return results.flat();
+  }
+
+  // =========================
 
   async findOneOwnedDigifranchiseByUserId(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner | null> {
     const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne({
@@ -311,7 +381,7 @@ export class DigifranchiseService {
       ...createDigifranchiseSubServiceOfferedDto,
       userId: user,
       digifranchiseServiceId: Service,
-      digifranchiseOwnedId:owedFranchise
+      digifranchiseOwnedId: owedFranchise
     });
 
     return this.digifranchiseSubServiceOfferedRepository.save(newDigifranchiseSubServiceOffered);
@@ -417,60 +487,60 @@ export class DigifranchiseService {
 
   async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
     const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
-       where: [
-         { connectNumberWithOutCountryCode: phoneNumber },
-         { otherMobileNumberWithOutCountryCode: phoneNumber }
-       ]
+      where: [
+        { connectNumberWithOutCountryCode: phoneNumber },
+        { otherMobileNumberWithOutCountryCode: phoneNumber }
+      ]
     });
-   
+
     if (!getDigifranchiseGeneralInfoByPhone) {
-       throw new NotFoundException('digifranchise not found');
+      throw new NotFoundException('digifranchise not found');
     }
-   
+
     if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
-       throw new NotFoundException('digifranchise not yet published');
+      throw new NotFoundException('digifranchise not yet published');
     }
-   
+
     // Fetch the ownedDigifranchiseId from the DigifranchiseGeneralInfo entity
     const ownedDigifranchiseId = getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId;
-   
+
     const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({
-       where: { id: ownedDigifranchiseId }
+      where: { id: ownedDigifranchiseId }
     });
-   
+
     if (!getDigifranchiseInformation) {
-       throw new NotFoundException('digifranchise not found');
+      throw new NotFoundException('digifranchise not found');
     }
-   
+
     const getComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({
-       where: { ownedDigifranchiseId: ownedDigifranchiseId }
+      where: { ownedDigifranchiseId: ownedDigifranchiseId }
     });
-   
+
     const getProfessionalBodyMemberships = await this.digifranchiseProfessionalBodyMembershipRepository.find({
-       where: { ownedDigifranchiseId: ownedDigifranchiseId }
+      where: { ownedDigifranchiseId: ownedDigifranchiseId }
     });
-   
+
     const digifranchise = await this.digifranchiseRepository.findOne({
-       where: { id: getDigifranchiseInformation.digifranchiseId }
+      where: { id: getDigifranchiseInformation.digifranchiseId }
     });
-   
+
     const digifranchiseOwner = await this.userRepository.findOne({
-       where: { id: getDigifranchiseInformation.userId }
+      where: { id: getDigifranchiseInformation.userId }
     });
-   
+
     const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId, ownedDigifranchiseId);
     const digifranchiseServices = await this.getServicesAndSubServicesByDigifranchiseId(getDigifranchiseInformation.digifranchiseId, ownedDigifranchiseId);
-   
+
     return {
-       digifranchiseInfo: digifranchise,
-       ownerInfo: digifranchiseOwner,
-       generalInfo: getDigifranchiseGeneralInfoByPhone,
-       complainceInfo: getComplianceInfo,
-       professionalBodiesInfo: getProfessionalBodyMemberships,
-       products: digifranchiseProducts,
-       services: digifranchiseServices,
+      digifranchiseInfo: digifranchise,
+      ownerInfo: digifranchiseOwner,
+      generalInfo: getDigifranchiseGeneralInfoByPhone,
+      complainceInfo: getComplianceInfo,
+      professionalBodiesInfo: getProfessionalBodyMemberships,
+      products: digifranchiseProducts,
+      services: digifranchiseServices,
     };
-   }
+  }
 
   async publishDigifranchiseWeb(digifranchiseId: string): Promise<any> {
     const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({

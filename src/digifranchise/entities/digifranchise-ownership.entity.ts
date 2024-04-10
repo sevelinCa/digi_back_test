@@ -16,6 +16,7 @@ import { DigifranchiseSubServices } from './digifranchise-sub-service.entity';
 import { OrderTable } from 'src/payment/entities/order.entity';
 import { DigifranchiseSubProduct } from './digifranchise-sub-product.entity';
 import { StaffManagement } from 'src/digifranchise-mgt/entities/staff-management.entity';
+import { DigifranchiseProduct } from './digifranchise-product.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -44,16 +45,17 @@ export class DigifranchiseOwner {
   @OneToMany(() => DigifranchiseServiceOffered, service => service.ownedFranchise)
   serviceOffered: DigifranchiseServiceOffered[];
 
+  @OneToMany(() => DigifranchiseProduct, product => product.ownedFranchise)
+  productOffered: DigifranchiseProduct[];
+  
   @OneToMany(() => DigifranchiseSubServices, owner => owner.digifranchiseOwnedId)
   subService: DigifranchiseSubServices[];
 
   @OneToMany(() => DigifranchiseSubProduct, owner => owner.digifranchiseOwnedId)
   subProduct: DigifranchiseSubProduct[];
 
-
   @OneToMany(() => DigifranchiseExpense, ownedFranchise => ownedFranchise.ownedDigifranchise)
   digifranchiseExpense: DigifranchiseExpense[];
-
 
   @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.ownerDigifranchise)
   selectItem: DigifranchiseSelectProductOrServiceTable[];

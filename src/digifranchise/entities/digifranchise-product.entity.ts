@@ -3,6 +3,7 @@ import { Digifranchise } from './digifranchise.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
 import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select-product-service.entity';
+import { DigifranchiseOwner } from './digifranchise-ownership.entity';
 
 @Entity()
 export class DigifranchiseProduct {
@@ -22,6 +23,10 @@ export class DigifranchiseProduct {
 
   @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.franchiseProduct)
   selectedItem: DigifranchiseSelectProductOrServiceTable[];
+
+  @ManyToOne(() => DigifranchiseOwner, ownedItem => ownedItem.serviceOffered, { nullable: true })
+  @JoinColumn({ name: 'digifranchiseOwnedId' })
+  ownedFranchise: DigifranchiseOwner | null; 
 
   @Column({type: 'text'})
   productName: string;
