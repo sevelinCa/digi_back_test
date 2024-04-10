@@ -34,7 +34,7 @@ export class OrderService {
         private readonly digifranchiseServiceCategoryRepository: Repository<DigifranchiseServiceCategory>,
         @InjectRepository(DigifranchiseOwner)
         private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
-    
+
         @InjectRepository(DigifranchiseSubProduct)
         private readonly digifranchiseSubProductRepository: Repository<DigifranchiseSubProduct>,
         @InjectRepository(DigifranchiseSubServices)
@@ -44,7 +44,7 @@ export class OrderService {
     ) { }
 
     async createOrder(
-        createOrderTableDto: CreateOrderTableDto, 
+        createOrderTableDto: CreateOrderTableDto,
         productOrServiceId: string,
         ownedDigifranchiseId: string
     ): Promise<OrderTable> {
@@ -119,7 +119,7 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
-            ownedDigifranchise: owned 
+            ownedDigifranchise: owned
         });
 
         const savedOrder = await this.orderRepository.save(newOrder);
@@ -204,8 +204,8 @@ export class OrderService {
     }
 
     async createOrderWithAuth(
-        createOrderTableDto: CreateOrderTableDto, 
-        userId: string, 
+        createOrderTableDto: CreateOrderTableDto,
+        userId: string,
         productOrServiceOrCategoryId: string,
         ownedDigifranchiseId: string): Promise<OrderTable> {
         const user = await checkIfUserExists(this.userRepository, userId);
@@ -293,7 +293,7 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
-            ownedDigifranchise: owned 
+            ownedDigifranchise: owned
         });
 
         const savedOrder = await this.orderRepository.save(newOrder);
@@ -301,22 +301,22 @@ export class OrderService {
     }
 
 
-async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
-    const orders = await this.orderRepository.find({
-        where: { 
-            deleteAt: IsNull(),
-            ownedDigifranchise: Equal(ownedDigifranchiseId) 
-        },
-        relations: [
-            'userId',
-            'productId',
-            'productId.productGalleryImages',
-            'serviceId',
-            'serviceId.serviceGalleryImages'
-        ]
-    });
-    return { orders, count: orders.length };
-}
+    async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
+        const orders = await this.orderRepository.find({
+            where: {
+                deleteAt: IsNull(),
+                ownedDigifranchise: Equal(ownedDigifranchiseId)
+            },
+            relations: [
+                'userId',
+                'productId',
+                'productId.productGalleryImages',
+                'serviceId',
+                'serviceId.serviceGalleryImages'
+            ]
+        });
+        return { orders, count: orders.length };
+    }
 
 
     async getOneOrder(orderId: string): Promise<OrderTable | null> {
@@ -356,8 +356,8 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
 
     async getAllOrdersWithAuth(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
         const orders = await this.orderRepository.find({
-            where: { 
-                ownedDigifranchise: Equal(ownedDigifranchiseId), 
+            where: {
+                ownedDigifranchise: Equal(ownedDigifranchiseId),
                 deleteAt: IsNull()
             },
             relations: [
@@ -372,12 +372,14 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
     }
 
     async getAllOrdersWithAuthAndUser(userId: string, ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
-        console.log(`=====> User Fetching orders for userId: ${userId}, ====> ownedDigifranchiseId: ${ownedDigifranchiseId}`);
-    
+        const owned = await this.digifranchiseOwnerRepository.findOne({ where: { id: ownedDigifranchiseId } })
+        if (!owned) {
+            throw new HttpException('Owned does not exist', HttpStatus.NOT_FOUND);
+        }
         const orders = await this.orderRepository.find({
-            where: { 
-                userId: { id: Equal(userId) },
-                ownedDigifranchise: Equal(ownedDigifranchiseId), 
+            where: {
+                userId: Equal(userId),
+                ownedDigifranchise: Equal(owned.id),
                 deleteAt: IsNull()
             },
             relations: [
@@ -388,10 +390,7 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
                 'serviceId.serviceGalleryImages'
             ]
         });
-    
-        console.log(`====> Found ${orders.length} ===> orders.`);
-        console.log(orders);
-    
+
         return { orders, count: orders.length };
     }
 
@@ -452,7 +451,7 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
         return savedOrder;
     }
 
-    async createOrderByCategoryWithAuth(createOrderTableDto: CreateOrderTableDto,userId: string, serviceCategoryId: string): Promise<OrderTable> {
+    async createOrderByCategoryWithAuth(createOrderTableDto: CreateOrderTableDto, userId: string, serviceCategoryId: string): Promise<OrderTable> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
@@ -514,9 +513,9 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
     }
 
 
-async deleteAllOrders(): Promise<void> {
-    await this.orderRepository.delete({});
-}
+    async deleteAllOrders(): Promise<void> {
+        await this.orderRepository.delete({});
+    }
 
 
 }
