@@ -157,6 +157,19 @@ export class OrderController {
         return this.orderService.getAllOrdersWithAuth(ownedFranchiseId);
     }
 
+    @ApiOperation({ summary: 'Get all orders for a user with authentication' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Orders have been successfully retrieved.' })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Get('get-all-order-with-auth-user/:ownedFranchiseId')
+    async getAllOrdersWithAuthAndUser(
+        @Req() req: Request,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+    ): Promise<{ orders: OrderTable[], count: number }> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.getAllOrdersWithAuthAndUser(userId, ownedFranchiseId);
+    }
+
     @ApiOperation({ summary: 'Create a new order with-service category' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
     @ApiBody({ type: CreateOrderTableDto })
