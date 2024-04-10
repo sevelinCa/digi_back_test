@@ -66,5 +66,11 @@ export class CustomerSubscriptionController {
     }
 
 
+    @ApiOperation({ summary: 'GET ALL - Retrieve all subscriptions' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All subscriptions have been successfully retrieved.' })
+    @Get('get-all-subscriptions-in-general')
+    async getAllSubscriptionsInGeneral(): Promise<CustomerSubscription[]> {
+        return this.subscriptionService.getAllSubscriptionsInGeneral();
+    }
 
 }

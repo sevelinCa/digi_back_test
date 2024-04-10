@@ -78,4 +78,7 @@ export class CustomerSubscriptionService {
     
     }
 
+    async getAllSubscriptionsInGeneral(): Promise<CustomerSubscription[]> {
+        return this.customerSubscriptionRepository.find({})
+    }
 }
