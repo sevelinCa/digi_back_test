@@ -175,6 +175,16 @@ export class CustomerManagementController {
         return this.customerManagementService.getAllCustomer(userId, ownedFranchiseId);
     }
 
+    @ApiOperation({ summary: 'Retrieve all customer ' })
+    @ApiResponse({ status: 200, description: 'The list of customer  has been successfully retrieved.' })
+    @Get('get-all-customers')
+    async getAllCustomerByUser(
+        @Req() req: Request,
+    ): Promise<CustomerManagement[]> {
+        const userId = (req.user as UserEntity).id;
+        return this.customerManagementService.getAllCustomerByUser(userId);
+    }
+
     @ApiOperation({ summary: 'Retrieve a customer  by ID' })
     @ApiResponse({ status: 200, description: 'The customer  has been successfully retrieved.' })
     @Get('get-one-customer/:customerId')

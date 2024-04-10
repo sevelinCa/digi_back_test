@@ -58,6 +58,15 @@ export class CustomerManagementService {
         });
     }
 
+    async getAllCustomerByUser(userId: string): Promise<CustomerManagement[]> {
+        return this.customerManagementRepository.find({
+            where: {
+                userId: Equal(userId),
+                deleteAt: IsNull()
+            }
+        });
+    }
+
     async getOneCustomerById(customerId: string): Promise<CustomerManagement | null> {
         return this.customerManagementRepository.findOne({ where: { id: customerId, deleteAt: IsNull() } });
     }
