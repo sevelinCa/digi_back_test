@@ -63,20 +63,24 @@ export class CustomerSubscriptionService {
         });
     }
 
+
     async getAllSubscriptionsByOwnedId(ownedFranchiseId: string): Promise<CustomerSubscription[]> {
         const owned = await this.digifranchiseOwnerRepository.findOne({
             where: { id: ownedFranchiseId }
-        })
+        });
         if (!owned) {
             throw new HttpException('Owned not exist', HttpStatus.NOT_FOUND);
-    
         }
     
-        return this.customerSubscriptionRepository.find({
-            where: { digifranchiseOwnerId: Equal(owned.id), deleteAt: IsNull() }
-        })
+        const subscriptions = await this.customerSubscriptionRepository.find({
+            where: { digifranchiseOwnerId: Equal(owned.id), deleteAt: IsNull() },
+            relations: ['userId', 'digifranchiseOwnerId'] 
+        });
     
+    
+        return subscriptions;
     }
+
 
     async getAllSubscriptionsInGeneral(): Promise<CustomerSubscription[]> {
         return this.customerSubscriptionRepository.find({})
