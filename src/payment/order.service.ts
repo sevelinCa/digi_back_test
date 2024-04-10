@@ -355,7 +355,6 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
     }
 
     async getAllOrdersWithAuth(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
-        console.log('===> OWNED', ownedDigifranchiseId)
         const orders = await this.orderRepository.find({
             where: { 
                 ownedDigifranchise: Equal(ownedDigifranchiseId), 
@@ -369,6 +368,30 @@ async getAllOrders(ownedDigifranchiseId: string): Promise<{ orders: OrderTable[]
                 'serviceId.serviceGalleryImages'
             ]
         });
+        return { orders, count: orders.length };
+    }
+
+    async getAllOrdersWithAuthAndUser(userId: string, ownedDigifranchiseId: string): Promise<{ orders: OrderTable[], count: number }> {
+        console.log(`=====> User Fetching orders for userId: ${userId}, ====> ownedDigifranchiseId: ${ownedDigifranchiseId}`);
+    
+        const orders = await this.orderRepository.find({
+            where: { 
+                userId: { id: Equal(userId) },
+                ownedDigifranchise: Equal(ownedDigifranchiseId), 
+                deleteAt: IsNull()
+            },
+            relations: [
+                'userId',
+                'productId',
+                'productId.productGalleryImages',
+                'serviceId',
+                'serviceId.serviceGalleryImages'
+            ]
+        });
+    
+        console.log(`====> Found ${orders.length} ===> orders.`);
+        console.log(orders);
+    
         return { orders, count: orders.length };
     }
 
