@@ -255,12 +255,12 @@ export class DigifranchiseService {
    
        const products = await this.digifranchiseProductRepository.find({
          where: { digifranchiseId: Equal(digifranchiseId) },
-         relations: ['digifranchiseId', 'productGalleryImages', 'userId','selectedItem'],
+         relations: ['digifranchiseId', 'productGalleryImages', 'userId'],
        });
    
        const services = await this.digifranchiseServiceOfferedRepository.find({
          where: { digifranchiseId: Equal(digifranchiseId) },
-         relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId','selectedItem'],
+         relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
        });
    
        return {

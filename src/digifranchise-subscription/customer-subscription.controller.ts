@@ -9,14 +9,14 @@ import { Request } from "express";
 
 
 @ApiTags('Customer Subscription')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'subscription', version: '1' })
 export class CustomerSubscriptionController {
     constructor(private readonly subscriptionService: CustomerSubscriptionService) { }
 
     @ApiOperation({ summary: 'CREATE - Create a new subscription' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'A new subscription has been successfully created.' })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Post('create-subscription/:digifranchiseOwnedId')
     async createSubscription(
         @Req() req: Request,
@@ -28,6 +28,8 @@ export class CustomerSubscriptionController {
 
     @ApiOperation({ summary: 'GET ALL - Retrieve all subscriptions' })
     @ApiResponse({ status: HttpStatus.OK, description: 'All subscriptions have been successfully retrieved.' })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Get('get-all-subscriptions')
     async getAllSubscriptions(@Req() req: Request): Promise<CustomerSubscription[]> {
         const userId = (req.user as UserEntity).id;
@@ -55,7 +57,6 @@ export class CustomerSubscriptionController {
         return this.subscriptionService.getSubscribersByDigifranchiseId(digifranchiseId);
     }
 
-
     @ApiOperation({ summary: 'GET ALL - Retrieve all subscriptions' })
     @ApiResponse({ status: HttpStatus.OK, description: 'All subscriptions have been successfully retrieved.' })
     @Get('get-all-subscriptions/:digifranchiseOwnedId')
@@ -64,7 +65,6 @@ export class CustomerSubscriptionController {
     ): Promise<CustomerSubscription[]> {
         return this.subscriptionService.getAllSubscriptionsByOwnedId(digifranchiseOwnedId);
     }
-
 
     @ApiOperation({ summary: 'GET ALL - Retrieve all subscriptions' })
     @ApiResponse({ status: HttpStatus.OK, description: 'All subscriptions have been successfully retrieved.' })
