@@ -238,31 +238,42 @@ export class DigifranchiseService {
     return servicesWithSubServices.flat();
    }
 
-   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<DigifranchiseOwner[]> {
+   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<any[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
-      where: { userId },
-      relations: [
-        'digifranchise', 
-        'digifranchiseGeneralInfo', 
-        'digifranchiseComplianceInfo',
-        'digifranchiseGalleryImage',
-        'serviceOffered',
-        'subService',
-        'subProduct',
-        'digifranchiseExpense',
-        'selectItem',
-        'availability',
-        'unavailability',
-        'subscription',
-        'customer',
-        'staff',
-        'supplier',
-        'inventory',
-        'order',
-      ],
+       where: { userId },
+       relations: [
+         'digifranchise', 
+         'digifranchiseGeneralInfo', 
+         'digifranchiseComplianceInfo',
+         'digifranchiseGalleryImage',
+       ],
     });
-    return ownershipRecords;
-  }
+   
+    const results = await Promise.all(ownershipRecords.map(async (ownership) => {
+       const digifranchiseId = ownership.digifranchise.id;
+   
+       const products = await this.digifranchiseProductRepository.find({
+         where: { digifranchiseId: Equal(digifranchiseId) },
+         relations: ['digifranchiseId', 'productGalleryImages', 'userId','selectedItem'],
+       });
+   
+       const services = await this.digifranchiseServiceOfferedRepository.find({
+         where: { digifranchiseId: Equal(digifranchiseId) },
+         relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId','selectedItem'],
+       });
+   
+       return {
+         ...ownership,
+         digifranchise: {
+           ...ownership.digifranchise,
+           digifranchiseProduct: products,
+           digifranchiseServiceOffered: services,
+         },
+       };
+    }));
+   
+    return results.flat();
+   }
 
   async findOneOwnedDigifranchiseByUserId(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner | null> {
     const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne({
