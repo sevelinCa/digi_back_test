@@ -164,14 +164,15 @@ export class CustomerManagementController {
         return this.customerManagementService.createCustomer(userId, ownedFranchiseId, createCustomerManagementDto);
     }
 
-
     @ApiOperation({ summary: 'Retrieve all customer ' })
     @ApiResponse({ status: 200, description: 'The list of customer  has been successfully retrieved.' })
-    @Get('get-all-customers')
-    @Get('get-all-customers')
-    async getAllCustomer(@Req() req: Request): Promise<CustomerManagement[]> {
+    @Get('get-all-customers/:ownedFranchiseId')
+    async getAllCustomer(
+        @Req() req: Request,
+        @Param('ownedFranchiseId') ownedFranchiseId: string
+    ): Promise<CustomerManagement[]> {
         const userId = (req.user as UserEntity).id;
-        return this.customerManagementService.getAllCustomer(userId);
+        return this.customerManagementService.getAllCustomer(userId, ownedFranchiseId);
     }
 
     @ApiOperation({ summary: 'Retrieve a customer  by ID' })
