@@ -42,8 +42,20 @@ export class CustomerManagementService {
         return savedCustomer;
     }
 
-    async getAllCustomer(userId: string): Promise<CustomerManagement[]> {
-        return this.customerManagementRepository.find({ where: { userId: Equal(userId), deleteAt: IsNull() } });
+    async getAllCustomer(userId: string, ownedFranchiseId: string,): Promise<CustomerManagement[]> {
+
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchiseId } })
+        if (!owned) {
+            throw new Error('Owned does not exist')
+        }
+
+        return this.customerManagementRepository.find({
+            where: {
+                userId: Equal(userId),
+                ownedDigifranchise: Equal(owned.id),
+                deleteAt: IsNull()
+            }
+        });
     }
 
     async getOneCustomerById(customerId: string): Promise<CustomerManagement | null> {
