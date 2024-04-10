@@ -54,4 +54,17 @@ export class CustomerSubscriptionController {
     async getSubscribersByDigifranchiseId(@Param('digifranchiseId') digifranchiseId: string): Promise<CustomerSubscription[]> {
         return this.subscriptionService.getSubscribersByDigifranchiseId(digifranchiseId);
     }
+
+
+    @ApiOperation({ summary: 'GET ALL - Retrieve all subscriptions' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All subscriptions have been successfully retrieved.' })
+    @Get('get-all-subscriptions/:digifranchiseOwnedId')
+    async getAllSubscriptionsByOwnedId(
+        @Param('digifranchiseOwnedId') digifranchiseOwnedId: string,
+    ): Promise<CustomerSubscription[]> {
+        return this.subscriptionService.getAllSubscriptionsByOwnedId(digifranchiseOwnedId);
+    }
+
+
+
 }
