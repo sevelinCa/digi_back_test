@@ -224,12 +224,6 @@ export class AuthController {
     return this.service.forgotPassword(forgotPasswordDto.email);
   }
 
-  @Post('website/forgot/password')
- async forgotPasswordForWebs(
-  @Body() forgotPasswordDto: AuthForgotPasswordForWebSiteDto
-): Promise<void> {
-    return this.service.forgotPasswordForWebs(forgotPasswordDto);
- }
 
   @Post('reset/password')
   @HttpCode(HttpStatus.NO_CONTENT)
