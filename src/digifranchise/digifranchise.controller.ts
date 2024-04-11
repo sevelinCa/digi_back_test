@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get, HttpCode, HttpStatus, Param, Delete, Put, Query, HttpException } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, NotFoundException, Get, HttpCode, HttpStatus, Param, Delete, Put, Query, HttpException, UnauthorizedException } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -28,6 +28,7 @@ import { DigifranchiseProfessionalBodyMembershipService } from './digranchise-pr
 import { DigifranchiseProfessionalBodyMembership } from './entities/digifranchise-professional-body-membership.entity';
 import { AddProfessionalMembershipDto } from './dto/add-digifranchise-professional-membership.dto';
 import { DigifranchiseServiceCategory } from './entities/digifranchise-service-category.entity';
+import type { DigifranchiseSelectProductOrServiceTable } from './entities/digifranchise-select-product-service.entity';
 
 @ApiTags('Digifranchise')
 @ApiBearerAuth()
@@ -115,6 +116,32 @@ export class DigifranchiseController {
   async createDigifranchise(@Body() createDigifranchiseDto: CreateDigifranchiseDto): Promise<Digifranchise> {
     return this.digifranchiseService.createDigifranchise(createDigifranchiseDto);
   }
+
+
+  @Get('getAllSelectedItemByOwnerAndUser/:ownerId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'GET - Retrieve selected products and services by owner and user ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Selected products and services have been successfully retrieved.' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No items found for the given owner and user.' })
+  async getByOwnerAndUserId(
+   @Req() req: Request,
+   @Param('ownerId') ownerId: string): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+   if (!req.user) {
+      throw new UnauthorizedException('User not authenticated');
+   }
+  
+   const userId = (req.user as UserEntity).id;
+  
+   try {
+      const items = await this.digifranchiseService.getSelectedItemByOwnerAndUserId(ownerId, userId);
+      if (!items || items.length === 0) {
+        throw new NotFoundException('No items found for the given owner and user');
+      }
+      return items;
+   } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+   }
+  }
 }
 
 @ApiTags('Digifranchise Optional - Endpoint')
@@ -164,5 +191,6 @@ export class DigifranchiseOptionEndpoint {
     }
     return product;
   }
+
 
 }

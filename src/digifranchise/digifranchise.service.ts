@@ -239,44 +239,6 @@ export class DigifranchiseService {
     return servicesWithSubServices.flat();
   }
 
-  // =============
-  //  async findAllOwnedDigifranchiseByUserId(userId: string): Promise<any[]> {
-  //   const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
-  //      where: { userId },
-  //      relations: [
-  //        'digifranchise', 
-  //        'digifranchiseGeneralInfo', 
-  //        'digifranchiseComplianceInfo',
-  //        'digifranchiseGalleryImage',
-  //      ],
-  //   });
-
-  //   const results = await Promise.all(ownershipRecords.map(async (ownership) => {
-  //      const digifranchiseId = ownership.digifranchise.id;
-
-  //      const products = await this.digifranchiseProductRepository.find({
-  //        where: { digifranchiseId: Equal(digifranchiseId) },
-  //        relations: ['digifranchiseId', 'productGalleryImages', 'userId'],
-  //      });
-
-  //      const services = await this.digifranchiseServiceOfferedRepository.find({
-  //        where: { digifranchiseId: Equal(digifranchiseId) },
-  //        relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
-  //      });
-
-  //      return {
-  //        ...ownership,
-  //        digifranchise: {
-  //          ...ownership.digifranchise,
-  //          digifranchiseProduct: products,
-  //          digifranchiseServiceOffered: services,
-  //        },
-  //      };
-  //   }));
-
-  //   return results.flat();
-  //  }
-
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<any[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
       where: { userId },
@@ -301,48 +263,18 @@ export class DigifranchiseService {
         relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
       });
 
-      // const productsWithSelectedItem = await Promise.all(products.map(async (product) => {
-      //   const selectedItem = await this.digifranchiseSelectItemRepository.find({
-      //     where: {
-      //       franchiseProduct: Equal(product.id),
-      //       userId: Equal(userId),
-      //     },
-      //   });
-      //   return {
-      //     ...product,
-      //     selectedItem,
-      //   };
-      // }));
-
-      // const servicesWithSelectedItem = await Promise.all(services.map(async (service) => {
-      //   const selectedItem = await this.digifranchiseSelectItemRepository.find({
-      //     where: {
-      //       digifranchiseService: Equal(service.id),
-      //       userId: Equal(userId),
-      //     },
-      //   });
-      //   return {
-      //     ...service,
-      //     selectedItem,
-      //   };
-      // }));
-
       return {
         ...ownership,
         digifranchise: {
           ...ownership.digifranchise,
           products,
-services
-          // digifranchiseProduct: productsWithSelectedItem,
-          // digifranchiseServiceOffered: servicesWithSelectedItem,
+          services,
         },
       };
     }));
 
     return results.flat();
   }
-
-  // =========================
 
   async findOneOwnedDigifranchiseByUserId(userId: string, digifranchiseId: string): Promise<DigifranchiseOwner | null> {
     const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne({
@@ -422,64 +354,6 @@ services
 
     await this.digifranchiseSubServiceOfferedRepository.remove(serviceOffered);
   }
-
-  // async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
-
-  //   const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
-  //     where: [
-  //       { connectNumberWithOutCountryCode: phoneNumber },
-  //       { otherMobileNumberWithOutCountryCode: phoneNumber }
-  //     ]
-  //   })
-
-  //   if (!getDigifranchiseGeneralInfoByPhone) {
-  //     throw new NotFoundException('digifranchise not found')
-  //   }
-
-  //   if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
-  //     throw new NotFoundException('digifranchise not yet published')
-  //   }
-
-  //   const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({
-  //     where: { id: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
-  //   })
-
-  //   if (!getDigifranchiseInformation) {
-  //     throw new NotFoundException('digifranchise not found')
-  //   }
-
-  //   const getComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({
-  //     where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
-  //   })
-
-  //   const getProfessionalBodyMemberships = await this.digifranchiseProfessionalBodyMembershipRepository.find({
-  //     where: { ownedDigifranchiseId: getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId }
-  //   })
-
-  //   const digifranchise = await this.digifranchiseRepository.findOne({
-  //     where: { id: getDigifranchiseInformation.digifranchiseId }
-  //   })
-
-  //   const digifranchiseOwner = await this.userRepository.findOne({
-  //     where: { id: getDigifranchiseInformation.userId }
-  //   })
-
-  //   // const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId)
-  //   const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId, getDigifranchiseInformation.userId);
-  //   const digifranchiseServices = await this.findAllServiceOfferedByDigifranchiseId(getDigifranchiseInformation.digifranchiseId)
-
-
-  //   return {
-  //     digifranchiseInfo: digifranchise,
-  //     ownerInfo: digifranchiseOwner,
-  //     generalInfo: getDigifranchiseGeneralInfoByPhone,
-  //     complainceInfo: getComplianceInfo,
-  //     professionalBodiesInfo: getProfessionalBodyMemberships,
-  //     products: digifranchiseProducts,
-  //     services: digifranchiseServices,
-
-  //   }
-  // }
 
   async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
     const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
@@ -614,4 +488,26 @@ services
     }
     return product;
   }
+
+  async getSelectedItemByOwnerAndUserId(ownerId: string, userId: string): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+    const owner = await this.digifranchiseOwnershipRepository.findOne({ where: { id: ownerId } });
+    if (!owner) {
+      throw new Error('Owner not found');
+    }
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return await this.digifranchiseSelectItemRepository.find({
+      where: {
+        ownerDigifranchise: Equal(owner.id),
+        userId: Equal(user.id)
+      },
+      relations: ['ownerDigifranchise', 'franchiseProduct', 'digifranchiseService', 'userId',]
+    });
+  }
+
+
+
 }
