@@ -880,39 +880,6 @@ export class AuthService {
     });
   }
 
-  async forgotPasswordForWebs(forgotPasswordDto: AuthForgotPasswordForWebSiteDto): Promise<void> {
-    const user = await this.usersService.findOne({ email: forgotPasswordDto.email });
-
-    if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: 'emailNotExists',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    const hash = await this.jwtService.signAsync(
-      {
-        forgotUserId: user.id,
-      },
-      {
-        secret: this.configService.getOrThrow('auth.forgotSecret', { infer: true }),
-        expiresIn: this.configService.getOrThrow('auth.forgotExpires', { infer: true }),
-      },
-    );
-
-    await this.mailService.forgotPassword({
-      to: forgotPasswordDto.email,
-      data: {
-        hash,
-        websiteUrl: forgotPasswordDto.websiteURL,
-      } as ForgotPasswordMailData['data'],
-    });
-  }
 
 
   async forgotPasswordWithPhone(phoneNumber: string): Promise<any> {

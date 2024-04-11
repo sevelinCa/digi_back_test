@@ -284,13 +284,7 @@ export class DigifranchiseService {
         'digifranchise',
         'digifranchiseGeneralInfo',
         'digifranchiseComplianceInfo',
-        'digifranchiseGalleryImage',
-        'serviceOffered',
-        'productOffered',
         "availability",
-        "unavailability",
-        "subscription",
-        "customer"
       ],
     });
 
