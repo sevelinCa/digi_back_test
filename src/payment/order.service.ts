@@ -394,50 +394,61 @@ export class OrderService {
         return { orders, count: orders.length };
     }
 
+    async deleteAllOrders(): Promise<void> {
+        await this.orderRepository.delete({});
+    }
 
-
-    async createOrderByCategory(createOrderTableDto: CreateOrderTableDto, serviceCategoryId: string): Promise<OrderTable> {
+    async createOrderByCategory(createOrderTableDto: CreateOrderTableDto, serviceCategoryId: string, ownedDigifranchiseId: string): Promise<OrderTable> {
         let serviceCategory;
         let serviceOffered;
-
+        let owned;
+    
         serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({
             where: { id: serviceCategoryId },
             relations: ['service']
         });
-
+    
         if (!serviceCategory) {
             throw new HttpException('Service category does not exist', HttpStatus.NOT_FOUND);
         }
-
+    
         serviceOffered = serviceCategory.service;
-
+    
         const unitPrice = serviceCategory.unitPrice;
-
+    
         const franchise = await this.digifranchiseRepository.findOne({ where: { id: serviceOffered.digifranchiseId } });
         if (!franchise) {
             throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
         }
-
+    
         const vatRateRecord = await this.rateTableRepository.findOne({
             where: { rateName: 'VAT', deleteAt: IsNull() },
         });
-
+    
         if (!vatRateRecord) {
             throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
         }
-
+    
         const vatRate = vatRateRecord.rateNumber;
         const quantity = createOrderTableDto.quantity;
         const totalAmount = Number(unitPrice) * Number(quantity);
         const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
-
+    
         const lastOrder = await this.orderRepository.find({
             order: { orderNumber: 'DESC' },
             take: 1,
         });
-
+    
         const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
-
+    
+        owned = await this.digifranchiseOwnerRepository.findOne({
+            where: { id: Equal(ownedDigifranchiseId) },
+        });
+    
+        if (!owned) {
+            throw new HttpException('Digifranchise owner not found', HttpStatus.NOT_FOUND);
+        }
+    
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
             serviceId: serviceOffered,
@@ -445,59 +456,69 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            ownedDigifranchise: owned
         });
-
+    
         const savedOrder = await this.orderRepository.save(newOrder);
         return savedOrder;
     }
 
-    async createOrderByCategoryWithAuth(createOrderTableDto: CreateOrderTableDto, userId: string, serviceCategoryId: string): Promise<OrderTable> {
+    async createOrderByCategoryWithAuth(createOrderTableDto: CreateOrderTableDto, userId: string, serviceCategoryId: string, ownedDigifranchiseId: string): Promise<OrderTable> {
         const user = await checkIfUserExists(this.userRepository, userId);
         if (!user) {
             throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
         }
-
+    
         let serviceCategory;
         let serviceOffered;
-
+        let owned;
+    
         serviceCategory = await this.digifranchiseServiceCategoryRepository.findOne({
             where: { id: serviceCategoryId },
             relations: ['service']
         });
-
+    
         if (!serviceCategory) {
             throw new HttpException('Service category does not exist', HttpStatus.NOT_FOUND);
         }
-
+    
         serviceOffered = serviceCategory.service;
-
+    
         const unitPrice = serviceCategory.unitPrice;
-
+    
         const franchise = await this.digifranchiseRepository.findOne({ where: { id: serviceOffered.digifranchiseId } });
         if (!franchise) {
             throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
         }
-
+    
         const vatRateRecord = await this.rateTableRepository.findOne({
             where: { rateName: 'VAT', deleteAt: IsNull() },
         });
-
+    
         if (!vatRateRecord) {
             throw new HttpException('VAT rate not found', HttpStatus.NOT_FOUND);
         }
-
+    
         const vatRate = vatRateRecord.rateNumber;
         const quantity = createOrderTableDto.quantity;
         const totalAmount = Number(unitPrice) * Number(quantity);
         const vatAmount = (Number(unitPrice) * Number(quantity)) * ((vatRate as number) / 100);
-
+    
         const lastOrder = await this.orderRepository.find({
             order: { orderNumber: 'DESC' },
             take: 1,
         });
-
+    
         const nextOrderNumber = lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
-
+    
+        owned = await this.digifranchiseOwnerRepository.findOne({
+            where: { id: Equal(ownedDigifranchiseId) },
+        });
+    
+        if (!owned) {
+            throw new HttpException('Digifranchise owner not found', HttpStatus.NOT_FOUND);
+        }
+    
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
             userId: user,
@@ -506,16 +527,11 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            ownedDigifranchise: owned
         });
-
+    
         const savedOrder = await this.orderRepository.save(newOrder);
         return savedOrder;
     }
-
-
-    async deleteAllOrders(): Promise<void> {
-        await this.orderRepository.delete({});
-    }
-
 
 }
