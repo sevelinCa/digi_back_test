@@ -124,23 +124,10 @@ export class DigifranchiseController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Selected products and services have been successfully retrieved.' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'No items found for the given owner and user.' })
   async getByOwnerAndUserId(
-   @Req() req: Request,
-   @Param('ownerId') ownerId: string): Promise<DigifranchiseSelectProductOrServiceTable[]> {
-   if (!req.user) {
-      throw new UnauthorizedException('User not authenticated');
-   }
-  
-   const userId = (req.user as UserEntity).id;
-  
-   try {
-      const items = await this.digifranchiseService.getSelectedItemByOwnerAndUserId(ownerId, userId);
-      if (!items || items.length === 0) {
-        throw new NotFoundException('No items found for the given owner and user');
-      }
-      return items;
-   } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-   }
+    @Req() req: Request,
+    @Param('ownerId') ownerId: string): Promise<DigifranchiseSelectProductOrServiceTable[]> {
+    const userId = (req.user as UserEntity).id;
+    return this.digifranchiseService.getSelectedItemByOwnerAndUserId(ownerId, userId);
   }
 }
 
