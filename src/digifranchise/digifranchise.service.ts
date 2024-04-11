@@ -301,38 +301,40 @@ export class DigifranchiseService {
         relations: ['digifranchiseId', 'serviceCategories', 'serviceGalleryImages', 'userId'],
       });
 
-      const productsWithSelectedItem = await Promise.all(products.map(async (product) => {
-        const selectedItem = await this.digifranchiseSelectItemRepository.find({
-          where: {
-            franchiseProduct: Equal(product.id),
-            userId: Equal(userId),
-          },
-        });
-        return {
-          ...product,
-          selectedItem,
-        };
-      }));
+      // const productsWithSelectedItem = await Promise.all(products.map(async (product) => {
+      //   const selectedItem = await this.digifranchiseSelectItemRepository.find({
+      //     where: {
+      //       franchiseProduct: Equal(product.id),
+      //       userId: Equal(userId),
+      //     },
+      //   });
+      //   return {
+      //     ...product,
+      //     selectedItem,
+      //   };
+      // }));
 
-      const servicesWithSelectedItem = await Promise.all(services.map(async (service) => {
-        const selectedItem = await this.digifranchiseSelectItemRepository.find({
-          where: {
-            digifranchiseService: Equal(service.id),
-            userId: Equal(userId),
-          },
-        });
-        return {
-          ...service,
-          selectedItem,
-        };
-      }));
+      // const servicesWithSelectedItem = await Promise.all(services.map(async (service) => {
+      //   const selectedItem = await this.digifranchiseSelectItemRepository.find({
+      //     where: {
+      //       digifranchiseService: Equal(service.id),
+      //       userId: Equal(userId),
+      //     },
+      //   });
+      //   return {
+      //     ...service,
+      //     selectedItem,
+      //   };
+      // }));
 
       return {
         ...ownership,
         digifranchise: {
           ...ownership.digifranchise,
-          digifranchiseProduct: productsWithSelectedItem,
-          digifranchiseServiceOffered: servicesWithSelectedItem,
+          products,
+services
+          // digifranchiseProduct: productsWithSelectedItem,
+          // digifranchiseServiceOffered: servicesWithSelectedItem,
         },
       };
     }));
