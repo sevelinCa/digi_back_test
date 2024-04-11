@@ -71,13 +71,13 @@ export class CustomerSubscriptionService {
         if (!owned) {
             throw new HttpException('Owned not exist', HttpStatus.NOT_FOUND);
         }
-    
+
         const subscriptions = await this.customerSubscriptionRepository.find({
             where: { digifranchiseOwnerId: Equal(owned.id), deleteAt: IsNull() },
-            relations: ['userId', 'digifranchiseOwnerId'] 
+            relations: ['userId', 'digifranchiseOwnerId']
         });
-    
-    
+
+
         return subscriptions;
     }
 

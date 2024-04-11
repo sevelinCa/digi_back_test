@@ -170,32 +170,6 @@ export class OrderController {
         return this.orderService.getAllOrdersWithAuthAndUser(userId, ownedFranchiseId);
     }
 
-    @ApiOperation({ summary: 'Create a new order with-service category' })
-    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
-    @ApiBody({ type: CreateOrderTableDto })
-    @Post('create-order-with-serviceCategory/:serviceCategoryId')
-    async createOrderByCategory(
-        @Param('serviceCategoryId') serviceCategoryId: string,
-        @Body() createOrderTableDto: CreateOrderTableDto,
-    ): Promise<OrderTable> {
-        return this.orderService.createOrderByCategory(createOrderTableDto, serviceCategoryId);
-    }
-
-    @ApiOperation({ summary: 'Create a new order with auth' })
-    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
-    @ApiBody({ type: CreateOrderTableDto })
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Post('create-order-serviceCategory-auth/:serviceCategoryId')
-    async createOrderByCategoryWithAuth(
-        @Req() req: Request,
-        @Param('serviceCategoryId') serviceCategoryId: string,
-        @Body() createOrderTableDto: CreateOrderTableDto,
-    ): Promise<OrderTable> {
-        const userId = (req.user as UserEntity).id;
-        return this.orderService.createOrderByCategoryWithAuth(createOrderTableDto, userId, serviceCategoryId);
-    }
-
     @ApiOperation({ summary: 'Delete all orders' })
     @ApiResponse({ status: HttpStatus.OK, description: 'All orders have been successfully deleted.' })
     @ApiBearerAuth()
@@ -204,6 +178,35 @@ export class OrderController {
     async deleteAllOrders(): Promise<void> {
         return this.orderService.deleteAllOrders();
     }
+
+    @ApiOperation({ summary: 'Create a new order with-service category' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
+    @ApiBody({ type: CreateOrderTableDto })
+    @Post('create-order-with-serviceCategory/:serviceCategoryId/:ownedFranchiseId')
+    async createOrderByCategory(
+        @Param('serviceCategoryId') serviceCategoryId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+        @Body() createOrderTableDto: CreateOrderTableDto,
+    ): Promise<OrderTable> {
+        return this.orderService.createOrderByCategory(createOrderTableDto, serviceCategoryId,ownedFranchiseId);
+    }
+
+    @ApiOperation({ summary: 'Create a new order with auth' })
+    @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
+    @ApiBody({ type: CreateOrderTableDto })
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Post('create-order-serviceCategory-auth/:serviceCategoryId/:ownedFranchiseId')
+    async createOrderByCategoryWithAuth(
+        @Req() req: Request,
+        @Param('serviceCategoryId') serviceCategoryId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+        @Body() createOrderTableDto: CreateOrderTableDto,
+    ): Promise<OrderTable> {
+        const userId = (req.user as UserEntity).id;
+        return this.orderService.createOrderByCategoryWithAuth(createOrderTableDto, userId, serviceCategoryId,ownedFranchiseId);
+    }
+
 }
 
 
