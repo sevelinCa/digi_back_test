@@ -300,7 +300,14 @@ export class CalenderMgtVenueNoAutController {
         return this.calenderMgtService.createVenue(createVenueDto, ownedFranchiseId);
     }
 
+    @ApiOperation({ summary: 'GET ALL - Retrieve all venues' })
+    @Get('venues/:ownedFranchiseId')
+    async getAllVenues(
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
 
+    ): Promise<CalenderVenue[]> {
+        return this.calenderMgtService.getAllVenues(ownedFranchiseId);
+    }
 
     @ApiOperation({ summary: 'GET ONE - Retrieve venue by ID' })
     @Get('venues/:venueId')
