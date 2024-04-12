@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { CalenderBooking } from './entities/calender-bookings.entity';
 import { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.dto';
 import { CalenderEventOwner } from './entities/calender-event-owner.entity';
-import  { CalenderEventGuest } from './entities/calender-event-guest.entity';
+import { CalenderEventGuest } from './entities/calender-event-guest.entity';
 
 @ApiTags('Calender')
 @ApiBearerAuth()
@@ -24,9 +24,12 @@ export class CalenderMgtController {
     @ApiOperation({ summary: 'CREATE - Create - Venue', })
     @ApiResponse({ status: HttpStatus.OK, description: 'You have created Venue.' })
     @ApiBody({ type: CreateVenueDto })
-    @Post('create-venue')
-    async createVenue(@Body() createVenueDto: CreateVenueDto): Promise<CalenderVenue> {
-        return this.calenderMgtService.createVenue(createVenueDto);
+    @Post('create-venue/:ownedFranchiseId')
+    async createVenue(
+        @Body() createVenueDto: CreateVenueDto,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+    ): Promise<CalenderVenue> {
+        return this.calenderMgtService.createVenue(createVenueDto, ownedFranchiseId);
     }
 
     @ApiOperation({ summary: 'CREATE - Create - Event', })
@@ -69,9 +72,11 @@ export class CalenderMgtController {
 
 
     @ApiOperation({ summary: 'GET ALL - Retrieve all venues' })
-    @Get('venues')
-    async getAllVenues(): Promise<CalenderVenue[]> {
-        return this.calenderMgtService.getAllVenues();
+    @Get('venues/:ownedFranchiseId')
+    async getAllVenues(
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+    ): Promise<CalenderVenue[]> {
+        return this.calenderMgtService.getAllVenues(ownedFranchiseId);
     }
 
     @ApiOperation({ summary: 'GET ALL - Retrieve all events' })
@@ -80,7 +85,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.getAllEvents();
     }
 
-    
+
     @ApiOperation({ summary: 'GET ALL - Retrieve all bookings' })
     @Get('bookings')
     async getAllBookings(): Promise<CalenderBooking[]> {
@@ -128,7 +133,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.getBookingById(bookingId);
     }
 
-        @ApiOperation({
+    @ApiOperation({
         summary: 'GET ONE - Retrieve event owner by ID',
     })
     @Get('event-owners/:eventOwnerId')
@@ -170,7 +175,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.deleteVenue(venueId);
     }
 
-    
+
     @ApiOperation({
         summary: 'DELETE - Soft delete event by ID',
     })
@@ -187,7 +192,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.deleteBooking(bookingId);
     }
 
-        @ApiOperation({
+    @ApiOperation({
         summary: 'DELETE - Soft delete event owner by ID',
     })
     @Delete('event-owners/:eventOwnerId')
@@ -212,7 +217,7 @@ export class CalenderMgtController {
         return this.calenderMgtService.getAllEventsByVenueId(venueId);
     }
 
-    
+
     @ApiOperation({
         summary: 'GET ALL - Retrieve all bookings by user ID',
     })
@@ -284,19 +289,10 @@ export class CalenderMgtController {
 export class CalenderMgtVenueNoAutController {
     constructor(private readonly calenderMgtService: CalenderMgtService) { }
 
-    @ApiOperation({ summary: 'CREATE - Create - Venue', })
-    @ApiResponse({ status: HttpStatus.OK, description: 'You have created Venue.' })
-    @ApiBody({ type: CreateVenueDto })
-    @Post('create-venue')
-    async createVenue(@Body() createVenueDto: CreateVenueDto): Promise<CalenderVenue> {
-        return this.calenderMgtService.createVenue(createVenueDto);
-    }
+///==================
 
-    @ApiOperation({ summary: 'GET ALL - Retrieve all venues' })
-    @Get('venues')
-    async getAllVenues(): Promise<CalenderVenue[]> {
-        return this.calenderMgtService.getAllVenues();
-    }
+
+//================
 
 
     @ApiOperation({ summary: 'GET ONE - Retrieve venue by ID' })

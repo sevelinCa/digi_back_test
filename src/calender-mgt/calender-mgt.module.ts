@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { CalenderEventGuest } from './entities/calender-event-guest.entity';
 import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-mana
       CalenderVenue, 
       UserEntity,
       CalenderEventGuest,
-      CustomerManagement
+      CustomerManagement,
+      DigifranchiseOwner
     ]),
   ],
   providers: [CalenderMgtService],

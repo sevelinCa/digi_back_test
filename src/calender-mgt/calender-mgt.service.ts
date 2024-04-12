@@ -13,6 +13,7 @@ import type { CreateBookingDto, UpdateBookingDto } from './dto/create-bookings.d
 import { CalenderEventGuest } from './entities/calender-event-guest.entity';
 import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
 import type { MailerService } from 'src/mailer/mailer.service';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 @Injectable()
 export class CalenderMgtService {
     constructor(
@@ -30,12 +31,22 @@ export class CalenderMgtService {
         private readonly customerManagementRepository: Repository<CustomerManagement>,
         @InjectRepository(CalenderBooking)
         private readonly bookingRepository: Repository<CalenderBooking>,
+        @InjectRepository(DigifranchiseOwner)
+        private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>,
 
     ) { }
 
 
-    async createVenue(createVenueDto: CreateVenueDto): Promise<CalenderVenue> {
-        const newVenue = this.venueRepository.create(createVenueDto);
+    async createVenue(createVenueDto: CreateVenueDto, ownedFranchise: string): Promise<CalenderVenue> {
+
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchise } })
+        if (!owned) {
+            throw new Error('Owner not exist')
+        }
+        const newVenue = this.venueRepository.create({
+            ...createVenueDto,
+            ownedFranchiseId: owned
+        });
         return this.venueRepository.save(newVenue);
     }
 
@@ -80,11 +91,11 @@ export class CalenderMgtService {
             relations: ['guests', 'guests.customerId', 'venueId'],
         });
     }
-    
+
     async GetOneEventWithItsGuest(eventId: string): Promise<CalenderEvents | null> {
         return this.eventsRepository.findOne({
             where: { id: eventId },
-            relations: ['guests', 'guests.customerId', 'venueId'], 
+            relations: ['guests', 'guests.customerId', 'venueId'],
         });
     }
 
@@ -107,8 +118,13 @@ export class CalenderMgtService {
         const saveNewBooking = this.bookingRepository.save(newBooking)
         return saveNewBooking;
     }
-    async getAllVenues(): Promise<CalenderVenue[]> {
-        return this.venueRepository.find({ where: { deleteAt: IsNull() } });
+
+    async getAllVenues(ownedFranchiseId: string): Promise<CalenderVenue[]> {
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchiseId } });
+        if (!owned) {
+            throw new Error('Owner not exist');
+        }
+        return this.venueRepository.find({ where: { deleteAt: IsNull(), ownedFranchiseId: Equal(owned.id) } });
     }
 
     async getAllEvents(): Promise<CalenderEvents[]> {
@@ -260,11 +276,11 @@ export class CalenderMgtService {
         const guestEventAssociation = await this.calenderEventGuestRepository.findOne({
             where: { id: guestId, eventId: { id: eventId } },
         });
-    
+
         if (!guestEventAssociation) {
             throw new NotFoundException(`Guest with ID ${guestId} not found in the specified event.`);
         }
-    
+
         await this.calenderEventGuestRepository.remove(guestEventAssociation);
     }
 }
