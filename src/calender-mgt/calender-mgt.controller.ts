@@ -289,10 +289,17 @@ export class CalenderMgtController {
 export class CalenderMgtVenueNoAutController {
     constructor(private readonly calenderMgtService: CalenderMgtService) { }
 
-///==================
+    @ApiOperation({ summary: 'CREATE - Create - Venue', })
+    @ApiResponse({ status: HttpStatus.OK, description: 'You have created Venue.' })
+    @ApiBody({ type: CreateVenueDto })
+    @Post('create-venue/:ownedFranchiseId')
+    async createVenue(
+        @Body() createVenueDto: CreateVenueDto,
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+    ): Promise<CalenderVenue> {
+        return this.calenderMgtService.createVenue(createVenueDto, ownedFranchiseId);
+    }
 
-
-//================
 
 
     @ApiOperation({ summary: 'GET ONE - Retrieve venue by ID' })
