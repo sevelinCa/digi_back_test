@@ -1,9 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 export class CalenderVenue {
  @PrimaryGeneratedColumn('uuid')
  id: string;
+
+ @ManyToOne(() => DigifranchiseOwner, owned => owned.venue, { nullable: true })
+ @JoinColumn({ name: 'ownedFranchiseId' })
+ ownedFranchiseId: DigifranchiseOwner | null;
 
  @Column({ type: 'varchar', length: 255, nullable: true }) 
  name: string;

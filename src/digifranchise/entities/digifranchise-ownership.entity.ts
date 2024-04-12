@@ -17,6 +17,7 @@ import { OrderTable } from 'src/payment/entities/order.entity';
 import { DigifranchiseSubProduct } from './digifranchise-sub-product.entity';
 import { StaffManagement } from 'src/digifranchise-mgt/entities/staff-management.entity';
 import { DigifranchiseProduct } from './digifranchise-product.entity';
+import { CalenderVenue } from 'src/calender-mgt/entities/calender-venues.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -80,6 +81,9 @@ export class DigifranchiseOwner {
 
   @OneToMany(() => InventoryManagement, inventory => inventory.ownedDigifranchise)
   inventory: InventoryManagement[];
+
+  @OneToMany(() => CalenderVenue, venue => venue.ownedFranchiseId)
+  venue: CalenderVenue[];
 
   @OneToMany(() => OrderTable, orders => orders.ownedDigifranchise)
   order: OrderTable[];
