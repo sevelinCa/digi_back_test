@@ -19,7 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // import { AuthGoogleModule } from './auth-google/auth-google.module';
 // import { AuthTwitterModule } from './auth-twitter/auth-twitter.module';
 // import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
-import { HeaderResolver } from 'nestjs-i18n';
+import { HeaderResolver, I18nModule } from 'nestjs-i18n';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
@@ -49,6 +49,8 @@ import { AccountingModule } from './accounting/accounting.module';
 import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { InventoryModule } from './inventory/inventory.module';
 
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -72,29 +74,46 @@ import { InventoryModule } from './inventory/inventory.module';
         return new DataSource(options).initialize();
       },
     }),
-    // I18nModule.forRootAsync({
-    //   useFactory: (configService: ConfigService<AllConfigType>) => ({
-    //     fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
-    //       infer: true,
-    //     }),
-    //     loaderOptions: { path: path.join(__dirname, '/i18n/'), watch: true },
-    //   }),
-    //   resolvers: [
-    //     {
-    //       use: HeaderResolver,
-    //       useFactory: (configService: ConfigService<AllConfigType>) => {
-    //         return [
-    //           configService.get('app.headerLanguage', {
-    //             infer: true,
-    //           }),
-    //         ];
-    //       },
-    //       inject: [ConfigService],
-    //     },
-    //   ],
-    //   imports: [ConfigModule, ],
-    //   inject: [ConfigService],
-    // }),
+
+
+
+
+    I18nModule.forRootAsync({
+     useFactory: (configService: ConfigService<AllConfigType>) => {
+        const i18nPath = path.join(__dirname, '../i18n/');
+        console.log('========> i18n Path:', i18nPath);
+    
+        const fallbackLanguage = configService.getOrThrow('app.fallbackLanguage', {
+          infer: true,
+        });
+    
+        const loaderOptions = {
+          path: i18nPath,
+          watch: true,
+        };
+    
+        return {
+          fallbackLanguage,
+          loaderOptions,
+        };
+     },
+     resolvers: [
+        {
+          use: HeaderResolver,
+          useFactory: (configService: ConfigService<AllConfigType>) => {
+            return [
+              configService.get('app.headerLanguage', {
+                infer: true,
+              }),
+            ];
+          },
+          inject: [ConfigService],
+        },
+     ],
+     imports: [ConfigModule],
+     inject: [ConfigService],
+    }),
+
     UsersModule,
     // FilesModule,
     AuthModule,
