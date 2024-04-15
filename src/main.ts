@@ -37,7 +37,7 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
 
-  const staticFilesDirectory = path.resolve(__dirname, '..', 'uploads');
+  const staticFilesDirectory = path.resolve(__dirname, '../..', 'uploads');
   app.use('/uploads', express.static(staticFilesDirectory));
 
   const options = new DocumentBuilder()
