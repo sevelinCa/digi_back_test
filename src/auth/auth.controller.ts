@@ -33,7 +33,7 @@ import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
 import { GoogleCreateUserDto } from './dto/google-create-user.dto';
 import { PhoneForgotPasswordDto } from './dto/auth-phone-forgot-password.dto';
 import { PhoneRestPasswordDto } from './dto/auth-phone-reset-password.dto';
-import type { AuthForgotPasswordForWebSiteDto } from './dto/auth-forgot-password-on-webs.dto';
+import { AuthForgotPasswordForWebSiteDto } from './dto/auth-forgot-password-on-webs.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -130,7 +130,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async register(@Body() createUserDto: AuthRegisterLoginDto) {
     await this.service.register(createUserDto);
-    
+
     return {
       message: "sign up is successful, check your email to verify!!"
     }
@@ -141,7 +141,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async registerCustomer(@Query('digifranchiseId') digifranchiseId: string, @Body() createUserDto: AuthRegisterLoginDto) {
     await this.service.customerRegister(digifranchiseId, createUserDto);
-    
+
     return {
       message: "sign up is successful, check your email to verify!!"
     }
@@ -157,7 +157,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async registerCustomerWithPhone(@Query('digifranchiseId') digifranchiseId: string, @Body() phoneRegisterDto: AuthPhoneRegisterDto) {
     await this.service.phoneCustomerRegister(digifranchiseId, phoneRegisterDto);
-    
+
     return {
       message: "sign up is successful, check phone for otp"
     }
@@ -224,6 +224,14 @@ export class AuthController {
     return this.service.forgotPassword(forgotPasswordDto.email);
   }
 
+  @Post('forgot-password-for-webs')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async forgetPasswordForWebs(
+    @Body() forgotPasswordForWebsDto: AuthForgotPasswordForWebSiteDto,
+  ): Promise<void> {
+    return this.service.forgetPasswordForWebs(forgotPasswordForWebsDto);
+  }
+
 
   @Post('reset/password')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -280,7 +288,7 @@ export class AuthController {
     @Body() updateUserProfileDto: UserProfileDto,
   ) {
     await this.service.update(request.user, updateUserProfileDto);
-    
+
     return {
       message: "update is successful"
     }

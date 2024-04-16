@@ -881,6 +881,54 @@ export class AuthService {
   }
 
 
+  async forgetPasswordForWebs(dto: AuthForgotPasswordForWebSiteDto): Promise<void> {
+    const user = await this.usersService.findOne({
+      email: dto.email,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'emailNotExists',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (!dto.websiteURL || dto.websiteURL.trim() === '') {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'websiteURL is required and must not be empty',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    console.log(`Website URL: ${dto.websiteURL}`);
+
+    const hash = await this.jwtService.signAsync(
+      {
+        forgotUserId: user.id,
+      },
+      {
+        secret: this.configService.getOrThrow('auth.forgotSecret', { infer: true }),
+        expiresIn: this.configService.getOrThrow('auth.forgotExpires', { infer: true }),
+      },
+    );
+
+    await this.mailService.forgotPasswordForWebs({
+      to: dto.email,
+      data: {
+        hash,
+        websiteUrl: dto.websiteURL,
+      },
+    });
+  }
+
+
 
   async forgotPasswordWithPhone(phoneNumber: string): Promise<any> {
     const user = await this.usersService.findOne({
