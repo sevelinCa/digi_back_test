@@ -18,6 +18,7 @@ import { DigifranchiseSubProduct } from './digifranchise-sub-product.entity';
 import { StaffManagement } from 'src/digifranchise-mgt/entities/staff-management.entity';
 import { DigifranchiseProduct } from './digifranchise-product.entity';
 import { CalenderVenue } from 'src/calender-mgt/entities/calender-venues.entity';
+import { availability, unavailability } from 'src/digifranchise-mgt/entities/availability.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -88,8 +89,11 @@ export class DigifranchiseOwner {
   @OneToMany(() => OrderTable, orders => orders.ownedDigifranchise)
   order: OrderTable[];
 
-  
+  @OneToMany(() => availability, availability => availability.ownedDigifranchise)
+  availabilityTime: availability[];
 
+  @OneToMany(() => unavailability, unavailability => unavailability.ownedDigifranchise)
+  unavailabilityTime: unavailability[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

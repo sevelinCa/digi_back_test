@@ -6,13 +6,14 @@ import { AllConfigType } from 'src/config/config.type';
 import { MaybeType } from '../utils/types/maybe.type';
 import { MailerService } from '../mailer/mailer.service';
 import path from 'path';
+import type { ForgotPasswordForWebsMailData } from './interfaces/forgot-password-for-webs-mail-data.interface';
 
 @Injectable()
 export class MailService {
   constructor(
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService<AllConfigType>,
-  ) {}
+  ) { }
 
   async userSignUp(mailData: MailData<{ hash: string }>): Promise<void> {
     const i18n = I18nContext.current();
@@ -114,4 +115,54 @@ export class MailService {
       },
     });
   }
+
+  async forgotPasswordForWebs(mailData: ForgotPasswordForWebsMailData): Promise<void> {
+    const i18n = I18nContext.current();
+    let resetPasswordTitle: MaybeType<string>;
+    let text1: MaybeType<string>;
+    let text2: MaybeType<string>;
+    let text3: MaybeType<string>;
+    let text4: MaybeType<string>;
+
+    if (i18n) {
+      [resetPasswordTitle, text1, text2, text3, text4] = await Promise.all([
+        i18n.t('common.resetPassword'),
+        i18n.t('reset-password.text1'),
+        i18n.t('reset-password.text2'),
+        i18n.t('reset-password.text3'),
+        i18n.t('reset-password.text4'),
+      ]);
+    }
+
+    const url = new URL(mailData.data.websiteUrl + '/password-change');
+    url.searchParams.set('hash', mailData.data.hash);
+
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      subject: resetPasswordTitle,
+      text: `${url.toString()} ${resetPasswordTitle}`,
+      templatePath: path.join(
+        this.configService.getOrThrow('app.workingDirectory', {
+          infer: true,
+        }),
+        'src',
+        'mail',
+        'mail-templates',
+        'reset-password.hbs',
+      ),
+      context: {
+        title: resetPasswordTitle,
+        url: url.toString(),
+        actionTitle: resetPasswordTitle,
+        app_name: this.configService.get('app.name', {
+          infer: true,
+        }),
+        text1,
+        text2,
+        text3,
+        text4,
+      },
+    });
+ }
+
 }
