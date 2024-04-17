@@ -21,7 +21,12 @@ export class AvailabilityController {
         return await this.availabilityService.createNewAvailability(availabilityDto, ownedFranchiseId);
     }
 
-
+    @ApiOperation({ summary: 'Get Available Availability' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Available availability retrieved.' })
+    @Get('available-all-week-availability/:ownedFranchiseId')
+    async getAvailableAvailability(@Param('ownedFranchiseId') ownedFranchiseId: string): Promise<any> {
+        const availableAvailability = await this.availabilityService.getAvailableAvailability(ownedFranchiseId);
+        return availableAvailability;
+    }
 }
-
 

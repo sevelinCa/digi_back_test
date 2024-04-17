@@ -103,7 +103,36 @@ export class AvailabilityService {
         return availableTimeSlots;
     }
 
+    async getAvailableAvailability(ownedFranchiseId: string) {
 
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchiseId } });
+        if (!owned) {
+            throw new Error('Owned franchise not exist')
+        }
+
+        const availabilityWeekDays = await this.availabilityWeekDaysRepository.find({
+            where: { ownedDigifranchise: Equal(owned.id) },
+            relations: ['availability', 'dayTime']
+        });
+
+        const availableWeekDays = availabilityWeekDays.filter(weekDay => weekDay.availabilityCounts > 0);
+
+        const availableAvailability = await Promise.all(availableWeekDays.map(async (weekDay) => {
+            const availableDayTime = await this.availabilityDayTimeRepository.find({
+                where: { weekDay: Equal(weekDay.id), ownedDigifranchise: Equal(owned.id) },
+                relations: ['weekDay']
+            });
+
+            const availableDayTimes = availableDayTime.filter(dayTime => !dayTime.isBooked);
+
+            return {
+                ...weekDay,
+                availabilityDayTime: availableDayTimes
+            };
+        }));
+
+        return availableAvailability;
+    }
 
 }
 

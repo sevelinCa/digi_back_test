@@ -17,7 +17,7 @@ import { StaffManagement } from './entities/staff-management.entity';
 import { InventoryManagement } from './entities/inventory-management.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { AvailabilityService } from './availability.service';
-import { AvailabilityController, UnavailabilityController } from './availability.controller';
+import { AvailabilityController } from './availability.controller';
 import { AvailabilityWeekDays, AvailabilityDayTime, Availability, UnavailabilityWeekDays, UnavailabilityDayTime, Unavailability } from './entities/availability.entity';
 
 @Module({
@@ -59,7 +59,6 @@ import { AvailabilityWeekDays, AvailabilityDayTime, Availability, Unavailability
     StaffManagementController,
     InventoryManagementController,
     AvailabilityController,
-    UnavailabilityController,
   ]
 })
 export class DigifranchiseMgtModule { }
