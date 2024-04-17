@@ -18,7 +18,7 @@ import { DigifranchiseSubProduct } from './digifranchise-sub-product.entity';
 import { StaffManagement } from 'src/digifranchise-mgt/entities/staff-management.entity';
 import { DigifranchiseProduct } from './digifranchise-product.entity';
 import { CalenderVenue } from 'src/calender-mgt/entities/calender-venues.entity';
-import { availability, unavailability } from 'src/digifranchise-mgt/entities/availability.entity';
+import { Availability, AvailabilityDayTime, AvailabilityWeekDays, Unavailability, UnavailabilityWeekDays } from 'src/digifranchise-mgt/entities/availability.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -89,11 +89,23 @@ export class DigifranchiseOwner {
   @OneToMany(() => OrderTable, orders => orders.ownedDigifranchise)
   order: OrderTable[];
 
-  @OneToMany(() => availability, availability => availability.ownedDigifranchise)
-  availabilityTime: availability[];
+  @OneToMany(() => Availability, availability => availability.ownedDigifranchise)
+  availabilityTime: Availability[];
 
-  @OneToMany(() => unavailability, unavailability => unavailability.ownedDigifranchise)
-  unavailabilityTime: unavailability[];
+  @OneToMany(() => AvailabilityWeekDays, availableWeekDay => availableWeekDay.ownedDigifranchise)
+  availableWeekDay: AvailabilityWeekDays[];
+
+  @OneToMany(() => AvailabilityDayTime, availableDay => availableDay.ownedDigifranchise)
+  availableDay: AvailabilityDayTime[];
+
+  @OneToMany(() => Unavailability, unavailability => unavailability.ownedDigifranchise)
+  unavailabilityTime: Unavailability[];
+
+  @OneToMany(() => UnavailabilityWeekDays, unavailableWeekDay => unavailableWeekDay.ownedDigifranchise)
+  unavailableWeekDay: UnavailabilityWeekDays[];
+
+  @OneToMany(() => Unavailability, unavailableDay => unavailableDay.ownedDigifranchise)
+  unavailableDay: Unavailability[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

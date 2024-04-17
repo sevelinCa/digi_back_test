@@ -16,15 +16,53 @@ import { StaffManagementService } from './staff-management.service';
 import { StaffManagement } from './entities/staff-management.entity';
 import { InventoryManagement } from './entities/inventory-management.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { AvailabilityService } from './availability.service';
+import { AvailabilityController, UnavailabilityController } from './availability.controller';
+import { AvailabilityWeekDays, AvailabilityDayTime, Availability, UnavailabilityWeekDays, UnavailabilityDayTime, Unavailability } from './entities/availability.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AvailableManagement,Digifranchise, DigifranchiseOwner,UserEntity, CustomerManagement, UnavailableManagement, SupplierManagement, StaffManagement, InventoryManagement ]),
+    TypeOrmModule.forFeature([
+      AvailableManagement,
+      Digifranchise,
+      DigifranchiseOwner,
+      UserEntity,
+      CustomerManagement,
+      UnavailableManagement,
+      SupplierManagement,
+      StaffManagement,
+      InventoryManagement,
+      AvailabilityWeekDays,
+      AvailabilityDayTime,
+      Availability,
+      UnavailabilityWeekDays,
+      UnavailabilityDayTime,
+      Unavailability,
+    ]),
   ],
-  providers: [AvailabilityManagementService, UnavailableManagementService, CustomerManagementService, SupplierManagementService, InventoryManagementService, StaffManagementService,  ],
-  controllers: [AvailabilityManagementController,AvailabilityNoAuthManagementController,UnavailableManagementController,CustomerManagementController,SupplierManagementController,StaffManagementController, InventoryManagementController, ]
+  providers: [
+    AvailabilityManagementService,
+    UnavailableManagementService,
+    CustomerManagementService,
+    SupplierManagementService,
+    InventoryManagementService,
+    StaffManagementService,
+    AvailabilityService,
+    // UnavailabilityService,
+  ],
+  controllers: [
+    AvailabilityManagementController,
+    AvailabilityNoAuthManagementController,
+    UnavailableManagementController,
+    CustomerManagementController,
+    SupplierManagementController,
+    StaffManagementController,
+    InventoryManagementController,
+    AvailabilityController,
+    UnavailabilityController,
+  ]
 })
-export class DigifranchiseMgtModule {}
+export class DigifranchiseMgtModule { }
 
 
 
