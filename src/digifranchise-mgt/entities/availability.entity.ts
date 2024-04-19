@@ -196,6 +196,10 @@ export class AvailabilitySlotsDetails {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @ManyToOne(() => UserEntity, { nullable: true })
+    @JoinColumn({ name: 'userId' })
+    userId: UserEntity | null;
+
     @ManyToOne(() => AvailabilityDayTime, workingHour => workingHour.availabilitySlotsDetails)
     @JoinColumn({ name: 'availabilityDayTime' })
     availabilityDayTime: AvailabilityDayTime | null;
