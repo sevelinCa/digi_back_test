@@ -185,7 +185,6 @@ export class AvailabilityService {
         return availableAvailability;
     }
 
-//-------------------
     async getAvailabilityByOwnedFranchiseId(availabilityId: string): Promise<Availability | null> {
         return this.availabilityRepository.findOne({ where: { id: availabilityId } });
     }
