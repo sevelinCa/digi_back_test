@@ -214,6 +214,12 @@ export class AvailabilitySlotsDetails {
     @Column({ type: 'json', nullable: true })
     availabilityTimeSlotsDetails: { startTime: string; endTime: string }[] | null;
 
+    @Column({ type: 'timestamp', nullable: true })
+    workingDate?: Date; 
+
+    @Column({ type: 'varchar', length: 255 })
+    day: string;
+
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 

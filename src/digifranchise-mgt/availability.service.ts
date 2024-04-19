@@ -33,18 +33,14 @@ export class AvailabilityService {
     
         const savedAvailabilities: Availability[] = [];
     
-        // Assuming the current date is the start of the month
         const currentDate = new Date();
         const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-    
-        // Check if availabilityWeekDays is defined before iterating
         if (availabilityDto.availabilityWeekDays && availabilityDto.availabilityWeekDays.length > 0) {
             for (let day = 1; day <= daysInMonth; day++) {
                 const currentDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toLocaleDateString('en-US', { weekday: 'long' });
     
                 const matchingDayOfWeek = availabilityDto.availabilityWeekDays.find(dayDto => dayDto.day === currentDayOfWeek);
                 if (matchingDayOfWeek) {
-                    // Creating availability for the day
                     const newAvailability = this.availabilityRepository.create({
                         ownedDigifranchise: owned,
                         allowedTimeSlotUnits: availabilityDto.allowedTimeSlotUnits,
@@ -55,13 +51,12 @@ export class AvailabilityService {
                     const savedAvailability = await this.availabilityRepository.save(newAvailability);
                     savedAvailabilities.push(savedAvailability);
     
-                    // Apply day-specific availability settings
                     if (matchingDayOfWeek.availabilityDayTime && matchingDayOfWeek.availabilityDayTime.length > 0) {
                         const weekDay = this.availabilityWeekDaysRepository.create({
                             day: currentDayOfWeek,
                             isDayFullBooked: matchingDayOfWeek.isDayFullBooked || false,
                             ownedDigifranchise: owned,
-                            workingDate: new Date(currentDate.getFullYear(), currentDate.getMonth(), day), 
+                            workingDate: new Date(currentDate.getFullYear(), currentDate.getMonth(), day),
                         });
     
                         const savedWeekDay = await this.availabilityWeekDaysRepository.save(weekDay);
@@ -88,6 +83,8 @@ export class AvailabilityService {
                                     ownedDigifranchise: owned,
                                     isSlotBooked: false,
                                     availabilityTimeSlotsDetails: [{ startTime: slot.startTime, endTime: slot.endTime }],
+                                    day: currentDayOfWeek, 
+                                    workingDate: savedWeekDay.workingDate, 
                                 });
     
                                 await this.availabilitySlotsDetailsRepository.save(newAvailabilitySlot);
@@ -98,10 +95,6 @@ export class AvailabilityService {
                         savedWeekDay.availabilityCounts = totalAvailableTimeSlots;
                         savedWeekDay.availability = [savedAvailability];
                         await this.availabilityWeekDaysRepository.save(savedWeekDay);
-    
-                        if (savedWeekDay.workingDate) {
-                            await this.deleteSlotsAtEndOfDay(savedWeekDay.workingDate); 
-                        } 
                     }
                 }
             }
@@ -150,9 +143,7 @@ export class AvailabilityService {
         for (const slot of slotsToDelete) {
             await this.availabilitySlotsDetailsRepository.delete(slot.id);
         }
-    }
-
-    
+    }  
 
     async getAvailableAvailability(ownedFranchiseId: string) {
 
