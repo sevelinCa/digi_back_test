@@ -165,7 +165,6 @@ export class AvailabilityService {
         return slots;
     }
 
-
     async bookSlotDetail(slotId: string, ownedFranchiseId: string): Promise<AvailabilitySlotsDetails> {
     
         const owned = await this.ownedFranchiseRepository.findOne({
@@ -185,7 +184,6 @@ export class AvailabilityService {
             throw new Error('Slot not found or does not belong to the specified franchise');
         }
     
-        // Toggle the isSlotBooked property
         slot.isSlotBooked = !slot.isSlotBooked;
     
         const updatedSlot = await this.availabilitySlotsDetailsRepository.save(slot);
@@ -193,114 +191,18 @@ export class AvailabilityService {
         return updatedSlot;
     }
     
+    async getAllAvailabilitySlotsByAndFranchise(ownerFranchiseId: string): Promise<AvailabilitySlotsDetails[]> {
+        const slots = await this.availabilitySlotsDetailsRepository.find({
+            where: {
+                ownedDigifranchise: Equal(ownerFranchiseId),
+            },
+            relations: ['availabilityDayTime', 'availabilityWeekDays'], 
+        });
+    
+        return slots;
+    }
     
     
-    // async getAvailableAvailability(ownedFranchiseId: string) {
-
-    //     const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownedFranchiseId } });
-    //     if (!owned) {
-    //         throw new Error('Owned franchise not exist')
-    //     }
-
-    //     const availabilityWeekDays = await this.availabilityWeekDaysRepository.find({
-    //         where: { ownedDigifranchise: Equal(owned.id) },
-    //         relations: ['availability', 'dayTime']
-    //     });
-
-    //     const availableWeekDays = availabilityWeekDays.filter(weekDay => weekDay.availabilityCounts > 0);
-
-    //     const availableAvailability = await Promise.all(availableWeekDays.map(async (weekDay) => {
-    //         const availableDayTime = await this.availabilityDayTimeRepository.find({
-    //             where: { weekDay: Equal(weekDay.id), ownedDigifranchise: Equal(owned.id) },
-    //             relations: ['weekDay']
-    //         });
-
-    //         const availableDayTimes = availableDayTime.filter(dayTime => !dayTime.isBooked);
-
-    //         return {
-    //             ...weekDay,
-    //             availabilityDayTime: availableDayTimes
-    //         };
-    //     }));
-
-    //     return availableAvailability;
-    // }
-
-    // async getAvailabilityByOwnedFranchiseId(availabilityId: string): Promise<Availability | null> {
-    //     return this.availabilityRepository.findOne({ where: { id: availabilityId } });
-    // }
-
-    // async deleteAvailabilityByOwnedFranchiseId(availabilityId: string): Promise<void> {
-    //     await this.availabilityRepository.delete({ id: availabilityId, deleteAt: IsNull() });
-    //  }
-
-
-
-    // async updateAvailability(availabilityId: string, updateAvailabilityDto: UpdateAvailabilityDto): Promise<Availability> {
-
-    //     const availability = await this.availabilityRepository.findOne({where:{id: Equal(availabilityId)}});
-    //     if (!availability) {
-    //         throw new Error('Availability not found');
-    //     }
-
-
-
-    //     availability.allowedTimeSlotUnits = updateAvailabilityDto.allowedTimeSlotUnits ?? AllowedTimeSlotUnits.THIRTY_MINUTES;
-
-    //     availability.breakTimeBetweenBookedSlots = updateAvailabilityDto.breakTimeBetweenBookedSlots ?? BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES;
-    //     availability.allowBookingOnPublicHolidays = updateAvailabilityDto.allowBookingOnPublicHolidays ?? false;
-
-    //     const updatedAvailability = await this.availabilityRepository.save(availability);
-
-
-    //     if (updateAvailabilityDto.availabilityWeekDays) {
-    //         for (const weekDayDto of updateAvailabilityDto.availabilityWeekDays) {
-
-    //             let weekDay = await this.availabilityWeekDaysRepository.findOne({ where: { day: weekDayDto.day, availability: availability } });
-    //             if (!weekDay) {
-    //                 weekDay = this.availabilityWeekDaysRepository.create({
-
-    //                     day: weekDayDto.day,
-    //                     isDayFullBooked: weekDayDto.isDayFullBooked,
-
-    //                     availability: [updatedAvailability],
-    //                 });
-    //             } else {
-    //                 weekDay.isDayFullBooked = weekDayDto.isDayFullBooked || false;
-
-    //                 weekDay.availability = [updatedAvailability];
-    //             }
-
-
-    //             await this.availabilityWeekDaysRepository.save(weekDay);
-
-
-    //             if (weekDayDto.availabilityDayTime) {
-    //                 for (const dayTimeDto of weekDayDto.availabilityDayTime) {
-
-    //                     let dayTime = await this.availabilityDayTimeRepository.findOne({ where: { startTime: dayTimeDto.startTime, endTime: dayTimeDto.endTime, weekDay: weekDay } });
-    //                     if (!dayTime) {
-    //                         dayTime = this.availabilityDayTimeRepository.create({
-    //                             startTime: dayTimeDto.startTime,
-    //                             endTime: dayTimeDto.endTime,
-    //                             isBooked: dayTimeDto.isBooked,
-    //                             weekDay: weekDay,
-    //                         });
-    //                     } else {
-    //                         dayTime.isBooked = dayTimeDto.isBooked || false;
-    //                     }
-
-
-    //                     await this.availabilityDayTimeRepository.save(dayTime);
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     return updatedAvailability;
-    // }
-
-
 }
 
 
