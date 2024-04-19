@@ -18,7 +18,7 @@ import { DigifranchiseSubProduct } from './digifranchise-sub-product.entity';
 import { StaffManagement } from 'src/digifranchise-mgt/entities/staff-management.entity';
 import { DigifranchiseProduct } from './digifranchise-product.entity';
 import { CalenderVenue } from 'src/calender-mgt/entities/calender-venues.entity';
-import { Availability, AvailabilityDayTime, AvailabilityWeekDays, Unavailability, UnavailabilityWeekDays } from 'src/digifranchise-mgt/entities/availability.entity';
+import { Availability, AvailabilityDayTime, AvailabilityWeekDays, Unavailability } from 'src/digifranchise-mgt/entities/availability.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -101,8 +101,8 @@ export class DigifranchiseOwner {
   @OneToMany(() => Unavailability, unavailability => unavailability.ownedDigifranchise)
   unavailabilityTime: Unavailability[];
 
-  @OneToMany(() => UnavailabilityWeekDays, unavailableWeekDay => unavailableWeekDay.ownedDigifranchise)
-  unavailableWeekDay: UnavailabilityWeekDays[];
+  // @OneToMany(() => UnavailabilityWeekDays, unavailableWeekDay => unavailableWeekDay.ownedDigifranchise)
+  // unavailableWeekDay: UnavailabilityWeekDays[];
 
   @OneToMany(() => Unavailability, unavailableDay => unavailableDay.ownedDigifranchise)
   unavailableDay: Unavailability[];

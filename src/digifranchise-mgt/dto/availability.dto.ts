@@ -85,6 +85,11 @@ export class AvailabilityDto {
                 availabilityDayTime: [
                     {
                         startTime: '09:00',
+                        endTime: '12:00',
+                        isBooked: false,
+                    },
+                    {
+                        startTime: '13:00',
                         endTime: '17:00',
                         isBooked: false,
                     },
@@ -95,8 +100,13 @@ export class AvailabilityDto {
                 isDayFullBooked: false,
                 availabilityDayTime: [
                     {
-                        startTime: '09:00',
-                        endTime: '17:00',
+                        startTime: '10:00',
+                        endTime: '14:00',
+                        isBooked: false,
+                    },
+                    {
+                        startTime: '15:00',
+                        endTime: '19:00',
                         isBooked: false,
                     },
                 ],
@@ -106,8 +116,13 @@ export class AvailabilityDto {
                 isDayFullBooked: false,
                 availabilityDayTime: [
                     {
-                        startTime: '09:00',
-                        endTime: '17:00',
+                        startTime: '08:00',
+                        endTime: '11:00',
+                        isBooked: false,
+                    },
+                    {
+                        startTime: '12:00',
+                        endTime: '16:00',
                         isBooked: false,
                     },
                 ],
@@ -117,8 +132,13 @@ export class AvailabilityDto {
                 isDayFullBooked: false,
                 availabilityDayTime: [
                     {
-                        startTime: '09:00',
-                        endTime: '17:00',
+                        startTime: '09:30',
+                        endTime: '13:30',
+                        isBooked: false,
+                    },
+                    {
+                        startTime: '14:30',
+                        endTime: '18:30',
                         isBooked: false,
                     },
                 ],
@@ -128,8 +148,45 @@ export class AvailabilityDto {
                 isDayFullBooked: false,
                 availabilityDayTime: [
                     {
-                        startTime: '09:00',
-                        endTime: '17:00',
+                        startTime: '10:00',
+                        endTime: '15:00',
+                        isBooked: false,
+                    },
+                    {
+                        startTime: '16:00',
+                        endTime: '20:00',
+                        isBooked: false,
+                    },
+                ],
+            },
+            {
+                day: 'Saturday',
+                isDayFullBooked: false,
+                availabilityDayTime: [
+                    {
+                        startTime: '11:00',
+                        endTime: '14:00',
+                        isBooked: false,
+                    },
+                    {
+                        startTime: '15:00',
+                        endTime: '19:00',
+                        isBooked: false,
+                    },
+                ],
+            },
+            {
+                day: 'Sunday',
+                isDayFullBooked: false,
+                availabilityDayTime: [
+                    {
+                        startTime: '12:00',
+                        endTime: '16:00',
+                        isBooked: false,
+                    },
+                    {
+                        startTime: '17:00',
+                        endTime: '21:00',
                         isBooked: false,
                     },
                 ],
@@ -137,6 +194,8 @@ export class AvailabilityDto {
         ],
         required: true
     })
+    
+    
     @IsOptional()
     @IsArray()
     @Type(() => AvailabilityWeekDaysDto)
