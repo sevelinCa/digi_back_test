@@ -18,7 +18,7 @@ import { InventoryManagement } from './entities/inventory-management.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { AvailabilityService } from './availability.service';
 import { AvailabilityController } from './availability.controller';
-import { AvailabilityWeekDays, AvailabilityDayTime, Availability, UnavailabilityWeekDays, UnavailabilityDayTime, Unavailability } from './entities/availability.entity';
+import { AvailabilityWeekDays, AvailabilityDayTime, Availability, Unavailability, AvailabilitySlotsDetails } from './entities/availability.entity';
 
 @Module({
   imports: [
@@ -35,8 +35,7 @@ import { AvailabilityWeekDays, AvailabilityDayTime, Availability, Unavailability
       AvailabilityWeekDays,
       AvailabilityDayTime,
       Availability,
-      UnavailabilityWeekDays,
-      UnavailabilityDayTime,
+      AvailabilitySlotsDetails,
       Unavailability,
     ]),
   ],
