@@ -166,6 +166,32 @@ export class AvailabilityService {
     }
 
 
+    async bookSlotDetail(slotId: string, ownedFranchiseId: string): Promise<AvailabilitySlotsDetails> {
+    
+        const owned = await this.ownedFranchiseRepository.findOne({
+            where:{id: ownedFranchiseId}
+        })
+        if(!owned){
+            throw new Error('Franchise owner not found')
+        }
+        const slot = await this.availabilitySlotsDetailsRepository.findOne({
+            where: {
+                id: slotId,
+                ownedDigifranchise: Equal(ownedFranchiseId) 
+            }
+        });
+        
+        if (!slot) {
+            throw new Error('Slot not found or does not belong to the specified franchise');
+        }
+    
+        // Toggle the isSlotBooked property
+        slot.isSlotBooked = !slot.isSlotBooked;
+    
+        const updatedSlot = await this.availabilitySlotsDetailsRepository.save(slot);
+    
+        return updatedSlot;
+    }
     
     
     

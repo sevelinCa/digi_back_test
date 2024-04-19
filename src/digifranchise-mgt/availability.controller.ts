@@ -36,6 +36,22 @@ export class AvailabilityController {
     }
 
 
+    @ApiOperation({ summary: 'Book a slot detail' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Slot booked successfully.' })
+    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Slot not found or does not belong to the specified franchise.' })
+    @ApiResponse({ status: HttpStatus.CONFLICT, description: 'Slot is already booked.' })
+    @Post('book-slot-detail/:slotId/:ownedFranchiseId')
+    async bookSlotDetail(
+        @Param('slotId') slotId: string,
+        @Param('ownedFranchiseId') ownedFranchiseId: string
+    ): Promise<AvailabilitySlotsDetails> {
+        try {
+            const updatedSlot = await this.availabilityService.bookSlotDetail(slotId, ownedFranchiseId);
+            return updatedSlot;
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 
