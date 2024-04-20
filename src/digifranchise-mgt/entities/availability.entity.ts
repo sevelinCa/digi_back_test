@@ -31,7 +31,7 @@ export class AvailabilityWeekDays {
     ownedDigifranchise: DigifranchiseOwner | null;
 
     @ManyToOne(() => Unavailability, workingDay => workingDay.WeekDays)
-    unavailability: Unavailability [];
+    unavailability: Unavailability[];
 
     @ManyToOne(() => AvailabilitySlotsDetails, slotDetails => slotDetails.availabilityWeekDays)
     availabilitySlotsDetails: AvailabilitySlotsDetails[];
@@ -40,7 +40,7 @@ export class AvailabilityWeekDays {
     day: string;
 
     @Column({ type: 'timestamp', nullable: true })
-    workingDate?: Date; 
+    workingDate?: Date;
 
     @Column({ type: 'boolean', default: false })
     isDayFullBooked: boolean;
@@ -181,6 +181,9 @@ export class Unavailability {
     @Column({ type: 'time' })
     endTime: string;
 
+    @Column({ type: 'timestamp', nullable: true })
+    workingDate?: Date;
+
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 
@@ -196,10 +199,6 @@ export class AvailabilitySlotsDetails {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => UserEntity, { nullable: true })
-    @JoinColumn({ name: 'userId' })
-    userId: UserEntity | null;
-
     @ManyToOne(() => AvailabilityDayTime, workingHour => workingHour.availabilitySlotsDetails)
     @JoinColumn({ name: 'availabilityDayTime' })
     availabilityDayTime: AvailabilityDayTime | null;
@@ -212,6 +211,9 @@ export class AvailabilitySlotsDetails {
     @JoinColumn({ name: 'ownedDigifranchise' })
     ownedDigifranchise: DigifranchiseOwner | null;
 
+    @ManyToOne(() => AvailabilityBookedSlots, BookedSlot => BookedSlot.slot)
+    bookedSlots: AvailabilityBookedSlots[];
+
     @Column({ type: 'boolean', default: false })
     isSlotBooked: boolean;
 
@@ -219,7 +221,7 @@ export class AvailabilitySlotsDetails {
     availabilityTimeSlotsDetails: { startTime: string; endTime: string }[] | null;
 
     @Column({ type: 'timestamp', nullable: true })
-    workingDate?: Date; 
+    workingDate?: Date;
 
     @Column({ type: 'varchar', length: 255 })
     day: string;
@@ -232,4 +234,28 @@ export class AvailabilitySlotsDetails {
 
     @Column({ type: 'timestamp', nullable: true })
     deleteAt: Date | null;
+}
+
+@Entity()
+export class AvailabilityBookedSlots {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @ManyToOne(() => UserEntity, { nullable: true })
+    @JoinColumn({ name: 'userId' })
+    userId: UserEntity | null;
+
+    @ManyToOne(() => AvailabilitySlotsDetails)
+    @JoinColumn({ name: 'slotId' })
+    slot: AvailabilitySlotsDetails;
+
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deleteAt: Date | null;
+
 }
