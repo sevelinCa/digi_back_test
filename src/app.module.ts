@@ -75,14 +75,10 @@ import { InventoryModule } from './inventory/inventory.module';
       },
     }),
 
-
-
-
     I18nModule.forRootAsync({
      useFactory: (configService: ConfigService<AllConfigType>) => {
         const i18nPath = path.join(__dirname, '../i18n/');
-        console.log('========> i18n Path:', i18nPath);
-    
+   
         const fallbackLanguage = configService.getOrThrow('app.fallbackLanguage', {
           infer: true,
         });
