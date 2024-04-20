@@ -16,7 +16,7 @@ export enum BreakTimeBetweenBookedSlots {
     ONE_HOUR = 60,
 }
 
-class AvailabilityDayTimeDto {
+export class AvailabilityDayTimeDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({ example: '09:00' })

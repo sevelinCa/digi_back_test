@@ -1,6 +1,6 @@
-import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import { IsString, IsOptional, IsBoolean, IsArray, IsEnum } from "class-validator";
 
 export enum AllowedTimeSlotUnits {
     FIFTEEN_MINUTES = 15,
@@ -17,14 +17,14 @@ export enum BreakTimeBetweenBookedSlots {
 
 export class UpdateAvailabilityDayTimeDto {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({ example: '09:00' })
-    startTime: string;
+    startTime?: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({ example: '17:00' })
-    endTime: string;
+    endTime?: string;
 
     @IsBoolean()
     @IsOptional()
@@ -34,9 +34,9 @@ export class UpdateAvailabilityDayTimeDto {
 
 export class UpdateAvailabilityWeekDaysDto {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({ example: 'Monday' })
-    day: string;
+    day?: string;
 
     @IsBoolean()
     @IsOptional()
@@ -52,7 +52,7 @@ export class UpdateAvailabilityWeekDaysDto {
                 isBooked: false,
             },
         ],
-        required: true
+        required: false
     })
     @IsOptional()
     @IsArray()
@@ -60,6 +60,17 @@ export class UpdateAvailabilityWeekDaysDto {
     availabilityDayTime?: UpdateAvailabilityDayTimeDto[];
 }
 
+export class UpdateUnavailabilityDto {
+    @IsString()
+    @IsOptional()
+    @ApiProperty({ example: '09:00' })
+    startTime?: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty({ example: '17:00' })
+    endTime?: string;
+}
 
 export class UpdateAvailabilityDto {
     @IsOptional()
@@ -72,8 +83,8 @@ export class UpdateAvailabilityDto {
     @ApiProperty({ example: BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES })
     breakTimeBetweenBookedSlots?: BreakTimeBetweenBookedSlots;
 
-    @IsOptional()
     @IsBoolean()
+    @IsOptional()
     @ApiProperty({ example: false })
     allowBookingOnPublicHolidays?: boolean;
 
@@ -86,55 +97,10 @@ export class UpdateAvailabilityDto {
                 availabilityDayTime: [
                     {
                         startTime: '09:00',
-                        endTime: '17:00',
-                        isBooked: false,
-                    },
+                        endTime: '12:00',
+                    }
                 ],
-            },
-            {
-                day: 'Tuesday',
-                isDayFullBooked: false,
-                availabilityDayTime: [
-                    {
-                        startTime: '09:00',
-                        endTime: '17:00',
-                        isBooked: false,
-                    },
-                ],
-            },
-            {
-                day: 'Wednesday',
-                isDayFullBooked: false,
-                availabilityDayTime: [
-                    {
-                        startTime: '09:00',
-                        endTime: '17:00',
-                        isBooked: false,
-                    },
-                ],
-            },
-            {
-                day: 'Thursday',
-                isDayFullBooked: false,
-                availabilityDayTime: [
-                    {
-                        startTime: '09:00',
-                        endTime: '17:00',
-                        isBooked: false,
-                    },
-                ],
-            },
-            {
-                day: 'Friday',
-                isDayFullBooked: false,
-                availabilityDayTime: [
-                    {
-                        startTime: '09:00',
-                        endTime: '17:00',
-                        isBooked: false,
-                    },
-                ],
-            },
+            }
         ],
         required: false
     })
@@ -142,56 +108,20 @@ export class UpdateAvailabilityDto {
     @IsArray()
     @Type(() => UpdateAvailabilityWeekDaysDto)
     availabilityWeekDays?: UpdateAvailabilityWeekDaysDto[];
-}
 
-
-
-export class UpdateUnavailabilityWeekDaysDto {
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ example: 'Monday' })
-    day: string;
-
-    @IsBoolean()
+    @ApiProperty({
+        type: [UpdateUnavailabilityDto],
+        example: [
+            {
+                startTime: '10:00',
+                endTime: '14:00',
+                workingDate: '2024-10-20'
+            }
+        ],
+        required: false,
+    })
     @IsOptional()
-    @ApiProperty({ example: false })
-    isDayFullBooked?: boolean;
-
-    @IsOptional()
-    @ApiProperty({ example: 0 })
-    availabilityCounts?: number;
-}
-
-export class UpdateUnavailabilityDayTimeDto {
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ example: '09:00' })
-    startTime: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({ example: '17:00' })
-    endTime: string;
-
-    @IsBoolean()
-    @IsOptional()
-    @ApiProperty({ example: false })
-    isBooked?: boolean;
-}
-
-export class UpdateUnavailabilityDto {
-    @IsNotEmpty()
-    @IsEnum(AllowedTimeSlotUnits)
-    @ApiProperty({ example: AllowedTimeSlotUnits.THIRTY_MINUTES })
-    allowedTimeSlotUnits: AllowedTimeSlotUnits;
-
-    @IsNotEmpty()
-    @IsEnum(BreakTimeBetweenBookedSlots)
-    @ApiProperty({ example: BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES })
-    breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots;
-
-    @IsBoolean()
-    @IsOptional()
-    @ApiProperty({ example: false })
-    allowBookingOnPublicHolidays?: boolean;
+    @IsArray()
+    @Type(() => UpdateUnavailabilityDto)
+    unavailability?: UpdateUnavailabilityDto[];
 }
