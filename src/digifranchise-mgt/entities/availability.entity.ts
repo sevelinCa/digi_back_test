@@ -15,6 +15,60 @@ export enum BreakTimeBetweenBookedSlots {
     ONE_HOUR = 60,
 }
 
+
+@Entity()
+export class Availability {
+
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'userId' })
+    userId: UserEntity;
+
+    @ManyToOne(() => DigifranchiseOwner, ownedFranchise => ownedFranchise.availability)
+    @JoinColumn({ name: 'ownedDigifranchise' })
+    ownedDigifranchise: DigifranchiseOwner | null;
+
+
+    @OneToMany(() => AvailabilityWeekDays, weekDay => weekDay.availability)
+    weekDays: AvailabilityWeekDays[];
+
+    @OneToMany(() => AvailabilityDayTime, dayTime => dayTime.availability)
+    dayTime: AvailabilityDayTime[];
+
+    @OneToMany(() => Unavailability, unavailability => unavailability.availability)
+    unavailabilities: Unavailability[];
+
+    @Column({
+        type: 'enum',
+        enum: AllowedTimeSlotUnits,
+        default: AllowedTimeSlotUnits.THIRTY_MINUTES,
+    })
+    allowedTimeSlotUnits: AllowedTimeSlotUnits;
+
+    @Column({
+        type: 'enum',
+        enum: BreakTimeBetweenBookedSlots,
+        default: BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES,
+    })
+    breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots;
+
+    @Column({ type: 'boolean', default: false })
+    allowBookingOnPublicHolidays: boolean;
+
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deleteAt: Date | null;
+}
+
+
+
 @Entity()
 export class AvailabilityWeekDays {
     @PrimaryGeneratedColumn('uuid')
@@ -30,11 +84,14 @@ export class AvailabilityWeekDays {
     @JoinColumn({ name: 'ownedDigifranchise' })
     ownedDigifranchise: DigifranchiseOwner | null;
 
-    @ManyToOne(() => Unavailability, workingDay => workingDay.WeekDays)
+    @ManyToOne(() => Unavailability, workingDay => workingDay.availabilityWeekDays)
     unavailability: Unavailability[];
 
     @ManyToOne(() => AvailabilitySlotsDetails, slotDetails => slotDetails.availabilityWeekDays)
     availabilitySlotsDetails: AvailabilitySlotsDetails[];
+
+    @OneToMany(() => AvailabilityDayTime, dayTime => dayTime.weekDay)
+    dayTimeSlots: AvailabilityDayTime[];
 
     @Column({ type: 'varchar', length: 255 })
     day: string;
@@ -69,8 +126,8 @@ export class AvailabilityDayTime {
 
 
     @ManyToOne(() => Availability, availability => availability.dayTime)
-    @JoinColumn({ name: 'availability' })
-    availability: Availability | null;
+    @JoinColumn({ name: 'availabilityId' }) 
+    availability: Availability;
 
     @ManyToOne(() => DigifranchiseOwner, ownedFranchise => ownedFranchise.availability)
     @JoinColumn({ name: 'ownedDigifranchise' })
@@ -100,60 +157,6 @@ export class AvailabilityDayTime {
     @Column({ type: 'timestamp', nullable: true })
     deleteAt: Date | null;
 }
-
-@Entity()
-export class Availability {
-
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
-
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'userId' })
-    userId: UserEntity;
-
-    @ManyToOne(() => DigifranchiseOwner, ownedFranchise => ownedFranchise.availability)
-    @JoinColumn({ name: 'ownedDigifranchise' })
-    ownedDigifranchise: DigifranchiseOwner | null;
-
-    @ManyToOne(() => AvailabilityWeekDays, weekDays => weekDays.availability)
-    @JoinColumn({ name: 'weekDays' })
-    weekDays: AvailabilityWeekDays | null;
-
-    @ManyToOne(() => AvailabilityDayTime, dayTime => dayTime.availability)
-    @JoinColumn({ name: 'dayTime' })
-    dayTime: AvailabilityDayTime | null;
-
-
-    @ManyToOne(() => Unavailability, unavailability => unavailability.availability)
-    unavailability: Unavailability[];
-
-    @Column({
-        type: 'enum',
-        enum: AllowedTimeSlotUnits,
-        default: AllowedTimeSlotUnits.THIRTY_MINUTES,
-    })
-    allowedTimeSlotUnits: AllowedTimeSlotUnits;
-
-    @Column({
-        type: 'enum',
-        enum: BreakTimeBetweenBookedSlots,
-        default: BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES,
-    })
-    breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots;
-
-    @Column({ type: 'boolean', default: false })
-    allowBookingOnPublicHolidays: boolean;
-
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
-
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
-
-    @Column({ type: 'timestamp', nullable: true })
-    deleteAt: Date | null;
-}
-
 @Entity()
 export class Unavailability {
     @PrimaryGeneratedColumn('uuid')
@@ -167,13 +170,13 @@ export class Unavailability {
     @JoinColumn({ name: 'ownedDigifranchise' })
     ownedDigifranchise: DigifranchiseOwner | null;
 
-    @ManyToOne(() => AvailabilityWeekDays, workingDay => workingDay.unavailability)
-    @JoinColumn({ name: 'availabilityWeekDays' })
-    WeekDays: AvailabilityWeekDays | null;
+    @ManyToOne(() => AvailabilityWeekDays, { nullable: true })
+    @JoinColumn({ name: 'availabilityWeekDaysId' }) 
+    availabilityWeekDays: AvailabilityWeekDays;
 
-    @ManyToOne(() => Availability, workingAvailability => workingAvailability.unavailability)
-    @JoinColumn({ name: 'Availability' })
-    availability: Availability | null;
+    @ManyToOne(() => Availability, availability => availability.unavailabilities)
+    @JoinColumn({ name: 'availabilityId' })
+    availability: Availability;
 
     @Column({ type: 'time' })
     startTime: string;

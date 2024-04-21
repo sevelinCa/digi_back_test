@@ -55,7 +55,7 @@
 
    ```bash
    npm run migration:generate -- src/database/migrations/CreatePostTable
-   npm run migration:generate -- src/database/migrations/UpdateNewAvailabilityTables
+   npm run migration:generate -- src/database/migrations/FixAssociationsInNewAvailbalityTables
    
    
       
