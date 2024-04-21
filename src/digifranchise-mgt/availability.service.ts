@@ -140,17 +140,17 @@ export class AvailabilityService {
                 weekDay: savedWeekDay,
             });
 
-            // Find or create the related Availability entity
+            
             let availability = await this.availabilityRepository.findOne({ where: { ownedDigifranchise: owned } });
             if (!availability) {
                 availability = await this.createAvailability(owned, availabilityDto);
             }
             availabilityDayTime.availability = availability;
 
-            // Save the AvailabilityDayTime entity
+            
             const savedDayTime = await this.availabilityDayTimeRepository.save(availabilityDayTime);
 
-            // Create and save the AvailabilitySlotsDetails entity
+            
             const slotDetails = await this.createAvailabilitySlotDetails(
                 owned,
                 savedDayTime,
@@ -184,10 +184,10 @@ export class AvailabilityService {
                 workingDate: savedWeekDay.workingDate,
             });
 
-            // Save the AvailabilitySlotsDetails entity
+            
             const savedAvailabilitySlot = await this.availabilitySlotsDetailsRepository.save(newAvailabilitySlot);
 
-            // Update the availability counts in AvailabilityWeekDays
+            
             savedWeekDay.availabilityCounts += 1;
             await this.availabilityWeekDaysRepository.save(savedWeekDay);
 
@@ -225,7 +225,6 @@ export class AvailabilityService {
 
             const availability = await this.availabilityRepository.findOne({ where: { ownedDigifranchise: Equal(owned.id) } });
 
-            console.log('=====================', availability)
             if (availability) {
                 newUnavailability.availability = availability;
             } else {
@@ -275,13 +274,13 @@ export class AvailabilityService {
         try {
             const currentDate = new Date();
 
-            // Subtracting a certain number of days (e.g., 1 day) from the current date
-            const daysAgo = 1; // Change this value as needed
+            
+            const daysAgo = 1; 
             const startOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - daysAgo);
 
-            // Set the end of the day to the current date
+            
             const endOfDay = new Date(currentDate);
-            endOfDay.setHours(23, 59, 59, 999); // Set to the last millisecond of the day
+            endOfDay.setHours(23, 59, 59, 999); 
 
             const slotsToDelete = await this.availabilitySlotsDetailsRepository.find({
                 where: {
