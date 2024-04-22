@@ -229,6 +229,12 @@ export class AvailabilitySlotsDetails {
     @Column({ type: 'varchar', length: 255 })
     day: string;
 
+    @Column({ type: 'time' })
+    startTime: string;
+
+    @Column({ type: 'time' })
+    endTime: string;
+
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 

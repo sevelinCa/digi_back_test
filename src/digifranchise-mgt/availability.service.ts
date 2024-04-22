@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Equal, Repository } from 'typeorm';
+import { Between, Equal, In, Repository } from 'typeorm';
 import {
     AvailabilityWeekDays, AvailabilityDayTime, Availability,
     AllowedTimeSlotUnits, BreakTimeBetweenBookedSlots, AvailabilitySlotsDetails,
@@ -140,23 +140,28 @@ export class AvailabilityService {
                 weekDay: savedWeekDay,
             });
 
-            
+
             let availability = await this.availabilityRepository.findOne({ where: { ownedDigifranchise: owned } });
             if (!availability) {
                 availability = await this.createAvailability(owned, availabilityDto);
             }
             availabilityDayTime.availability = availability;
 
-            
+
             const savedDayTime = await this.availabilityDayTimeRepository.save(availabilityDayTime);
 
-            
+
             const slotDetails = await this.createAvailabilitySlotDetails(
                 owned,
                 savedDayTime,
                 savedWeekDay,
                 { startTime: dayTimeDto.startTime, endTime: dayTimeDto.endTime },
-                currentDayOfWeek
+                currentDayOfWeek,
+                availabilityDto.allowedTimeSlotUnits,
+
+                availabilityDto.breakTimeBetweenBookedSlots
+
+
             );
 
             return savedDayTime;
@@ -171,23 +176,34 @@ export class AvailabilityService {
         savedDayTime: AvailabilityDayTime,
         savedWeekDay: AvailabilityWeekDays,
         slot: { startTime: string, endTime: string },
-        currentDayOfWeek: string
+        currentDayOfWeek: string,
+        allowedTimeSlotUnits: AllowedTimeSlotUnits,
+        breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots
+
     ): Promise<AvailabilitySlotsDetails> {
         try {
+            const availableTimeSlots = this.calculateAvailableTimeSlots(
+                slot.startTime,
+                slot.endTime,
+                allowedTimeSlotUnits,
+                breakTimeBetweenBookedSlots
+            );
+
             const newAvailabilitySlot = this.availabilitySlotsDetailsRepository.create({
                 availabilityDayTime: savedDayTime,
                 availabilityWeekDays: savedWeekDay,
                 ownedDigifranchise: owned,
                 isSlotBooked: false,
-                availabilityTimeSlotsDetails: [{ startTime: slot.startTime, endTime: slot.endTime }],
+                availabilityTimeSlotsDetails: availableTimeSlots,
                 day: currentDayOfWeek,
                 workingDate: savedWeekDay.workingDate,
+                startTime: savedDayTime.startTime,
+                endTime: savedDayTime.endTime
+
             });
 
-            
             const savedAvailabilitySlot = await this.availabilitySlotsDetailsRepository.save(newAvailabilitySlot);
 
-            
             savedWeekDay.availabilityCounts += 1;
             await this.availabilityWeekDaysRepository.save(savedWeekDay);
 
@@ -215,7 +231,7 @@ export class AvailabilityService {
         currentDate: Date
     ): Promise<Unavailability> {
         try {
-            
+
             const newUnavailability = this.UnavailabilityRepository.create({
                 ownedDigifranchise: owned,
                 startTime: unavailabilityDto.startTime,
@@ -274,13 +290,13 @@ export class AvailabilityService {
         try {
             const currentDate = new Date();
 
-            
-            const daysAgo = 1; 
+
+            const daysAgo = 1;
             const startOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - daysAgo);
 
-            
+
             const endOfDay = new Date(currentDate);
-            endOfDay.setHours(23, 59, 59, 999); 
+            endOfDay.setHours(23, 59, 59, 999);
 
             const slotsToDelete = await this.availabilitySlotsDetailsRepository.find({
                 where: {
@@ -315,6 +331,78 @@ export class AvailabilityService {
         });
 
         return slots;
+    }
+
+    async getAllSlotesInDateByDateAndFranchise(
+        date: Date,
+        ownerFranchiseId: string
+    ): Promise<{ startTime: string; endTime: string }[]> {
+        try {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            const slots = await this.availabilitySlotsDetailsRepository.find({
+                where: {
+                    ownedDigifranchise: Equal(ownerFranchiseId),
+                    workingDate: Between(startOfDay, endOfDay),
+                },
+                relations: ['availabilityDayTime'],
+            });
+
+            const availabilityTimeSlotsDetails = slots
+                .map(slot => slot.availabilityDayTime)
+                .filter(detail => detail !== null)
+                .map(detail => {
+                    if (detail) {
+                        return { startTime: detail.startTime, endTime: detail.endTime };
+                    } else {
+                        return { startTime: '', endTime: '' };
+                    }
+                });
+
+            return availabilityTimeSlotsDetails;
+        } catch (error) {
+            console.error('Error fetching availability time slots details:', error);
+            throw error;
+        }
+    }
+
+    async getAllSlotesInDayByDayAndFranchise(
+        date: Date,
+        ownerFranchiseId: string
+    ): Promise<{ startTime: string; endTime: string }[]> {
+        try {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            const slots = await this.availabilitySlotsDetailsRepository.find({
+                where: {
+                    ownedDigifranchise: Equal(ownerFranchiseId),
+                    workingDate: Between(startOfDay, endOfDay),
+                },
+                relations: ['availabilityDayTime'],
+            });
+
+            const availabilityTimeSlotsDetails = slots
+                .map(slot => slot.availabilityDayTime)
+                .filter(detail => detail !== null)
+                .map(detail => {
+                    if (detail) {
+                        return { startTime: detail.startTime, endTime: detail.endTime };
+                    } else {
+                        return { startTime: '', endTime: '' };
+                    }
+                });
+
+            return availabilityTimeSlotsDetails;
+        } catch (error) {
+            console.error('Error fetching availability time slots details:', error);
+            throw error;
+        }
     }
 
     async bookSlotDetail(slotId: string, ownedFranchiseId: string): Promise<AvailabilitySlotsDetails> {
@@ -421,6 +509,39 @@ export class AvailabilityService {
             throw error;
         }
     }
+
+    async getWorkingHoursRange(ownerFranchiseId: string) {
+        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownerFranchiseId } });
+        if (!owned) {
+            throw new Error('Franchise manager not found');
+        }
+    
+        const allSlots = await this.availabilitySlotsDetailsRepository.find({
+            where: {
+                ownedDigifranchise: Equal(owned.id),
+            },
+        });
+    
+        const uniqueDaysMap = new Map<string, any>();
+        
+        allSlots.forEach(slot => {
+            const day = slot.day;
+            if (!uniqueDaysMap.has(day)) {
+                uniqueDaysMap.set(day, slot);
+            }
+        });
+    
+        const sortedUniqueDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        
+        const slotsByUniqueDays = sortedUniqueDays.map(day => {
+            const slot = uniqueDaysMap.get(day);
+            return slot ? [slot] : [];
+        });
+    
+        return slotsByUniqueDays;
+    }
+    
+
 }
 
 

@@ -6,8 +6,15 @@ import { AllConfigType } from 'src/config/config.type';
 import { MaybeType } from '../utils/types/maybe.type';
 import { MailerService } from '../mailer/mailer.service';
 import path from 'path';
-import type { ForgotPasswordForWebsMailData } from './interfaces/forgot-password-for-webs-mail-data.interface';
+import { ForgotPasswordForWebsMailData } from './interfaces/forgot-password-for-webs-mail-data.interface';
 
+
+interface EnquiryEmailBody {
+  from: string;
+  phone: string;
+  message: string;
+  names: string; 
+ }
 @Injectable()
 export class MailService {
   constructor(
@@ -163,6 +170,48 @@ export class MailService {
         text4,
       },
     });
- }
+  }
+
+  async sendEnquiryEmail(to: string, subject: string, body: EnquiryEmailBody, senderName: string, senderEmail: string): Promise<void> {
+    const i18n = I18nContext.current();
+    let emailSubject: MaybeType<string>;
+    let emailBody: MaybeType<string>;
+
+    if (i18n) {
+        emailSubject = await i18n.t('enquiry-email.subject');
+        emailBody = await i18n.t('enquiry-email.body');
+    }
+
+    const templatePath = path.join(
+        this.configService.getOrThrow('app.workingDirectory', {
+            infer: true,
+        }),
+        'src',
+        'mail',
+        'mail-templates',
+        'enquiry-email.hbs',
+    );
+
+    const context = {
+        title: emailSubject || subject,
+        from: senderEmail, 
+        fromName: senderName, 
+        phone: body.phone,
+        message: body.message,
+        names: body.names,
+        app_name: this.configService.get('app.name', {
+            infer: true,
+        }),
+    };
+
+    await this.mailerService.sendMail({
+        to,
+        from: `${senderName} <${senderEmail}>`, 
+        subject: `${senderName}: ${emailSubject || subject}`,
+        templatePath,
+        context,
+    });
+}
+
 
 }
