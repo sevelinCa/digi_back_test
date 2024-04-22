@@ -70,18 +70,6 @@ export class AvailabilityController {
         }
     }
 
-
-    @ApiOperation({ summary: 'Update Availability' })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Availability updated.' })
-    @ApiBody({ type: UpdateAvailabilityDto })
-    @Put('update-availability/:availabilityId')
-    async updateAvailability(
-        @Param('availabilityId') availabilityId: string,
-        @Body() updateAvailabilityDto: UpdateAvailabilityDto
-    ): Promise<any> {
-        return await this.availabilityService.updateAvailability(updateAvailabilityDto, availabilityId);
-    }
-
     @ApiOperation({ summary: 'Get all slots in date by date and franchise' })
     @ApiResponse({ status: 200, description: 'Slots retrieved successfully.', type: [Object] })
     @Get('all-slots-in-date/:ownerFranchiseId')
