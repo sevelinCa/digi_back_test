@@ -25,5 +25,6 @@ export class EnquiryMessageController {
         return this.enquiryMessageService.createEquiry(createEnquiriesTableDto, digifranchiseOwnedId);
     }
 
+
 }
 
