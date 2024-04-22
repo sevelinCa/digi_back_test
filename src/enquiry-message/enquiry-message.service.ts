@@ -30,5 +30,9 @@ export class EnquiryMessageService {
         return savedEquiry;
     }
 
+    async getAllEnquiries(): Promise<EnquiriesTable[]> {
+        return await this.enquiriesRepository.find();
+    }
+
 
 }
