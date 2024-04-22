@@ -14,8 +14,6 @@ export enum BreakTimeBetweenBookedSlots {
     THIRTY_MINUTES = 30,
     ONE_HOUR = 60,
 }
-
-
 @Entity()
 export class Availability {
 
@@ -36,6 +34,10 @@ export class Availability {
 
     @OneToMany(() => AvailabilityDayTime, dayTime => dayTime.availability)
     dayTime: AvailabilityDayTime[];
+
+
+    @OneToMany(() => AvailabilitySlotsDetails, dayTime => dayTime.availability)
+    slotDetails: AvailabilitySlotsDetails[];
 
     @OneToMany(() => Unavailability, unavailability => unavailability.availability)
     unavailabilities: Unavailability[];
@@ -66,16 +68,14 @@ export class Availability {
     @Column({ type: 'timestamp', nullable: true })
     deleteAt: Date | null;
 }
-
-
-
 @Entity()
 export class AvailabilityWeekDays {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToMany(() => Availability, availability => availability.weekDays)
-    availability: Availability[];
+    @ManyToOne(() => Availability, availability => availability.weekDays)
+    @JoinColumn({ name: 'availabilityId' })
+    availability: Availability;
 
     @OneToMany(() => AvailabilityDayTime, dayTime => dayTime.weekDay)
     dayTime: AvailabilityDayTime[];
@@ -114,7 +114,6 @@ export class AvailabilityWeekDays {
     @Column({ type: 'timestamp', nullable: true })
     deleteAt: Date | null;
 }
-
 @Entity()
 export class AvailabilityDayTime {
     @PrimaryGeneratedColumn('uuid')
@@ -213,6 +212,10 @@ export class AvailabilitySlotsDetails {
     @ManyToOne(() => DigifranchiseOwner, ownedFranchise => ownedFranchise.availability)
     @JoinColumn({ name: 'ownedDigifranchise' })
     ownedDigifranchise: DigifranchiseOwner | null;
+
+    @ManyToOne(() => Availability, ownedFranchise => ownedFranchise.slotDetails)
+    @JoinColumn({ name: 'availabilityId' })
+    availability: Availability | null;
 
     @ManyToOne(() => AvailabilityBookedSlots, BookedSlot => BookedSlot.slot)
     bookedSlots: AvailabilityBookedSlots[];
