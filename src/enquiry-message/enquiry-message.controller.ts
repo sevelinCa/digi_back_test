@@ -25,6 +25,14 @@ export class EnquiryMessageController {
         return this.enquiryMessageService.createEquiry(createEnquiriesTableDto, digifranchiseOwnedId);
     }
 
+    @ApiOperation({ summary: 'GET - Retrieve all enquiries' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All enquiries retrieved successfully.' })
+    @Get('enquiries')
+    async getAllEnquiries(): Promise<EnquiriesTable[]> {
+        return this.enquiryMessageService.getAllEnquiries();
+    }
+
+
 
 }
 
