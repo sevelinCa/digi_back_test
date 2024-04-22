@@ -2,7 +2,7 @@ import { Controller, Post, Body, Param, HttpStatus, HttpException, Get, Delete, 
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AvailabilityService } from './availability.service';
 import { AvailabilityDto } from './dto/availability.dto';
-import { AvailabilitySlotsDetails } from './entities/availability.entity';
+import { AvailabilitySlotsDetails, type AvailabilityDayTime } from './entities/availability.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
 import { UpdateAvailabilityDto } from './dto/update-availability.dto';
@@ -79,7 +79,27 @@ export class AvailabilityController {
         @Param('availabilityId') availabilityId: string,
         @Body() updateAvailabilityDto: UpdateAvailabilityDto
     ): Promise<any> {
-        return await this.availabilityService.updateAvailability(updateAvailabilityDto,  availabilityId);
+        return await this.availabilityService.updateAvailability(updateAvailabilityDto, availabilityId);
+    }
+
+    @ApiOperation({ summary: 'Get all slots in date by date and franchise' })
+    @ApiResponse({ status: 200, description: 'Slots retrieved successfully.', type: [Object] })
+    @Get('all-slots-in-date/:ownerFranchiseId')
+    async getAllSlotesInDateByDateAndFranchise(
+        @Query('date') date: string,
+        @Param('ownerFranchiseId') ownerFranchiseId: string
+    ): Promise<{ startTime: string; endTime: string }[]> {
+        try {
+            const parsedDate = new Date(date);
+            return await this.availabilityService.getAllSlotesInDateByDateAndFranchise(parsedDate, ownerFranchiseId);
+        } catch (error) {
+            throw new HttpException('Error fetching availability time slots details', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Get('working-hours-range/:ownerFranchiseId')
+    async getWorkingHoursRange(@Param('ownerFranchiseId') ownerFranchiseId: string) {
+        return this.availabilityService.getWorkingHoursRange(ownerFranchiseId);
     }
 }
 
