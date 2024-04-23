@@ -30,15 +30,4 @@ export class EnquiryMessageService {
         return savedEquiry;
     }
 
-    async getAllEnquiries(): Promise<EnquiriesTable[]> {
-        return await this.enquiriesRepository.find();
-    }
-
-    async getEnquiryById(enquiryId: string): Promise<EnquiriesTable> {
-        const enquiry = await this.enquiriesRepository.findOne({ where: { id: enquiryId } });
-        if (!enquiry) {
-            throw new HttpException('Enquiry not found', HttpStatus.NOT_FOUND);
-        }
-        return enquiry;
-    }
 }
