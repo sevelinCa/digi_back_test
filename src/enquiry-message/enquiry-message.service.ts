@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { EnquiriesTable } from './entities/enquiries.entity';
 import { CreateEnquiriesTableDto } from './dto/enquiries.dto';
 
@@ -30,8 +30,14 @@ export class EnquiryMessageService {
         return savedEquiry;
     }
 
-    async getAllEnquiries(): Promise<EnquiriesTable[]> {
-        return await this.enquiriesRepository.find();
+    async getAllEnquiriesByOwner(ownedFranchiseId: string): Promise<EnquiriesTable[]> {
+        const owned = await this.digifranchiseOwnerRepository.findOne({
+            where:{id: ownedFranchiseId}
+        });
+        if (!owned) {
+            throw new HttpException('Owner not found', HttpStatus.NOT_FOUND);
+        }
+        return await this.enquiriesRepository.find({ where: { digifranchiseOwnerId: Equal(owned.id) } });
     }
 
     async getEnquiryById(enquiryId: string): Promise<EnquiriesTable> {
