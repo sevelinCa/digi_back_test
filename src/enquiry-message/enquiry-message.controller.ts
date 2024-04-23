@@ -27,16 +27,19 @@ export class EnquiryMessageController {
 
     @ApiOperation({ summary: 'GET - Retrieve all enquiries' })
     @ApiResponse({ status: HttpStatus.OK, description: 'All enquiries retrieved successfully.' })
-    @Get('enquiries')
-    async getAllEnquiries(): Promise<EnquiriesTable[]> {
-        return this.enquiryMessageService.getAllEnquiries();
+    @Get('get-all-enquiries/:ownedFranchiseId')
+    async getAllEnquiries(
+        @Param('ownedFranchiseId') ownedFranchiseId: string,
+    ): Promise<EnquiriesTable[]> {
+        return this.enquiryMessageService.getAllEnquiriesByOwner(ownedFranchiseId);
     }
 
     @ApiOperation({ summary: 'GET - Retrieve a single enquiry by ID' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Enquiry retrieved successfully.' })
     @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Enquiry not found.' })
     @Get('enquiries/:enquiryId')
-    async getEnquiryById(@Param('enquiryId') enquiryId: string): Promise<EnquiriesTable> {
+    async getEnquiryById(
+        @Param('enquiryId') enquiryId: string): Promise<EnquiriesTable> {
         return this.enquiryMessageService.getEnquiryById(enquiryId);
     }
 
