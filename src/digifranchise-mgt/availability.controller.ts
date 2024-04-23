@@ -2,7 +2,7 @@ import { Controller, Post, Body, Param, HttpStatus, HttpException, Get, Delete, 
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AvailabilityService } from './availability.service';
 import { AvailabilityDto } from './dto/availability.dto';
-import { AvailabilitySlotsDetails, type AvailabilityDayTime } from './entities/availability.entity';
+import { AvailabilitySlotsDetails, type AvailabilityDayTime, type Unavailability } from './entities/availability.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
 import { UpdateAvailabilityDto } from './dto/update-availability.dto';
@@ -100,6 +100,20 @@ export class AvailabilityController {
     @Get('working-hours-range/:ownerFranchiseId')
     async getWorkingHoursRange(@Param('ownerFranchiseId') ownerFranchiseId: string) {
         return this.availabilityService.getWorkingHoursRange(ownerFranchiseId);
+    }
+
+    @ApiOperation({ summary: 'Get all unavailabilities by franchise' })
+    @ApiResponse({ status: HttpStatus.OK, description: 'All unavailabilities retrieved successfully.', type: [AvailabilitySlotsDetails] })
+    @Get('get-all-unavailabilities/:ownerFranchiseId')
+    async getUnavailbilityByFranchise(
+        @Param('ownerFranchiseId') ownerFranchiseId: string
+    ): Promise<Unavailability[]> {
+        try {
+            const unavailbilities = await this.availabilityService.getUnavailbilityByFranchise(ownerFranchiseId);
+            return unavailbilities;
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+        }
     }
 }
 
