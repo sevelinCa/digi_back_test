@@ -615,40 +615,39 @@ export class AvailabilityService {
     }
 
     async getWorkingHoursRange(ownerFranchiseId: string) {
-        const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownerFranchiseId } });
+        const owned = await this.ownedFranchiseRepository.findOne({
+            where: { id: ownerFranchiseId },
+        });
         if (!owned) {
             throw new Error('Franchise manager not found');
         }
 
-        const allAvailabilitySlots = await this.availabilitySlotsDetailsRepository.find({
-            where: {
-                ownedDigifranchise: Equal(owned.id),
-            },
-            relations: ['availability'],
-        });
-
-        const allUnavailabilitySlots = await this.unavailabilityRepository.find({
+        const allSlots = await this.availabilitySlotsDetailsRepository.find({
             where: {
                 ownedDigifranchise: Equal(owned.id),
             },
         });
-
-        const allSlots = [...allAvailabilitySlots, ...allUnavailabilitySlots];
 
         const uniqueDaysMap = new Map<string, any>();
 
-        allSlots.forEach(slot => {
-            if ('day' in slot) {
-                const day = slot.day;
-                if (!uniqueDaysMap.has(day)) {
-                    uniqueDaysMap.set(day, slot);
-                }
+        allSlots.forEach((slot) => {
+            const day = slot.day;
+            if (!uniqueDaysMap.has(day)) {
+                uniqueDaysMap.set(day, slot);
             }
         });
 
-        const sortedUniqueDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const sortedUniqueDays = [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+        ];
 
-        const slotsByUniqueDays = sortedUniqueDays.map(day => {
+        const slotsByUniqueDays = sortedUniqueDays.map((day) => {
             const slot = uniqueDaysMap.get(day);
             return slot ? [slot] : [];
         });
