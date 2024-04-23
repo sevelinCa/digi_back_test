@@ -32,7 +32,7 @@ export class AvailabilityService {
         @InjectRepository(AvailabilityBookedSlots)
         private availabilityBookedSlotsRepository: Repository<AvailabilityBookedSlots>,
         @InjectRepository(Unavailability)
-        private readonly UnavailabilityRepository: Repository<Unavailability>,
+        private readonly unavailabilityRepository: Repository<Unavailability>,
     ) {
         schedule.scheduleJob('0 0 * * *', this.deleteSlotsAtEndOfDay.bind(this))
     }
@@ -240,7 +240,7 @@ export class AvailabilityService {
     ): Promise<Unavailability> {
         try {
 
-            const newUnavailability = this.UnavailabilityRepository.create({
+            const newUnavailability = this.unavailabilityRepository.create({
                 ownedDigifranchise: owned,
                 startTime: unavailabilityDto.startTime,
                 endTime: unavailabilityDto.endTime,
@@ -262,7 +262,7 @@ export class AvailabilityService {
                 console.error('AvailabilityWeekDays not found for Unavailability.');
             }
 
-            return this.UnavailabilityRepository.save(newUnavailability);
+            return this.unavailabilityRepository.save(newUnavailability);
         } catch (error) {
             console.error('Error creating Unavailability:', error);
             throw error;
@@ -463,7 +463,7 @@ export class AvailabilityService {
             relations: ['availability'],
         });
 
-        const allUnavailabilitySlots = await this.UnavailabilityRepository.find({
+        const allUnavailabilitySlots = await this.unavailabilityRepository.find({
             where: {
                 ownedDigifranchise: Equal(owned.id),
             },
@@ -493,6 +493,15 @@ export class AvailabilityService {
     }
 
 
+    async getUnavailbilityByFranchise(ownerFranchiseId: string): Promise<Unavailability[]> {
+        const unvailbilities = await this.unavailabilityRepository.find({
+            where: {
+                ownedDigifranchise: Equal(ownerFranchiseId),
+            },
+        });
+
+        return unvailbilities;
+    }
 }
 
 
