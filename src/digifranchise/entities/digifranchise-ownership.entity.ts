@@ -29,6 +29,9 @@ export class DigifranchiseOwner {
   userId: string;
 
   @Column({ type: 'varchar', length: 255 })
+  userEmail: string;
+
+  @Column({ type: 'varchar', length: 255 })
   digifranchiseId: string
 
   @ManyToOne(() => Digifranchise)
