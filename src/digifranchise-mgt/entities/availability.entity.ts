@@ -248,6 +248,59 @@ export class AvailabilitySlotsDetails {
     deleteAt: Date | null;
 }
 
+
+@Entity()
+export class AvailabilitySlotsTimeOneOne {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @ManyToOne(() => AvailabilityDayTime, workingHour => workingHour.availabilitySlotsDetails)
+    @JoinColumn({ name: 'availabilityDayTime' })
+    availabilityDayTime: AvailabilityDayTime | null;
+
+    @ManyToOne(() => AvailabilityWeekDays, workingDay => workingDay.availabilitySlotsDetails)
+    @JoinColumn({ name: 'availabilityWeekDays' })
+    availabilityWeekDays: AvailabilityWeekDays | null;
+
+    @ManyToOne(() => DigifranchiseOwner, ownedFranchise => ownedFranchise.availability)
+    @JoinColumn({ name: 'ownedDigifranchise' })
+    ownedDigifranchise: DigifranchiseOwner | null;
+
+    @ManyToOne(() => Availability, ownedFranchise => ownedFranchise.slotDetails)
+    @JoinColumn({ name: 'availabilityId' })
+    availability: Availability | null;
+
+    @ManyToOne(() => AvailabilityBookedSlots, BookedSlot => BookedSlot.slot)
+    bookedSlots: AvailabilityBookedSlots[];
+
+    @Column({ type: 'boolean', default: false })
+    isSlotBooked: boolean;
+
+    @Column({ type: 'json', nullable: true })
+    singleAvailabilityTimeSlots: { startTime: string; endTime: string }[] | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    workingDate?: Date;
+
+    @Column({ type: 'varchar', length: 255 })
+    day: string;
+
+    @Column({ type: 'time' })
+    startTime: string;
+
+    @Column({ type: 'time' })
+    endTime: string;
+
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    updatedAt: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deleteAt: Date | null;
+}
+
 @Entity()
 export class AvailabilityBookedSlots {
     @PrimaryGeneratedColumn('uuid')
@@ -260,6 +313,10 @@ export class AvailabilityBookedSlots {
     @ManyToOne(() => AvailabilitySlotsDetails)
     @JoinColumn({ name: 'slotId' })
     slot: AvailabilitySlotsDetails;
+
+    @ManyToOne(() => AvailabilitySlotsTimeOneOne)
+    @JoinColumn({ name: 'slotId' })
+    bookedSlotId: AvailabilitySlotsTimeOneOne;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
