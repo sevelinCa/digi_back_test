@@ -2,7 +2,7 @@ import { Controller, Post, Body, Param, HttpStatus, HttpException, Get, Delete, 
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AvailabilityService } from './availability.service';
 import { AvailabilityDto } from './dto/availability.dto';
-import { AvailabilitySlotsDetails, type AvailabilityDayTime, type Unavailability } from './entities/availability.entity';
+import { AvailabilitySlotsDetails, type AvailabilityDayTime, type AvailabilitySlotsTimeOneOne, type Unavailability } from './entities/availability.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from 'express';
 import { UpdateAvailabilityDto } from './dto/update-availability.dto';
@@ -32,7 +32,7 @@ export class AvailabilityController {
     async getAvailabilitySlotsByDateAndFranchise(
         @Query('date') date: string,
         @Param('ownerFranchiseId') ownerFranchiseId: string
-    ): Promise<AvailabilitySlotsDetails[]> {
+    ): Promise<AvailabilitySlotsTimeOneOne[]> {
         const parsedDate = new Date(date);
         return await this.availabilityService.getAvailabilitySlotsByDateAndFranchise(parsedDate, ownerFranchiseId);
     }
@@ -46,7 +46,7 @@ export class AvailabilityController {
     async bookSlotDetail(
         @Param('slotId') slotId: string,
         @Param('ownedFranchiseId') ownedFranchiseId: string
-    ): Promise<AvailabilitySlotsDetails> {
+    ): Promise<AvailabilitySlotsTimeOneOne> {
         try {
             const updatedSlot = await this.availabilityService.bookSlotDetail(slotId, ownedFranchiseId);
             return updatedSlot;
@@ -115,5 +115,12 @@ export class AvailabilityController {
             throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @Get('get-available-slots-inDay/:ownerFranchiseId')
+    async getAvailableSlotsInDay(@Param('ownerFranchiseId') ownerFranchiseId: string) {
+        return this.availabilityService.getAvailableSlotsInDay(ownerFranchiseId);
+    }
+    
 }
 
