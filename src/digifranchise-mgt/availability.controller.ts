@@ -17,14 +17,13 @@ export class AvailabilityController {
     @ApiResponse({ status: HttpStatus.OK, description: 'New availability created.' })
     @ApiBody({ type: AvailabilityDto })
     @Post('new-availability/:ownedFranchiseId')
-    async createNewAvailability(
+    async createAvailability(
         @Param('ownedFranchiseId') ownedFranchiseId: string,
 
         @Body() availabilityDto: AvailabilityDto
     ): Promise<any> {
-        return await this.availabilityService.createNewAvailability(availabilityDto, ownedFranchiseId);
+        return await this.availabilityService.createAvailability(availabilityDto, ownedFranchiseId);
     }
-
 
     @ApiOperation({ summary: 'Get availability by date and franchise' })
     @ApiResponse({ status: 200, description: 'Availabilities retrieved successfully.', type: [AvailabilitySlotsDetails] })
@@ -36,6 +35,7 @@ export class AvailabilityController {
         const parsedDate = new Date(date);
         return await this.availabilityService.getAvailabilitySlotsByDateAndFranchise(parsedDate, ownerFranchiseId);
     }
+
 
 
     @ApiOperation({ summary: 'Book a slot detail' })
@@ -115,5 +115,6 @@ export class AvailabilityController {
             throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }
     }
+
 }
 
