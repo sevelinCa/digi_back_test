@@ -122,13 +122,19 @@ export class OrderController {
         return this.orderService.createOrderForSubs(createOrderTableDto, subProductOrSubServiceOrSubCategoryId);
     }
 
+
     @ApiOperation({ summary: 'GET - Retrieve an order by its number' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Order retrieved successfully.' })
     @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order not found.' })
     @Get('get-order-by-number/:orderNumber')
-    async getOrderByOrderNumber(@Param('orderNumber') orderNumber: number): Promise<OrderTable | null> {
-        return this.orderService.getOrderByOrderNumber(orderNumber);
+    async getOrderByOrderNumber(@Param('orderNumber') orderNumber: number): Promise<OrderTable> {
+        const order = await this.orderService.getOrderByOrderNumber(orderNumber);
+        if (!order) {
+            throw new NotFoundException('Order not found');
+        }
+        return order;
     }
+    
 
     @ApiOperation({ summary: 'Create a new order with auth' })
     @ApiResponse({ status: HttpStatus.CREATED, description: 'Order has been successfully created.' })
