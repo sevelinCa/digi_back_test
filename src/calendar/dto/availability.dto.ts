@@ -74,7 +74,7 @@ export class UnavailabilityDto {
     endTime: string;
 }
 
-export class AvailabilityDto {
+export class SetWorkingHoursDto {
     @IsNotEmpty()
     @IsEnum(AllowedTimeSlotUnits)
     @ApiProperty({ example: AllowedTimeSlotUnits.THIRTY_MINUTES })

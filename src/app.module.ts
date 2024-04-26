@@ -48,6 +48,7 @@ import { RatingOrderModule } from './rating/rating-order.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { CalendarModule } from './calendar/calendar.module';
 
 
 
@@ -135,6 +136,7 @@ import { InventoryModule } from './inventory/inventory.module';
     DigifranchisePaymentModule,
     EnquiryMessageModule,
     RatingOrderModule,
+    CalendarModule,
     // ChatModule
   ],
 })
