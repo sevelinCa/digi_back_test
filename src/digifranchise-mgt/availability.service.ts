@@ -167,8 +167,6 @@ export class AvailabilityService {
         }
     }
     
-
-    
     async createAvailabilitySlotsTimeOneOne(
         owned: DigifranchiseOwner,
         savedDayTime: AvailabilityDayTime,
@@ -186,13 +184,16 @@ export class AvailabilityService {
             const slots = this.calculateAvailableTimeSlots(slot.startTime, slot.endTime, allowedTimeSlotUnits, breakTimeBetweenBookedSlots);
             
             const newAvailabilitySlots = slots.map(singleSlot => {
+                const startTime24Hour = new Date(`1970-01-01T${singleSlot.startTime}`).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+                const endTime24Hour = new Date(`1970-01-01T${singleSlot.endTime}`).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    
                 const newAvailabilitySlot = this.availabilitySlotsTimeOneOneRepository.create({
                     availabilityDayTime: savedDayTime,
                     availabilityWeekDays: savedWeekDay,
                     ownedDigifranchise: owned,
                     isSlotBooked: false,
-                    startTime: singleSlot.startTime,
-                    endTime: singleSlot.endTime,
+                    startTime: startTime24Hour, 
+                    endTime: endTime24Hour, 
                     singleAvailabilityTimeSlots: [singleSlot], 
                     day: currentDayOfWeek,
                     availability: availability,
