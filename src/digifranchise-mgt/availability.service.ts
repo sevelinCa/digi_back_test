@@ -184,16 +184,20 @@ export class AvailabilityService {
             const slots = this.calculateAvailableTimeSlots(slot.startTime, slot.endTime, allowedTimeSlotUnits, breakTimeBetweenBookedSlots);
             
             const newAvailabilitySlots = slots.map(singleSlot => {
-                const startTime24Hour = new Date(`1970-01-01T${singleSlot.startTime}`).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-                const endTime24Hour = new Date(`1970-01-01T${singleSlot.endTime}`).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-    
+
+                const startTime24Hour = new Date(`2024-01-01T${singleSlot.startTime}`).toString();
+                const endTime24Hour = new Date(`2024-01-01T${singleSlot.endTime}`).toString();
+
+                console.log("================STARTITME", singleSlot.startTime)
+                console.log("================ENDTIME ", singleSlot.endTime)
+
                 const newAvailabilitySlot = this.availabilitySlotsTimeOneOneRepository.create({
                     availabilityDayTime: savedDayTime,
                     availabilityWeekDays: savedWeekDay,
                     ownedDigifranchise: owned,
                     isSlotBooked: false,
-                    startTime: startTime24Hour, 
-                    endTime: endTime24Hour, 
+                    startTime: singleSlot.startTime, 
+                    endTime: singleSlot.endTime, 
                     singleAvailabilityTimeSlots: [singleSlot], 
                     day: currentDayOfWeek,
                     availability: availability,
