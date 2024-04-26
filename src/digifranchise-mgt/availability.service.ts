@@ -47,14 +47,24 @@ export class AvailabilityService {
         schedule.scheduleJob('0 0 * * *', this.deleteSlotsAtEndOfDay.bind(this));
     }
     private convertTo24HourFormat(time: string): string {
+        if (!time.includes(' ')) {
+            throw new Error('Invalid time format. Expected format is "HH:MM AM/PM".');
+        }
+    
         const [timeString, period] = time.split(' ');
         let [hours, minutes] = timeString.split(':');
+    
+        if (isNaN(parseInt(hours, 10)) || isNaN(parseInt(minutes, 10))) {
+            throw new Error('Invalid time format. Hours and minutes must be numbers.');
+        }
+    
         if (period.toLowerCase() === 'pm' && hours !== '12') {
             hours = (parseInt(hours, 10) + 12).toString();
         } else if (period.toLowerCase() === 'am' && hours === '12') {
             hours = '00';
         }
-        return `${hours.padStart(2, '0')}:${minutes}`;
+    
+        return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
     }
 
 
