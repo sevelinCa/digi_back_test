@@ -49,7 +49,8 @@ export class AvailabilityService {
     private convertTo24HourFormat(time: string): string {
         const [timeString, period] = time.split(' ');
         let [hours, minutes] = timeString.split(':');
-        if (period.toLowerCase() === 'pm' && hours !== '12') {
+        console.log(">>>>>>>>>>>>>>", period.toLocaleLowerCase())
+        if (period.toLowerCase() == 'pm' && hours !== '12') {
             hours = (parseInt(hours, 10) + 12).toString();
         } else if (period.toLowerCase() === 'am' && hours === '12') {
             hours = '00';
@@ -60,13 +61,13 @@ export class AvailabilityService {
 
     async createNewAvailability(availabilityDto: AvailabilityDto, ownedFranchiseId: string) {
         try {
-            const existingAvailability = await this.availabilityRepository.findOne({ where: { ownedDigifranchise: Equal(ownedFranchiseId) } });
-            if (existingAvailability) {
-                return {
-                    statusCode: HttpStatus.BAD_REQUEST,
-                    message: 'The provided ownedFranchiseId has been used to create availability before.',
-                };
-            }
+            // const existingAvailability = await this.availabilityRepository.findOne({ where: { ownedDigifranchise: Equal(ownedFranchiseId) } });
+            // if (existingAvailability) {
+            //     return {
+            //         statusCode: HttpStatus.BAD_REQUEST,
+            //         message: 'The provided ownedFranchiseId has been used to create availability before.',
+            //     };
+            // }
 
             const owned = await this.ownedFranchiseRepository.findOneOrFail({ where: { id: ownedFranchiseId } });
 
@@ -197,6 +198,9 @@ export class AvailabilityService {
                 // Use the convertTo24HourFormat function here
                 const startTime24Hour = this.convertTo24HourFormat(singleSlot.startTime);
                 const endTime24Hour = this.convertTo24HourFormat(singleSlot.endTime);
+
+                console.log("--------->", singleSlot.startTime)
+                console.log("---------*", singleSlot.endTime)
 
                 const newAvailabilitySlot = this.availabilitySlotsTimeOneOneRepository.create({
                     availabilityDayTime: savedDayTime,
