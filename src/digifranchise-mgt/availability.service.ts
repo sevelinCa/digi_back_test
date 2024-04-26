@@ -50,9 +50,9 @@ export class AvailabilityService {
         const [timeString, period] = time.split(' ');
         let [hours, minutes] = timeString.split(':');
         console.log(">>>>>>>>>>>>>>", period.toLocaleLowerCase())
-        if (period.toLowerCase() == 'pm' && hours !== '12') {
+        if (period == 'PM' && hours !== '12') {
             hours = (parseInt(hours, 10) + 12).toString();
-        } else if (period.toLowerCase() === 'am' && hours === '12') {
+        } else if (period === 'AM' && hours === '12') {
             hours = '00';
         }
         return `${hours.padStart(2, '0')}:${minutes}`;
