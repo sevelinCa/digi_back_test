@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Equal, Repository } from 'typeorm';
+import { Between, Equal, Repository, getConnection, getRepository } from 'typeorm';
 import {
     AvailabilityWeekDays,
     AvailabilityDayTime,
@@ -46,7 +46,16 @@ export class AvailabilityService {
     ) {
         schedule.scheduleJob('0 0 * * *', this.deleteSlotsAtEndOfDay.bind(this));
     }
-
+    private convertTo24HourFormat(time: string): string {
+        const [timeString, period] = time.split(' ');
+        let [hours, minutes] = timeString.split(':');
+        if (period.toLowerCase() === 'pm' && hours !== '12') {
+            hours = (parseInt(hours, 10) + 12).toString();
+        } else if (period.toLowerCase() === 'am' && hours === '12') {
+            hours = '00';
+        }
+        return `${hours.padStart(2, '0')}:${minutes}`;
+    }
 
 
     async createNewAvailability(availabilityDto: AvailabilityDto, ownedFranchiseId: string) {
@@ -58,37 +67,37 @@ export class AvailabilityService {
                     message: 'The provided ownedFranchiseId has been used to create availability before.',
                 };
             }
-    
+
             const owned = await this.ownedFranchiseRepository.findOneOrFail({ where: { id: ownedFranchiseId } });
-    
+
             const currentDate = new Date();
             const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-    
+
             const savedAvailabilities: Availability[] = [];
             const savedUnavailabilities: Unavailability[] = [];
-    
+
             const promises: Promise<any>[] = [];
             let currentDayOfWeek: string;
-    
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const currentDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toLocaleDateString('en-US', { weekday: 'long' });
                 const workingDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
 
                 const dayPromises: Promise<any>[] = [];
-    
+
                 if (availabilityDto.availabilityWeekDays) {
                     const matchingDayOfWeek = availabilityDto.availabilityWeekDays.find(dayDto => dayDto.day === currentDayOfWeek);
                     if (matchingDayOfWeek) {
                         const newAvailability = await this.createAvailability(owned, availabilityDto);
                         savedAvailabilities.push(newAvailability);
-    
+
                         if (matchingDayOfWeek.availabilityDayTime && matchingDayOfWeek.availabilityDayTime.length > 0) {
                             const savedWeekDay = await this.createAvailabilityWeekDay(owned, currentDayOfWeek, day);
 
                             const availabilityPromises: Promise<AvailabilitySlotsTimeOneOne[]>[] = matchingDayOfWeek.availabilityDayTime.map(async (dayTimeDto) => {
-                                                                const savedDayTime = await this.createAvailabilityDayTime(owned, savedWeekDay, dayTimeDto, availabilityDto, currentDayOfWeek);
-                                
-                                const availabilityId = newAvailability.id; 
+                                const savedDayTime = await this.createAvailabilityDayTime(owned, savedWeekDay, dayTimeDto, availabilityDto, currentDayOfWeek);
+
+                                const availabilityId = newAvailability.id;
                                 const slotPromise = this.createAvailabilitySlotsTimeOneOne(
                                     owned,
                                     savedDayTime,
@@ -98,11 +107,11 @@ export class AvailabilityService {
                                     availabilityDto.allowedTimeSlotUnits,
                                     availabilityDto.breakTimeBetweenBookedSlots,
                                     availabilityId,
-                                    workingDate 
+                                    workingDate
                                 );
                                 return slotPromise;
                             });
-                            
+
                             dayPromises.push(...availabilityPromises);
                         }
                     }
@@ -113,30 +122,30 @@ export class AvailabilityService {
                     });
                     dayPromises.push(...unavailabilityPromises);
                 }
-    
+
                 promises.push(...dayPromises);
             }
-    
+
             await Promise.all(promises);
-    
+
             return { savedAvailabilities, savedUnavailabilities };
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
-        
+
     async updateAvailabilitySlotsTimeOneOne(updateAvailabilityDto: any, slotId: string): Promise<any> {
         try {
             const slot = await this.availabilitySlotsTimeOneOneRepository.findOne({ where: { id: slotId } });
-    
+
             if (!slot) {
                 return {
                     statusCode: HttpStatus.NOT_FOUND,
                     message: 'Availability slot not found.',
                 };
             }
-    
+
             const startTime = updateAvailabilityDto.startTime;
             const endTime = updateAvailabilityDto.endTime;
             const slotDuration = updateAvailabilityDto.allowedTimeSlotUnits;
@@ -147,7 +156,7 @@ export class AvailabilityService {
                 slotDuration,
                 breakTime
             );
-    
+
             await this.availabilitySlotsTimeOneOneRepository.update(
                 { id: slotId },
                 {
@@ -156,7 +165,7 @@ export class AvailabilityService {
                     singleAvailabilityTimeSlots: slots,
                 }
             );
-    
+
             return {
                 statusCode: HttpStatus.OK,
                 message: 'Availability slot updated successfully.',
@@ -166,7 +175,8 @@ export class AvailabilityService {
             throw error;
         }
     }
-    
+
+
     async createAvailabilitySlotsTimeOneOne(
         owned: DigifranchiseOwner,
         savedDayTime: AvailabilityDayTime,
@@ -176,44 +186,45 @@ export class AvailabilityService {
         allowedTimeSlotUnits: AllowedTimeSlotUnits,
         breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots,
         availabilityId: string,
-        workingDate: Date 
+        workingDate: Date
     ): Promise<AvailabilitySlotsTimeOneOne[]> {
         try {
             const availability = await this.availabilityRepository.findOneOrFail({ where: { id: availabilityId } });
-            
+
             const slots = this.calculateAvailableTimeSlots(slot.startTime, slot.endTime, allowedTimeSlotUnits, breakTimeBetweenBookedSlots);
-            
+
             const newAvailabilitySlots = slots.map(singleSlot => {
-
-                const startTime24Hour = new Date(`2024-01-01T${singleSlot.startTime}`).toString();
-                const endTime24Hour = new Date(`2024-01-01T${singleSlot.endTime}`).toString();
-
-                console.log("================STARTITME", singleSlot.startTime)
-                console.log("================ENDTIME ", singleSlot.endTime)
+                // Use the convertTo24HourFormat function here
+                const startTime24Hour = this.convertTo24HourFormat(singleSlot.startTime);
+                const endTime24Hour = this.convertTo24HourFormat(singleSlot.endTime);
 
                 const newAvailabilitySlot = this.availabilitySlotsTimeOneOneRepository.create({
                     availabilityDayTime: savedDayTime,
                     availabilityWeekDays: savedWeekDay,
                     ownedDigifranchise: owned,
                     isSlotBooked: false,
-                    startTime: singleSlot.startTime, 
-                    endTime: singleSlot.endTime, 
-                    singleAvailabilityTimeSlots: [singleSlot], 
+                    startTime: startTime24Hour,
+                    endTime: endTime24Hour,
+                    singleAvailabilityTimeSlots: [{
+                        startTime: startTime24Hour,
+                        endTime: endTime24Hour
+                    }],
                     day: currentDayOfWeek,
                     availability: availability,
-                    workingDate: workingDate 
+                    workingDate: workingDate
                 });
-                
+
                 return this.availabilitySlotsTimeOneOneRepository.save(newAvailabilitySlot);
             });
-            
+
             return Promise.all(newAvailabilitySlots);
+
         } catch (error) {
             console.error('Error creating AvailabilitySlotsTimeOneOne:', error);
             throw error;
         }
     }
-    
+
     private async createAvailability(owned: DigifranchiseOwner, availabilityDto: AvailabilityDto): Promise<Availability> {
         const newAvailability = this.availabilityRepository.create({
             ownedDigifranchise: owned,
@@ -446,7 +457,7 @@ export class AvailabilityService {
             where: {
                 ownedDigifranchise: Equal(ownerFranchiseId),
                 workingDate: Between(startOfDay, endOfDay),
-                isSlotBooked:false
+                isSlotBooked: false
             },
             relations: ['availabilityDayTime', 'availabilityWeekDays'],
         });
@@ -701,12 +712,40 @@ export class AvailabilityService {
                 ownedDigifranchise: Equal(owned.id),
                 isSlotBooked: false
             },
-            relations: ['availability','availability.unavailabilities'],
+            relations: ['availability', 'availability.unavailabilities'],
         });
 
         return allAvailabilitySlots
 
     }
-    
-    
+
+    async deleteAvailability(ownedFranchiseId: string): Promise<void> {
+
+        const owned = await this.ownedFranchiseRepository.findOne({
+            where: { id: ownedFranchiseId }
+        })
+        if (!owned) {
+            throw new Error('Franchise owner not found')
+        }
+        const availability = await this.availabilityRepository.findOne({
+            where: { ownedDigifranchise: Equal(owned.id) },
+            relations: ['weekDays', 'dayTime', 'slotDetails', 'unavailabilities',],
+        });
+
+        if (!availability) {
+            throw new Error('Availability not found');
+        }
+
+        await this.availabilityWeekDaysRepository.remove(availability.weekDays);
+
+        await this.availabilityDayTimeRepository.remove(availability.dayTime);
+
+        await this.availabilitySlotsDetailsRepository.remove(availability.slotDetails);
+
+        await this.unavailabilityRepository.remove(availability.unavailabilities);
+
+
+        await this.availabilityRepository.remove(availability);
+    }
+
 }
