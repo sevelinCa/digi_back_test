@@ -29,10 +29,10 @@ export class AvailabilityTimeSlots {
     endTime: string;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+    createdAt: string;
 
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+    updatedAt: string;
 
     @Column({ type: 'timestamp', nullable: true })
     deleteAt: Date | null;

@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CalendarService } from './calendar.service';
@@ -60,13 +61,33 @@ export class CalendarController {
       );
     }
   }
+  @ApiOperation({ summary: 'Get timeslots' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Users can retrieve availabile slots by date and digifranchise',
+  })
+  @Get('get-timeslots/:ownedFranchiseId')
+  async getTimeSlots(
+    @Param('ownedFranchiseId') ownedFranchiseId: string,
+    @Query('date') workingDate: string
+  ): Promise<any> {
+    try {
+      const timeSlots = await this.calendarService.getTimeSlots(
+        ownedFranchiseId,
+        workingDate
+      );
+      return { message: 'Timeslots fetched successfully', timeSlots };
+    } catch (error) {
+      return { message: 'Error creating availability', error: error };
+    }
+  }
   @ApiOperation({ summary: 'Get Working Hours' })
   @ApiResponse({
     status: HttpStatus.OK,
     description:
       'Digifranchise Owner is able to to retrieve their working hours',
   })
-  // @ApiBody({ type: SetWorkingHoursDto })
   @Get('get-working-hours/:ownedFranchiseId')
   async getWorkingHours(
     @Param('ownedFranchiseId') ownedFranchiseId: string
@@ -76,8 +97,7 @@ export class CalendarController {
         await this.calendarService.getWorkingHours(ownedFranchiseId);
       return { message: 'Availability fetched successfully', availabilities };
     } catch (error) {
-      console.log(error, '=======++++');
-      // return { message: 'Error creating availability', error: error };
+      return { message: 'Error creating availability', error: error };
     }
   }
   @ApiOperation({ summary: 'Update Working Hours' })
@@ -92,15 +112,35 @@ export class CalendarController {
     @Body() workingHoursDto: SetWorkingHoursDto
   ): Promise<any> {
     try {
-      const availability =
-        await this.calendarService.createWorkingHoursForDigifranchise(
+      const updatedSlots =
+        await this.calendarService.updateWorkingHoursForDigifranchise(
           workingHoursDto,
           ownedFranchiseId
         );
-      return { message: 'Availability updated successfully', availability };
+      return { message: 'Availability updated successfully', updatedSlots };
     } catch (error) {
-      console.log(error, '=======++++');
-      // return { message: 'Error creating availability', error: error };
+      return { message: 'Error creating availability', error: error };
+    }
+  }
+  @ApiOperation({ summary: 'Book Timeslot' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Users can book timeslot',
+  })
+  @Put('book-timeslot/:ownedFranchiseId')
+  async bookTimeSlot(
+    @Param('ownedFranchiseId') ownedFranchiseId: string,
+    @Query('slotId') slotId: string
+  ): Promise<any> {
+    try {
+      const updatedSlot =
+        await this.calendarService.bookAvailabilitySlot(
+          slotId,
+          ownedFranchiseId
+        );
+      return { message: 'Availability updated successfully', updatedSlot };
+    } catch (error) {
+      return { message: 'Error creating availability', error: error };
     }
   }
 }
