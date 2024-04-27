@@ -1,5 +1,13 @@
-import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum AllowedTimeSlotUnits {
   FIFTEEN_MINUTES = 15,
@@ -14,40 +22,44 @@ export enum BreakTimeBetweenBookedSlots {
   ONE_HOUR = 60,
 }
 
-
 @Entity()
 export class DigifranchiseWorkingHours {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @ManyToOne(
+    () => DigifranchiseOwner,
+    (ownedFranchise) => ownedFranchise.availability
+  )
+  @JoinColumn({ name: 'ownedDigifranchise' })
+  ownedDigifranchise: DigifranchiseOwner | null;
 
-    @ManyToOne(() => DigifranchiseOwner, ownedFranchise => ownedFranchise.availability)
-    @JoinColumn({ name: 'ownedDigifranchise' })
-    ownedDigifranchise: DigifranchiseOwner | null;
+  @Column({
+    type: 'enum',
+    enum: AllowedTimeSlotUnits,
+    default: AllowedTimeSlotUnits.THIRTY_MINUTES,
+  })
+  allowedTimeSlotUnits: AllowedTimeSlotUnits;
 
-    @Column({
-        type: 'enum',
-        enum: AllowedTimeSlotUnits,
-        default: AllowedTimeSlotUnits.THIRTY_MINUTES,
-    })
-    allowedTimeSlotUnits: AllowedTimeSlotUnits;
+  @Column({
+    type: 'enum',
+    enum: BreakTimeBetweenBookedSlots,
+    default: BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES,
+  })
+  breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots;
 
-    @Column({
-        type: 'enum',
-        enum: BreakTimeBetweenBookedSlots,
-        default: BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES,
-    })
-    breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots;
+  @Column({ type: 'boolean', default: false })
+  allowBookingOnPublicHolidays: boolean;
 
-    @Column({ type: 'boolean', default: false })
-    allowBookingOnPublicHolidays: boolean;
+  @Column({ type: 'text', nullable: true })
+  workingDays: string;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
-    @Column({ type: 'timestamp', nullable: true })
-    deleteAt: Date | null;
+  @Column({ type: 'timestamp', nullable: true })
+  deleteAt: Date | null;
 }
