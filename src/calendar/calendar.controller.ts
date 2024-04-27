@@ -133,12 +133,11 @@ export class CalendarController {
     @Query('slotId') slotId: string
   ): Promise<any> {
     try {
-      const updatedSlot =
         await this.calendarService.bookAvailabilitySlot(
           slotId,
           ownedFranchiseId
         );
-      return { message: 'Availability updated successfully', updatedSlot };
+      return { message: 'Availability Booked successfully' };
     } catch (error) {
       return { message: 'Error creating availability', error: error };
     }

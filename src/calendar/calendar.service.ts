@@ -63,27 +63,26 @@ export class CalendarService {
       );
     }
     const isTimeSlotsExists =
-      await this.digifranchiseAvailableTimeSlotsRepository.find({
-        where: { ownedDigifranchise: getOwnedDigifranchise },
+      await this.digifranchiseAvailableTimeSlotsRepository.findOne({
+        where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
       });
-    // if (isTimeSlotsExists) {
-    //   throw new HttpException(
-    //     {
-    //       status: HttpStatus.CONFLICT,
-    //       error: 'Digifranchise timeslots has already been created',
-    //     },
-    //     HttpStatus.CONFLICT
-    //   );
-    // }
+    if (isTimeSlotsExists) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'Digifranchise timeslots has already been created',
+        },
+        HttpStatus.CONFLICT
+      );
+    }
     let workingDays: any = [];
     for (let i = 0; i < availabilityWeekDays!.length; i++) {
-      console.log(availabilityWeekDays![i].availabilityDayTime![0].startTime);
       const obj = {
         day: availabilityWeekDays![i].day,
         startTime: availabilityWeekDays![i].availabilityDayTime![0].startTime,
         endTime: availabilityWeekDays![i].availabilityDayTime![0].endTime,
       };
-      workingDays.push(JSON.stringify(obj));
+      workingDays.push(obj);
     }
     setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
     setWorkingHours.workingDays = workingDays;
@@ -120,15 +119,26 @@ export class CalendarService {
       currentDate.setDate(currentDate.getDate() + 1);
     }
     if (unavailability) {
-      const setUnavailability = unavailability.map((unavail) => {
-        return {
-          workingDate: unavailability![0].workingDate,
-          startTime: unavailability![0].startTime,
-          endTime: unavailability![0].endTime,
-          ownedDigifranchise: getOwnedDigifranchise,
-        };
-      });
-      await this.digifranchiseUnavailableTimes.save(setUnavailability);
+      for (const unAvail of unavailability) {
+        const setUnavailability = await this.getTimeSlots(
+          ownedDigifranchiseId,
+          unAvail.workingDate
+        );
+        for (const unSlot of setUnavailability) {
+          if (
+            (unSlot.startTime < unAvail.endTime &&
+              unSlot.endTime > unAvail.startTime) ||
+            (unSlot.startTime === unAvail.startTime &&
+              unSlot.endTime === unAvail.endTime)
+          ) {
+            console.log(unSlot);
+            await this.digifranchiseAvailableTimeSlotsRepository.update(
+              unSlot.id,
+              { isSlotAvailable: false }
+            );
+          }
+        }
+      }
     }
   }
   calculateAvailableTimeSlots(
@@ -280,6 +290,19 @@ export class CalendarService {
     setWorkingHoursDto: SetWorkingHoursDto,
     ownedDigifranchiseId: string
   ) {
+    const getOwnedDigifranchise: DigifranchiseOwner | null =
+      await this.digifranchiseOwnerRepository.findOne({
+        where: { id: ownedDigifranchiseId },
+      });
+    if (!getOwnedDigifranchise) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Owned Digifranchise does not exist',
+        },
+        HttpStatus.NOT_FOUND
+      );
+    }
     const workingHours = await this.digifranchiseWorkingHoursRepository.findOne(
       {
         where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
@@ -310,20 +333,37 @@ export class CalendarService {
     return data;
   }
   async bookAvailabilitySlot(slotId: string, ownedDigifranchiseId: string) {
+    const getOwnedDigifranchise: DigifranchiseOwner | null =
+      await this.digifranchiseOwnerRepository.findOne({
+        where: { id: ownedDigifranchiseId },
+      });
+    if (!getOwnedDigifranchise) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Owned Digifranchise does not exist',
+        },
+        HttpStatus.NOT_FOUND
+      );
+    }
     const availabilitySlot =
       await this.digifranchiseAvailableTimeSlotsRepository.findOne({
         where: { ownedDigifranchise: { id: ownedDigifranchiseId }, id: slotId },
       });
-    if (availabilitySlot) {
-      const updatedTimeSlot =
-        await this.digifranchiseAvailableTimeSlotsRepository.update(
-          { ownedDigifranchise: { id: ownedDigifranchiseId }, id: slotId },
-          {
-            isSlotAvailable: true,
-            isSlotBooked: false,
-          }
-        );
-      return updatedTimeSlot;
+    if (!availabilitySlot) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Slot does not exist',
+        },
+        HttpStatus.NOT_FOUND
+      );
     }
+    const updatedTimeSlot =
+      await this.digifranchiseAvailableTimeSlotsRepository.update(slotId, {
+        isSlotAvailable: false,
+        isSlotBooked: true,
+      });
+    return updatedTimeSlot;
   }
 }

@@ -51,8 +51,8 @@ export class DigifranchiseWorkingHours {
   @Column({ type: 'boolean', default: false })
   allowBookingOnPublicHolidays: boolean;
 
-  @Column({ type: 'text', nullable: true })
-  workingDays: string;
+  @Column({ type: 'json', nullable: true })
+  workingDays: any[];
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
