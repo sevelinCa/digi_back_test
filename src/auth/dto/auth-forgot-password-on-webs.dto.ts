@@ -1,14 +1,12 @@
-
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNumber, IsString } from 'class-validator';
 
 export class AuthForgotPasswordForWebSiteDto {
-    @ApiProperty({ example: 'user@example.com' })
-    email: string;
+  @ApiProperty({ example: 'user@example.com' })
+  @IsEmail()
+  email: string;
 
-    @ApiProperty({ example: 'https://www.example.com', required: true })
-    websiteURL: string; 
-
-    @ApiProperty({ example: '07888888888', required: true })
-    connectNumber: string;
-  }
-
+  @ApiProperty({ example: 'https://www.example.com'})
+  @IsString()
+  websiteURL: string;
+}

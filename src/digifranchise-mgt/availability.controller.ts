@@ -122,18 +122,22 @@ export class AvailabilityController {
         return this.availabilityService.getAvailableSlotsInDay(ownerFranchiseId);
     }
 
-    @ApiOperation({ summary: 'Delete an availability and all its associated data' })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Availability deleted successfully.' })
-    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Availability not found.' })
-    @Delete(':ownedFranchiseId')
-    async deleteAvailability(@Param('ownedFranchiseId') ownedFranchiseId: string): Promise<void> {
-        try {
-            await this.availabilityService.deleteAvailability(ownedFranchiseId);
-        } catch (error) {
-            throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-        }
+
+
+@ApiOperation({ summary: 'Delete all records related to an ownedDigifranchise by ID' })
+@ApiResponse({ status: HttpStatus.OK, description: 'All records related to the ownedDigifranchise deleted successfully.' })
+@ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'OwnedDigifranchise not found or no records to delete.' })
+@Delete('delete-all-by-ownedDigifranchise/:ownedDigifranchiseId')
+async deleteAllByOwnedDigifranchise(@Param('ownedDigifranchiseId') ownedDigifranchiseId: string): Promise<any> {
+    try {
+        await this.availabilityService.deleteAllByOwnedDigifranchise(ownedDigifranchiseId);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'All records related to the ownedDigifranchise deleted successfully.',
+        };
+    } catch (error) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     }
-
-
+}
 }
 
