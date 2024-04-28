@@ -49,7 +49,7 @@ export class AvailabilityService {
     private convertTo24HourFormat(time: string): string {
         const [timeString, period] = time.split(' ');
         let [hours, minutes] = timeString.split(':');
-        console.log(">>>>>>>>>>>>>>", period.toLocaleLowerCase())
+        // console.log(">>>>>>>>>>>>>>", period.toLocaleLowerCase())
         if (period == 'PM' && hours !== '12') {
             hours = (parseInt(hours, 10) + 12).toString();
         } else if (period === 'AM' && hours === '12') {
