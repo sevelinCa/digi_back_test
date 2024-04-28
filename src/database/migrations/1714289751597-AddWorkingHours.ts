@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class GenerateCalendarEntity1714252810491 implements MigrationInterface {
-    name = 'GenerateCalendarEntity1714252810491'
+export class AddWorkingHours1714289751597 implements MigrationInterface {
+    name = 'AddWorkingHours1714289751597'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "customer_subscription" DROP CONSTRAINT "FK_b4059529c205d91c7d138685b55"`);
