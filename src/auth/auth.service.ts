@@ -402,7 +402,7 @@ export class AuthService {
     });
   }
 
-  async customerRegister(digifranchiseId: string, dto: AuthRegisterLoginDto): Promise<void> {
+  async customerRegister(digifranchiseId: string, dto: AuthRegisterLoginDto, websiteURL: string): Promise<void> {
     const user = await this.usersService.create({
       ...dto,
       email: dto.email,
@@ -448,10 +448,11 @@ export class AuthService {
 
     await this.customerSubscription.createSubscription(user.id, digifranchiseId)
 
-    await this.mailService.userSignUp({
+    await this.mailService.customerSignUp({
       to: dto.email,
       data: {
         hash,
+        websiteUrl: websiteURL
       },
     });
   }
@@ -897,16 +898,15 @@ export class AuthService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
-    if (!dto.websiteURL || dto.websiteURL.trim() === '') {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'websiteURL is required and must not be empty',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (!dto.websiteURL || dto.websiteURL.trim() === '') {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.BAD_REQUEST,
+    //       error: 'websiteURL is required and must not be empty',
+    //     },
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
     console.log(`Website URL: ${dto.websiteURL}`);
 
     const hash = await this.jwtService.signAsync(
