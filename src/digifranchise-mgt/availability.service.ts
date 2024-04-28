@@ -46,13 +46,21 @@ export class AvailabilityService {
     ) {
         schedule.scheduleJob('0 0 * * *', this.deleteSlotsAtEndOfDay.bind(this));
     }
+
     private convertTo24HourFormat(time: string): string {
-        const [timeString, period] = time.split(' ');
-        let [hours, minutes] = timeString.split(':');
-        // console.log(">>>>>>>>>>>>>>", period.toLocaleLowerCase())
-        if (period == 'PM' && hours !== '12') {
+        // Normalize the string to replace non-breaking spaces with regular spaces
+        const normalizedTime = time.replace(/\u00A0/g, ' ');
+    
+        const timeRegex = /(\d{1,2}):(\d{2})\s?(am|pm)/i;
+        const match = normalizedTime.match(timeRegex);
+        if (!match) {
+            throw new Error('Invalid time format');
+        }
+        let [, hours, minutes, period] = match;
+        hours = parseInt(hours, 10).toString();
+        if (period.toLowerCase() === 'pm' && hours !== '12') {
             hours = (parseInt(hours, 10) + 12).toString();
-        } else if (period === 'AM' && hours === '12') {
+        } else if (period.toLowerCase() === 'am' && hours === '12') {
             hours = '00';
         }
         return `${hours.padStart(2, '0')}:${minutes}`;

@@ -122,17 +122,7 @@ export class AvailabilityController {
         return this.availabilityService.getAvailableSlotsInDay(ownerFranchiseId);
     }
 
-    @ApiOperation({ summary: 'Delete an availability and all its associated data' })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Availability deleted successfully.' })
-    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Availability not found.' })
-    @Delete(':ownedFranchiseId')
-    async deleteAvailability(@Param('ownedFranchiseId') ownedFranchiseId: string): Promise<void> {
-        try {
-            await this.availabilityService.deleteAvailability(ownedFranchiseId);
-        } catch (error) {
-            throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-        }
-    }
+
 
 
 }
