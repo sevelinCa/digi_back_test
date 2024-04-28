@@ -10,7 +10,7 @@ import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select
 import { DigifranchiseServiceOffered } from './digifranchise-service-offered.entity';
 import { AvailableManagement } from 'src/digifranchise-mgt/entities/available-management.entity';
 import { UnavailableManagement } from 'src/digifranchise-mgt/entities/unavailable-management.entity';
-import { CustomerSubscription } from 'src/digifranchise-mgt/entities/customer-subscription.entity';
+// import { CustomerSubscription } from 'src/digifranchise-mgt/entities/customer-subscription.entity';
 import { InventoryManagement } from 'src/digifranchise-mgt/entities/inventory-management.entity';
 import { DigifranchiseSubServices } from './digifranchise-sub-service.entity';
 import { OrderTable } from 'src/payment/entities/order.entity';
@@ -71,8 +71,8 @@ export class DigifranchiseOwner {
   @OneToMany(() => UnavailableManagement, unavailability => unavailability.ownedDigifranchise)
   unavailability: UnavailableManagement[];
 
-  @OneToMany(() => CustomerSubscription, subscription => subscription.ownedDigifranchise)
-  subscription: CustomerSubscription[];
+  // @OneToMany(() => CustomerSubscription, subscription => subscription.ownedDigifranchise)
+  // subscription: CustomerSubscription[];
 
   @OneToMany(() => CustomerManagement, customer => customer.ownedDigifranchise)
   customer: CustomerManagement[];
