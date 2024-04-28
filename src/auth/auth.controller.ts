@@ -139,8 +139,8 @@ export class AuthController {
 
   @Post('email/digifranchise-customer/register')
   @HttpCode(HttpStatus.OK)
-  async registerCustomer(@Query('digifranchiseId') digifranchiseId: string, @Body() createUserDto: AuthRegisterLoginDto) {
-    await this.service.customerRegister(digifranchiseId, createUserDto);
+  async registerCustomer(@Query('digifranchiseId') digifranchiseId: string,@Query('websiteUrl') websiteUrl: string, @Body() createUserDto: AuthRegisterLoginDto) {
+    await this.service.customerRegister(digifranchiseId, createUserDto, websiteUrl);
 
     return {
       message: "sign up is successful, check your email to verify!!"
@@ -227,9 +227,10 @@ export class AuthController {
   @Post('forgot-password-for-webs')
   @HttpCode(HttpStatus.NO_CONTENT)
   async forgetPasswordForWebs(
-    @Body() forgotPasswordForWebsDto: AuthForgotPasswordForWebSiteDto,
+    @Body() forgotPasswordForWebsDto: AuthForgotPasswordForWebSiteDto
   ): Promise<void> {
-    return this.service.forgetPasswordForWebs(forgotPasswordForWebsDto);
+    console.log(forgotPasswordForWebsDto,"=======>")
+    return await this.service.forgetPasswordForWebs(forgotPasswordForWebsDto);
   }
 
 

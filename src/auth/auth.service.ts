@@ -898,16 +898,15 @@ export class AuthService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
-    if (!dto.websiteURL || dto.websiteURL.trim() === '') {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'websiteURL is required and must not be empty',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (!dto.websiteURL || dto.websiteURL.trim() === '') {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.BAD_REQUEST,
+    //       error: 'websiteURL is required and must not be empty',
+    //     },
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
     console.log(`Website URL: ${dto.websiteURL}`);
 
     const hash = await this.jwtService.signAsync(
