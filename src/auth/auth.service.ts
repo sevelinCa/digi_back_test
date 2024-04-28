@@ -402,7 +402,7 @@ export class AuthService {
     });
   }
 
-  async customerRegister(digifranchiseId: string, dto: AuthRegisterLoginDto): Promise<void> {
+  async customerRegister(digifranchiseId: string, dto: AuthRegisterLoginDto, websiteURL: string): Promise<void> {
     const user = await this.usersService.create({
       ...dto,
       email: dto.email,
@@ -448,10 +448,11 @@ export class AuthService {
 
     await this.customerSubscription.createSubscription(user.id, digifranchiseId)
 
-    await this.mailService.userSignUp({
+    await this.mailService.customerSignUp({
       to: dto.email,
       data: {
         hash,
+        websiteUrl: websiteURL
       },
     });
   }
