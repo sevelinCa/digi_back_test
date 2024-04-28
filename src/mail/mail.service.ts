@@ -22,7 +22,7 @@ export class MailService {
   ) {}
 
   async userSignUp(
-    mailData: MailData<{ hash: string; websiteUrl?: string }>
+    mailData: MailData<{ hash: string; }>
   ): Promise<void> {
     const i18n = I18nContext.current();
     let emailConfirmTitle: MaybeType<string>;
@@ -39,7 +39,7 @@ export class MailService {
       ]);
     }
 
-    const url = new URL(mailData.data.websiteUrl + '/confirm-email');
+    const url = new URL(process.env.FRONTEND_DOMAIN + '/confirm-email');
     url.searchParams.set('hash', mailData.data.hash);
 
     await this.mailerService.sendMail({
