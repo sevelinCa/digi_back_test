@@ -19,6 +19,7 @@ import { StaffManagement } from 'src/digifranchise-mgt/entities/staff-management
 import { DigifranchiseProduct } from './digifranchise-product.entity';
 import { CalenderVenue } from 'src/calender-mgt/entities/calender-venues.entity';
 import { Availability, AvailabilityDayTime, AvailabilitySlotsTimeOneOne, AvailabilityWeekDays, Unavailability } from 'src/digifranchise-mgt/entities/availability.entity';
+import { DigifranchiseWorkingHours } from 'src/calendar/entities/digifranchise-working-hours.entity';
 
 @Entity()
 export class DigifranchiseOwner {
@@ -65,8 +66,8 @@ export class DigifranchiseOwner {
   @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.ownerDigifranchise)
   selectItem: DigifranchiseSelectProductOrServiceTable[];
 
-  @OneToMany(() => AvailableManagement, availability => availability.ownedDigifranchise)
-  availability: AvailableManagement[];
+  @OneToMany(() => DigifranchiseWorkingHours, availability => availability.ownedDigifranchise)
+  availability: DigifranchiseWorkingHours[];
 
   @OneToMany(() => UnavailableManagement, unavailability => unavailability.ownedDigifranchise)
   unavailability: UnavailableManagement[];
