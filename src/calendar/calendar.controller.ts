@@ -24,13 +24,13 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 
 @ApiTags('Digifranchise Working Hours')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @ApiOperation({ summary: 'Set Working Hours' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Digifranchise Owner is able to set Working Hours.',
@@ -83,6 +83,8 @@ export class CalendarController {
     }
   }
   @ApiOperation({ summary: 'Get Working Hours' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiResponse({
     status: HttpStatus.OK,
     description:
@@ -106,6 +108,8 @@ export class CalendarController {
     description: 'Digifranchise Owner is able to update Working Hours.',
   })
   @ApiBody({ type: SetWorkingHoursDto })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Patch('update-working-hours/:ownedFranchiseId')
   async updateWorkingHours(
     @Param('ownedFranchiseId') ownedFranchiseId: string,
@@ -117,7 +121,7 @@ export class CalendarController {
           workingHoursDto,
           ownedFranchiseId
         );
-        console.log(updatedSlots)
+      console.log(updatedSlots);
       return { message: 'Availability updated successfully', updatedSlots };
     } catch (error) {
       return { message: 'Error updating availability', error: error };
@@ -134,10 +138,7 @@ export class CalendarController {
     @Query('slotId') slotId: string
   ): Promise<any> {
     try {
-        await this.calendarService.bookAvailabilitySlot(
-          slotId,
-          ownedFranchiseId
-        );
+      await this.calendarService.bookAvailabilitySlot(slotId, ownedFranchiseId);
       return { message: 'Availability Booked successfully' };
     } catch (error) {
       return { message: 'Error creating availability', error: error };
