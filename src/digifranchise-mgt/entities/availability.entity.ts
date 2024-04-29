@@ -217,8 +217,8 @@ export class AvailabilitySlotsDetails {
     @JoinColumn({ name: 'availabilityId' })
     availability: Availability | null;
 
-    @ManyToOne(() => AvailabilityBookedSlots, BookedSlot => BookedSlot.slot)
-    bookedSlots: AvailabilityBookedSlots[];
+    // @ManyToOne(() => AvailabilityBookedSlots, BookedSlot => BookedSlot.slot)
+    // bookedSlots: AvailabilityBookedSlots[];
 
     @Column({ type: 'boolean', default: false })
     isSlotBooked: boolean;
@@ -270,8 +270,8 @@ export class AvailabilitySlotsTimeOneOne {
     @JoinColumn({ name: 'availabilityId' })
     availability: Availability | null;
 
-    @ManyToOne(() => AvailabilityBookedSlots, BookedSlot => BookedSlot.slot)
-    bookedSlots: AvailabilityBookedSlots[];
+    // @ManyToOne(() => AvailabilityBookedSlots, BookedSlot => BookedSlot.slot)
+    // bookedSlots: AvailabilityBookedSlots[];
 
     @Column({ type: 'boolean', default: false })
     isSlotBooked: boolean;
@@ -310,9 +310,9 @@ export class AvailabilityBookedSlots {
     @JoinColumn({ name: 'userId' })
     userId: UserEntity | null;
 
-    @ManyToOne(() => AvailabilitySlotsDetails)
-    @JoinColumn({ name: 'slotId' })
-    slot: AvailabilitySlotsDetails;
+    // @ManyToOne(() => AvailabilitySlotsDetails)
+    // @JoinColumn({ name: 'slotId' })
+    // slot: AvailabilitySlotsDetails;
 
     @ManyToOne(() => AvailabilitySlotsTimeOneOne)
     @JoinColumn({ name: 'slotId' })

@@ -66,7 +66,7 @@ export class AvailabilityWeekDaysDto {
   @IsOptional()
   @IsArray()
   @Type(() => AvailabilityDayTimeDto)
-  availabilityDayTime?: AvailabilityDayTimeDto[];
+  availabilityDayTime?: AvailabilityDayTimeDto;
 }
 
 export class UnavailabilityDto {
@@ -108,72 +108,58 @@ export class SetWorkingHoursDto {
       {
         day: 'Monday',
         isDayFullBooked: false,
-        availabilityDayTime: [
-          {
-            startTime: '09:00',
-            endTime: '12:00',
-          },
-        ],
+        availabilityDayTime: {
+          startTime: '09:00',
+          endTime: '12:00',
+        },
       },
       {
         day: 'Tuesday',
         isDayFullBooked: false,
-        availabilityDayTime: [
-          {
-            startTime: '10:00',
-            endTime: '14:00',
-          },
-        ],
+        availabilityDayTime: {
+          startTime: '10:00',
+          endTime: '14:00',
+        },
       },
       {
         day: 'Wednesday',
         isDayFullBooked: false,
-        availabilityDayTime: [
-          {
-            startTime: '08:00',
-            endTime: '11:00',
-          },
-        ],
+        availabilityDayTime: {
+          startTime: '08:00',
+          endTime: '11:00',
+        },
       },
       {
         day: 'Thursday',
         isDayFullBooked: false,
-        availabilityDayTime: [
-          {
-            startTime: '09:30',
-            endTime: '13:30',
-          },
-        ],
+        availabilityDayTime: {
+          startTime: '09:30',
+          endTime: '13:30',
+        },
       },
       {
         day: 'Friday',
         isDayFullBooked: false,
-        availabilityDayTime: [
-          {
-            startTime: '10:00',
-            endTime: '15:00',
-          },
-        ],
+        availabilityDayTime: {
+          startTime: '10:00',
+          endTime: '15:00',
+        },
       },
       {
         day: 'Saturday',
         isDayFullBooked: false,
-        availabilityDayTime: [
-          {
-            startTime: '11:00',
-            endTime: '14:00',
-          },
-        ],
+        availabilityDayTime: {
+          startTime: '11:00',
+          endTime: '14:00',
+        },
       },
       {
         day: 'Sunday',
         isDayFullBooked: false,
-        availabilityDayTime: [
-          {
-            startTime: '12:00',
-            endTime: '16:00',
-          },
-        ],
+        availabilityDayTime: {
+          startTime: '12:00',
+          endTime: '16:00',
+        },
       },
     ],
     required: true,
@@ -181,7 +167,7 @@ export class SetWorkingHoursDto {
   @IsOptional()
   @IsArray()
   @Type(() => AvailabilityWeekDaysDto)
-  availabilityWeekDays?: AvailabilityWeekDaysDto[];
+  availabilityWeekDays?: AvailabilityWeekDaysDto[] | any[];
 
   @ApiProperty({
     type: [UnavailabilityDto],
@@ -197,5 +183,5 @@ export class SetWorkingHoursDto {
   @IsOptional()
   @IsArray()
   @Type(() => Unavailability)
-  unavailability: UnavailabilityDto[];
+  unavailability?: UnavailabilityDto[];
 }
