@@ -22,7 +22,7 @@ export class MailService {
   ) {}
 
   async userSignUp(
-    mailData: MailData<{ hash: string; }>
+    mailData: MailData<{ hash: string}>
   ): Promise<void> {
     const i18n = I18nContext.current();
     let emailConfirmTitle: MaybeType<string>;
