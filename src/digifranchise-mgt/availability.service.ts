@@ -67,84 +67,6 @@ export class AvailabilityService {
     }
 
 
-    // async createNewAvailability(availabilityDto: AvailabilityDto, ownedFranchiseId: string) {
-    //     // const existingAvailability = await this.availabilityRepository.findOne({ where: { ownedDigifranchise: Equal(ownedFranchiseId) } });
-    //     // if (existingAvailability) {
-    //     //     return {
-    //     //         statusCode: HttpStatus.BAD_REQUEST,
-    //     //         message: 'The provided ownedFranchiseId has been used to create availability before.',
-    //     //     };
-    //     // }
-    //     try {
-
-
-    //         const owned = await this.ownedFranchiseRepository.findOneOrFail({ where: { id: ownedFranchiseId } });
-
-    //         const currentDate = new Date();
-    //         const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-
-    //         const savedAvailabilities: Availability[] = [];
-    //         const savedUnavailabilities: Unavailability[] = [];
-
-    //         const promises: Promise<any>[] = [];
-    //         let currentDayOfWeek: string;
-
-    //         for (let day = 1; day <= daysInMonth; day++) {
-    //             const currentDayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toLocaleDateString('en-US', { weekday: 'long' });
-    //             const workingDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-
-    //             const dayPromises: Promise<any>[] = [];
-
-    //             if (availabilityDto.availabilityWeekDays) {
-    //                 const matchingDayOfWeek = availabilityDto.availabilityWeekDays.find(dayDto => dayDto.day === currentDayOfWeek);
-    //                 if (matchingDayOfWeek) {
-    //                     const newAvailability = await this.createAvailability(owned, availabilityDto);
-    //                     savedAvailabilities.push(newAvailability);
-
-    //                     if (matchingDayOfWeek.availabilityDayTime && matchingDayOfWeek.availabilityDayTime.length > 0) {
-    //                         const savedWeekDay = await this.createAvailabilityWeekDay(owned, currentDayOfWeek, day);
-
-    //                         const availabilityPromises: Promise<AvailabilitySlotsTimeOneOne[]>[] = matchingDayOfWeek.availabilityDayTime.map(async (dayTimeDto) => {
-    //                             const savedDayTime = await this.createAvailabilityDayTime(owned, savedWeekDay, dayTimeDto, availabilityDto, currentDayOfWeek);
-
-    //                             const availabilityId = newAvailability.id;
-    //                             const slotPromise = this.createAvailabilitySlotsTimeOneOne(
-    //                                 owned,
-    //                                 savedDayTime,
-    //                                 savedWeekDay,
-    //                                 { startTime: dayTimeDto.startTime, endTime: dayTimeDto.endTime },
-    //                                 currentDayOfWeek,
-    //                                 availabilityDto.allowedTimeSlotUnits,
-    //                                 availabilityDto.breakTimeBetweenBookedSlots,
-    //                                 availabilityId,
-    //                                 workingDate
-    //                             );
-    //                             return slotPromise;
-    //                         });
-
-    //                         dayPromises.push(...availabilityPromises);
-    //                     }
-    //                 }
-    //             }
-    //             if (availabilityDto.unavailability && availabilityDto.unavailability.length > 0) {
-    //                 const unavailabilityPromises: Promise<Unavailability>[] = availabilityDto.unavailability.map(unavailabilityDto => {
-    //                     return this.createUnavailability(owned, unavailabilityDto, day, currentDate);
-    //                 });
-    //                 dayPromises.push(...unavailabilityPromises);
-    //             }
-
-    //             promises.push(...dayPromises);
-    //         }
-
-    //         await Promise.all(promises);
-
-    //         return { savedAvailabilities, savedUnavailabilities };
-    //     } catch (error) {
-    //         console.error(error);
-    //         throw error;
-    //     }
-    // }
-
     async createNewAvailability(availabilityDto: AvailabilityDto, ownedFranchiseId: string) {
 
         const existingAvailability = await this.availabilityRepository.findOne({ where: { ownedDigifranchise: Equal(ownedFranchiseId) } });
@@ -653,25 +575,35 @@ export class AvailabilityService {
     }
 
     async updateAvailability(updateAvailabilityDto: any, availabilityId: string) {
+        console.log(`Updating availability with ID: ${availabilityId}`);
         try {
-            const availability =
-                await this.availabilitySlotsDetailsRepository.findOne({
-                    where: { id: availabilityId },
-                    relations: ['availabilityDayTime', 'availabilityWeekDays'],
-                });
-
+           
+            const availability = await this.availabilityRepository.findOne({where:{id: availabilityId}});
+    
             if (!availability) {
+                console.error(`Availability with ID ${availabilityId} not found.`);
                 return {
                     statusCode: HttpStatus.NOT_FOUND,
                     message: 'Availability not found.',
                 };
             }
-            const startTime =
-                updateAvailabilityDto.availabilityWeekDays[0].availabilityDayTime[0]
-                    .startTime;
-            const endTime =
-                updateAvailabilityDto.availabilityWeekDays[0].availabilityDayTime[0]
-                    .endTime;
+    
+           
+            const slotsToUpdate = await this.availabilitySlotsTimeOneOneRepository.find({
+                where: { availability: Equal(availability.id) },
+                relations: ['availabilityDayTime', 'availabilityWeekDays'],
+            });
+    
+            if (slotsToUpdate.length === 0) {
+                console.error(`No slots found for availability with ID ${availabilityId}.`);
+                return {
+                    statusCode: HttpStatus.NOT_FOUND,
+                    message: 'No slots found for the specified availability.',
+                };
+            }
+    
+            const startTime = updateAvailabilityDto.availabilityWeekDays[0].availabilityDayTime[0].startTime;
+            const endTime = updateAvailabilityDto.availabilityWeekDays[0].availabilityDayTime[0].endTime;
             const slotDuration = updateAvailabilityDto.allowedTimeSlotUnits;
             const breakTime = updateAvailabilityDto.breakTimeBetweenBookedSlots;
             const slots = this.calculateAvailableTimeSlots(
@@ -680,40 +612,32 @@ export class AvailabilityService {
                 slotDuration,
                 breakTime
             );
-            await this.availabilityDayTimeRepository.update(
-                { id: availability?.availabilityDayTime?.id },
-                {
-                    startTime: startTime,
-                    endTime: endTime,
-                }
-            );
-            const response = this.availabilityDayTimeRepository.findOne({
-                where: { id: availability?.availabilityDayTime?.id },
-                relations: ['availability'],
-            });
-            await this.availabilitySlotsDetailsRepository.update(
-                { day: updateAvailabilityDto.availabilityWeekDays[0].day },
-                {
-                    startTime: startTime,
-                    endTime: endTime,
-                    availabilityTimeSlotsDetails: slots,
-                }
-            );
-            if (response) {
-                const avId = response.then((res) => res?.availability.id);
-                await this.availabilityRepository.update(
-                    { id: await avId },
+    
+           
+            for (const slot of slotsToUpdate) {
+                await this.availabilityDayTimeRepository.update(
+                    { id: slot.availabilityDayTime?.id },
                     {
-                        allowedTimeSlotUnits: slotDuration,
-                        breakTimeBetweenBookedSlots: breakTime,
+                        startTime: startTime,
+                        endTime: endTime,
                     }
                 );
             }
-            const newAvailability =
-                await this.availabilitySlotsDetailsRepository.findOne({
-                    where: { id: availabilityId },
-                    relations: ['availabilityDayTime', 'availabilityWeekDays'],
-                });
+    
+           
+            await this.availabilityRepository.update(
+                { id: availabilityId },
+                {
+                    allowedTimeSlotUnits: slotDuration,
+                    breakTimeBetweenBookedSlots: breakTime,
+                }
+            );
+    
+            const newAvailability = await this.availabilitySlotsTimeOneOneRepository.findOne({
+                where: { id: availabilityId },
+                relations: ['availabilityDayTime', 'availabilityWeekDays'],
+            });
+    
             return {
                 statusCode: HttpStatus.OK,
                 message: 'Availability updated successfully.',
@@ -724,6 +648,7 @@ export class AvailabilityService {
             throw error;
         }
     }
+    
 
     async getWorkingHoursRange(ownerFranchiseId: string) {
         const owned = await this.ownedFranchiseRepository.findOne({ where: { id: ownerFranchiseId } });
@@ -731,7 +656,7 @@ export class AvailabilityService {
             throw new Error('Franchise manager not found');
         }
 
-        const allAvailabilitySlots = await this.availabilitySlotsDetailsRepository.find({
+        const allAvailabilitySlots = await this.availabilitySlotsTimeOneOneRepository.find({
             where: {
                 ownedDigifranchise: Equal(owned.id),
             },
