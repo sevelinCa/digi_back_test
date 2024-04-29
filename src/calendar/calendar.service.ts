@@ -85,7 +85,7 @@ export class CalendarService {
     //   );
     // }
     let workingDays: any = [];
-    for (let i = 0; i < availabilityWeekDays!.length || 1; i++) {
+    for (let i = 0; i < availabilityWeekDays!.length; i++) {
       const obj = {
         day: availabilityWeekDays![i]?.day,
         startTime: availabilityWeekDays![i]?.availabilityDayTime!.startTime,
