@@ -40,9 +40,9 @@ export class CalendarService {
     //   }
     //   // console.log(allDigifrinchesHours[0].ownedDigifranchise?.id);
     // });
-    schedule.scheduleJob(dayjs().endOf('day').toDate(), () => {
-      this.deleteSlotsAtEndOfDay();
-    });
+    // schedule.scheduleJob(dayjs().endOf('day').toDate(), () => {
+    //   this.deleteSlotsAtEndOfDay();
+    // });
   }
 
   async createWorkingHoursForDigifranchise(
@@ -56,17 +56,6 @@ export class CalendarService {
       unavailability,
     } = setWorkingHoursDto;
     let currentDate = new Date();
-    // const date = currentDate;
-    // const day = currentDate.toLocaleDateString('en-US', { weekday: 'long' });
-    // const time = currentDate.toLocaleTimeString([], {
-    //   hour: '2-digit',
-    //   minute: '2-digit',
-    //   second: '2-digit',
-    //   hour12: false,
-    // });
-    // const futureDate = new Date(
-    //   currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
-    // );
     const setWorkingHours =
       this.digifranchiseWorkingHoursRepository.create(setWorkingHoursDto);
     const getOwnedDigifranchise: DigifranchiseOwner | null =
@@ -86,35 +75,27 @@ export class CalendarService {
       await this.digifranchiseWorkingHoursRepository.findOne({
         where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
       });
-    if (isTimeSlotsExists) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          error: 'Digifranchise timeslots has already been created',
-        },
-        HttpStatus.CONFLICT
-      );
-    }
+    // if (isTimeSlotsExists) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.CONFLICT,
+    //       error: 'Digifranchise timeslots has already been created',
+    //     },
+    //     HttpStatus.CONFLICT
+    //   );
+    // }
     let workingDays: any = [];
-    for (let i = 0; i < availabilityWeekDays!.length || 1; i++) {
+    for (let i = 0; i < availabilityWeekDays!.length; i++) {
       const obj = {
-        day:
-          availabilityWeekDays![i]?.day ||
-          availabilityWeekDays![i]?.availabilityDayTime!.day,
-        startTime:
-          availabilityWeekDays![i]?.startTime ||
-          availabilityWeekDays![i]?.availabilityDayTime!.startTime,
-        endTime:
-          availabilityWeekDays![i]?.startTime ||
-          availabilityWeekDays![i]?.availabilityDayTime!.endTime,
+        day: availabilityWeekDays![i]?.day,
+        startTime: availabilityWeekDays![i]?.availabilityDayTime!.startTime,
+        endTime: availabilityWeekDays![i]?.availabilityDayTime!.endTime,
       };
       workingDays.push(obj);
     }
     setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
     setWorkingHours.availabilityWeekDays = workingDays;
     await this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
-    const delay = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
     const currentDay = dayjs().date();
     const endOfMonth = dayjs().daysInMonth();
     const remainingDays = endOfMonth - currentDay + 1;
@@ -125,12 +106,17 @@ export class CalendarService {
           weekday: 'long',
         });
         if (day.day === dayOfWeek) {
+          console.log(
+            'compare days==============================',
+            day.availabilityDayTime
+          );
           const slots = this.calculateAvailableTimeSlots(
-            day.availabilityDayTime![0].startTime!,
-            day.availabilityDayTime![0].endTime!,
+            day.availabilityDayTime!.startTime,
+            day.availabilityDayTime!.endTime,
             allowedTimeSlotUnits,
             breakTimeBetweenBookedSlots
           );
+          console.log('slots==============================', slots);
           for (const slot of slots) {
             await this.createTimeSlot(
               getOwnedDigifranchise,
@@ -141,7 +127,6 @@ export class CalendarService {
               slot.startTime,
               slot.endTime
             );
-            await delay(10);
           }
         }
       }
@@ -160,7 +145,6 @@ export class CalendarService {
             (unSlot.startTime === unAvail.startTime &&
               unSlot.endTime === unAvail.endTime)
           ) {
-            console.log(unSlot);
             await this.digifranchiseAvailableTimeSlotsRepository.update(
               unSlot.id,
               { isSlotAvailable: false }
@@ -170,41 +154,35 @@ export class CalendarService {
       }
     }
   }
-  calculateAvailableTimeSlots(
+  calculateAvailableTimeSlots = (
     startTime: string,
     endTime: string,
     slotDuration: number,
     breakTime: number
-  ) {
-    const startDate = new Date(`2024-01-01T${startTime}`);
-    const endDate = new Date(`2024-01-01T${endTime}`);
-    const durationInMinutes =
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60);
+  ) => {
+    const startDate = dayjs(`2024-01-01T${startTime}`);
+    const endDate = dayjs(`2024-01-01T${endTime}`);
+
+    const durationInMinutes = endDate.diff(startDate, 'minute');
     const timeSlotDuration = slotDuration;
     const breakTimeDuration = breakTime;
     const numberOfSlots = Math.floor(
       durationInMinutes / (timeSlotDuration + breakTimeDuration)
     );
-    const availableTimeSlots: { startTime: string; endTime: string }[] = [];
+    const availableTimeSlots: any = [];
     let currentTime = startDate;
     for (let i = 0; i < numberOfSlots; i++) {
-      const slotStartTime = currentTime.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-      currentTime = new Date(currentTime.getTime() + timeSlotDuration * 60000);
-      const slotEndTime = currentTime.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      const slotStartTime = currentTime.format('HH:mm');
+      currentTime = currentTime.add(timeSlotDuration, 'minute');
+      const slotEndTime = currentTime.format('HH:mm');
       availableTimeSlots.push({
         startTime: slotStartTime,
         endTime: slotEndTime,
       });
-      currentTime = new Date(currentTime.getTime() + breakTimeDuration * 60000);
+      currentTime = currentTime.add(breakTimeDuration, 'minute');
     }
     return availableTimeSlots;
-  }
+  };
   private async createTimeSlot(
     ownedDigifranchise: DigifranchiseOwner,
     day: string,
@@ -225,6 +203,7 @@ export class CalendarService {
           day: day,
           startTime: startTime,
           endTime: endTime,
+          isSlotBooked: true,
           workingDate: Between(startOfDay, endOfDay),
         },
       });
@@ -300,35 +279,6 @@ export class CalendarService {
         },
       }
     );
-    // const unavailableSlots = await this.digifranchiseUnavailableTimes.find({
-    //   where: {
-    //     ownedDigifranchise: { id: ownedDigifranchiseId },
-    //     workingDate: Between(startOfDay, endOfDay),
-    //   },
-    // });
-    // const unSlots: any = [];
-    // for (const unslot of unavailableSlots) {
-    //   console.log(unslot);
-    //   const unSlotss = this.calculateAvailableTimeSlots(
-    //     unslot.startTime,
-    //     unslot.endTime,
-    //     workingHours!.allowedTimeSlotUnits,
-    //     workingHours!.breakTimeBetweenBookedSlots
-    //   );
-    //   unSlots.push(unSlotss);
-    // }
-
-    // const availableTimeSlots = timeSlots.filter((slot) => {
-    //   for (const unslot of unSlots) {
-    //     if (
-    //       slot.startTime >= unslot.startTime &&
-    //       slot.endTime <= unslot.endTime
-    //     ) {
-    //       return false;
-    //     }
-    //   }
-    //   return true;
-    // });
 
     return timeSlots;
   }
