@@ -3,13 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DigifranchiseWorkingHours } from './entities/digifranchise-working-hours.entity';
 import { Between, Repository } from 'typeorm';
 import { AvailabilityTimeSlots } from './entities/time-slots.entity';
-import { DigifranchiseUnavailableTimes } from './entities/unavailable-times.entity';
+import * as schedule from 'node-schedule';
+// import { DigifranchiseUnavailableTimes } from './entities/unavailable-times.entity';
 import {
   AvailabilityWeekDaysDto,
   SetWorkingHoursDto,
 } from './dto/availability.dto';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { response } from 'express';
+import { exit } from 'process';
+import { startOfToday } from 'date-fns';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class CalendarService {
@@ -19,10 +23,27 @@ export class CalendarService {
     @InjectRepository(DigifranchiseWorkingHours)
     private readonly digifranchiseWorkingHoursRepository: Repository<DigifranchiseWorkingHours>,
     @InjectRepository(AvailabilityTimeSlots)
-    private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
-    @InjectRepository(DigifranchiseUnavailableTimes)
-    private readonly digifranchiseUnavailableTimes: Repository<DigifranchiseUnavailableTimes>
-  ) {}
+    private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>
+    // @InjectRepository(DigifranchiseUnavailableTimes)
+    // private readonly digifranchiseUnavailableTimes: Repository<DigifranchiseUnavailableTimes>
+  ) {
+    // schedule.scheduleJob(dayjs().add(2, 'second').toDate(), async () => {
+    //   const allDigifrinchesHours =
+    //     await this.digifranchiseWorkingHoursRepository.find({
+    //       relations: ['ownedDigifranchise'],
+    //     });
+    //   for (const digifranchiseHour of allDigifrinchesHours) {
+    //     await this.createWorkingHoursForDigifranchise(
+    //       digifranchiseHour,
+    //       digifranchiseHour!.ownedDigifranchise!.id
+    //     );
+    //   }
+    //   // console.log(allDigifrinchesHours[0].ownedDigifranchise?.id);
+    // });
+    schedule.scheduleJob(dayjs().endOf('day').toDate(), () => {
+      this.deleteSlotsAtEndOfDay();
+    });
+  }
 
   async createWorkingHoursForDigifranchise(
     setWorkingHoursDto: SetWorkingHoursDto,
@@ -46,7 +67,6 @@ export class CalendarService {
     // const futureDate = new Date(
     //   currentDate.getTime() + 30 * 24 * 60 * 60 * 1000
     // );
-
     const setWorkingHours =
       this.digifranchiseWorkingHoursRepository.create(setWorkingHoursDto);
     const getOwnedDigifranchise: DigifranchiseOwner | null =
@@ -63,7 +83,7 @@ export class CalendarService {
       );
     }
     const isTimeSlotsExists =
-      await this.digifranchiseAvailableTimeSlotsRepository.findOne({
+      await this.digifranchiseWorkingHoursRepository.findOne({
         where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
       });
     if (isTimeSlotsExists) {
@@ -76,20 +96,29 @@ export class CalendarService {
       );
     }
     let workingDays: any = [];
-    for (let i = 0; i < availabilityWeekDays!.length; i++) {
+    for (let i = 0; i < availabilityWeekDays!.length || 1; i++) {
       const obj = {
-        day: availabilityWeekDays![i].day,
-        startTime: availabilityWeekDays![i].availabilityDayTime![0].startTime,
-        endTime: availabilityWeekDays![i].availabilityDayTime![0].endTime,
+        day:
+          availabilityWeekDays![i]?.day ||
+          availabilityWeekDays![i]?.availabilityDayTime!.day,
+        startTime:
+          availabilityWeekDays![i]?.startTime ||
+          availabilityWeekDays![i]?.availabilityDayTime!.startTime,
+        endTime:
+          availabilityWeekDays![i]?.startTime ||
+          availabilityWeekDays![i]?.availabilityDayTime!.endTime,
       };
       workingDays.push(obj);
     }
     setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
-    setWorkingHours.workingDays = workingDays;
-    this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
+    setWorkingHours.availabilityWeekDays = workingDays;
+    await this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
     const delay = (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
-    for (let j = 0; j < 30; j++) {
+    const currentDay = dayjs().date();
+    const endOfMonth = dayjs().daysInMonth();
+    const remainingDays = endOfMonth - currentDay + 1;
+    for (let j = 0; j < remainingDays; j++) {
       for (let i = 0; i < availabilityWeekDays!.length; i++) {
         const day = availabilityWeekDays![i];
         const dayOfWeek = currentDate.toLocaleDateString('en-US', {
@@ -185,17 +214,35 @@ export class CalendarService {
     startTime: string,
     endTime: string
   ): Promise<any> {
-    const newAvailability =
-      this.digifranchiseAvailableTimeSlotsRepository.create({
-        ownedDigifranchise: ownedDigifranchise,
-        isSlotBooked: isSlotBooked,
-        day: day,
-        workingDate: workingDate,
-        isSlotAvailable: isSlotAvailable,
-        startTime: startTime,
-        endTime: endTime,
+    const startOfDay = new Date(workingDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(workingDate);
+    endOfDay.setHours(23, 59, 59, 999);
+    const existingSlot =
+      await this.digifranchiseAvailableTimeSlotsRepository.findOne({
+        where: {
+          ownedDigifranchise: { id: ownedDigifranchise.id },
+          day: day,
+          startTime: startTime,
+          endTime: endTime,
+          workingDate: Between(startOfDay, endOfDay),
+        },
       });
-    return this.digifranchiseAvailableTimeSlotsRepository.save(newAvailability);
+    if (!existingSlot) {
+      const newAvailability =
+        this.digifranchiseAvailableTimeSlotsRepository.create({
+          ownedDigifranchise: ownedDigifranchise,
+          isSlotBooked: isSlotBooked,
+          day: day,
+          workingDate: workingDate,
+          isSlotAvailable: isSlotAvailable,
+          startTime: startTime,
+          endTime: endTime,
+        });
+      return this.digifranchiseAvailableTimeSlotsRepository.save(
+        newAvailability
+      );
+    }
   }
 
   async getWorkingHours(ownedDigifranchiseId: string) {
@@ -253,37 +300,37 @@ export class CalendarService {
         },
       }
     );
-    const unavailableSlots = await this.digifranchiseUnavailableTimes.find({
-      where: {
-        ownedDigifranchise: { id: ownedDigifranchiseId },
-        workingDate: Between(startOfDay, endOfDay),
-      },
-    });
-    const unSlots: any = [];
-    for (const unslot of unavailableSlots) {
-      console.log(unslot);
-      const unSlotss = this.calculateAvailableTimeSlots(
-        unslot.startTime,
-        unslot.endTime,
-        workingHours!.allowedTimeSlotUnits,
-        workingHours!.breakTimeBetweenBookedSlots
-      );
-      unSlots.push(unSlotss);
-    }
+    // const unavailableSlots = await this.digifranchiseUnavailableTimes.find({
+    //   where: {
+    //     ownedDigifranchise: { id: ownedDigifranchiseId },
+    //     workingDate: Between(startOfDay, endOfDay),
+    //   },
+    // });
+    // const unSlots: any = [];
+    // for (const unslot of unavailableSlots) {
+    //   console.log(unslot);
+    //   const unSlotss = this.calculateAvailableTimeSlots(
+    //     unslot.startTime,
+    //     unslot.endTime,
+    //     workingHours!.allowedTimeSlotUnits,
+    //     workingHours!.breakTimeBetweenBookedSlots
+    //   );
+    //   unSlots.push(unSlotss);
+    // }
 
-    const availableTimeSlots = timeSlots.filter((slot) => {
-      for (const unslot of unSlots) {
-        if (
-          slot.startTime >= unslot.startTime &&
-          slot.endTime <= unslot.endTime
-        ) {
-          return false;
-        }
-      }
-      return true;
-    });
+    // const availableTimeSlots = timeSlots.filter((slot) => {
+    //   for (const unslot of unSlots) {
+    //     if (
+    //       slot.startTime >= unslot.startTime &&
+    //       slot.endTime <= unslot.endTime
+    //     ) {
+    //       return false;
+    //     }
+    //   }
+    //   return true;
+    // });
 
-    return availableTimeSlots;
+    return timeSlots;
   }
 
   async updateWorkingHoursForDigifranchise(
@@ -314,23 +361,29 @@ export class CalendarService {
       where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
     });
     for (const slot in slots) {
-      await this.digifranchiseAvailableTimeSlotsRepository.delete(
-        slots[slot]!.id
-      );
+      await this.digifranchiseAvailableTimeSlotsRepository.delete({
+        id: slots[slot]!.id,
+        isSlotBooked: false,
+      });
     }
-    const unavailableSlots = await this.digifranchiseUnavailableTimes.find({
-      where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
-    });
-    for (const slot in unavailableSlots) {
-      await this.digifranchiseUnavailableTimes.delete(
-        unavailableSlots[slot]!.id
+    // const unavailableSlots = await this.digifranchiseUnavailableTimes.find({
+    //   where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
+    // });
+    // for (const slot in unavailableSlots) {
+    //   await this.digifranchiseUnavailableTimes.delete(
+    //     unavailableSlots[slot]!.id
+    //   );
+    // }
+    try {
+      const data = await this.createWorkingHoursForDigifranchise(
+        setWorkingHoursDto,
+        ownedDigifranchiseId
       );
+      return data;
+    } catch (error) {
+      return error;
     }
-    const data = await this.createWorkingHoursForDigifranchise(
-      setWorkingHoursDto,
-      ownedDigifranchiseId
-    );
-    return data;
+    // return data;
   }
   async bookAvailabilitySlot(slotId: string, ownedDigifranchiseId: string) {
     const getOwnedDigifranchise: DigifranchiseOwner | null =
@@ -365,5 +418,24 @@ export class CalendarService {
         isSlotBooked: true,
       });
     return updatedTimeSlot;
+  }
+  private async deleteSlotsAtEndOfDay() {
+    try {
+      const startOfDay = dayjs().startOf('day').toDate();
+      const endOfDay = dayjs().endOf('day').toDate();
+
+      const slotsToDelete =
+        await this.digifranchiseAvailableTimeSlotsRepository.find({
+          where: {
+            workingDate: Between(startOfDay, endOfDay),
+          },
+        });
+
+      for (const slot of slotsToDelete) {
+        await this.digifranchiseAvailableTimeSlotsRepository.delete(slot.id);
+      }
+    } catch (error) {
+      console.error('Error deleting slots:', error);
+    }
   }
 }

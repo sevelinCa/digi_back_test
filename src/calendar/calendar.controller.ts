@@ -79,7 +79,7 @@ export class CalendarController {
       );
       return { message: 'Timeslots fetched successfully', timeSlots };
     } catch (error) {
-      return { message: 'Error creating availability', error: error };
+      return { message: 'Error fetching availability', error: error?.response };
     }
   }
   @ApiOperation({ summary: 'Get Working Hours' })
@@ -97,7 +97,7 @@ export class CalendarController {
         await this.calendarService.getWorkingHours(ownedFranchiseId);
       return { message: 'Availability fetched successfully', availabilities };
     } catch (error) {
-      return { message: 'Error creating availability', error: error };
+      return { message: 'Error fetching availability', error: error?.response };
     }
   }
   @ApiOperation({ summary: 'Update Working Hours' })
@@ -117,9 +117,10 @@ export class CalendarController {
           workingHoursDto,
           ownedFranchiseId
         );
+        console.log(updatedSlots)
       return { message: 'Availability updated successfully', updatedSlots };
     } catch (error) {
-      return { message: 'Error creating availability', error: error };
+      return { message: 'Error updating availability', error: error };
     }
   }
   @ApiOperation({ summary: 'Book Timeslot' })
