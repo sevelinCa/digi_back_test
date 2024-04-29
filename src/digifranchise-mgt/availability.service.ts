@@ -807,11 +807,11 @@ export class AvailabilityService {
             relations: ['bookedSlots']
         });
 
-        for (const detail of slotDetails) {
-            if (detail.bookedSlots) {
-                await this.availabilityBookedSlotsRepository.remove(detail.bookedSlots);
-            }
-        }
+        // for (const detail of slotDetails) {
+        //     if (detail.bookedSlots) {
+        //         await this.availabilityBookedSlotsRepository.remove(detail.bookedSlots);
+        //     }
+        // }
 
         const slotsTimeOneOne = await this.availabilitySlotsTimeOneOneRepository.find({
             where: { ownedDigifranchise: Equal(ownedDigifranchiseId) }

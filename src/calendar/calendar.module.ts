@@ -4,7 +4,7 @@ import { CalendarController } from './calendar.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DigifranchiseWorkingHours } from './entities/digifranchise-working-hours.entity';
 import { AvailabilityTimeSlots } from './entities/time-slots.entity';
-import { DigifranchiseUnavailableTimes } from './entities/unavailable-times.entity';
+// import { DigifranchiseUnavailableTimes } from './entities/unavailable-times.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Module({
@@ -13,7 +13,7 @@ import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-own
       DigifranchiseOwner,
       DigifranchiseWorkingHours,
       AvailabilityTimeSlots,
-      DigifranchiseUnavailableTimes
+      // DigifranchiseUnavailableTimes
     ]),
   ],
   providers: [CalendarService],

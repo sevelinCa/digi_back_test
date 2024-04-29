@@ -17,7 +17,7 @@ export class AvailabilityTimeSlots {
     isSlotAvailable: boolean;
 
     @Column({ type: 'timestamp', nullable: true })
-    workingDate?: Date;
+    workingDate: Date;
 
     @Column({ type: 'varchar', length: 255 })
     day: string;
