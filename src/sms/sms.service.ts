@@ -60,4 +60,22 @@ export class SmsService {
     }
     return false;
   }
+
+  async sendOrderCreationConfirmMessage(phoneNumber: string, message: string): Promise<void> {
+    try {
+      await this.client.messages.create({
+        body: message,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: phoneNumber,
+      });
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          errors: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }

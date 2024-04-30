@@ -17,11 +17,13 @@ import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchis
 import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digifranchise-sub-service-category.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { MailModule } from 'src/mail/mail.module';
+import { SmsModule } from 'src/sms/sms.module';
 
 
 @Module({
   imports: [
     MailModule,
+    SmsModule,
     TypeOrmModule.forFeature([
       OrderTable,
       UserEntity,
