@@ -26,15 +26,17 @@ export class CreateOrderTableDto {
     @ApiProperty({
         example: [
             {
-                "Name": "Alex Smith",
-                "Email": "alex.smith@example.com",
-                "Address": "123 Main St, Anytown, AT 12345",
-                "phoneNumber": "123-456-7890"
+                "basic_info": {
+                    "name": "Alex Smith",
+                    "email": "alex.smith@example.com",
+                    "address": "123 Main St, Anytown, AT 12345",
+                    "phoneNumber": "123-456-7890"
+                }
             },
             {
-                "AcademicLevel": "High School",
-                "SubjectToBeTutored": "Mathematics",
-                "Grade": "10"
+                "academicLevel": "High School",
+                "subjectToBeTutored": "Mathematics",
+                "grade": "10"
             }
         ],
         type: () => [Object]

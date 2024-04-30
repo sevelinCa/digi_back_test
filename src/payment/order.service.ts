@@ -130,9 +130,10 @@ export class OrderService {
             ownedDigifranchise: owned
         });
 
-        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.Email || info.phoneNumber);
-        const userEmail = userInfo?.Email;
-        const userPhoneNumber = userInfo?.phoneNumber;
+
+        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.basic_info && info.basic_info.email && info.basic_info.phoneNumber);
+        const userEmail = userInfo?.basic_info?.email;
+        const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
 
         const savedOrder = await this.orderRepository.save(newOrder);
         const thankYouMessage = `Thank you for your order. Your order number is: ${savedOrder.orderNumber}.`;

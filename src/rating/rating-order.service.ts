@@ -56,12 +56,52 @@ export class RatingOrderService {
         return await this.ratingOrderRepository.find();
     }
 
+    // async getRatingOrderById(orderId: string): Promise<RatingOrderTable> {
+    //     const ratingOrder = await this.ratingOrderRepository.findOne({ where: { id:orderId } });
+    //     if (!ratingOrder) {
+    //         throw new NotFoundException(`Rating order with ID ${orderId} not found`);
+    //     }
+    //     return ratingOrder;
+    // }
+
     async getRatingOrderById(orderId: string): Promise<RatingOrderTable> {
-        const ratingOrder = await this.ratingOrderRepository.findOne({ where: { id:orderId } });
+        const ratingOrder = await this.ratingOrderRepository.findOne({
+            where: { id: orderId },
+            relations: [
+                'userId', 
+            'orderId', 
+            'orderId.productId', 
+            'orderId.serviceId', 
+            'orderId.serviceId.digifranchiseId', 
+            'orderId.subProduct', 
+            'orderId.subService', 
+            'orderId.ownedDigifranchise']
+        });
         if (!ratingOrder) {
             throw new NotFoundException(`Rating order with ID ${orderId} not found`);
         }
         return ratingOrder;
+    }
+
+    async getAllRatingsByOwnedDigifranchise(ownedDigifranchiseId: string): Promise<RatingOrderTable[]> {
+        const ratings = await this.ratingOrderRepository
+            .createQueryBuilder('rating')
+            .innerJoinAndSelect('rating.orderId', 'order')
+            .leftJoinAndSelect('order.userId', 'userId')
+            .leftJoinAndSelect('order.productId', 'productId')
+            .leftJoinAndSelect('order.serviceId', 'serviceId')
+            .leftJoinAndSelect('serviceId.digifranchiseId', 'digifranchiseId')
+            .leftJoinAndSelect('order.subProduct', 'subProduct')
+            .leftJoinAndSelect('order.subService', 'subService')
+            .innerJoin('order.ownedDigifranchise', 'ownedDigifranchise')
+            .where('ownedDigifranchise.id = :ownedDigifranchiseId', { ownedDigifranchiseId })
+            .getMany();
+
+        if (!ratings || ratings.length === 0) {
+            throw new NotFoundException(`No ratings found for the ownedDigifranchise with ID ${ownedDigifranchiseId}`);
+        }
+
+        return ratings;
     }
 
     async getAverageRatingForDigifranchise(digifranchiseId: string): Promise<number> {
