@@ -139,6 +139,19 @@ export class OrderService {
 
 
 
+        if (userEmail) {
+            await this.mailService.sendMailToConfirmCreatedOrder({
+                to: userEmail,
+                data: {
+                    orderNumber: savedOrder.orderNumber,
+                    email: userEmail,
+                },
+            });
+        } else if (userPhoneNumber) {
+            await this.smsService.sendOrderCreationConfirmMessage(userPhoneNumber, thankYouMessage);
+        } else {
+            throw new HttpException('Neither email nor phone number is provided in order additional info', HttpStatus.BAD_REQUEST);
+        }
 
         return savedOrder;
     }
@@ -369,7 +382,6 @@ export class OrderService {
     async getOrderByOrderNumber(orderNumber: number, ownedFranchiseId: string): Promise<OrderTable | null> {
         return this.orderRepository.findOne({
             where: { orderNumber: orderNumber, ownedDigifranchise: Equal(ownedFranchiseId) },
-            relations: ['ownedDigifranchise']
         });
     }
 
