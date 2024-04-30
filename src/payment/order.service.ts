@@ -130,16 +130,13 @@ export class OrderService {
             ownedDigifranchise: owned
         });
 
-
-        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.basic_info && info.basic_info.email && info.basic_info.phoneNumber);
+        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.basic_info && (info.basic_info.email || info.basic_info.phoneNumber));
         const userEmail = userInfo?.basic_info?.email;
         const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-
+        
         const savedOrder = await this.orderRepository.save(newOrder);
         const thankYouMessage = `Thank you for your order. Your order number is: ${savedOrder.orderNumber}.`;
-
-
-
+        
         if (userEmail) {
             await this.mailService.sendMailToConfirmCreatedOrder({
                 to: userEmail,
@@ -148,9 +145,13 @@ export class OrderService {
                     email: userEmail,
                 },
             });
-        } else if (userPhoneNumber) {
+        }
+        
+        if (userPhoneNumber) {
             await this.smsService.sendOrderCreationConfirmMessage(userPhoneNumber, thankYouMessage);
-        } else {
+        }
+        
+        if (!userEmail && !userPhoneNumber) {
             throw new HttpException('Neither email nor phone number is provided in order additional info', HttpStatus.BAD_REQUEST);
         }
 
