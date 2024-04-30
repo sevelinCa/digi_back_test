@@ -23,15 +23,25 @@ export class CreateOrderTableDto {
     @IsNotEmpty()
     OrderDate: Date;
 
-    @ApiProperty({ 
+    @ApiProperty({
         example: [
-            { "Name": "Alex Smith", "Email": "alex.smith@example.com", "Address": "123 Main St, Anytown, AT 12345" },
-            { "AcademicLevel": "High School", "SubjectToBeTutored": "Mathematics", "Grade": "10" }
-        ], 
-        type: () => [Object] 
+            {
+                "Name": "Alex Smith",
+                "Email": "alex.smith@example.com",
+                "Address": "123 Main St, Anytown, AT 12345",
+                "phoneNumber": "123-456-7890"
+            },
+            {
+                "AcademicLevel": "High School",
+                "SubjectToBeTutored": "Mathematics",
+                "Grade": "10"
+            }
+        ],
+        type: () => [Object]
     })
     @IsArray()
     orderAdditionalInfo: any[];
+
 }
 
 export class UpdateOrderTableDto {
@@ -46,13 +56,13 @@ export class UpdateOrderTableDto {
     @IsEnum(OrderStatus)
     status?: OrderStatus;
 
-    @ApiProperty({ 
+    @ApiProperty({
         example: [
             { "Name": "Alex Smith", "Email": "alex.smith@example.com", "Address": "123 Main St, Anytown, AT 12345" },
             { "AcademicLevel": "High School", "SubjectToBeTutored": "Mathematics", "Grade": "10" }
-        ], 
-        type: () => [Object], 
-        required: false 
+        ],
+        type: () => [Object],
+        required: false
     })
     @IsOptional()
     @IsArray()

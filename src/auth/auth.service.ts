@@ -928,8 +928,6 @@ export class AuthService {
     });
   }
 
-
-
   async forgotPasswordWithPhone(phoneNumber: string): Promise<any> {
     const user = await this.usersService.findOne({
       phoneNumber,

@@ -15,6 +15,7 @@ import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchi
 import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digifranchise-sub-service-category.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { MailService } from 'src/mail/mail.service';
+import { SmsService } from 'src/sms/sms.service';
 
 @Injectable()
 export class OrderService {
@@ -45,6 +46,9 @@ export class OrderService {
 
         @Inject(MailService)
         private readonly mailService: MailService,
+
+        private smsService: SmsService,
+
     ) { }
 
     async createOrder(
@@ -126,19 +130,15 @@ export class OrderService {
             ownedDigifranchise: owned
         });
 
-        const userEmail = createOrderTableDto.orderAdditionalInfo.find(info => info.Email)?.Email;
-        if (!userEmail) {
-            throw new HttpException('User email not found in order additional info', HttpStatus.BAD_REQUEST);
-        }
+        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.Email || info.phoneNumber);
+        const userEmail = userInfo?.Email;
+        const userPhoneNumber = userInfo?.phoneNumber;
 
         const savedOrder = await this.orderRepository.save(newOrder);
-        await this.mailService.sendMailToConfirmCreatedOrder({
-            to: userEmail, 
-            data: {
-                orderNumber: savedOrder.orderNumber,
-                email: userEmail, 
-            },
-        });
+        const thankYouMessage = `Thank you for your order. Your order number is: ${savedOrder.orderNumber}.`;
+
+
+
 
         return savedOrder;
     }
