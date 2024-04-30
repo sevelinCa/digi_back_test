@@ -16,10 +16,12 @@ import { DigifranchiseSubServices } from 'src/digifranchise/entities/digifranchi
 import { DigifranchiseSubProduct } from 'src/digifranchise/entities/digifranchise-sub-product.entity';
 import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digifranchise-sub-service-category.entity';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { MailModule } from 'src/mail/mail.module';
 
 
 @Module({
   imports: [
+    MailModule,
     TypeOrmModule.forFeature([
       OrderTable,
       UserEntity,
@@ -35,6 +37,7 @@ import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-own
       DigifranchiseSubServiceCategory,
       DigifranchiseOwner
     ]),
+
   ],
   providers: [OrderService, RateService, OrderBasicInfoService],
   controllers: [RateController, OrderController, OrderBasicInfoController]

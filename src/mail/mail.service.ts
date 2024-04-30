@@ -305,4 +305,30 @@ export class MailService {
       },
     });
   }
+
+
+  async sendMailToConfirmCreatedOrder(mailData: MailData<{ orderNumber: number, email: string }>): Promise<void> {
+   
+    const context = {
+        orderNumber: mailData.data.orderNumber,
+        app_name: this.configService.get('app.name', { infer: true }),
+    };
+
+   
+    const subject = `${context.app_name} Order Confirmation - Order Number: ${context.orderNumber}`;
+
+    await this.mailerService.sendMail({
+        to: mailData.data.email,
+        subject: subject,
+       
+        templatePath: path.join(
+            this.configService.getOrThrow('app.workingDirectory', { infer: true }),
+            'src',
+            'mail',
+            'mail-templates',
+            'sendMail-toConfirm-CreatedOrder.hbs'
+        ),
+        context: context,
+    });
+}
 }
