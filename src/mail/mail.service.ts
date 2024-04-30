@@ -261,4 +261,48 @@ export class MailService {
       context,
     });
   }
+
+
+  async confirmOrderNumber(
+    mailData: MailData<{ hash: string}>
+  ): Promise<void> {
+    const i18n = I18nContext.current();
+    let emailConfirmTitle: MaybeType<string>;
+    let text1: MaybeType<string>;
+    let text2: MaybeType<string>;
+    let text3: MaybeType<string>;
+
+    if (i18n) {
+      [emailConfirmTitle, text1, text2, text3] = await Promise.all([
+        i18n.t('common.createOrder'),
+        i18n.t('confirm-order.text1'),
+        i18n.t('confirm-order.text2'),
+        i18n.t('confirm-order.text3'),
+      ]);
+    }
+
+
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      subject: emailConfirmTitle,
+      text: ``,
+      templatePath: path.join(
+        this.configService.getOrThrow('app.workingDirectory', {
+          infer: true,
+        }),
+        'src',
+        'mail',
+        'mail-templates',
+        'activation.hbs'
+      ),
+      context: {
+        title: emailConfirmTitle,
+        actionTitle: emailConfirmTitle,
+        app_name: this.configService.get('app.name', { infer: true }),
+        text1,
+        text2,
+        text3,
+      },
+    });
+  }
 }
