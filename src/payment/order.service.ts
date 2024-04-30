@@ -126,19 +126,17 @@ export class OrderService {
             ownedDigifranchise: owned
         });
 
-        // Extract the user's email from the orderAdditionalInfo array
         const userEmail = createOrderTableDto.orderAdditionalInfo.find(info => info.Email)?.Email;
         if (!userEmail) {
             throw new HttpException('User email not found in order additional info', HttpStatus.BAD_REQUEST);
         }
 
         const savedOrder = await this.orderRepository.save(newOrder);
-        // Use the extracted userEmail to send the confirmation email
         await this.mailService.sendMailToConfirmCreatedOrder({
-            to: userEmail, // Use the extracted user's email
+            to: userEmail, 
             data: {
                 orderNumber: savedOrder.orderNumber,
-                email: userEmail, // Use the extracted user's email
+                email: userEmail, 
             },
         });
 
