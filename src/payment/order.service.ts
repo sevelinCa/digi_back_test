@@ -16,7 +16,7 @@ import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digi
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { MailService } from 'src/mail/mail.service';
 import { SmsService } from 'src/sms/sms.service';
-import { nanoid } from 'nanoid';
+import uniqid from 'uniqid';
 
 @Injectable()
 export class OrderService {
@@ -128,7 +128,7 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
-            orderCode: nanoid(),
+            orderCode: uniqid(),
             ownedDigifranchise: owned
         });
 
@@ -328,7 +328,7 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
-            orderCode: nanoid(),
+            orderCode: uniqid(),
             ownedDigifranchise: owned
         });
 
