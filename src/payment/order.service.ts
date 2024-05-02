@@ -16,6 +16,7 @@ import { DigifranchiseSubServiceCategory } from 'src/digifranchise/entities/digi
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 import { MailService } from 'src/mail/mail.service';
 import { SmsService } from 'src/sms/sms.service';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class OrderService {
@@ -127,6 +128,7 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            orderCode: nanoid(),
             ownedDigifranchise: owned
         });
 
@@ -135,7 +137,7 @@ export class OrderService {
         const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
         
         const savedOrder = await this.orderRepository.save(newOrder);
-        const thankYouMessage = `Thank you for your order. Your order number is: ${savedOrder.orderNumber}.`;
+        const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
         
         if (userEmail) {
             await this.mailService.sendMailToConfirmCreatedOrder({
@@ -316,6 +318,7 @@ export class OrderService {
         if (!owned) {
             throw new HttpException('Digifranchise owner not found', HttpStatus.NOT_FOUND);
         }
+
         const newOrder = this.orderRepository.create({
             ...createOrderTableDto,
             userId: user,
@@ -325,10 +328,37 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            orderCode: nanoid(),
             ownedDigifranchise: owned
         });
 
+        
+
         const savedOrder = await this.orderRepository.save(newOrder);
+
+        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.basic_info && (info.basic_info.email || info.basic_info.phoneNumber));
+        const userEmail = userInfo?.basic_info?.email;
+        const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
+        
+        const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
+        
+        if (userEmail) {
+            await this.mailService.sendMailToConfirmCreatedOrder({
+                to: userEmail,
+                data: {
+                    orderNumber: savedOrder.orderNumber,
+                    email: userEmail,
+                },
+            });
+        }
+        
+        if (userPhoneNumber) {
+            await this.smsService.sendOrderCreationConfirmMessage(userPhoneNumber, thankYouMessage);
+        }
+        
+        if (!userEmail && !userPhoneNumber) {
+            throw new HttpException('Neither email nor phone number is provided in order additional info', HttpStatus.BAD_REQUEST);
+        }
         return savedOrder;
     }
 
