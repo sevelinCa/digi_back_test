@@ -61,79 +61,91 @@ export class AuthService {
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
-      email: loginDto.email,
+       email: loginDto.email,
     });
-
+   
     if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: 'notFound',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+       throw new HttpException(
+         {
+           status: HttpStatus.UNPROCESSABLE_ENTITY,
+           errors: {
+             email: 'notFound',
+           },
+         },
+         HttpStatus.UNPROCESSABLE_ENTITY,
+       );
     }
-
+   
+    if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
+             throw new HttpException(
+         {
+           status: HttpStatus.FORBIDDEN,
+           errors: {
+             role: 'notAllowed',
+           },
+         },
+         HttpStatus.FORBIDDEN,
+       );
+    }
+   
     if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+       throw new HttpException(
+         {
+           status: HttpStatus.UNPROCESSABLE_ENTITY,
+           errors: {
+             email: `needLoginViaProvider:${user.provider}`,
+           },
+         },
+         HttpStatus.UNPROCESSABLE_ENTITY,
+       );
     }
-
+   
     if (!user.password) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: 'incorrectPassword',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+       throw new HttpException(
+         {
+           status: HttpStatus.UNPROCESSABLE_ENTITY,
+           errors: {
+             password: 'incorrectPassword',
+           },
+         },
+         HttpStatus.UNPROCESSABLE_ENTITY,
+       );
     }
-
+   
     const isValidPassword = await bcrypt.compare(
-      loginDto.password,
-      user.password,
+       loginDto.password,
+       user.password,
     );
-
+   
     if (!isValidPassword) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: 'incorrectPassword',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+       throw new HttpException(
+         {
+           status: HttpStatus.UNPROCESSABLE_ENTITY,
+           errors: {
+             password: 'incorrectPassword',
+           },
+         },
+         HttpStatus.UNPROCESSABLE_ENTITY,
+       );
     }
-
+   
     const session = await this.sessionService.create({
-      user,
+       user,
     });
-
+   
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
-      id: user.id,
-      role: user.role,
-      sessionId: session.id,
+       id: user.id,
+       role: user.role,
+       sessionId: session.id,
     });
-
+   
     return {
-      refreshToken,
-      token,
-      tokenExpires,
-      user,
+       refreshToken,
+       token,
+       tokenExpires,
+       user,
     };
-  }
+   }
 
   async customerEmailLogin(digifranchiseId: string, loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
