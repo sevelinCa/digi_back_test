@@ -39,6 +39,9 @@ import { CustomerSubscriptionService } from 'src/digifranchise-subscription/cust
 import { CustomerSubscription } from 'src/digifranchise-subscription/entities/customer-subscription.entity';
 import { AuthForgotPasswordForWebSiteDto } from './dto/auth-forgot-password-on-webs.dto';
 import { ForgotPasswordMailData } from 'forgot-password-mail-data.interface';
+import { Role } from 'src/roles/domain/role';
+import { RoleEntity } from 'src/roles/infrastructure/persistence/relational/entities/role.entity';
+
 
 @Injectable()
 export class AuthService {
@@ -51,7 +54,9 @@ export class AuthService {
     private smsService: SmsService,
     private customerSubscription: CustomerSubscriptionService,
     @InjectRepository(UserEntity)
-    private readonly usersRepository: Repository<User>
+    private readonly usersRepository: Repository<User>,
+    @InjectRepository(RoleEntity) 
+    private readonly roleRepository: Repository<RoleEntity>,
   ) { }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
@@ -318,7 +323,7 @@ async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateU
           await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId)
         }
       })
-      const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
         id: user.id,
         role: newUser.role,
         sessionId: session.id,
@@ -1225,4 +1230,66 @@ async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateU
       tokenExpires,
     };
   }
+
+  private async getTokensDataForGoogle(data: {
+    id: User['id'];
+    role: User['role'];
+    sessionId: Session['id'];
+   }) {
+    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
+       infer: true,
+    });
+   
+    const tokenExpires = Date.now() + ms(tokenExpiresIn);
+   
+  // Fetch the full RoleEntity using the role ID
+if (!data.role) {
+  throw new Error('Role is not defined'); // Or handle this case differently
+}
+
+const roleEntity = await this.roleRepository.findOne({ where: { id: data.role.id } });
+
+if (!roleEntity) {
+  throw new Error('Role entity not found'); 
+}
+
+const tokenPayload = {
+   id: data.id,
+   role: {
+     id: roleEntity.id,
+     name: roleEntity.name, 
+     __entity: roleEntity, 
+   },
+   sessionId: data.sessionId,
+};
+   
+    const [token, refreshToken] = await Promise.all([
+       await this.jwtService.signAsync(
+         tokenPayload, 
+         {
+           secret: this.configService.getOrThrow('auth.secret', { infer: true }),
+           expiresIn: tokenExpiresIn,
+         },
+       ),
+       await this.jwtService.signAsync(
+         {
+           sessionId: data.sessionId,
+         },
+         {
+           secret: this.configService.getOrThrow('auth.refreshSecret', {
+             infer: true,
+           }),
+           expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
+             infer: true,
+           }),
+         },
+       ),
+    ]);
+   
+    return {
+       token,
+       refreshToken,
+       tokenExpires,
+    };
+   }
 }
