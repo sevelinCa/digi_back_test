@@ -126,12 +126,12 @@ export class OrderController {
     @ApiOperation({ summary: 'GET - Retrieve an order by its number and owned franchise ID' })
     @ApiResponse({ status: HttpStatus.OK, description: 'Order retrieved successfully.' })
     @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Order not found.' })
-    @Get('get-order-by-number/:orderNumber')
+    @Get('get-order-by-number/:orderCode')
     async getOrderByOrderNumber(
-        @Param('orderNumber') orderNumber: number,
+        @Param('orderCode') orderCode: string,
         @Query('ownedFranchiseId') ownedFranchiseId: string,
     ): Promise<OrderTable> {
-        const order = await this.orderService.getOrderByOrderNumber(orderNumber, ownedFranchiseId);
+        const order = await this.orderService.getOrderByOrderNumber(orderCode, ownedFranchiseId);
         if (!order) {
             throw new NotFoundException('Order not found');
         }

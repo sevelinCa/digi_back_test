@@ -411,9 +411,9 @@ export class OrderService {
         }
     }
 
-    async getOrderByOrderNumber(orderNumber: number, ownedFranchiseId: string): Promise<OrderTable | null> {
+    async getOrderByOrderNumber(orderCode: string, ownedFranchiseId: string): Promise<OrderTable | null> {
         return this.orderRepository.findOne({
-            where: { orderNumber: orderNumber, ownedDigifranchise: Equal(ownedFranchiseId) },
+            where: { orderCode: orderCode, ownedDigifranchise: Equal(ownedFranchiseId) },
             relations: ['ownedDigifranchise']
         });
     }
