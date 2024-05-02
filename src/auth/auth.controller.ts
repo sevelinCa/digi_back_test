@@ -91,10 +91,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   public async googleAuthenticationCustomer(
     @Req() req,
-    @Query('digifranchiseId') digifranchiseId: string,
+    @Query('ownedDigifranchiseId') ownedDigifranchiseId: string,
     @Body() authDto: GoogleCreateUserDto,
   ) {
-    const data = await this.service.googleAuthCustomer(digifranchiseId, authDto);
+    const data = await this.service.googleAuthCustomer(ownedDigifranchiseId, authDto);
     return {
       user: {
         ...data.user,

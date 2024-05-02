@@ -278,7 +278,7 @@ export class AuthService {
     }
   }
 
-  async googleAuthCustomer(digifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
+  async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
     const user = await this.usersRepository.findOne({
       where: { email: googleUser.email as string },
     });
@@ -328,10 +328,10 @@ export class AuthService {
         const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
 
         getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-          if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
+          if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
             return
           } else {
-            await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+            await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId)
           }
         })
         const { token, refreshToken, tokenExpires } = await this.getTokensData({
