@@ -315,7 +315,7 @@ export class MailService {
     };
 
    
-    const subject = `${context.app_name} Order Confirmation - Order Number: ${context.orderNumber}`;
+    const subject = `${context.app_name} Order Confirmation - Order Code: ${context.orderNumber}`;
 
     await this.mailerService.sendMail({
         to: mailData.data.email,
