@@ -278,9 +278,30 @@ export class AuthService {
     }
   }
 
-  async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
+async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
+ const user = await this.usersRepository.findOne({
+    where: { email: googleUser.email as string },
+ });
+
+ if (user) {
+  throw new HttpException('An account with this email address already exists. Please log in or use a different email address.', HttpStatus.CONFLICT);
+ } else {
+    const newUser = await this.usersRepository.save(
+      this.usersRepository.create({
+        ...googleUser,
+        role: {
+          id: RoleEnum.customer
+        },
+        status: {
+          id: StatusEnum.active
+        },
+        image: googleUser.profilePic,
+        provider: 'google',
+      }),
+    );
+
     const user = await this.usersRepository.findOne({
-      where: { email: googleUser.email as string },
+      where: { email: newUser.email as string },
     });
 
     if (user) {
@@ -288,9 +309,18 @@ export class AuthService {
         user,
       });
 
+      const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+
+      getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+        if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
+          return
+        } else {
+          await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId)
+        }
+      })
       const { token, refreshToken, tokenExpires } = await this.getTokensData({
         id: user.id,
-        role: user.role,
+        role: newUser.role,
         sessionId: session.id,
       });
 
@@ -298,58 +328,11 @@ export class AuthService {
         refreshToken,
         token,
         tokenExpires,
-        user,
-      };
-    } else {
-
-      const newUser = await this.usersRepository.save(
-        this.usersRepository.create({
-          ...googleUser,
-          role: {
-            id: RoleEnum.customer
-          },
-          status: {
-            id: StatusEnum.active
-          },
-          image: googleUser.profilePic,
-          provider: 'google',
-        }),
-      );
-
-      const user = await this.usersRepository.findOne({
-        where: { email: newUser.email as string },
-      });
-
-      if (user) {
-        const session = await this.sessionService.create({
-          user,
-        });
-
-        const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
-
-        getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-          if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
-            return
-          } else {
-            await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId)
-          }
-        })
-        const { token, refreshToken, tokenExpires } = await this.getTokensData({
-          id: user.id,
-          role: newUser.role,
-          sessionId: session.id,
-        });
-
-        return {
-          refreshToken,
-          token,
-          tokenExpires,
-          newUser,
-        }
+        newUser,
       }
     }
-  }
-
+ }
+}
   async register(dto: AuthRegisterLoginDto): Promise<void> {
     const user = await this.usersService.create({
       ...dto,
