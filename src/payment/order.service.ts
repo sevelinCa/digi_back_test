@@ -143,7 +143,7 @@ export class OrderService {
             await this.mailService.sendMailToConfirmCreatedOrder({
                 to: userEmail,
                 data: {
-                    orderNumber: savedOrder.orderNumber,
+                    orderNumber: savedOrder.orderCode,
                     email: userEmail,
                 },
             });
@@ -346,7 +346,7 @@ export class OrderService {
             await this.mailService.sendMailToConfirmCreatedOrder({
                 to: userEmail,
                 data: {
-                    orderNumber: savedOrder.orderNumber,
+                    orderNumber: savedOrder.orderCode,
                     email: userEmail,
                 },
             });

@@ -74,7 +74,7 @@ export class OrderTable {
     orderNumber: number;
 
     @Column({ type: 'varchar' })
-    orderCode: string | null
+    orderCode: string
 
     @Column({ type: 'varchar', length: 255 })
     unitPrice: string;

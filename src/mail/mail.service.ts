@@ -307,7 +307,7 @@ export class MailService {
   }
 
 
-  async sendMailToConfirmCreatedOrder(mailData: MailData<{ orderNumber: number, email: string }>): Promise<void> {
+  async sendMailToConfirmCreatedOrder(mailData: MailData<{ orderNumber: string, email: string }>): Promise<void> {
    
     const context = {
         orderNumber: mailData.data.orderNumber,
