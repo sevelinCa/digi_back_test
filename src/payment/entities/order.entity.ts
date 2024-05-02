@@ -73,6 +73,9 @@ export class OrderTable {
     @Column({ type: 'integer' })
     orderNumber: number;
 
+    @Column({ type: 'varchar' })
+    orderCode: string
+
     @Column({ type: 'varchar', length: 255 })
     unitPrice: string;
 
