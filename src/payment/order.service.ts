@@ -231,9 +231,11 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            orderCode: uniqid(),
         });
 
         const savedOrder = await this.orderRepository.save(newOrder);
+
         return savedOrder;
     }
 
@@ -520,10 +522,36 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            orderCode: uniqid(),
             ownedDigifranchise: owned
         });
 
         const savedOrder = await this.orderRepository.save(newOrder);
+
+        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.basic_info && (info.basic_info.email || info.basic_info.phoneNumber));
+        const userEmail = userInfo?.basic_info?.email;
+        const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
+        
+        const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
+        
+        if (userEmail) {
+            await this.mailService.sendMailToConfirmCreatedOrder({
+                to: userEmail,
+                data: {
+                    orderNumber: savedOrder.orderCode,
+                    email: userEmail,
+                },
+            });
+        }
+        
+        if (userPhoneNumber) {
+            await this.smsService.sendOrderCreationConfirmMessage(userPhoneNumber, thankYouMessage);
+        }
+        
+        if (!userEmail && !userPhoneNumber) {
+            throw new HttpException('Neither email nor phone number is provided in order additional info', HttpStatus.BAD_REQUEST);
+        }
+
         return savedOrder;
     }
 
@@ -591,10 +619,35 @@ export class OrderService {
             vatAmount: vatAmount,
             totalAmount,
             orderNumber: nextOrderNumber,
+            orderCode: uniqid(),
             ownedDigifranchise: owned
         });
 
         const savedOrder = await this.orderRepository.save(newOrder);
+
+        const userInfo = createOrderTableDto.orderAdditionalInfo.find(info => info.basic_info && (info.basic_info.email || info.basic_info.phoneNumber));
+        const userEmail = userInfo?.basic_info?.email;
+        const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
+        
+        const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
+        
+        if (userEmail) {
+            await this.mailService.sendMailToConfirmCreatedOrder({
+                to: userEmail,
+                data: {
+                    orderNumber: savedOrder.orderCode,
+                    email: userEmail,
+                },
+            });
+        }
+        
+        if (userPhoneNumber) {
+            await this.smsService.sendOrderCreationConfirmMessage(userPhoneNumber, thankYouMessage);
+        }
+        
+        if (!userEmail && !userPhoneNumber) {
+            throw new HttpException('Neither email nor phone number is provided in order additional info', HttpStatus.BAD_REQUEST);
+        }
         return savedOrder;
     }
 
