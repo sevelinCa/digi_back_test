@@ -26,7 +26,7 @@ import { Session } from 'src/session/domain/session';
 import { UsersService } from 'src/users/users.service';
 import { SessionService } from 'src/session/session.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
 import { SmsService } from 'src/sms/sms.service';
@@ -55,115 +55,115 @@ export class AuthService {
     private customerSubscription: CustomerSubscriptionService,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<User>,
-    @InjectRepository(RoleEntity) 
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) { }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
-       email: loginDto.email,
+      email: loginDto.email,
     });
-   
-    if (!user) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             email: 'notFound',
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
-    }
-   
-    if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-             throw new HttpException(
-         {
-           status: HttpStatus.FORBIDDEN,
-           errors: {
-             role: 'notAllowed',
-           },
-         },
-         HttpStatus.FORBIDDEN,
-       );
-    }
-   
-    if (user.provider !== AuthProvidersEnum.email) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             email: `needLoginViaProvider:${user.provider}`,
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
-    }
-   
-    if (!user.password) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             password: 'incorrectPassword',
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
-    }
-   
-    const isValidPassword = await bcrypt.compare(
-       loginDto.password,
-       user.password,
-    );
-   
-    if (!isValidPassword) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             password: 'incorrectPassword',
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
-    }
-   
-    const session = await this.sessionService.create({
-       user,
-    });
-   
-    const { token, refreshToken, tokenExpires } = await this.getTokensData({
-       id: user.id,
-       role: user.role,
-       sessionId: session.id,
-    });
-   
-    return {
-       refreshToken,
-       token,
-       tokenExpires,
-       user,
-    };
-   }
 
-   async customerEmailLogin(digifranchiseId: string, loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
-    const user = await this.usersService.findOne({
-       email: loginDto.email,
-    });
-   
     if (!user) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             email: 'notFound',
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'notFound',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
-   
+
+    if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: {
+            role: 'notAllowed',
+          },
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (user.provider !== AuthProvidersEnum.email) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: `needLoginViaProvider:${user.provider}`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (!user.password) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
+
+    if (!isValidPassword) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    const session = await this.sessionService.create({
+      user,
+    });
+
+    const { token, refreshToken, tokenExpires } = await this.getTokensData({
+      id: user.id,
+      role: user.role,
+      sessionId: session.id,
+    });
+
+    return {
+      refreshToken,
+      token,
+      tokenExpires,
+      user,
+    };
+  }
+
+  async customerEmailLogin(digifranchiseId: string, loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
+    const user = await this.usersService.findOne({
+      email: loginDto.email,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: 'notFound',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
     if (user.role && user.role.id !== RoleEnum.customer) {
       throw new HttpException(
         {
@@ -174,76 +174,76 @@ export class AuthService {
         },
         HttpStatus.FORBIDDEN,
       );
-  }
-   
+    }
+
     if (user.provider !== AuthProvidersEnum.email) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             email: `needLoginViaProvider:${user.provider}`,
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            email: `needLoginViaProvider:${user.provider}`,
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
-   
+
     if (!user.password) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             password: 'incorrectPassword',
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
-   
+
     const isValidPassword = await bcrypt.compare(
-       loginDto.password,
-       user.password,
+      loginDto.password,
+      user.password,
     );
-   
+
     if (!isValidPassword) {
-       throw new HttpException(
-         {
-           status: HttpStatus.UNPROCESSABLE_ENTITY,
-           errors: {
-             password: 'incorrectPassword',
-           },
-         },
-         HttpStatus.UNPROCESSABLE_ENTITY,
-       );
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
-   
+
     const session = await this.sessionService.create({
-       user,
+      user,
     });
-   
+
     const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
-   
+
     getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-       if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
-         return
-       } else {
-         await this.customerSubscription.createSubscription(user.id, digifranchiseId)
-       }
+      if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
+        return
+      } else {
+        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+      }
     })
-   
+
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
-       id: user.id,
-       role: user.role,
-       sessionId: session.id,
+      id: user.id,
+      role: user.role,
+      sessionId: session.id,
     });
-   
+
     return {
-       refreshToken,
-       token,
-       tokenExpires,
-       user,
+      refreshToken,
+      token,
+      tokenExpires,
+      user,
     };
-   }
+  }
 
   async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
     const user = await this.usersRepository.findOne({
@@ -307,30 +307,18 @@ export class AuthService {
     }
   }
 
-async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
- const user = await this.usersRepository.findOne({
-    where: { email: googleUser.email as string },
- });
 
- if (user) {
-  throw new HttpException('An account with this email address already exists. Please log in or use a different email address.', HttpStatus.CONFLICT);
- } else {
-    const newUser = await this.usersRepository.save(
-      this.usersRepository.create({
-        ...googleUser,
-        role: {
-          id: RoleEnum.customer
-        },
-        status: {
-          id: StatusEnum.active
-        },
-        image: googleUser.profilePic,
-        provider: 'google',
-      }),
-    );
+  async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
+    const existingUserWithDifferentProvider = await this.usersRepository.findOne({
+      where: { email: googleUser.email as string, provider: Not('google') },
+    });
+
+    if (existingUserWithDifferentProvider) {
+      throw new HttpException('An account with this email address already exists, Please log in or use a different email address.', HttpStatus.CONFLICT);
+    }
 
     const user = await this.usersRepository.findOne({
-      where: { email: newUser.email as string },
+      where: { email: googleUser.email as string, provider: 'google' },
     });
 
     if (user) {
@@ -338,18 +326,19 @@ async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateU
         user,
       });
 
-      const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+      const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
 
       getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
         if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
-          return
+          return;
         } else {
-          await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId)
+          await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
         }
-      })
+      });
+
       const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
         id: user.id,
-        role: newUser.role,
+        role: user.role,
         sessionId: session.id,
       });
 
@@ -357,11 +346,58 @@ async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateU
         refreshToken,
         token,
         tokenExpires,
-        newUser,
+        user,
+      };
+    } else {
+      const newUser = await this.usersRepository.save(
+        this.usersRepository.create({
+          ...googleUser,
+          role: {
+            id: RoleEnum.customer,
+          },
+          status: {
+            id: StatusEnum.active,
+          },
+          image: googleUser.profilePic,
+          provider: 'google',
+        }),
+      );
+
+      const user = await this.usersRepository.findOne({
+        where: { email: newUser.email as string },
+      });
+
+      if (user) {
+        const session = await this.sessionService.create({
+          user,
+        });
+
+        const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
+
+        getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+          if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
+            return;
+          } else {
+            await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
+          }
+        });
+
+        const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
+          id: user.id,
+          role: newUser.role,
+          sessionId: session.id,
+        });
+
+        return {
+          refreshToken,
+          token,
+          tokenExpires,
+          newUser,
+        };
       }
     }
- }
-}
+  }
+
   async register(dto: AuthRegisterLoginDto): Promise<void> {
     const user = await this.usersService.create({
       ...dto,
@@ -1259,61 +1295,61 @@ async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateU
     id: User['id'];
     role: User['role'];
     sessionId: Session['id'];
-   }) {
+  }) {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
-       infer: true,
+      infer: true,
     });
-   
+
     const tokenExpires = Date.now() + ms(tokenExpiresIn);
-   
-  // Fetch the full RoleEntity using the role ID
-if (!data.role) {
-  throw new Error('Role is not defined'); // Or handle this case differently
-}
 
-const roleEntity = await this.roleRepository.findOne({ where: { id: data.role.id } });
+    // Fetch the full RoleEntity using the role ID
+    if (!data.role) {
+      throw new Error('Role is not defined'); // Or handle this case differently
+    }
 
-if (!roleEntity) {
-  throw new Error('Role entity not found'); 
-}
+    const roleEntity = await this.roleRepository.findOne({ where: { id: data.role.id } });
 
-const tokenPayload = {
-   id: data.id,
-   role: {
-     id: roleEntity.id,
-     name: roleEntity.name, 
-     __entity: roleEntity, 
-   },
-   sessionId: data.sessionId,
-};
-   
-    const [token, refreshToken] = await Promise.all([
-       await this.jwtService.signAsync(
-         tokenPayload, 
-         {
-           secret: this.configService.getOrThrow('auth.secret', { infer: true }),
-           expiresIn: tokenExpiresIn,
-         },
-       ),
-       await this.jwtService.signAsync(
-         {
-           sessionId: data.sessionId,
-         },
-         {
-           secret: this.configService.getOrThrow('auth.refreshSecret', {
-             infer: true,
-           }),
-           expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
-             infer: true,
-           }),
-         },
-       ),
-    ]);
-   
-    return {
-       token,
-       refreshToken,
-       tokenExpires,
+    if (!roleEntity) {
+      throw new Error('Role entity not found');
+    }
+
+    const tokenPayload = {
+      id: data.id,
+      role: {
+        id: roleEntity.id,
+        name: roleEntity.name,
+        __entity: roleEntity,
+      },
+      sessionId: data.sessionId,
     };
-   }
+
+    const [token, refreshToken] = await Promise.all([
+      await this.jwtService.signAsync(
+        tokenPayload,
+        {
+          secret: this.configService.getOrThrow('auth.secret', { infer: true }),
+          expiresIn: tokenExpiresIn,
+        },
+      ),
+      await this.jwtService.signAsync(
+        {
+          sessionId: data.sessionId,
+        },
+        {
+          secret: this.configService.getOrThrow('auth.refreshSecret', {
+            infer: true,
+          }),
+          expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
+            infer: true,
+          }),
+        },
+      ),
+    ]);
+
+    return {
+      token,
+      refreshToken,
+      tokenExpires,
+    };
+  }
 }
