@@ -106,7 +106,7 @@ export class DigifranchiseServiceSeedService {
         if (check === 0) {
             const digifranchiseId = this.digifranchiseRepository.create({
                 digifranchiseName: "Body Revamp",
-                description: "Body Revamp is a personal training digifranchiseId where certified individuals offer personalized personal training services to their customers. Customers can either subscribe to online exercise and training content or sign up for training sessions delivered live online or in-person.",
+                description: "Body Revamp is a personal training digifranchise where certified individuals offer personalized personal training services to their customers. Customers can either subscribe to online exercise and training content or sign up for training sessions delivered live online or in-person.",
                 status: StatusEnum.active,
             });
 
