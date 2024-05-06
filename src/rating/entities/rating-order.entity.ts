@@ -27,8 +27,8 @@ export class RatingOrderTable {
     @Column({ type: 'integer' })
     rating: number;
 
-    @Column({ type: 'text'})
-    review: string;
+    @Column({ type: 'text', nullable: true })
+    review: string | null;
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;

@@ -9,12 +9,12 @@ export class CreateRatingOrderDto {
  @Max(5)
  rating: number;
 
- @ApiProperty({ example: 'Great service!' })
- @IsNotEmpty()
+ @ApiProperty({ example: 'Great service!', required: false })
+ @IsOptional()
  @IsString()
  @MinLength(1)
  @MaxLength(255)
- review: string;
+ review?: string;
 }
 
 export class UpdateRatingOrderDto {
