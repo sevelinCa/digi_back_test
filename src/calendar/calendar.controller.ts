@@ -19,7 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { SetWorkingHoursDto } from './dto/availability.dto';
+import { SetWorkingHoursDto, TimeSlotDTO } from './dto/availability.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 
@@ -121,24 +121,24 @@ export class CalendarController {
           workingHoursDto,
           ownedFranchiseId
         );
-      console.log(updatedSlots);
       return { message: 'Availability updated successfully', updatedSlots };
     } catch (error) {
       return { message: 'Error updating availability', error: error };
     }
   }
-  @ApiOperation({ summary: 'Book Timeslot' })
+  @ApiOperation({ summary: 'Book Timeslots' })
+  @ApiBody({ type: [TimeSlotDTO] })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Users can book timeslot',
+    description: 'Users can book timeslots',
   })
   @Put('book-timeslot/:ownedFranchiseId')
   async bookTimeSlot(
     @Param('ownedFranchiseId') ownedFranchiseId: string,
-    @Query('slotId') slotId: string
+    @Body() timeslots: TimeSlotDTO[]
   ): Promise<any> {
     try {
-      await this.calendarService.bookAvailabilitySlot(slotId, ownedFranchiseId);
+      await this.calendarService.bookAvailabilitySlot(timeslots, ownedFranchiseId);
       return { message: 'Availability Booked successfully' };
     } catch (error) {
       return { message: 'Error creating availability', error: error };
