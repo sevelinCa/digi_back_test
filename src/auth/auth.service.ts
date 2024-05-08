@@ -247,137 +247,72 @@ export class AuthService {
 
   async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
     const user = await this.usersRepository.findOne({
-      where: { email: googleUser.email as string },
+       where: { email: googleUser.email as string },
     });
-
+   
     if (user) {
-      const session = await this.sessionService.create({
-        user,
-      });
-
-      const { token, refreshToken, tokenExpires } = await this.getTokensData({
-        id: user.id,
-        role: user.role,
-        sessionId: session.id,
-      });
-
-      return {
-        refreshToken,
-        token,
-        tokenExpires,
-        user,
-      };
+       if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
+         throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+       }
+   
+       const session = await this.sessionService.create({
+         user,
+       });
+   
+       const { token, refreshToken, tokenExpires } = await this.getTokensData({
+         id: user.id,
+         role: user.role,
+         sessionId: session.id,
+       });
+   
+       return {
+         refreshToken,
+         token,
+         tokenExpires,
+         user,
+       };
     } else {
-
-      const newUser = await this.usersRepository.save(
-        this.usersRepository.create({
-          ...googleUser,
-          role: {
-            id: RoleEnum.digifranchise_super_admin
-          },
-          status: {
-            id: StatusEnum.active
-          },
-          image: googleUser.profilePic,
-          provider: 'google',
-        }),
-      );
-
-      const user = await this.usersRepository.findOne({
-        where: { email: newUser.email as string },
-      });
-
-      if (user) {
-        const session = await this.sessionService.create({
-          user,
-        });
-        const { token, refreshToken, tokenExpires } = await this.getTokensData({
-          id: user.id,
-          role: newUser.role,
-          sessionId: session.id,
-        });
-
-        return {
-          refreshToken,
-          token,
-          tokenExpires,
-          newUser,
-        }
-      }
+       const newUser = await this.usersRepository.save(
+         this.usersRepository.create({
+           ...googleUser,
+           role: {
+             id: RoleEnum.digifranchise_super_admin
+           },
+           status: {
+             id: StatusEnum.active
+           },
+           image: googleUser.profilePic,
+           provider: 'google',
+         }),
+       );
+   
+       const user = await this.usersRepository.findOne({
+         where: { email: newUser.email as string },
+       });
+   
+       if (user) {
+         if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
+           throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+         }
+   
+         const session = await this.sessionService.create({
+           user,
+         });
+         const { token, refreshToken, tokenExpires } = await this.getTokensData({
+           id: user.id,
+           role: newUser.role,
+           sessionId: session.id,
+         });
+   
+         return {
+           refreshToken,
+           token,
+           tokenExpires,
+           newUser,
+         }
+       }
     }
-  }
-
-
-  // async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
-  //   const user = await this.usersRepository.findOne({
-  //      where: { email: googleUser.email as string },
-  //   });
-   
-  //   if (user) {
-  //      if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-  //        throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
-  //      }
-   
-  //      const session = await this.sessionService.create({
-  //        user,
-  //      });
-   
-  //      const { token, refreshToken, tokenExpires } = await this.getTokensData({
-  //        id: user.id,
-  //        role: user.role,
-  //        sessionId: session.id,
-  //      });
-   
-  //      return {
-  //        refreshToken,
-  //        token,
-  //        tokenExpires,
-  //        user,
-  //      };
-  //   } else {
-  //      const newUser = await this.usersRepository.save(
-  //        this.usersRepository.create({
-  //          ...googleUser,
-  //          role: {
-  //            id: RoleEnum.digifranchise_super_admin
-  //          },
-  //          status: {
-  //            id: StatusEnum.active
-  //          },
-  //          image: googleUser.profilePic,
-  //          provider: 'google',
-  //        }),
-  //      );
-   
-  //      const user = await this.usersRepository.findOne({
-  //        where: { email: newUser.email as string },
-  //      });
-   
-  //      if (user) {
-  //        if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-  //          throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
-  //        }
-   
-  //        const session = await this.sessionService.create({
-  //          user,
-  //        });
-  //        const { token, refreshToken, tokenExpires } = await this.getTokensData({
-  //          id: user.id,
-  //          role: newUser.role,
-  //          sessionId: session.id,
-  //        });
-   
-  //        return {
-  //          refreshToken,
-  //          token,
-  //          tokenExpires,
-  //          newUser,
-  //        }
-  //      }
-  //   }
-  //  }
-
-
+   }
 
   async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
     const existingUserWithDifferentProvider = await this.usersRepository.findOne({
