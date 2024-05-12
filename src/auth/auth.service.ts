@@ -914,7 +914,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailNotExists',
+            email: 'email does not exist',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -954,7 +954,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailNotExists',
+            email: 'email does not exist',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
