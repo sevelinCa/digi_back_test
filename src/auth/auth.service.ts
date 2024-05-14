@@ -252,7 +252,7 @@ export class AuthService {
    
     if (user) {
        if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-         throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+         throw new HttpException('You are not allowed to login on this page. Use Customer Login Page.', HttpStatus.FORBIDDEN);
        }
    
        const session = await this.sessionService.create({
@@ -292,7 +292,7 @@ export class AuthService {
    
        if (user) {
          if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-           throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+           throw new HttpException('You are not allowed to login on this page. Use Customer Login Page.', HttpStatus.FORBIDDEN);
          }
    
          const session = await this.sessionService.create({
@@ -329,7 +329,7 @@ export class AuthService {
    
     if (user) {
        if (user.role?.id !== RoleEnum.customer) {
-         throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
+         throw new HttpException('You are not allowed to login on this page. Use Admin Login Page on app', HttpStatus.FORBIDDEN);
        }
    
        const session = await this.sessionService.create({
@@ -379,7 +379,7 @@ export class AuthService {
    
        if (user) {
          if (user.role?.id !== RoleEnum.customer) {
-           throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
+           throw new HttpException('You are not allowed to login on this page. Use Admin Login Page on app.', HttpStatus.FORBIDDEN);
          }
    
          const session = await this.sessionService.create({
