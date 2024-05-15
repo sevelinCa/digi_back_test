@@ -2,6 +2,7 @@ import { Unavailability } from 'src/digifranchise-mgt/entities/availability.enti
 import {
   IsArray,
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -184,4 +185,56 @@ export class SetWorkingHoursDto {
   @IsArray()
   @Type(() => Unavailability)
   unavailability?: UnavailabilityDto[];
+}
+
+export class TimeSlotDTO {
+  @ApiProperty({ example: '7b9d2daf-3744-42fc-abf5-72f5d053e08e' })
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @ApiProperty({ example: false })
+  @IsNotEmpty()
+  @IsBoolean()
+  isSlotBooked: boolean;
+
+  @ApiProperty({ example: true })
+  @IsNotEmpty()
+  @IsBoolean()
+  isSlotAvailable: boolean;
+
+  @ApiProperty({ example: '2024-05-09T05:46:08.735Z' })
+  @IsNotEmpty()
+  @IsDateString()
+  workingDate: string;
+
+  @ApiProperty({ example: 'Thursday' })
+  @IsNotEmpty()
+  @IsString()
+  day: string;
+
+  @ApiProperty({ example: '11:00:00' })
+  @IsNotEmpty()
+  @IsString()
+  startTime: string;
+
+  @ApiProperty({ example: '11:30:00' })
+  @IsNotEmpty()
+  @IsString()
+  endTime: string;
+
+  @ApiProperty({ example: '2024-05-07T05:46:09.154Z' })
+  @IsNotEmpty()
+  @IsDateString()
+  createdAt: string;
+
+  @ApiProperty({ example: '2024-05-07T05:46:09.154Z' })
+  @IsNotEmpty()
+  @IsDateString()
+  updatedAt: string;
+
+  @ApiProperty({ example: null })
+  @IsOptional()
+  @IsDateString()
+  deleteAt: string | null;
 }

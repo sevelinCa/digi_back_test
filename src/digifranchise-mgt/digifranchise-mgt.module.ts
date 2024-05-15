@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { AvailabilityManagementService } from './availability-management.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-// import { AvailabilityManagementService } from './availability-management.service';
-// import { AvailableManagement } from './entities/available-management.entity';
-// import { UnavailableManagement } from './entities/unavailable-management.entity';
-// import { AvailabilityManagementController, AvailabilityNoAuthManagementController, CustomerManagementController, InventoryManagementController, StaffManagementController, SupplierManagementController, UnavailableManagementController } from './digifranchise-mgt.controller';
+import { AvailableManagement } from './entities/available-management.entity';
 import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
+import { AvailabilityManagementController, AvailabilityNoAuthManagementController, CustomerManagementController, InventoryManagementController, StaffManagementController, SupplierManagementController, UnavailableManagementController } from './digifranchise-mgt.controller';
 import { UnavailableManagementService } from './unavailability-management.service';
+import { UnavailableManagement } from './entities/unavailable-management.entity';
 import { CustomerManagementService } from './customer-management.service';
 import { CustomerManagement } from './entities/customer-management.entity';
 import { SupplierManagementService } from './supplier-management.service';
@@ -23,12 +23,12 @@ import { AvailabilityWeekDays, AvailabilityDayTime, Availability, Unavailability
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      // AvailableManagement,
+      AvailableManagement,
       Digifranchise,
       DigifranchiseOwner,
       UserEntity,
       CustomerManagement,
-      // UnavailableManagement,
+      UnavailableManagement,
       SupplierManagement,
       StaffManagement,
       InventoryManagement,
@@ -42,7 +42,7 @@ import { AvailabilityWeekDays, AvailabilityDayTime, Availability, Unavailability
     ]),
   ],
   providers: [
-    // AvailabilityManagementService,
+    AvailabilityManagementService,
     UnavailableManagementService,
     CustomerManagementService,
     SupplierManagementService,
@@ -52,13 +52,13 @@ import { AvailabilityWeekDays, AvailabilityDayTime, Availability, Unavailability
     // UnavailabilityService,
   ],
   controllers: [
-    // AvailabilityManagementController,
-    // AvailabilityNoAuthManagementController,
-    // UnavailableManagementController,
-    // CustomerManagementController,
-    // SupplierManagementController,
-    // StaffManagementController,
-    // InventoryManagementController,
+    AvailabilityManagementController,
+    AvailabilityNoAuthManagementController,
+    UnavailableManagementController,
+    CustomerManagementController,
+    SupplierManagementController,
+    StaffManagementController,
+    InventoryManagementController,
     AvailabilityController,
   ]
 })

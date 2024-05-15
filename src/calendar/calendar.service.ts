@@ -334,7 +334,7 @@ export class CalendarService {
     }
     // return data;
   }
-  async bookAvailabilitySlot(slotId: string, ownedDigifranchiseId: string) {
+  async bookAvailabilitySlot(timeslots: any, ownedDigifranchiseId: string) {
     const getOwnedDigifranchise: DigifranchiseOwner | null =
       await this.digifranchiseOwnerRepository.findOne({
         where: { id: ownedDigifranchiseId },
@@ -348,25 +348,13 @@ export class CalendarService {
         HttpStatus.NOT_FOUND
       );
     }
-    const availabilitySlot =
-      await this.digifranchiseAvailableTimeSlotsRepository.findOne({
-        where: { ownedDigifranchise: { id: ownedDigifranchiseId }, id: slotId },
-      });
-    if (!availabilitySlot) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'Slot does not exist',
-        },
-        HttpStatus.NOT_FOUND
-      );
-    }
-    const updatedTimeSlot =
-      await this.digifranchiseAvailableTimeSlotsRepository.update(slotId, {
+    for(const slot of timeslots){
+      const updatedTimeSlot =
+      await this.digifranchiseAvailableTimeSlotsRepository.update(slot.id, {
         isSlotAvailable: false,
         isSlotBooked: true,
       });
-    return updatedTimeSlot;
+    }
   }
   private async deleteSlotsAtEndOfDay() {
     try {

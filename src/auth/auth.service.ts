@@ -252,7 +252,7 @@ export class AuthService {
    
     if (user) {
        if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-         throw new HttpException('You are not allowed to login on this page. Use Customer Login Page.', HttpStatus.FORBIDDEN);
+         throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
        }
    
        const session = await this.sessionService.create({
@@ -292,7 +292,7 @@ export class AuthService {
    
        if (user) {
          if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-           throw new HttpException('You are not allowed to login on this page. Use Customer Login Page.', HttpStatus.FORBIDDEN);
+           throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
          }
    
          const session = await this.sessionService.create({
@@ -329,7 +329,7 @@ export class AuthService {
    
     if (user) {
        if (user.role?.id !== RoleEnum.customer) {
-         throw new HttpException('You are not allowed to login on this page. Use Admin Login Page on app', HttpStatus.FORBIDDEN);
+         throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
        }
    
        const session = await this.sessionService.create({
@@ -379,7 +379,7 @@ export class AuthService {
    
        if (user) {
          if (user.role?.id !== RoleEnum.customer) {
-           throw new HttpException('You are not allowed to login on this page. Use Admin Login Page on app.', HttpStatus.FORBIDDEN);
+           throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
          }
    
          const session = await this.sessionService.create({
@@ -914,7 +914,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailNotExists',
+            email: 'email does not exist',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -954,7 +954,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailNotExists',
+            email: 'email does not exist',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1133,7 +1133,7 @@ export class AuthService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'emailAlreadyExists',
+              email: 'email already exists',
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,

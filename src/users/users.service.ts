@@ -40,7 +40,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'emailAlreadyExists',
+              email: 'email already exists',
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -164,7 +164,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'emailAlreadyExists',
+              email: 'email already exists',
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
