@@ -1159,7 +1159,6 @@ export class AuthService {
       }
     }
 
-
     Object.assign(user, {
       image: updateUserProfileDto?.image,
       email: updateUserProfileDto?.email,
