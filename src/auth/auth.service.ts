@@ -1295,14 +1295,12 @@ export class AuthService {
   
     Object.assign(user, {
       image: updateUserProfileDto?.image,
-      email: !updateUserProfileDto?.email ? null : updateUserProfileDto?.email,
       firstName: updateUserProfileDto?.firstName,
       lastName: updateUserProfileDto?.lastName,
       idImage: updateUserProfileDto?.idImage,
       gender: updateUserProfileDto?.gender,
       race: updateUserProfileDto?.race,
       homeAddress: updateUserProfileDto?.homeAddress,
-      phoneNumber: !updateUserProfileDto?.phoneNumber? null : updateUserProfileDto?.phoneNumber,
       educationLevel: updateUserProfileDto?.educationLevel,
       currentActivity: updateUserProfileDto?.currentActivity,
       fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
@@ -1316,6 +1314,18 @@ export class AuthService {
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
       crimes: updateUserProfileDto?.crimes
     });
+
+    if (updateUserProfileDto?.email) {
+      Object.assign(user, {
+        email: updateUserProfileDto?.email
+      })
+    }
+
+    if (updateUserProfileDto?.phoneNumber) {
+      Object.assign(user, {
+        phoneNumber: updateUserProfileDto?.phoneNumber
+      })
+    }
   
     await this.usersRepository.save(user);
   
