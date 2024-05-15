@@ -1161,14 +1161,14 @@ export class AuthService {
 
     Object.assign(user, {
       image: updateUserProfileDto?.image,
-      email: updateUserProfileDto?.email,
+      email: updateUserProfileDto?.email? null : updateUserProfileDto.email,
       firstName: updateUserProfileDto?.firstName,
       lastName: updateUserProfileDto?.lastName,
       idImage: updateUserProfileDto?.idImage,
       gender: updateUserProfileDto?.gender,
       race: updateUserProfileDto?.race,
       homeAddress: updateUserProfileDto?.homeAddress,
-      phoneNumber: updateUserProfileDto?.phoneNumber,
+      phoneNumber: updateUserProfileDto?.phoneNumber? null : updateUserProfileDto.phoneNumber,
       educationLevel: updateUserProfileDto?.educationLevel,
       currentActivity: updateUserProfileDto?.currentActivity,
       fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
