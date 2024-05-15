@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DigifranchiseWorkingHours } from './entities/digifranchise-working-hours.entity';
-import { Between, Repository } from 'typeorm';
+import { Between, MoreThanOrEqual, Repository } from 'typeorm';
 import { AvailabilityTimeSlots } from './entities/time-slots.entity';
 import * as schedule from 'node-schedule';
 // import { DigifranchiseUnavailableTimes } from './entities/unavailable-times.entity';
@@ -262,6 +262,9 @@ export class CalendarService {
         HttpStatus.NOT_FOUND
       );
     }
+    const today = new Date();
+    const currentTime =
+      today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
     const timeSlots = await this.digifranchiseAvailableTimeSlotsRepository.find(
       {
         where: {
@@ -269,6 +272,9 @@ export class CalendarService {
           isSlotAvailable: true,
           isSlotBooked: false,
           workingDate: Between(startOfDay, endOfDay),
+          ...(workingDate === today.toISOString().split('T')[0] && {
+            startTime: MoreThanOrEqual(currentTime)
+        })
         },
       }
     );
