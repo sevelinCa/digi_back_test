@@ -1103,6 +1103,129 @@ export class AuthService {
     });
   }
 
+  // async update(
+  //   userJwtPayload: JwtPayloadType,
+  //   updateUserProfileDto: UserProfileDto,
+  // ): Promise<void> {
+  //   const user = await this.usersService.findOne({
+  //     id: userJwtPayload.id,
+  //   });
+
+  //   if (!user) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: {
+  //           hash: `notFound`,
+  //         },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   if (updateUserProfileDto.email && updateUserProfileDto.email.trim().length > 0) {
+  //     const userObject = await this.usersService.findOne({
+  //       email: updateUserProfileDto.email,
+  //     });
+
+  //     if (userObject && userObject.id !== userJwtPayload.id) {
+  //       throw new HttpException(
+  //         {
+  //           status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //           errors: {
+  //             email: 'email already exists',
+  //           },
+  //         },
+  //         HttpStatus.UNPROCESSABLE_ENTITY,
+  //       );
+  //     }
+  //   }
+
+  //   if (updateUserProfileDto.phoneNumber && updateUserProfileDto.phoneNumber.trim().length > 0) {
+  //     const userObject = await this.usersService.findOne({
+  //       phoneNumber: updateUserProfileDto.phoneNumber,
+  //     });
+
+  //     if (userObject && userObject.id !== userJwtPayload.id) {
+  //       throw new HttpException(
+  //         {
+  //           status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //           errors: {
+  //             phoneNumber: 'phoneNumberAlreadyExists',
+  //           },
+  //         },
+  //         HttpStatus.UNPROCESSABLE_ENTITY,
+  //       );
+  //     }
+  //   }
+
+  //   Object.assign(user, {
+  //     image: updateUserProfileDto?.image,
+  //     email: updateUserProfileDto?.email,
+  //     firstName: updateUserProfileDto?.firstName,
+  //     lastName: updateUserProfileDto?.lastName,
+  //     idImage: updateUserProfileDto?.idImage,
+  //     gender: updateUserProfileDto?.gender,
+  //     race: updateUserProfileDto?.race,
+  //     homeAddress: updateUserProfileDto?.homeAddress,
+  //     phoneNumber: updateUserProfileDto?.phoneNumber,
+  //     educationLevel: updateUserProfileDto?.educationLevel,
+  //     currentActivity: updateUserProfileDto?.currentActivity,
+  //     fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
+  //     qualifications: updateUserProfileDto?.qualifications,
+  //     professionalBody: updateUserProfileDto?.professionalBody,
+  //     southAfricanCitizen: updateUserProfileDto?.southAfricanCitizen,
+  //     dateOfBirth: updateUserProfileDto?.dateOfBirth,
+  //     documentId: updateUserProfileDto?.documentId,
+  //     countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
+  //     criminalRecord: updateUserProfileDto?.criminalRecord,
+  //     policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
+  //     crimes: updateUserProfileDto?.crimes
+  //   });
+
+  //   await this.usersRepository.save(user);
+
+  //   const updatedUser = await this.usersService.findOne({
+  //     id: userJwtPayload.id,
+  //   });
+  //   if (!updatedUser) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: {
+  //           hash: `notFound`,
+  //         },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   if (
+  //     (!!updatedUser.email || !!updatedUser.phoneNumber) &&
+  //     !!updatedUser.gender &&
+  //     !!updatedUser.race &&
+  //     !!updatedUser.homeAddress &&
+  //     !!updatedUser.educationLevel &&
+  //     !!updatedUser.currentActivity &&
+  //     !!updatedUser.fieldOfStudy &&
+  //     !!updatedUser.southAfricanCitizen &&
+  //     !!updatedUser.documentId &&
+  //     !!updatedUser.countryOfOrigin
+  //   ) {
+  //     Object.assign(updatedUser, {
+  //       isProfileComplete: true
+  //     })
+  //     await this.usersRepository.save(updatedUser)
+  //   } else {
+  //     Object.assign(updatedUser, {
+  //       isProfileComplete: false
+  //     })
+  //     await this.usersRepository.save(updatedUser)
+  //   }
+
+  // }
+
+
   async update(
     userJwtPayload: JwtPayloadType,
     updateUserProfileDto: UserProfileDto,
@@ -1110,7 +1233,7 @@ export class AuthService {
     const user = await this.usersService.findOne({
       id: userJwtPayload.id,
     });
-
+  
     if (!user) {
       throw new HttpException(
         {
@@ -1122,13 +1245,13 @@ export class AuthService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
+  
     if (updateUserProfileDto.email && updateUserProfileDto.email.trim().length > 0) {
       const userObject = await this.usersService.findOne({
         email: updateUserProfileDto.email,
       });
-
-      if (userObject && userObject.id !== userJwtPayload.id) {
+  
+      if (userObject && userObject.id!== userJwtPayload.id) {
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1140,13 +1263,13 @@ export class AuthService {
         );
       }
     }
-
+  
     if (updateUserProfileDto.phoneNumber && updateUserProfileDto.phoneNumber.trim().length > 0) {
       const userObject = await this.usersService.findOne({
         phoneNumber: updateUserProfileDto.phoneNumber,
       });
-
-      if (userObject && userObject.id !== userJwtPayload.id) {
+  
+      if (userObject && userObject.id!== userJwtPayload.id) {
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1157,8 +1280,20 @@ export class AuthService {
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
+  
+    // Check if both email and phone number are empty or null
+    if (!updateUserProfileDto.email &&!updateUserProfileDto.phoneNumber) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            message: 'No Phone number so email cannot be empty too',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
-
+  
     Object.assign(user, {
       image: updateUserProfileDto?.image,
       email: updateUserProfileDto?.email? null : updateUserProfileDto.email,
@@ -1182,12 +1317,13 @@ export class AuthService {
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
       crimes: updateUserProfileDto?.crimes
     });
-
+  
     await this.usersRepository.save(user);
-
+  
     const updatedUser = await this.usersService.findOne({
       id: userJwtPayload.id,
     });
+  
     if (!updatedUser) {
       throw new HttpException(
         {
@@ -1199,18 +1335,18 @@ export class AuthService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
+  
     if (
-      (!!updatedUser.email || !!updatedUser.phoneNumber) &&
-      !!updatedUser.gender &&
-      !!updatedUser.race &&
-      !!updatedUser.homeAddress &&
-      !!updatedUser.educationLevel &&
-      !!updatedUser.currentActivity &&
-      !!updatedUser.fieldOfStudy &&
-      !!updatedUser.southAfricanCitizen &&
-      !!updatedUser.documentId &&
-      !!updatedUser.countryOfOrigin
+      (!!updatedUser.email ||!!updatedUser.phoneNumber) &&
+     !!updatedUser.gender &&
+     !!updatedUser.race &&
+     !!updatedUser.homeAddress &&
+     !!updatedUser.educationLevel &&
+     !!updatedUser.currentActivity &&
+     !!updatedUser.fieldOfStudy &&
+     !!updatedUser.southAfricanCitizen &&
+     !!updatedUser.documentId &&
+     !!updatedUser.countryOfOrigin
     ) {
       Object.assign(updatedUser, {
         isProfileComplete: true
@@ -1222,8 +1358,19 @@ export class AuthService {
       })
       await this.usersRepository.save(updatedUser)
     }
-
-  }
+  
+    if (!user.email &&!user.phoneNumber) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            message: 'Both phone and email are empty',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+    }}
 
   async refreshToken(
     data: Pick<JwtRefreshPayloadType, 'sessionId'>,
