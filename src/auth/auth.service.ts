@@ -247,170 +247,170 @@ export class AuthService {
 
   async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
     const user = await this.usersRepository.findOne({
-       where: { email: googleUser.email as string },
+      where: { email: googleUser.email as string },
     });
-   
+
     if (user) {
-       if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-         throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
-       }
-   
-       const session = await this.sessionService.create({
-         user,
-       });
-   
-       const { token, refreshToken, tokenExpires } = await this.getTokensData({
-         id: user.id,
-         role: user.role,
-         sessionId: session.id,
-       });
-   
-       return {
-         refreshToken,
-         token,
-         tokenExpires,
-         user,
-       };
+      if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
+        throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+      }
+
+      const session = await this.sessionService.create({
+        user,
+      });
+
+      const { token, refreshToken, tokenExpires } = await this.getTokensData({
+        id: user.id,
+        role: user.role,
+        sessionId: session.id,
+      });
+
+      return {
+        refreshToken,
+        token,
+        tokenExpires,
+        user,
+      };
     } else {
-       const newUser = await this.usersRepository.save(
-         this.usersRepository.create({
-           ...googleUser,
-           role: {
-             id: RoleEnum.digifranchise_super_admin
-           },
-           status: {
-             id: StatusEnum.active
-           },
-           image: googleUser.profilePic,
-           provider: 'google',
-         }),
-       );
-   
-       const user = await this.usersRepository.findOne({
-         where: { email: newUser.email as string },
-       });
-   
-       if (user) {
-         if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-           throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
-         }
-   
-         const session = await this.sessionService.create({
-           user,
-         });
-         const { token, refreshToken, tokenExpires } = await this.getTokensData({
-           id: user.id,
-           role: newUser.role,
-           sessionId: session.id,
-         });
-   
-         return {
-           refreshToken,
-           token,
-           tokenExpires,
-           newUser,
-         }
-       }
+      const newUser = await this.usersRepository.save(
+        this.usersRepository.create({
+          ...googleUser,
+          role: {
+            id: RoleEnum.digifranchise_super_admin
+          },
+          status: {
+            id: StatusEnum.active
+          },
+          image: googleUser.profilePic,
+          provider: 'google',
+        }),
+      );
+
+      const user = await this.usersRepository.findOne({
+        where: { email: newUser.email as string },
+      });
+
+      if (user) {
+        if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
+          throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+        }
+
+        const session = await this.sessionService.create({
+          user,
+        });
+        const { token, refreshToken, tokenExpires } = await this.getTokensData({
+          id: user.id,
+          role: newUser.role,
+          sessionId: session.id,
+        });
+
+        return {
+          refreshToken,
+          token,
+          tokenExpires,
+          newUser,
+        }
+      }
     }
-   }
+  }
 
   async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
     const existingUserWithDifferentProvider = await this.usersRepository.findOne({
-       where: { email: googleUser.email as string, provider: Not('google') },
+      where: { email: googleUser.email as string, provider: Not('google') },
     });
-   
+
     if (existingUserWithDifferentProvider) {
-       throw new HttpException('An account with this email address already exists, Please log in or use a different email address.', HttpStatus.CONFLICT);
+      throw new HttpException('An account with this email address already exists, Please log in or use a different email address.', HttpStatus.CONFLICT);
     }
-   
+
     const user = await this.usersRepository.findOne({
-       where: { email: googleUser.email as string, provider: 'google' },
+      where: { email: googleUser.email as string, provider: 'google' },
     });
-   
+
     if (user) {
-       if (user.role?.id !== RoleEnum.customer) {
-         throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
-       }
-   
-       const session = await this.sessionService.create({
-         user,
-       });
-   
-       const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
-   
-       getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-         if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
-           return;
-         } else {
-           await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
-         }
-       });
-   
-       const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
-         id: user.id,
-         role: user.role,
-         sessionId: session.id,
-       });
-   
-       return {
-         refreshToken,
-         token,
-         tokenExpires,
-         user,
-       };
+      if (user.role?.id !== RoleEnum.customer) {
+        throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
+      }
+
+      const session = await this.sessionService.create({
+        user,
+      });
+
+      const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
+
+      getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+        if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
+          return;
+        } else {
+          await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
+        }
+      });
+
+      const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
+        id: user.id,
+        role: user.role,
+        sessionId: session.id,
+      });
+
+      return {
+        refreshToken,
+        token,
+        tokenExpires,
+        user,
+      };
     } else {
-       const newUser = await this.usersRepository.save(
-         this.usersRepository.create({
-           ...googleUser,
-           role: {
-             id: RoleEnum.customer,
-           },
-           status: {
-             id: StatusEnum.active,
-           },
-           image: googleUser.profilePic,
-           provider: 'google',
-         }),
-       );
-   
-       const user = await this.usersRepository.findOne({
-         where: { email: newUser.email as string },
-       });
-   
-       if (user) {
-         if (user.role?.id !== RoleEnum.customer) {
-           throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
-         }
-   
-         const session = await this.sessionService.create({
-           user,
-         });
-   
-         const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
-   
-         getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-           if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
-             return;
-           } else {
-             await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
-           }
-         });
-   
-         const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
-           id: user.id,
-           role: newUser.role,
-           sessionId: session.id,
-         });
-   
-         return {
-           refreshToken,
-           token,
-           tokenExpires,
-           newUser,
-         };
-       }
+      const newUser = await this.usersRepository.save(
+        this.usersRepository.create({
+          ...googleUser,
+          role: {
+            id: RoleEnum.customer,
+          },
+          status: {
+            id: StatusEnum.active,
+          },
+          image: googleUser.profilePic,
+          provider: 'google',
+        }),
+      );
+
+      const user = await this.usersRepository.findOne({
+        where: { email: newUser.email as string },
+      });
+
+      if (user) {
+        if (user.role?.id !== RoleEnum.customer) {
+          throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
+        }
+
+        const session = await this.sessionService.create({
+          user,
+        });
+
+        const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
+
+        getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+          if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
+            return;
+          } else {
+            await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
+          }
+        });
+
+        const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
+          id: user.id,
+          role: newUser.role,
+          sessionId: session.id,
+        });
+
+        return {
+          refreshToken,
+          token,
+          tokenExpires,
+          newUser,
+        };
+      }
     }
-   }
+  }
 
   async register(dto: AuthRegisterLoginDto): Promise<void> {
     const user = await this.usersService.create({
@@ -1123,7 +1123,7 @@ export class AuthService {
       );
     }
 
-    if (updateUserProfileDto.email) {
+    if (updateUserProfileDto.email && updateUserProfileDto.email.trim().length > 0) {
       const userObject = await this.usersService.findOne({
         email: updateUserProfileDto.email,
       });
@@ -1141,7 +1141,7 @@ export class AuthService {
       }
     }
 
-    if (updateUserProfileDto.phoneNumber) {
+    if (updateUserProfileDto.phoneNumber && updateUserProfileDto.phoneNumber.trim().length > 0) {
       const userObject = await this.usersService.findOne({
         phoneNumber: updateUserProfileDto.phoneNumber,
       });
@@ -1151,14 +1151,13 @@ export class AuthService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'phoneNumberAlreadyExists',
+              phoneNumber: 'phoneNumberAlreadyExists',
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
     }
-
 
     Object.assign(user, {
       image: updateUserProfileDto?.image,
@@ -1182,9 +1181,9 @@ export class AuthService {
       criminalRecord: updateUserProfileDto?.criminalRecord,
       policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
       crimes: updateUserProfileDto?.crimes
-    })
+    });
 
-    await this.usersRepository.save(user)
+    await this.usersRepository.save(user);
 
     const updatedUser = await this.usersService.findOne({
       id: userJwtPayload.id,

@@ -81,7 +81,8 @@
     "swagger-ui-express": "5.0.0",
     "twilio": "^4.22.0",
     "twitter": "1.7.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "uniqid": "^5.4.0"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.1",

@@ -80,9 +80,6 @@ export class OrderService {
             throw new HttpException('Franchise does not exist', HttpStatus.NOT_FOUND);
         }
 
-
-
-
         const vatRateRecord = await this.rateTableRepository.findOne({
             where: { rateName: 'VAT', deleteAt: IsNull() },
         });
