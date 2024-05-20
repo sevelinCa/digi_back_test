@@ -59,6 +59,14 @@ class EnvironmentVariablesValidator {
   @IsString()
   @IsOptional()
   ACADEMY_REGISTER_ENDPOINT: string;
+
+  @IsString()
+  @IsOptional()
+  ACADEMY_LOGIN_ENDPOINT:string;
+
+  @IsString()
+  @IsOptional()
+  ACADEMY_ORIGIN_URL:string
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -81,6 +89,8 @@ export default registerAs<AppConfig>('app', () => {
     ACADEMY_API_BASE_URL: process.env.ACADEMY_API_BASE_URL,
     ACADEMY_CSRF_TOKEN_ENDPOINT: process.env.ACADEMY_CSRF_TOKEN_ENDPOINT,
     ACADEMY_REGISTER_ENDPOINT: process.env.ACADEMY_REGISTER_ENDPOINT,
+    ACADEMY_LOGIN_ENDPOINT: process.env.ACADEMY_LOGIN_ENDPOINT,
+    ACADEMY_ORIGIN_URL: process.env.ACADEMY_ORIGIN_URL,
   };
 
   return config;
