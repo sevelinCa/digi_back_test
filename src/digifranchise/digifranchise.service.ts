@@ -233,6 +233,7 @@ export class DigifranchiseService {
         where: {
           digifranchiseService: Equal(service.id),
           ownerDigifranchise: Equal(digifranchiseOwnerId),
+          isSelected:true,
         },
       });
 
