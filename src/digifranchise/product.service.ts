@@ -83,6 +83,7 @@ export class ProductService {
         where: {
           franchiseProduct: Equal(product.id),
           ownerDigifranchise: Equal(digifranchiseOwnerId),
+          isSelected: true
         },
       });
 
