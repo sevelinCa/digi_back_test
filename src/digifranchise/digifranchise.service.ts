@@ -575,7 +575,7 @@ export class DigifranchiseService {
     });
 
     const digifranchiseProducts =
-      await this.productService.getProductsAndSubProductsById(
+      await this.productService.getSelectedProductsAndSubProductsById(
         getDigifranchiseInformation.digifranchiseId,
         ownedDigifranchiseId,
       );
