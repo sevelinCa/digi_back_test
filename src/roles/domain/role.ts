@@ -1,4 +1,4 @@
-import { Allow, IsNumber } from 'class-validator';
+import { Allow, IsNumber } from "class-validator";
 
 export class Role {
   @IsNumber()

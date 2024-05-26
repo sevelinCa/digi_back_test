@@ -1,73 +1,81 @@
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, JoinColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  JoinColumn,
+  ManyToOne,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class StaffManagement {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'userId' })
-    userId: UserEntity;
-        
-    // @ManyToOne(() => Digifranchise)
-    // @JoinColumn({ name: 'digifranchiseId' })
-    // digifranchiseId: Digifranchise | null;
-  
-    @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.staff)
-    @JoinColumn({ name: 'ownedDigifranchise' })
-    ownedDigifranchise: DigifranchiseOwner | null;
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: "userId" })
+  userId: UserEntity;
 
-    @Column({ type: 'text' })
-    image: string;
+  // @ManyToOne(() => Digifranchise)
+  // @JoinColumn({ name: 'digifranchiseId' })
+  // digifranchiseId: Digifranchise | null;
 
-    @Column({ type: 'text' })
-    fullNames: string;
+  @ManyToOne(() => DigifranchiseOwner, (ownedFranchise) => ownedFranchise.staff)
+  @JoinColumn({ name: "ownedDigifranchise" })
+  ownedDigifranchise: DigifranchiseOwner | null;
 
-    @Column({ type: 'text' })
-    email: string;
+  @Column({ type: "text" })
+  image: string;
 
-    @Column({ type: 'text' })
-    mobile_number: string;
+  @Column({ type: "text" })
+  fullNames: string;
 
-    @Column({ type: 'text' })
-    id_or_passport_number: string;
+  @Column({ type: "text" })
+  email: string;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    date_of_birth: Date;
+  @Column({ type: "text" })
+  mobile_number: string;
 
-    @Column({ type: 'text' })
-    role_description: string;
+  @Column({ type: "text" })
+  id_or_passport_number: string;
 
-    @Column({ type: 'text' })
-    address: string;
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  date_of_birth: Date;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    date_started: Date;
+  @Column({ type: "text" })
+  role_description: string;
 
-    @Column({ type: 'boolean' })
-    app_access: boolean;
+  @Column({ type: "text" })
+  address: string;
 
-    @Column({ type: 'text' })
-    registration_method: string;
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  date_started: Date;
 
-    @Column({ type: 'text' })
-    tax_number: string;
+  @Column({ type: "boolean" })
+  app_access: boolean;
 
-    @Column({ type: 'text' })
-    uif_number: string;
+  @Column({ type: "text" })
+  registration_method: string;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2 })
-    gross_monthly_salary: number;
+  @Column({ type: "text" })
+  tax_number: string;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+  @Column({ type: "text" })
+  uif_number: string;
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+  @Column({ type: "decimal", precision: 10, scale: 2 })
+  gross_monthly_salary: number;
 
-    @Column({ type: 'timestamp', nullable: true })
-    deleteAt: Date | null;
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
+
+  @Column({ type: "timestamp", nullable: true })
+  deleteAt: Date | null;
 }

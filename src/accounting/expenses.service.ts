@@ -1,17 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Expense } from './entities/expense.entity';
-import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Expense } from "./entities/expense.entity";
+import { CreateExpenseDto } from "./dto/Create-DTOs/create-expense.dto";
 import {
   findExpenseById,
   findFixedExpenseCategoryById,
   getDigifranchiseAccountByUserId,
-} from 'src/helper/FindByFunctions';
-import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
-import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+} from "src/helper/FindByFunctions";
+import { FixedExpenseCategory } from "./entities/fixedExpenseCategory.entity";
+import { UpdateExpenseDto } from "./dto/Update-DTOs/update-expense.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 
 @Injectable()
 export class ExpenseService {
@@ -67,28 +67,28 @@ export class ExpenseService {
     startDate?: string,
     endDate?: string,
   ): Promise<{ expenses: Expense[]; count: number }> {
-    const queryBuilder = this.expenseRepository.createQueryBuilder('expense');
-  
+    const queryBuilder = this.expenseRepository.createQueryBuilder("expense");
+
     queryBuilder
-      .leftJoinAndSelect('expense.franchiseId', 'franchise')
+      .leftJoinAndSelect("expense.franchiseId", "franchise")
       .leftJoinAndSelect(
-        'expense.fixedExpenseCategoryId',
-        'fixedExpenseCategory',
+        "expense.fixedExpenseCategoryId",
+        "fixedExpenseCategory",
       );
-  
+
     if (startDate) {
-      queryBuilder.andWhere('expense.date >= :startDate', { startDate });
+      queryBuilder.andWhere("expense.date >= :startDate", { startDate });
     }
-  
+
     if (endDate) {
-      queryBuilder.andWhere('expense.date <= :endDate', { endDate });
+      queryBuilder.andWhere("expense.date <= :endDate", { endDate });
     }
-  
-    queryBuilder.andWhere('expense.deleteAt IS NULL');
-  
+
+    queryBuilder.andWhere("expense.deleteAt IS NULL");
+
     const expenses = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-  
+
     return { expenses, count };
   }
 
@@ -117,8 +117,8 @@ export class ExpenseService {
     if (!expense) {
       throw new NotFoundException(`Expense not found with ID ${expenseId}`);
     }
-  
-    expense.deleteAt = new Date(); 
-    await this.expenseRepository.save(expense); 
+
+    expense.deleteAt = new Date();
+    await this.expenseRepository.save(expense);
   }
 }

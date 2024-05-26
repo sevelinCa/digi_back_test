@@ -11,7 +11,7 @@
 //   @ManyToOne(() => DigifranchiseOwner)
 //   @JoinColumn({ name: 'ownedDigifranchiseId' })
 //   ownedDigifranchiseId: DigifranchiseOwner;
-  
+
 //   @OneToMany(() => DigifranchiseSubProduct, subProduct => subProduct.digifranchiseProductId, { nullable: true })
 //   subProducts: DigifranchiseSubProduct[];
 

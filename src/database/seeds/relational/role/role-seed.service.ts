@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RoleEntity } from 'src/roles/infrastructure/persistence/relational/entities/role.entity';
-import { RoleEnum } from 'src/roles/roles.enum';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
+import { RoleEnum } from "src/roles/roles.enum";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class RoleSeedService {
@@ -22,7 +22,7 @@ export class RoleSeedService {
       await this.repository.save(
         this.repository.create({
           id: RoleEnum.customer,
-          name: 'Customer',
+          name: "Customer",
         }),
       );
     }
@@ -37,7 +37,7 @@ export class RoleSeedService {
       await this.repository.save(
         this.repository.create({
           id: RoleEnum.admin,
-          name: 'Admin',
+          name: "Admin",
         }),
       );
     }
@@ -52,7 +52,7 @@ export class RoleSeedService {
       await this.repository.save(
         this.repository.create({
           id: RoleEnum.super_admin,
-          name: 'Super Admin',
+          name: "Super Admin",
         }),
       );
     }
@@ -67,7 +67,7 @@ export class RoleSeedService {
       await this.repository.save(
         this.repository.create({
           id: RoleEnum.digifranchise_super_admin,
-          name: 'Digifranchise Super Admin',
+          name: "Digifranchise Super Admin",
         }),
       );
     }
@@ -82,7 +82,7 @@ export class RoleSeedService {
       await this.repository.save(
         this.repository.create({
           id: RoleEnum.digifranchise_user,
-          name: 'Digifranchise User',
+          name: "Digifranchise User",
         }),
       );
     }

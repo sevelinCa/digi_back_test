@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { AllConfigType } from 'src/config/config.type';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from "@nestjs/typeorm";
+import { AllConfigType } from "src/config/config.type";
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -9,35 +9,35 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
-      type: this.configService.get('database.type', { infer: true }),
+      type: this.configService.get("database.type", { infer: true }),
       // url: this.configService.get('database.url', { infer: true }),
-      host: this.configService.get('database.host', { infer: true }),
-      port: this.configService.get('database.port', { infer: true }),
-      username: this.configService.get('database.username', { infer: true }),
-      password: this.configService.get('database.password', { infer: true }),
-      database: this.configService.get('database.name', { infer: true }),
-      synchronize: this.configService.get('database.synchronize', {
+      host: this.configService.get("database.host", { infer: true }),
+      port: this.configService.get("database.port", { infer: true }),
+      username: this.configService.get("database.username", { infer: true }),
+      password: this.configService.get("database.password", { infer: true }),
+      database: this.configService.get("database.name", { infer: true }),
+      synchronize: this.configService.get("database.synchronize", {
         infer: true,
       }),
       dropSchema: false,
       keepConnectionAlive: true,
       logging:
-        this.configService.get('app.nodeEnv', { infer: true }) !== 'production',
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+        this.configService.get("app.nodeEnv", { infer: true }) !== "production",
+      entities: [__dirname + "/../**/*.entity{.ts,.js}"],
+      migrations: [__dirname + "/migrations/**/*{.ts,.js}"],
       cli: {
-        entitiesDir: 'src',
-        migrationsDir: 'src/database/migrations',
-        subscribersDir: 'subscriber',
+        entitiesDir: "src",
+        migrationsDir: "src/database/migrations",
+        subscribersDir: "subscriber",
       },
       extra: {
         // based on https://node-postgres.com/apis/pool
         // max connection pool size
-        max: this.configService.get('database.maxConnections', { infer: true }),
-        ssl: this.configService.get('database.sslEnabled', { infer: true })
+        max: this.configService.get("database.maxConnections", { infer: true }),
+        ssl: this.configService.get("database.sslEnabled", { infer: true })
           ? {
               rejectUnauthorized: false,
-              ca: process.env.DATABASE_CA
+              ca: process.env.DATABASE_CA,
             }
           : undefined,
       },

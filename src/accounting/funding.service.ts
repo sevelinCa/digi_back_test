@@ -1,12 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Funding } from './entities/funding.entity';
-import { CreateFundingDto } from './dto/Create-DTOs/create-funding.dto';
-import { findFundingById } from 'src/helper/FindByFunctions';
-import  { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Funding } from "./entities/funding.entity";
+import { CreateFundingDto } from "./dto/Create-DTOs/create-funding.dto";
+import { findFundingById } from "src/helper/FindByFunctions";
+import { UpdateFundingDto } from "./dto/Update-DTOs/update-funding.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 
 @Injectable()
 export class FundingService {
@@ -47,23 +47,23 @@ export class FundingService {
     startDate?: string,
     endDate?: string,
   ): Promise<{ fundings: Funding[]; count: number }> {
-    const queryBuilder = this.fundingRepository.createQueryBuilder('funding');
-  
-    queryBuilder.leftJoinAndSelect('funding.franchiseId', 'franchise');
-  
+    const queryBuilder = this.fundingRepository.createQueryBuilder("funding");
+
+    queryBuilder.leftJoinAndSelect("funding.franchiseId", "franchise");
+
     if (startDate) {
-      queryBuilder.andWhere('funding.fundedAt >= :startDate', { startDate });
+      queryBuilder.andWhere("funding.fundedAt >= :startDate", { startDate });
     }
-  
+
     if (endDate) {
-      queryBuilder.andWhere('funding.fundedAt <= :endDate', { endDate });
+      queryBuilder.andWhere("funding.fundedAt <= :endDate", { endDate });
     }
-  
-    queryBuilder.andWhere('funding.deleteAt IS NULL');
-  
+
+    queryBuilder.andWhere("funding.deleteAt IS NULL");
+
     const fundings = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-  
+
     return { fundings, count };
   }
 
@@ -74,7 +74,7 @@ export class FundingService {
   async updateFunding(
     fundingId: string,
     updateFundingDto: UpdateFundingDto,
-   ): Promise<Funding> {
+  ): Promise<Funding> {
     const funding = await findFundingById(this.fundingRepository, fundingId);
     if (!funding) {
       throw new NotFoundException(`Funding not found with ID ${fundingId}`);
@@ -84,14 +84,14 @@ export class FundingService {
 
     return this.fundingRepository.save(funding);
   }
-  
+
   async deleteFunding(fundingId: string): Promise<void> {
     const funding = await findFundingById(this.fundingRepository, fundingId);
     if (!funding) {
       throw new NotFoundException(`Funding not found with ID ${fundingId}`);
     }
-  
-    funding.deleteAt = new Date(); 
+
+    funding.deleteAt = new Date();
     await this.fundingRepository.save(funding);
   }
 }

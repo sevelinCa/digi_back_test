@@ -1,16 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/domain/user';
-import { FilterUserDto, SortUserDto } from 'src/users/dto/query-user.dto';
-import { UserRepository } from 'src/users/infrastructure/persistence/user.repository';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
-import { NullableType } from 'src/utils/types/nullable.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { Repository } from 'typeorm';
-import { UserProfileDto } from './dto/user.profile.dto';
-import { UsersService } from 'src/users/users.service';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { JwtPayloadType } from 'src/auth/strategies/types/jwt-payload.type';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/users/domain/user";
+import { FilterUserDto, SortUserDto } from "src/users/dto/query-user.dto";
+import { UserRepository } from "src/users/infrastructure/persistence/user.repository";
+import { EntityCondition } from "src/utils/types/entity-condition.type";
+import { NullableType } from "src/utils/types/nullable.type";
+import { IPaginationOptions } from "src/utils/types/pagination-options";
+import { Repository } from "typeorm";
+import { UserProfileDto } from "./dto/user.profile.dto";
+import { UsersService } from "src/users/users.service";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { JwtPayloadType } from "src/auth/strategies/types/jwt-payload.type";
 
 @Injectable()
 export class UserService {
@@ -18,14 +18,13 @@ export class UserService {
     private readonly usersRepository: UserRepository,
     private usersService: UsersService,
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<User>
-  ) { }
+    private readonly userRepository: Repository<User>,
+  ) {}
 
   async createProfile(
     userJwtPayload: JwtPayloadType,
     createUserProfileDto: UserProfileDto,
   ) {
-
     const user = await this.usersService.findOne({
       id: userJwtPayload.id,
     });
@@ -52,7 +51,7 @@ export class UserService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'email already exists',
+              email: "email already exists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -70,14 +69,13 @@ export class UserService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'phoneNumberAlreadyExists',
+              email: "phoneNumberAlreadyExists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
     }
-
 
     Object.assign(user, {
       image: createUserProfileDto?.image,
@@ -99,12 +97,13 @@ export class UserService {
       documentId: createUserProfileDto?.documentId,
       countryOfOrigin: createUserProfileDto?.countryOfOrigin,
       criminalRecord: createUserProfileDto?.criminalRecord,
-      policeClearenceCertificate: createUserProfileDto?.policeClearenceCertificate,
+      policeClearenceCertificate:
+        createUserProfileDto?.policeClearenceCertificate,
       crimes: createUserProfileDto?.crimes,
       isProfileComplete: true,
-    })
+    });
 
-    await this.userRepository.save(user)
+    await this.userRepository.save(user);
   }
 
   findManyWithPagination({
@@ -159,7 +158,7 @@ export class UserService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'email already exists',
+              email: "email already exists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -177,14 +176,13 @@ export class UserService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'phoneNumberAlreadyExists',
+              email: "phoneNumberAlreadyExists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
     }
-
 
     Object.assign(user, {
       image: updateUserProfileDto?.image,
@@ -206,15 +204,16 @@ export class UserService {
       documentId: updateUserProfileDto?.documentId,
       countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
       criminalRecord: updateUserProfileDto?.criminalRecord,
-      policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
+      policeClearenceCertificate:
+        updateUserProfileDto?.policeClearenceCertificate,
       crimes: updateUserProfileDto?.crimes,
-      isProfileComplete: true
-    })
+      isProfileComplete: true,
+    });
 
-    await this.userRepository.save(user)
+    await this.userRepository.save(user);
   }
 
-  async softDelete(id: User['id']): Promise<void> {
+  async softDelete(id: User["id"]): Promise<void> {
     await this.usersRepository.softDelete(id);
   }
 }

@@ -1,20 +1,19 @@
-
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
-import { StatusEnum } from 'src/statuses/statuses.enum';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from "class-validator";
+import { StatusEnum } from "src/statuses/statuses.enum";
 
 export class CreateDigifranchiseDto {
-  @ApiProperty({ example: 'Unique Digifranchise Name' })
+  @ApiProperty({ example: "Unique Digifranchise Name" })
   @IsNotEmpty()
   @IsString()
   digifranchiseName: string;
 
-  @ApiProperty({ example: 'Link to Digifranchise Image' })
+  @ApiProperty({ example: "Link to Digifranchise Image" })
   @IsOptional()
   @IsString()
   digifranchiseImg: string;
 
-  @ApiProperty({ example: 'Description of Digifranchise', required: false })
+  @ApiProperty({ example: "Description of Digifranchise", required: false })
   @IsOptional()
   @IsString()
   description?: string;
@@ -24,10 +23,8 @@ export class CreateDigifranchiseDto {
   @IsEnum(StatusEnum)
   status: StatusEnum;
 
-  @ApiProperty({ example: '5000', required: false })
+  @ApiProperty({ example: "5000", required: false })
   @IsOptional()
   @IsString()
   digifranchiseFee?: string;
-
-
 }

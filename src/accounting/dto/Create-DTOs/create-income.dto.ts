@@ -1,7 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Length, IsInt } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, Length, IsInt } from "class-validator";
 export class CreateIncomeDto {
-  @ApiProperty({ example: 'Sales' })
+  @ApiProperty({ example: "Sales" })
   @IsNotEmpty()
   @IsString()
   @Length(1, 255)
@@ -17,14 +17,14 @@ export class CreateIncomeDto {
   unityCost: number;
 
   @ApiProperty({
-    example: 'Monthly sales revenue',
+    example: "Monthly sales revenue",
   })
   @IsNotEmpty()
   @IsString()
   @Length(1, 255)
   description: string;
 
-  @ApiProperty({ example: '2024-03-15T00:00:00Z' })
+  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
   @IsNotEmpty()
   incomeDate: Date;
 }

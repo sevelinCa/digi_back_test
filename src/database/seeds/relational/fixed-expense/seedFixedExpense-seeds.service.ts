@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FixedExpenseCategory } from 'src/accounting/entities/fixedExpenseCategory.entity';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { FixedExpenseCategory } from "src/accounting/entities/fixedExpenseCategory.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class FixedExpenseSeedService {
@@ -12,28 +12,28 @@ export class FixedExpenseSeedService {
 
   async run() {
     const fixedExpenses = [
-      'Accounting',
-      'Advertising',
-      'Bank Charges',
-      'Computer Expenses',
-      'Electricity/Water',
-      'Internet Fees',
-      'Lease Costs',
-      'Legal Fees',
-      'Marketing Fees',
-      'Marketing Lists',
-      'Office Expsenses',
-      'Rent',
-      'Salaries',
-      'Salary Oncosts',
-      'Salary',
-      'Software Lease',
-      'Stationery',
-      'Subscriptions',
-      'Telephones',
-      'Travel',
-      'Wages - Sundries',
-      'Website',
+      "Accounting",
+      "Advertising",
+      "Bank Charges",
+      "Computer Expenses",
+      "Electricity/Water",
+      "Internet Fees",
+      "Lease Costs",
+      "Legal Fees",
+      "Marketing Fees",
+      "Marketing Lists",
+      "Office Expsenses",
+      "Rent",
+      "Salaries",
+      "Salary Oncosts",
+      "Salary",
+      "Software Lease",
+      "Stationery",
+      "Subscriptions",
+      "Telephones",
+      "Travel",
+      "Wages - Sundries",
+      "Website",
     ];
 
     for (const fixedExpenseName of fixedExpenses) {

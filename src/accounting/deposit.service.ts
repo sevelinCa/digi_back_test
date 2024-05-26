@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Deposit } from './entities/deposit.entity';
-import { CreateDepositDto } from './dto/Create-DTOs/create-deposit.dto';
-import { findDepositById } from 'src/helper/FindByFunctions';
-import  { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Deposit } from "./entities/deposit.entity";
+import { CreateDepositDto } from "./dto/Create-DTOs/create-deposit.dto";
+import { findDepositById } from "src/helper/FindByFunctions";
+import { UpdateDepositDto } from "./dto/Update-DTOs/update-deposity.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
 @Injectable()
 export class DepositService {
@@ -44,23 +44,23 @@ export class DepositService {
     startDate?: string,
     endDate?: string,
   ): Promise<{ deposits: Deposit[]; count: number }> {
-    const queryBuilder = this.depositRepository.createQueryBuilder('deposit');
-  
-    queryBuilder.leftJoinAndSelect('deposit.franchiseId', 'franchise');
-  
+    const queryBuilder = this.depositRepository.createQueryBuilder("deposit");
+
+    queryBuilder.leftJoinAndSelect("deposit.franchiseId", "franchise");
+
     if (startDate) {
-      queryBuilder.andWhere('deposit.createdAt >= :startDate', { startDate });
+      queryBuilder.andWhere("deposit.createdAt >= :startDate", { startDate });
     }
-  
+
     if (endDate) {
-      queryBuilder.andWhere('deposit.createdAt <= :endDate', { endDate });
+      queryBuilder.andWhere("deposit.createdAt <= :endDate", { endDate });
     }
-  
-    queryBuilder.andWhere('deposit.deleteAt IS NULL');
-  
+
+    queryBuilder.andWhere("deposit.deleteAt IS NULL");
+
     const deposits = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-  
+
     return { deposits, count };
   }
 
@@ -73,15 +73,15 @@ export class DepositService {
     if (!deposit) {
       throw new NotFoundException(`Deposit not found with ID ${depositId}`);
     }
-  
-    deposit.deleteAt = new Date(); 
-    await this.depositRepository.save(deposit); 
+
+    deposit.deleteAt = new Date();
+    await this.depositRepository.save(deposit);
   }
 
   async updateDeposit(
     depositId: string,
     updateDepositDto: UpdateDepositDto,
-   ): Promise<Deposit> {
+  ): Promise<Deposit> {
     const deposit = await findDepositById(this.depositRepository, depositId);
     if (!deposit) {
       throw new NotFoundException(`Deposit not found with ID ${depositId}`);
@@ -93,5 +93,4 @@ export class DepositService {
     }
     return this.depositRepository.save(deposit);
   }
-
 }

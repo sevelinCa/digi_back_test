@@ -1,6 +1,6 @@
-import { registerAs } from '@nestjs/config';
-import { AppConfig } from './app-config.type';
-import validateConfig from '.././utils/validate-config';
+import { registerAs } from "@nestjs/config";
+import { AppConfig } from "./app-config.type";
+import validateConfig from ".././utils/validate-config";
 import {
   IsEnum,
   IsInt,
@@ -9,12 +9,12 @@ import {
   IsUrl,
   Max,
   Min,
-} from 'class-validator';
+} from "class-validator";
 
 enum Environment {
-  Development = 'development',
-  Production = 'production',
-  Test = 'test',
+  Development = "development",
+  Production = "production",
+  Test = "test",
 }
 
 class EnvironmentVariablesValidator {
@@ -62,30 +62,30 @@ class EnvironmentVariablesValidator {
 
   @IsString()
   @IsOptional()
-  ACADEMY_LOGIN_ENDPOINT:string;
+  ACADEMY_LOGIN_ENDPOINT: string;
 
   @IsString()
   @IsOptional()
-  ACADEMY_ORIGIN_URL:string
+  ACADEMY_ORIGIN_URL: string;
 }
 
-export default registerAs<AppConfig>('app', () => {
+export default registerAs<AppConfig>("app", () => {
   validateConfig(process.env, EnvironmentVariablesValidator);
 
   const config = {
-    nodeEnv: process.env.NODE_ENV || 'development',
-    name: process.env.APP_NAME || 'app',
+    nodeEnv: process.env.NODE_ENV || "development",
+    name: process.env.APP_NAME || "app",
     workingDirectory: process.env.PWD || process.cwd(),
     frontendDomain: process.env.FRONTEND_DOMAIN,
-    backendDomain: process.env.BACKEND_DOMAIN?? 'http://localhost',
+    backendDomain: process.env.BACKEND_DOMAIN ?? "http://localhost",
     port: process.env.APP_PORT
-     ? parseInt(process.env.APP_PORT, 10)
+      ? parseInt(process.env.APP_PORT, 10)
       : process.env.PORT
-       ? parseInt(process.env.PORT, 10)
+        ? parseInt(process.env.PORT, 10)
         : 3000,
-    apiPrefix: process.env.API_PREFIX || 'api',
-    fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
-    headerLanguage: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
+    apiPrefix: process.env.API_PREFIX || "api",
+    fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || "en",
+    headerLanguage: process.env.APP_HEADER_LANGUAGE || "x-custom-lang",
     ACADEMY_API_BASE_URL: process.env.ACADEMY_API_BASE_URL,
     ACADEMY_CSRF_TOKEN_ENDPOINT: process.env.ACADEMY_CSRF_TOKEN_ENDPOINT,
     ACADEMY_REGISTER_ENDPOINT: process.env.ACADEMY_REGISTER_ENDPOINT,

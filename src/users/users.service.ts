@@ -1,23 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { CreateUserDto } from './dto/create-user.dto';
-import { NullableType } from '../utils/types/nullable.type';
-import { FilterUserDto, SortUserDto } from './dto/query-user.dto';
-import { UserRepository } from './infrastructure/persistence/user.repository';
-import { DeepPartial } from 'src/utils/types/deep-partial.type';
-import { User } from './domain/user';
-import { StatusEnum } from 'src/statuses/statuses.enum';
-import { RoleEnum } from 'src/roles/roles.enum';
-import bcrypt from 'bcryptjs';
-import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
-import { GoogleCreateUserDto } from 'src/auth/dto/google-create-user.dto';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { EntityCondition } from "src/utils/types/entity-condition.type";
+import { IPaginationOptions } from "src/utils/types/pagination-options";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { NullableType } from "../utils/types/nullable.type";
+import { FilterUserDto, SortUserDto } from "./dto/query-user.dto";
+import { UserRepository } from "./infrastructure/persistence/user.repository";
+import { DeepPartial } from "src/utils/types/deep-partial.type";
+import { User } from "./domain/user";
+import { StatusEnum } from "src/statuses/statuses.enum";
+import { RoleEnum } from "src/roles/roles.enum";
+import bcrypt from "bcryptjs";
+import { AuthProvidersEnum } from "src/auth/auth-providers.enum";
+import { GoogleCreateUserDto } from "src/auth/dto/google-create-user.dto";
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly usersRepository: UserRepository,
-  ) {}
+  constructor(private readonly usersRepository: UserRepository) {}
 
   async create(createProfileDto: CreateUserDto): Promise<User> {
     const clonedPayload = {
@@ -40,7 +38,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'email already exists',
+              email: "email already exists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -57,7 +55,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'phoneAlreadyExists',
+              email: "phoneAlreadyExists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -92,7 +90,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              role: 'roleNotExists',
+              role: "roleNotExists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -109,7 +107,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              status: 'statusNotExists',
+              status: "statusNotExists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -141,7 +139,7 @@ export class UsersService {
   }
 
   async update(
-    id: User['id'],
+    id: User["id"],
     payload: DeepPartial<User>,
   ): Promise<User | null> {
     const clonedPayload = { ...payload };
@@ -164,7 +162,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'email already exists',
+              email: "email already exists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -199,7 +197,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              role: 'roleNotExists',
+              role: "roleNotExists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -216,7 +214,7 @@ export class UsersService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              status: 'statusNotExists',
+              status: "statusNotExists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -224,10 +222,10 @@ export class UsersService {
       }
     }
 
-    return this.usersRepository.update(id, clonedPayload );
+    return this.usersRepository.update(id, clonedPayload);
   }
 
-  async softDelete(id: User['id']): Promise<void> {
+  async softDelete(id: User["id"]): Promise<void> {
     await this.usersRepository.softDelete(id);
   }
 }

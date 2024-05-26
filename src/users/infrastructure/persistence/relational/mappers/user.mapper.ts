@@ -1,8 +1,8 @@
-import { RoleEntity } from 'src/roles/infrastructure/persistence/relational/entities/role.entity';
-import { User } from '../../../../domain/user';
-import { UserEntity } from '../entities/user.entity';
+import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
+import { User } from "../../../../domain/user";
+import { UserEntity } from "../entities/user.entity";
 // import { FileEntity } from 'src/files/infrastructure/persistence/relational/entities/file.entity';
-import { StatusEntity } from 'src/statuses/infrastructure/persistence/relational/entities/status.entity';
+import { StatusEntity } from "src/statuses/infrastructure/persistence/relational/entities/status.entity";
 // import { FileMapper } from 'src/files/infrastructure/persistence/relational/mappers/file.mapper';
 
 export class UserMapper {
@@ -25,7 +25,6 @@ export class UserMapper {
     user.createdAt = raw.createdAt;
     user.updatedAt = raw.updatedAt;
     user.deletedAt = raw.deletedAt;
-
 
     user.image = raw.image;
     user.idImage = raw.idImage;
@@ -72,7 +71,7 @@ export class UserMapper {
     }
 
     const userEntity = new UserEntity();
-    if (user.id && typeof user.id === 'number') {
+    if (user.id && typeof user.id === "number") {
       userEntity.id = user.id;
     }
     userEntity.email = user.email;

@@ -1,4 +1,4 @@
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import {
   Column,
   CreateDateColumn,
@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 
 export enum AllowedTimeSlotUnits {
   FIFTEEN_MINUTES = 15,
@@ -24,45 +24,45 @@ export enum BreakTimeBetweenBookedSlots {
 
 @Entity()
 export class DigifranchiseWorkingHours {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(
     () => DigifranchiseOwner,
-    (ownedFranchise) => ownedFranchise.availability
+    (ownedFranchise) => ownedFranchise.availability,
   )
-  @JoinColumn({ name: 'ownedDigifranchise' })
+  @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: AllowedTimeSlotUnits,
     default: AllowedTimeSlotUnits.THIRTY_MINUTES,
   })
   allowedTimeSlotUnits: AllowedTimeSlotUnits;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: BreakTimeBetweenBookedSlots,
     default: BreakTimeBetweenBookedSlots.FIFTEEN_MINUTES,
   })
   breakTimeBetweenBookedSlots: BreakTimeBetweenBookedSlots;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: "boolean", default: false })
   allowBookingOnPublicHolidays: boolean;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: "json", nullable: true })
   availabilityWeekDays: any[];
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: "json", nullable: true })
   unavailability: any[];
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 }

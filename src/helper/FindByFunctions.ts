@@ -1,18 +1,18 @@
-import { Equal, Repository } from 'typeorm';
-import { User } from '../users/domain/user';
-import { UserNotFoundException } from 'src/middlewares/accounting.exceptions';
-import { Expense } from 'src/accounting/entities/expense.entity';
-import { FixedExpenseCategory } from 'src/accounting/entities/fixedExpenseCategory.entity';
-import { Income } from 'src/accounting/entities/income.entity';
-import { Deposit } from 'src/accounting/entities/deposit.entity';
-import { Funding } from 'src/accounting/entities/funding.entity';
-import { OperatingParameters } from 'src/accounting/entities/operationParamenters.entity';
-import { Inventory } from 'src/inventory/entities/inventory.entity';
-import { Asset } from 'src/asset-mgt/entities/asset.entity';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { RoleEnum } from 'src/roles/roles.enum';
+import { Equal, Repository } from "typeorm";
+import { User } from "../users/domain/user";
+import { UserNotFoundException } from "src/middlewares/accounting.exceptions";
+import { Expense } from "src/accounting/entities/expense.entity";
+import { FixedExpenseCategory } from "src/accounting/entities/fixedExpenseCategory.entity";
+import { Income } from "src/accounting/entities/income.entity";
+import { Deposit } from "src/accounting/entities/deposit.entity";
+import { Funding } from "src/accounting/entities/funding.entity";
+import { OperatingParameters } from "src/accounting/entities/operationParamenters.entity";
+import { Inventory } from "src/inventory/entities/inventory.entity";
+import { Asset } from "src/asset-mgt/entities/asset.entity";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { RoleEnum } from "src/roles/roles.enum";
 
 export async function findUserById(
   userRepository: Repository<User>,
@@ -35,11 +35,9 @@ export async function getDigifranchiseAccountByUserId(
   DigifranchiseRepository: Repository<DigifranchiseOwner>,
   userId: string,
 ): Promise<DigifranchiseOwner | null> {
-  const userDigifranchise = await DigifranchiseRepository.findOne(
-    {
-      where: { userId: userId },
-    },
-  );
+  const userDigifranchise = await DigifranchiseRepository.findOne({
+    where: { userId: userId },
+  });
   return userDigifranchise || null;
 }
 
@@ -47,7 +45,9 @@ export async function getDigifranchiseById(
   DigifranchiseRepository: Repository<Digifranchise>,
   digifranchiseId: string,
 ): Promise<Digifranchise | null> {
-  const digifranchise = await DigifranchiseRepository.findOne({ where: { id: digifranchiseId } });
+  const digifranchise = await DigifranchiseRepository.findOne({
+    where: { id: digifranchiseId },
+  });
   return digifranchise || null;
 }
 
@@ -124,17 +124,19 @@ export async function checkIfDigifranchiseExists(
   digifranchiseRepository: Repository<Digifranchise>,
   digifranchiseId: string,
 ): Promise<boolean> {
-  const digifranchise = await digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
+  const digifranchise = await digifranchiseRepository.findOne({
+    where: { id: digifranchiseId },
+  });
   return !!digifranchise;
 }
 
 export async function findAdminID(): Promise<string> {
   const admin = await this.userRepository.findOne({
-    where: { role: Equal(RoleEnum.digifranchise_super_admin) }
+    where: { role: Equal(RoleEnum.digifranchise_super_admin) },
   });
   if (!admin) {
-    throw new Error('Admin user not found');
+    throw new Error("Admin user not found");
   }
-  console.log('AAAAAAAAAAAAAAAAAAA', admin)
+  console.log("AAAAAAAAAAAAAAAAAAA", admin);
   return admin.id;
 }

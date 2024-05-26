@@ -1,25 +1,28 @@
-import { Transform, Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
-import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
-import { RoleDto } from 'src/roles/dto/role.dto';
-import { StatusDto } from 'src/statuses/dto/status.dto';
-import { Crimes, ProfessionalBody, Qualifications } from '../infrastructure/persistence/relational/entities/user.entity';
+import { Transform, Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsEmail, IsNotEmpty, IsOptional, MinLength } from "class-validator";
+import { lowerCaseTransformer } from "src/utils/transformers/lower-case.transformer";
+import { RoleDto } from "src/roles/dto/role.dto";
+import { StatusDto } from "src/statuses/dto/status.dto";
+import {
+  Crimes,
+  ProfessionalBody,
+  Qualifications,
+} from "../infrastructure/persistence/relational/entities/user.entity";
 // import { FileDto } from 'src/files/dto/file.dto';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'test1@example.com' })
+  @ApiProperty({ example: "test1@example.com" })
   @Transform(lowerCaseTransformer)
   // @IsNotEmpty()
   @IsEmail()
   email: string | null;
 
-  @ApiProperty({ example: '+27450049245' })
+  @ApiProperty({ example: "+27450049245" })
   @Transform(lowerCaseTransformer)
   // @IsNotEmpty()
   @IsEmail()
   phoneNumber: string | null;
-
 
   @ApiProperty()
   @MinLength(6)
@@ -29,11 +32,11 @@ export class CreateUserDto {
 
   socialId?: string | null;
 
-  @ApiProperty({ example: 'John' })
+  @ApiProperty({ example: "John" })
   @IsNotEmpty()
   firstName: string | null;
 
-  @ApiProperty({ example: 'Doe' })
+  @ApiProperty({ example: "Doe" })
   @IsNotEmpty()
   lastName: string | null;
 
@@ -87,6 +90,5 @@ export class CreateUserDto {
 
   isProfileComplete: boolean;
 
-  dateOfBirth?: Date; 
-
+  dateOfBirth?: Date;
 }

@@ -1,7 +1,7 @@
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { Session } from '../../../../domain/session';
-import { SessionEntity } from '../entities/session.entity';
-import { UserMapper } from 'src/users/infrastructure/persistence/relational/mappers/user.mapper';
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { Session } from "../../../../domain/session";
+import { SessionEntity } from "../entities/session.entity";
+import { UserMapper } from "src/users/infrastructure/persistence/relational/mappers/user.mapper";
 
 export class SessionMapper {
   static toDomain(raw: SessionEntity): Session {
@@ -20,7 +20,7 @@ export class SessionMapper {
     user.id = session.user.id;
 
     const sessionEntity = new SessionEntity();
-    if (session.id && typeof session.id === 'number') {
+    if (session.id && typeof session.id === "number") {
       sessionEntity.id = session.id.toString();
     }
     sessionEntity.user = user;

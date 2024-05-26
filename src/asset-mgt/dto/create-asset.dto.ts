@@ -1,8 +1,8 @@
-import { IsInt, IsNotEmpty, IsString, Length, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsNotEmpty, IsString, Length, Min } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateAssetDto {
-  @ApiProperty({ example: 'Laptop' })
+  @ApiProperty({ example: "Laptop" })
   @IsNotEmpty()
   @IsString()
   @Length(1, 255)
@@ -13,7 +13,7 @@ export class CreateAssetDto {
   @Min(0)
   purchasePrice: number;
 
-  @ApiProperty({ example: '2024-03-15T00:00:00Z' })
+  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
   @IsNotEmpty()
   purchaseDate: Date;
 

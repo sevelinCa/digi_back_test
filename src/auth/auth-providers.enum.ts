@@ -1,8 +1,8 @@
 export enum AuthProvidersEnum {
-  email = 'email',
-  facebook = 'facebook',
-  google = 'google',
-  twitter = 'twitter',
-  apple = 'apple',
-  phone = 'phone'
+  email = "email",
+  facebook = "facebook",
+  google = "google",
+  twitter = "twitter",
+  apple = "apple",
+  phone = "phone",
 }
