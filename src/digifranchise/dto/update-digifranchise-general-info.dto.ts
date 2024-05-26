@@ -1,54 +1,54 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UpdateDigifranchiseGeneralInfoDto {
-  @ApiProperty({ example: 'James\' digifranchise' })
+  @ApiProperty({ example: "James' digifranchise" })
   @IsString()
   @IsOptional()
-  digifranchiseName: string
+  digifranchiseName: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  facebookHandle: string
+  facebookHandle: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  tiktokHandle: string
+  tiktokHandle: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  instagramHandle: string
+  instagramHandle: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  xHandle: string
+  xHandle: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  address: string
+  address: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  connectNumber: string
+  connectNumber: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  otherMobileNumber: string
+  otherMobileNumber: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  aboutCompany: string
+  aboutCompany: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  location: string
+  location: string;
 }

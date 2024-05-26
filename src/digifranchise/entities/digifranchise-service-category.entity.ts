@@ -1,33 +1,42 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
-import { Digifranchise } from './digifranchise.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { DigifranchiseServiceOffered } from './digifranchise-service-offered.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+} from "typeorm";
+import { Digifranchise } from "./digifranchise.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { DigifranchiseServiceOffered } from "./digifranchise-service-offered.entity";
 
 @Entity()
 export class DigifranchiseServiceCategory {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    serviceCategoryName: string;
+  @Column({ type: "varchar", length: 255 })
+  serviceCategoryName: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    unitPrice: string;
+  @Column({ type: "varchar", length: 255 })
+  unitPrice: string;
 
-    @Column({ type: 'text' })
-    description: string;
+  @Column({ type: "text" })
+  description: string;
 
-    @ManyToOne(() => DigifranchiseServiceOffered, service => service.serviceCategories)
-    service: DigifranchiseServiceOffered;
+  @ManyToOne(
+    () => DigifranchiseServiceOffered,
+    (service) => service.serviceCategories,
+  )
+  service: DigifranchiseServiceOffered;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
 
-    @Column({ type: 'timestamp', nullable: true })
-    deleteAt: Date | null;
+  @Column({ type: "timestamp", nullable: true })
+  deleteAt: Date | null;
 }
-
-

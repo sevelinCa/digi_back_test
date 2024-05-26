@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsOptional,
   IsInt,
@@ -10,14 +10,14 @@ import {
   IsDateString,
   IsNotEmpty,
   IsArray,
-} from 'class-validator';
+} from "class-validator";
 // import { Entries } from './create-inventory.dto';
-import { InventoryEntries } from '../entities/inventory-entries.entity';
+import { InventoryEntries } from "../entities/inventory-entries.entity";
 
 export class UpdateInventoryDto {
   @ApiProperty({
-    example: 'Item 1',
-    description: 'The name of the inventory item.',
+    example: "Item 1",
+    description: "The name of the inventory item.",
   })
   @IsOptional()
   @IsString()

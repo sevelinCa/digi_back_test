@@ -1,52 +1,72 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToMany } from 'typeorm';
-import { Digifranchise } from './digifranchise.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { DigifranchiseServiceCategory } from './digifranchise-service-category.entity';
-import { DigifranchiseGalleryImage } from './digifranchise-gallery-images.entity';
-import { DigifranchiseSelectProductOrServiceTable } from './digifranchise-select-product-service.entity';
-import { DigifranchiseOwner } from './digifranchise-ownership.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  OneToMany,
+} from "typeorm";
+import { Digifranchise } from "./digifranchise.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { DigifranchiseServiceCategory } from "./digifranchise-service-category.entity";
+import { DigifranchiseGalleryImage } from "./digifranchise-gallery-images.entity";
+import { DigifranchiseSelectProductOrServiceTable } from "./digifranchise-select-product-service.entity";
+import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
 
 @Entity()
 export class DigifranchiseServiceOffered {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(() => Digifranchise)
-  @JoinColumn({ name: 'digifranchiseId' })
+  @JoinColumn({ name: "digifranchiseId" })
   digifranchiseId: Digifranchise;
 
   @ManyToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
-  @ManyToOne(() => DigifranchiseOwner, ownedItem => ownedItem.serviceOffered, { nullable: true })
-  @JoinColumn({ name: 'digifranchiseOwnedId' })
+  @ManyToOne(
+    () => DigifranchiseOwner,
+    (ownedItem) => ownedItem.serviceOffered,
+    { nullable: true },
+  )
+  @JoinColumn({ name: "digifranchiseOwnedId" })
   ownedFranchise: DigifranchiseOwner | null;
 
-  @OneToMany(() => DigifranchiseGalleryImage, image => image.digifranchiseServiceId)
+  @OneToMany(
+    () => DigifranchiseGalleryImage,
+    (image) => image.digifranchiseServiceId,
+  )
   serviceGalleryImages: DigifranchiseGalleryImage[];
 
-  @OneToMany(() => DigifranchiseSelectProductOrServiceTable, selectItem => selectItem.digifranchiseService, { nullable: true })
+  @OneToMany(
+    () => DigifranchiseSelectProductOrServiceTable,
+    (selectItem) => selectItem.digifranchiseService,
+    { nullable: true },
+  )
   selectedItem: DigifranchiseSelectProductOrServiceTable[];
 
-  @Column({ type: 'text' })
+  @Column({ type: "text" })
   serviceName: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: "text" })
   description: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: "varchar", length: 255 })
   unitPrice: string;
 
-  @OneToMany(() => DigifranchiseServiceCategory, category => category.service)
+  @OneToMany(() => DigifranchiseServiceCategory, (category) => category.service)
   serviceCategories: DigifranchiseServiceCategory[];
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 }

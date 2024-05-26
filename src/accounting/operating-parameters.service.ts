@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { OperatingParameters } from './entities/operationParamenters.entity';
-import { CreateOperatingParametersDto } from './dto/Create-DTOs/create-operating-parameters.dto';
-import { findOperatingParametersById } from 'src/helper/FindByFunctions';
-import { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { OperatingParameters } from "./entities/operationParamenters.entity";
+import { CreateOperatingParametersDto } from "./dto/Create-DTOs/create-operating-parameters.dto";
+import { findOperatingParametersById } from "src/helper/FindByFunctions";
+import { UpdateOperatingParametersDto } from "./dto/Update-DTOs/update-operating-parameters.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
 @Injectable()
 export class OperatingParametersService {
@@ -14,7 +14,7 @@ export class OperatingParametersService {
     private readonly operatingParametersRepository: Repository<OperatingParameters>,
     @InjectRepository(DigifranchiseOwner)
     private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
-  ) { }
+  ) {}
 
   async createOperatingParameters(
     createOperatingParametersDto: CreateOperatingParametersDto,
@@ -45,27 +45,27 @@ export class OperatingParametersService {
     endDate?: string,
   ): Promise<{ parameters: OperatingParameters[]; count: number }> {
     const queryBuilder = this.operatingParametersRepository.createQueryBuilder(
-      'operatingParameters',
+      "operatingParameters",
     );
 
     queryBuilder.leftJoinAndSelect(
-      'operatingParameters.franchiseId',
-      'franchise',
+      "operatingParameters.franchiseId",
+      "franchise",
     );
 
     if (startDate) {
-      queryBuilder.andWhere('operatingParameters.createdAt >= :startDate', {
+      queryBuilder.andWhere("operatingParameters.createdAt >= :startDate", {
         startDate,
       });
     }
 
     if (endDate) {
-      queryBuilder.andWhere('operatingParameters.createdAt <= :endDate', {
+      queryBuilder.andWhere("operatingParameters.createdAt <= :endDate", {
         endDate,
       });
     }
 
-    queryBuilder.andWhere('operatingParameters.deleteAt IS NULL');
+    queryBuilder.andWhere("operatingParameters.deleteAt IS NULL");
 
     const parameters = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
@@ -86,9 +86,14 @@ export class OperatingParametersService {
     parametersId: string,
     updateOperatingParametersDto: UpdateOperatingParametersDto,
   ): Promise<OperatingParameters> {
-    const parameters = await findOperatingParametersById(this.operatingParametersRepository, parametersId);
+    const parameters = await findOperatingParametersById(
+      this.operatingParametersRepository,
+      parametersId,
+    );
     if (!parameters) {
-      throw new NotFoundException(`Operating parameters not found with ID ${parametersId}`);
+      throw new NotFoundException(
+        `Operating parameters not found with ID ${parametersId}`,
+      );
     }
 
     Object.assign(parameters, updateOperatingParametersDto);
@@ -96,7 +101,9 @@ export class OperatingParametersService {
     return this.operatingParametersRepository.save(parameters);
   }
 
-  async deleteOperatingParameters(operatingParametersId: string): Promise<void> {
+  async deleteOperatingParameters(
+    operatingParametersId: string,
+  ): Promise<void> {
     const operatingParameters = await findOperatingParametersById(
       this.operatingParametersRepository,
       operatingParametersId,

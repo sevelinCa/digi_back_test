@@ -15,8 +15,8 @@
 //     @Column({ type: 'text' })
 //     description: string;
 
-//     @ManyToOne(() => DigifranchiseOwnedServiceOffered, ownedService => ownedService.ownedServiceCategories) 
-//     @JoinColumn({ name: 'ownedServiceId' }) 
+//     @ManyToOne(() => DigifranchiseOwnedServiceOffered, ownedService => ownedService.ownedServiceCategories)
+//     @JoinColumn({ name: 'ownedServiceId' })
 //     ownedService: DigifranchiseOwnedServiceOffered;
 
 //     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

@@ -1,6 +1,13 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsObject, IsArray } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { InventoryEntries } from '../entities/inventory-entries.entity';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsObject,
+  IsArray,
+} from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { InventoryEntries } from "../entities/inventory-entries.entity";
 
 // export class Entries {
 //   @ApiProperty({ description: 'The quantity of the inventory item.' })
@@ -29,23 +36,24 @@ import { InventoryEntries } from '../entities/inventory-entries.entity';
 
 export class CreateInventoryDto {
   @ApiProperty({
-    example: 'Item 1',
-    description: 'The name of the inventory item.',
+    example: "Item 1",
+    description: "The name of the inventory item.",
   })
   @IsNotEmpty()
   @IsString()
   itemName: string;
 
   @ApiProperty({
-    example: [{
-      quantity: 'The Quantity recieved',
-      costPerItem: 'cost per item',
-      dateRecieved: 'date recieved'
-    }],
-    description: 'The name of the inventory item.',
+    example: [
+      {
+        quantity: "The Quantity recieved",
+        costPerItem: "cost per item",
+        dateRecieved: "date recieved",
+      },
+    ],
+    description: "The name of the inventory item.",
   })
   @IsNotEmpty()
   @IsArray()
   entries: InventoryEntries[];
-
 }

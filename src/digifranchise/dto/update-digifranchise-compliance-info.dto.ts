@@ -1,61 +1,73 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsDate, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-import { OtherComplianceDocs } from '../entities/digifranchise-compliance-information.entity';
+import { ApiProperty } from "@nestjs/swagger";
+import {
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from "class-validator";
+import { OtherComplianceDocs } from "../entities/digifranchise-compliance-information.entity";
 
 export class UpdateDigifranchiseComplianceInfoDto {
-  @ApiProperty({ example: '100391034' })
+  @ApiProperty({ example: "100391034" })
   @IsString()
   @IsOptional()
-  companyRegisterationNumber: string
+  companyRegisterationNumber: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  vatNumber: string
+  vatNumber: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  taxNumber: string
+  taxNumber: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  taxClearencePin: string
+  taxClearencePin: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  taxClearenceExpiration: string
+  taxClearenceExpiration: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  uifRegistration: string
+  uifRegistration: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  workMansCompensation: string
+  workMansCompensation: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  coidaRegisteration: string
+  coidaRegisteration: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  sdlNumber: string
+  sdlNumber: string;
 
-  @ApiProperty({ example: [{
-    docName: 'example doc name',
-    link: 'https://linktodoc.pdf',
-    expiryDate: '2024-10-10'
-  }], description: 'other compliance docs' })
+  @ApiProperty({
+    example: [
+      {
+        docName: "example doc name",
+        link: "https://linktodoc.pdf",
+        expiryDate: "2024-10-10",
+      },
+    ],
+    description: "other compliance docs",
+  })
   @IsArray()
   @IsOptional()
-  otherComplianceDocs: OtherComplianceDocs[]
+  otherComplianceDocs: OtherComplianceDocs[];
 
   // @ApiProperty({ example: [{
   //   link: 'https://linktodoc.pdf'

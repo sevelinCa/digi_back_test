@@ -12,55 +12,54 @@ import {
   NotFoundException,
   Query,
   Patch,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
   ApiQuery,
-} from '@nestjs/swagger';
-import { Roles } from 'src/roles/roles.decorator';
-import { RoleEnum } from 'src/roles/roles.enum';
-import { RolesGuard } from 'src/roles/roles.guard';
-import { Request } from 'express';
-import { CreateFixedExpenseDto } from './dto/Create-DTOs/create-fixed-expense.dto';
-import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
+} from "@nestjs/swagger";
+import { Roles } from "src/roles/roles.decorator";
+import { RoleEnum } from "src/roles/roles.enum";
+import { RolesGuard } from "src/roles/roles.guard";
+import { Request } from "express";
+import { CreateFixedExpenseDto } from "./dto/Create-DTOs/create-fixed-expense.dto";
+import { FixedExpenseCategory } from "./entities/fixedExpenseCategory.entity";
 import {
   ClientFixedExpensesService,
   ManagerFixedExpensesService,
-} from './fixed-expenses.service';
-import { CreateExpenseDto } from './dto/Create-DTOs/create-expense.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ExpenseService } from './expenses.service';
-import { getDigifranchiseAccountByUserId } from 'src/helper/FindByFunctions';
-import { Expense } from './entities/expense.entity';
-import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
-import { IncomeService } from './income.service';
-import { Income } from './entities/income.entity';
-import { FundingService } from './funding.service';
-import { CreateFundingDto } from './dto/Create-DTOs/create-funding.dto';
-import { Funding } from './entities/funding.entity';
-import { DepositService } from './deposit.service';
-import { CreateDepositDto } from './dto/Create-DTOs/create-deposit.dto';
-import { Deposit } from './entities/deposit.entity';
-import { CreateOperatingParametersDto } from './dto/Create-DTOs/create-operating-parameters.dto';
-import { OperatingParameters } from './entities/operationParamenters.entity';
-import { OperatingParametersService } from './operating-parameters.service';
-import { UpdateExpenseDto } from './dto/Update-DTOs/update-expense.dto';
-import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
-import  { UpdateFundingDto } from './dto/Update-DTOs/update-funding.dto';
-import  { UpdateDepositDto } from './dto/Update-DTOs/update-deposity.dto';
-import  { UpdateOperatingParametersDto } from './dto/Update-DTOs/update-operating-parameters.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import  { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+} from "./fixed-expenses.service";
+import { CreateExpenseDto } from "./dto/Create-DTOs/create-expense.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { ExpenseService } from "./expenses.service";
+import { getDigifranchiseAccountByUserId } from "src/helper/FindByFunctions";
+import { Expense } from "./entities/expense.entity";
+import { CreateIncomeDto } from "./dto/Create-DTOs/create-income.dto";
+import { IncomeService } from "./income.service";
+import { Income } from "./entities/income.entity";
+import { FundingService } from "./funding.service";
+import { CreateFundingDto } from "./dto/Create-DTOs/create-funding.dto";
+import { Funding } from "./entities/funding.entity";
+import { DepositService } from "./deposit.service";
+import { CreateDepositDto } from "./dto/Create-DTOs/create-deposit.dto";
+import { Deposit } from "./entities/deposit.entity";
+import { CreateOperatingParametersDto } from "./dto/Create-DTOs/create-operating-parameters.dto";
+import { OperatingParameters } from "./entities/operationParamenters.entity";
+import { OperatingParametersService } from "./operating-parameters.service";
+import { UpdateExpenseDto } from "./dto/Update-DTOs/update-expense.dto";
+import { UpdateIncomeDto } from "./dto/Update-DTOs/update-income.dto";
+import { UpdateFundingDto } from "./dto/Update-DTOs/update-funding.dto";
+import { UpdateDepositDto } from "./dto/Update-DTOs/update-deposity.dto";
+import { UpdateOperatingParametersDto } from "./dto/Update-DTOs/update-operating-parameters.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 
-
-@ApiTags('Admin - Fixed Expenses')
+@ApiTags("Admin - Fixed Expenses")
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'fixed-expenses', version: '1' })
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller({ path: "fixed-expenses", version: "1" })
 export class ManagerFixedExpensesController {
   constructor(
     private readonly managerFixedExpensesService: ManagerFixedExpensesService,
@@ -68,9 +67,9 @@ export class ManagerFixedExpensesController {
 
   @Roles(RoleEnum.digifranchise_super_admin)
   @ApiOperation({
-    summary: 'CREATE - Create Fixed Expense for MANAGER',
+    summary: "CREATE - Create Fixed Expense for MANAGER",
   })
-  @Post('create')
+  @Post("create")
   async createFixedExpenses(
     @Req() req: Request,
     @Body(new ValidationPipe())
@@ -83,7 +82,7 @@ export class ManagerFixedExpensesController {
 
   @Roles()
   @ApiOperation({
-    summary: 'GET ALL - Retreive All Fixed Expenses for ALL USERS ',
+    summary: "GET ALL - Retreive All Fixed Expenses for ALL USERS ",
   })
   @Get()
   async getAllFixedExpensesCategories(): Promise<FixedExpenseCategory[]> {
@@ -92,22 +91,22 @@ export class ManagerFixedExpensesController {
 
   @Roles()
   @ApiOperation({
-    summary: 'GET ONE - Retreive Fixed Expenses for ALL USERS',
+    summary: "GET ONE - Retreive Fixed Expenses for ALL USERS",
   })
-  @Get(':id')
+  @Get(":id")
   async getFixedExpenses(
-    @Param('id') id: string,
+    @Param("id") id: string,
   ): Promise<FixedExpenseCategory> {
     return this.managerFixedExpensesService.getFixedExpenses(id);
   }
 
   @Roles()
   @ApiOperation({
-    summary: 'UPDATE ONE - UPDATE Fixed Expenses based Id for MANAGER',
+    summary: "UPDATE ONE - UPDATE Fixed Expenses based Id for MANAGER",
   })
-  @Put(':id')
+  @Put(":id")
   async updateFixedExpenses(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body(new ValidationPipe()) updateData: CreateFixedExpenseDto,
   ): Promise<FixedExpenseCategory> {
     return this.managerFixedExpensesService.updateFixedExpenses(id, updateData);
@@ -115,28 +114,28 @@ export class ManagerFixedExpensesController {
 
   @Roles()
   @ApiOperation({
-    summary: 'DELETE ONE - DELETE Fixed Expenses  based on Id for MANAGER',
+    summary: "DELETE ONE - DELETE Fixed Expenses  based on Id for MANAGER",
   })
-  @Delete(':id')
-  async deleteFixedExpenses(@Param('id') id: string): Promise<void> {
+  @Delete(":id")
+  async deleteFixedExpenses(@Param("id") id: string): Promise<void> {
     return this.managerFixedExpensesService.deleteFixedExpenses(id);
   }
 }
 
-@ApiTags('Client - Fixed Expenses')
+@ApiTags("Client - Fixed Expenses")
 @ApiBearerAuth()
 @Roles()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'fixed-expense', version: '1' })
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller({ path: "fixed-expense", version: "1" })
 export class ClientFixedExpensesController {
   constructor(
     private readonly clientFixedExpensesService: ClientFixedExpensesService,
   ) {}
 
   @ApiOperation({
-    summary: 'CREATE - Create Fixed Expense for User',
+    summary: "CREATE - Create Fixed Expense for User",
   })
-  @Post('create')
+  @Post("create")
   async createFixedExpenses(
     @Req() req: Request,
     @Body(new ValidationPipe())
@@ -151,7 +150,7 @@ export class ClientFixedExpensesController {
 
   @ApiOperation({
     summary:
-      'GET ALL - Retrieve both user-specific and predefined Fixed Expenses Categories',
+      "GET ALL - Retrieve both user-specific and predefined Fixed Expenses Categories",
   })
   @Get()
   async getAllFixedExpensesCategories(@Req() req: Request): Promise<{
@@ -165,24 +164,24 @@ export class ClientFixedExpensesController {
   }
 
   @ApiOperation({
-    summary: 'GET ONE - Retrieve Fixed Expenses based on User and Id',
+    summary: "GET ONE - Retrieve Fixed Expenses based on User and Id",
   })
-  @Get(':id')
+  @Get(":id")
   async getFixedExpenses(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param("id") id: string,
   ): Promise<FixedExpenseCategory> {
     const userId = (req.user as UserEntity).id;
     return this.clientFixedExpensesService.getFixedExpenses(userId, id);
   }
 
   @ApiOperation({
-    summary: 'UPDATE ONE - UPDATE Fixed Expenses based on User and Id',
+    summary: "UPDATE ONE - UPDATE Fixed Expenses based on User and Id",
   })
-  @Put(':id')
+  @Put(":id")
   async updateFixedExpenses(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body(new ValidationPipe()) updateData: CreateFixedExpenseDto,
   ): Promise<FixedExpenseCategory> {
     const userId = (req.user as UserEntity).id;
@@ -194,22 +193,22 @@ export class ClientFixedExpensesController {
   }
 
   @ApiOperation({
-    summary: 'DELETE ONE - DELETE Fixed Expenses based on User and Id',
+    summary: "DELETE ONE - DELETE Fixed Expenses based on User and Id",
   })
-  @Delete(':id')
+  @Delete(":id")
   async deleteFixedExpenses(
     @Req() req: Request,
-    @Param('id') id: string,
+    @Param("id") id: string,
   ): Promise<void> {
     const userId = (req.user as UserEntity).id;
     return this.clientFixedExpensesService.deleteFixedExpenses(userId, id);
   }
 }
 
-@ApiTags('Expenses')
+@ApiTags("Expenses")
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'expense', version: '1' })
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller({ path: "expense", version: "1" })
 export class ExpensesController {
   constructor(
     private readonly expenseService: ExpenseService,
@@ -217,12 +216,12 @@ export class ExpensesController {
     private readonly DigifranchiseRepository: Repository<DigifranchiseOwner>,
   ) {}
   @ApiOperation({
-    summary: 'CREATE - Record Fixed Expense for User',
+    summary: "CREATE - Record Fixed Expense for User",
   })
-  @Post(':fixedExpenseId')
+  @Post(":fixedExpenseId")
   async create(
     @Req() req: Request,
-    @Param('fixedExpenseId') fixedExpenseId: string,
+    @Param("fixedExpenseId") fixedExpenseId: string,
     @Body() createExpenseDto: CreateExpenseDto,
   ) {
     const userId = (req.user as UserEntity).id;
@@ -245,60 +244,60 @@ export class ExpensesController {
   }
 
   @ApiOperation({
-    summary: 'GET ALL - get all expenses',
+    summary: "GET ALL - get all expenses",
   })
   @ApiQuery({
-    name: 'startDate',
+    name: "startDate",
     required: false,
-    description: 'Filter expenses starting from this date',
+    description: "Filter expenses starting from this date",
   })
   @ApiQuery({
-    name: 'endDate',
+    name: "endDate",
     required: false,
-    description: 'Filter expenses ending until this date',
+    description: "Filter expenses ending until this date",
   })
   @Get()
   async findAll(
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query("startDate") startDate?: string,
+    @Query("endDate") endDate?: string,
   ): Promise<{ expenses: Expense[]; count: number }> {
     return this.expenseService.findAllExpenses(startDate, endDate);
   }
 
   @ApiOperation({
-    summary: 'GET ONE - Retrieve Expense by ID',
+    summary: "GET ONE - Retrieve Expense by ID",
   })
-  @Get(':id')
+  @Get(":id")
   async getExpenseById(
-    @Param('id') expenseId: string,
+    @Param("id") expenseId: string,
   ): Promise<Expense | null> {
     return this.expenseService.getExpenseById(expenseId);
   }
 
   @ApiOperation({
-    summary: 'UPDATE - Update a specific expense',
+    summary: "UPDATE - Update a specific expense",
   })
-  @Patch(':expenseId')
+  @Patch(":expenseId")
   async updateExpense(
-    @Param('expenseId') expenseId: string,
+    @Param("expenseId") expenseId: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
   ): Promise<Expense> {
     return this.expenseService.updateExpense(expenseId, updateExpenseDto);
   }
 
   @ApiOperation({
-    summary: 'DELETE - Delete a specific expense',
+    summary: "DELETE - Delete a specific expense",
   })
-  @Delete(':expenseId')
-  async deleteExpense(@Param('expenseId') expenseId: string): Promise<void> {
+  @Delete(":expenseId")
+  async deleteExpense(@Param("expenseId") expenseId: string): Promise<void> {
     return this.expenseService.deleteExpense(expenseId);
   }
 }
 
-@ApiTags('Incomes')
+@ApiTags("Incomes")
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'income', version: '1' })
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller({ path: "income", version: "1" })
 export class IncomesController {
   constructor(
     private readonly incomeService: IncomeService,
@@ -307,7 +306,7 @@ export class IncomesController {
   ) {}
 
   @ApiOperation({
-    summary: 'CREATE - Record Income for User',
+    summary: "CREATE - Record Income for User",
   })
   @Post()
   async create(@Req() req: Request, @Body() createIncomeDto: CreateIncomeDto) {
@@ -327,58 +326,58 @@ export class IncomesController {
   }
 
   @ApiOperation({
-    summary: 'GET ALL - Retrieve all incomes',
+    summary: "GET ALL - Retrieve all incomes",
   })
   @ApiQuery({
-    name: 'startDate',
+    name: "startDate",
     required: false,
-    description: 'Filter incomes starting from this date',
+    description: "Filter incomes starting from this date",
   })
   @ApiQuery({
-    name: 'endDate',
+    name: "endDate",
     required: false,
-    description: 'Filter incomes ending until this date',
+    description: "Filter incomes ending until this date",
   })
   @Get()
   async findAll(
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query("startDate") startDate?: string,
+    @Query("endDate") endDate?: string,
   ): Promise<{ incomes: Income[]; count: number }> {
     return this.incomeService.findAllIncomes(startDate, endDate);
   }
 
   @ApiOperation({
-    summary: 'GET ONE - Retrieve Income by ID',
+    summary: "GET ONE - Retrieve Income by ID",
   })
-  @Get(':id')
-  async getIncomeById(@Param('id') incomeId: string): Promise<Income | null> {
+  @Get(":id")
+  async getIncomeById(@Param("id") incomeId: string): Promise<Income | null> {
     return this.incomeService.getIncomeById(incomeId);
   }
 
   @ApiOperation({
-    summary: 'UPDATE - Update a specific income',
+    summary: "UPDATE - Update a specific income",
   })
-  @Patch(':incomeId')
+  @Patch(":incomeId")
   async update(
-    @Param('incomeId') incomeId: string,
+    @Param("incomeId") incomeId: string,
     @Body() updateIncomeDto: UpdateIncomeDto,
   ): Promise<Income> {
     return this.incomeService.updateIncome(incomeId, updateIncomeDto);
   }
 
   @ApiOperation({
-    summary: 'DELETE - Delete a specific income',
+    summary: "DELETE - Delete a specific income",
   })
-  @Delete(':incomeId')
-  async delete(@Param('incomeId') incomeId: string): Promise<void> {
+  @Delete(":incomeId")
+  async delete(@Param("incomeId") incomeId: string): Promise<void> {
     return this.incomeService.deleteIncome(incomeId);
   }
 }
 
-@ApiTags('Fundings')
+@ApiTags("Fundings")
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'funding', version: '1' })
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller({ path: "funding", version: "1" })
 export class FundingsController {
   constructor(
     private readonly fundingService: FundingService,
@@ -387,7 +386,7 @@ export class FundingsController {
   ) {}
 
   @ApiOperation({
-    summary: 'CREATE - Record Funding for User',
+    summary: "CREATE - Record Funding for User",
   })
   @Post()
   async create(
@@ -409,62 +408,60 @@ export class FundingsController {
   }
 
   @ApiOperation({
-    summary: 'GET ALL - Retrieve all fundings',
+    summary: "GET ALL - Retrieve all fundings",
   })
   @ApiQuery({
-    name: 'startDate',
+    name: "startDate",
     required: false,
-    description: 'Filter fundings starting from this date',
+    description: "Filter fundings starting from this date",
   })
   @ApiQuery({
-    name: 'endDate',
+    name: "endDate",
     required: false,
-    description: 'Filter fundings ending until this date',
+    description: "Filter fundings ending until this date",
   })
   @Get()
   async findAll(
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query("startDate") startDate?: string,
+    @Query("endDate") endDate?: string,
   ): Promise<{ fundings: Funding[]; count: number }> {
     return this.fundingService.findAllFundings(startDate, endDate);
   }
 
   @ApiOperation({
-    summary: 'GET ONE - Retrieve Funding by ID',
+    summary: "GET ONE - Retrieve Funding by ID",
   })
-  @Get(':id')
+  @Get(":id")
   async getFundingById(
-    @Param('id') fundingId: string,
+    @Param("id") fundingId: string,
   ): Promise<Funding | null> {
     return this.fundingService.getFundingById(fundingId);
   }
 
   @ApiOperation({
-    summary: 'UPDATE - Update a specific funding',
+    summary: "UPDATE - Update a specific funding",
   })
-  @Put(':fundingId')
+  @Put(":fundingId")
   async updateFunding(
-    @Param('fundingId') fundingId: string,
+    @Param("fundingId") fundingId: string,
     @Body() updateFundingDto: UpdateFundingDto,
-   ): Promise<Funding> {
+  ): Promise<Funding> {
     return this.fundingService.updateFunding(fundingId, updateFundingDto);
   }
 
   @ApiOperation({
-    summary: 'DELETE - Delete a specific funding',
+    summary: "DELETE - Delete a specific funding",
   })
-  @Delete(':fundingId')
-  async deleteFunding(@Param('fundingId') fundingId: string): Promise<void> {
+  @Delete(":fundingId")
+  async deleteFunding(@Param("fundingId") fundingId: string): Promise<void> {
     return this.fundingService.deleteFunding(fundingId);
   }
-
-
 }
 
-@ApiTags('Deposits')
+@ApiTags("Deposits")
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'deposit', version: '1' })
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller({ path: "deposit", version: "1" })
 export class DepositsController {
   constructor(
     private readonly depositService: DepositService,
@@ -473,7 +470,7 @@ export class DepositsController {
   ) {}
 
   @ApiOperation({
-    summary: 'CREATE - Record Deposit for User',
+    summary: "CREATE - Record Deposit for User",
   })
   @Post()
   async create(
@@ -495,59 +492,58 @@ export class DepositsController {
   }
 
   @ApiOperation({
-    summary: 'GET ALL - Retrieve all deposits',
+    summary: "GET ALL - Retrieve all deposits",
   })
   @ApiQuery({
-    name: 'startDate',
+    name: "startDate",
     required: false,
-    description: 'Filter deposits starting from this date',
+    description: "Filter deposits starting from this date",
   })
   @ApiQuery({
-    name: 'endDate',
+    name: "endDate",
     required: false,
-    description: 'Filter deposits ending until this date',
+    description: "Filter deposits ending until this date",
   })
   @Get()
   async findAll(
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query("startDate") startDate?: string,
+    @Query("endDate") endDate?: string,
   ): Promise<{ deposits: Deposit[]; count: number }> {
     return this.depositService.findAllDeposits(startDate, endDate);
   }
 
   @ApiOperation({
-    summary: 'GET ONE - Retrieve Deposit by ID',
+    summary: "GET ONE - Retrieve Deposit by ID",
   })
-  @Get(':id')
+  @Get(":id")
   async getDepositById(
-    @Param('id') depositId: string,
+    @Param("id") depositId: string,
   ): Promise<Deposit | null> {
     return this.depositService.getDepositById(depositId);
   }
-@ApiOperation({
-    summary: 'UPDATE - Update a specific deposit',
+  @ApiOperation({
+    summary: "UPDATE - Update a specific deposit",
   })
-  @Put(':depositId')
+  @Put(":depositId")
   async updateDeposit(
-    @Param('depositId') depositId: string,
+    @Param("depositId") depositId: string,
     @Body() updateDepositDto: UpdateDepositDto,
-   ): Promise<Deposit> {
+  ): Promise<Deposit> {
     return this.depositService.updateDeposit(depositId, updateDepositDto);
   }
   @ApiOperation({
-    summary: 'DELETE - Delete a specific deposit',
+    summary: "DELETE - Delete a specific deposit",
   })
-  @Delete(':depositId')
-  async deleteDeposit(@Param('depositId') depositId: string): Promise<void> {
+  @Delete(":depositId")
+  async deleteDeposit(@Param("depositId") depositId: string): Promise<void> {
     return this.depositService.deleteDeposit(depositId);
   }
-  
 }
 
-@ApiTags('OperatingParameters')
+@ApiTags("OperatingParameters")
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller({ path: 'operating-parameters', version: '1' })
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Controller({ path: "operating-parameters", version: "1" })
 export class OperatingParametersController {
   constructor(
     private readonly operatingParametersService: OperatingParametersService,
@@ -556,7 +552,7 @@ export class OperatingParametersController {
   ) {}
 
   @ApiOperation({
-    summary: 'CREATE - Record Operating Parameters for User',
+    summary: "CREATE - Record Operating Parameters for User",
   })
   @Post()
   async create(
@@ -581,22 +577,22 @@ export class OperatingParametersController {
   }
 
   @ApiOperation({
-    summary: 'GET ALL - Retrieve all operating parameters',
+    summary: "GET ALL - Retrieve all operating parameters",
   })
   @ApiQuery({
-    name: 'startDate',
+    name: "startDate",
     required: false,
-    description: 'Filter operating parameters starting from this date',
+    description: "Filter operating parameters starting from this date",
   })
   @ApiQuery({
-    name: 'endDate',
+    name: "endDate",
     required: false,
-    description: 'Filter operating parameters ending until this date',
+    description: "Filter operating parameters ending until this date",
   })
   @Get()
   async findAll(
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
+    @Query("startDate") startDate?: string,
+    @Query("endDate") endDate?: string,
   ): Promise<{ parameters: OperatingParameters[]; count: number }> {
     return this.operatingParametersService.findAllOperatingParameters(
       startDate,
@@ -605,34 +601,39 @@ export class OperatingParametersController {
   }
 
   @ApiOperation({
-    summary: 'GET ONE - Retrieve Operating Parameters by ID',
+    summary: "GET ONE - Retrieve Operating Parameters by ID",
   })
-  @Get(':id')
+  @Get(":id")
   async getOperatingParametersById(
-    @Param('id') parametersId: string,
+    @Param("id") parametersId: string,
   ): Promise<OperatingParameters | null> {
     return this.operatingParametersService.getOperatingParametersById(
       parametersId,
     );
   }
 
- @ApiOperation({
-    summary: 'UPDATE - Update a specific operating parameters',
+  @ApiOperation({
+    summary: "UPDATE - Update a specific operating parameters",
   })
-  @Put(':parametersId')
+  @Put(":parametersId")
   async updateOperatingParameters(
-    @Param('parametersId') parametersId: string,
+    @Param("parametersId") parametersId: string,
     @Body() updateOperatingParametersDto: UpdateOperatingParametersDto,
-   ): Promise<OperatingParameters> {
-    return this.operatingParametersService.updateOperatingParameters(parametersId, updateOperatingParametersDto);
+  ): Promise<OperatingParameters> {
+    return this.operatingParametersService.updateOperatingParameters(
+      parametersId,
+      updateOperatingParametersDto,
+    );
   }
   @ApiOperation({
-    summary: 'DELETE - Delete a specific operating parameters',
+    summary: "DELETE - Delete a specific operating parameters",
   })
-  @Delete(':parametersId')
+  @Delete(":parametersId")
   async deleteOperatingParameters(
-    @Param('parametersId') parametersId: string,
-   ): Promise<void> {
-    return this.operatingParametersService.deleteOperatingParameters(parametersId);
+    @Param("parametersId") parametersId: string,
+  ): Promise<void> {
+    return this.operatingParametersService.deleteOperatingParameters(
+      parametersId,
+    );
   }
 }

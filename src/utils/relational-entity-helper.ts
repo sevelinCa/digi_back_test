@@ -1,5 +1,5 @@
-import { instanceToPlain } from 'class-transformer';
-import { AfterLoad, BaseEntity } from 'typeorm';
+import { instanceToPlain } from "class-transformer";
+import { AfterLoad, BaseEntity } from "typeorm";
 
 export class EntityRelationalHelper extends BaseEntity {
   __entity?: string;

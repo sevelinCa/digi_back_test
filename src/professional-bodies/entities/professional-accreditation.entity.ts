@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { ProfessionalBodyEntity } from './professional-body.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { ProfessionalBodyEntity } from "./professional-body.entity";
 
 @Entity()
 export class Accreditation {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
@@ -13,5 +13,5 @@ export class Accreditation {
   professionalBody: ProfessionalBodyEntity;
 
   @Column()
-  professionalBodyId: string
+  professionalBodyId: string;
 }

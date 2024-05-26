@@ -1,13 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, type Repository } from 'typeorm';
-import { Inventory } from './entities/inventory.entity';
-import { findInventoryById } from 'src/helper/FindByFunctions';
-import type { CreateInventoryDto } from './dto/create-inventory.dto';
-import type { UpdateInventoryDto } from './dto/update-inventory.dto';
-import { InventoryEntries } from './entities/inventory-entries.entity';
-import { UpdateInventoryEntriesDto } from './dto/update-inventory-entries.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { In, type Repository } from "typeorm";
+import { Inventory } from "./entities/inventory.entity";
+import { findInventoryById } from "src/helper/FindByFunctions";
+import type { CreateInventoryDto } from "./dto/create-inventory.dto";
+import type { UpdateInventoryDto } from "./dto/update-inventory.dto";
+import { InventoryEntries } from "./entities/inventory-entries.entity";
+import { UpdateInventoryEntriesDto } from "./dto/update-inventory-entries.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
 @Injectable()
 export class InventoryService {
@@ -18,7 +18,7 @@ export class InventoryService {
     private readonly inventoryEntriesRepository: Repository<InventoryEntries>,
     @InjectRepository(DigifranchiseOwner)
     private readonly digifranchiseRepository: Repository<DigifranchiseOwner>,
-  ) { }
+  ) {}
 
   // async createInventoryItem(
   //   createInventoryDto: CreateInventoryDto,
@@ -47,9 +47,9 @@ export class InventoryService {
   //     return this.inventoryEntriesRepository.create(entry)
   //   }
   //   )
-    
+
   //   console.log(">>>>>>>>", calculateEntryTotalValue)
-  
+
   //   // const newEntry = this.inventoryEntriesRepository.create(calculateEntryTotalValue)
 
   //   const newInventoryItem = this.inventoryRepository.create({
@@ -62,33 +62,39 @@ export class InventoryService {
   //   );
   //   return savedInventoryItem;
   // }
-  
-  async createInventoryItem(createInventoryDto: CreateInventoryDto, digifranchiseId: string): Promise<Inventory> {
-    const entriesWithTotalValue = createInventoryDto.entries.map(entry => (
-      { ...entry, totalValue: entry.quantity * entry.costPerItem }
-    ));
-  
-    const franchiseAcc = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId }});
+
+  async createInventoryItem(
+    createInventoryDto: CreateInventoryDto,
+    digifranchiseId: string,
+  ): Promise<Inventory> {
+    const entriesWithTotalValue = createInventoryDto.entries.map((entry) => ({
+      ...entry,
+      totalValue: entry.quantity * entry.costPerItem,
+    }));
+
+    const franchiseAcc = await this.digifranchiseRepository.findOne({
+      where: { id: digifranchiseId },
+    });
     if (!franchiseAcc) {
       throw new NotFoundException(`digifranchise account not found`);
     }
-  
+
     const newInventoryItem = this.inventoryRepository.create({
       ...createInventoryDto,
-      franchiseId: digifranchiseId
+      franchiseId: digifranchiseId,
     });
-    const savedInventoryItem = await this.inventoryRepository.save(newInventoryItem);
-  
-    const entryInstances = entriesWithTotalValue.map(entry => ({
+    const savedInventoryItem =
+      await this.inventoryRepository.save(newInventoryItem);
+
+    const entryInstances = entriesWithTotalValue.map((entry) => ({
       ...entry,
       inventoryId: savedInventoryItem.id,
     }));
-  
+
     await this.inventoryEntriesRepository.save(entryInstances);
-  
+
     return savedInventoryItem;
   }
-  
 
   async findAllInventoryItems(
     startDate?: string,
@@ -97,18 +103,19 @@ export class InventoryService {
     inventoryItems: Inventory[];
     count: number;
   }> {
-    const queryBuilder = this.inventoryRepository.createQueryBuilder('inventory');
+    const queryBuilder =
+      this.inventoryRepository.createQueryBuilder("inventory");
 
-    queryBuilder.leftJoinAndSelect('inventory.franchiseId', 'franchise');
+    queryBuilder.leftJoinAndSelect("inventory.franchiseId", "franchise");
 
-    queryBuilder.where('inventory.deleteAt IS NULL');
+    queryBuilder.where("inventory.deleteAt IS NULL");
 
     if (startDate) {
-      queryBuilder.andWhere('inventory.date >= :startDate', { startDate });
+      queryBuilder.andWhere("inventory.date >= :startDate", { startDate });
     }
 
     if (endDate) {
-      queryBuilder.andWhere('inventory.date <= :endDate', { endDate });
+      queryBuilder.andWhere("inventory.date <= :endDate", { endDate });
     }
 
     const inventoryItems = await queryBuilder.getMany();
@@ -117,27 +124,29 @@ export class InventoryService {
     return { inventoryItems, count };
   }
 
-  async findInventoryByDigifranchiseId(digifranchiseId: string): Promise<Inventory[] | null> {
+  async findInventoryByDigifranchiseId(
+    digifranchiseId: string,
+  ): Promise<Inventory[] | null> {
     const inventoryItems = await this.inventoryRepository.find({
-        where: { franchiseId: digifranchiseId }
+      where: { franchiseId: digifranchiseId },
     });
 
     if (inventoryItems.length === 0) {
-        return [];
+      return [];
     }
 
-    const inventoryIds = inventoryItems.map(item => item.id);
+    const inventoryIds = inventoryItems.map((item) => item.id);
     const entries = await this.inventoryEntriesRepository.find({
-        where: { inventoryId: In(inventoryIds) }
+      where: { inventoryId: In(inventoryIds) },
     });
 
-    const itemsWithEntries = inventoryItems.map(item => ({
-        ...item,
-        entries: entries.filter(entry => entry.inventoryId === item.id)
+    const itemsWithEntries = inventoryItems.map((item) => ({
+      ...item,
+      entries: entries.filter((entry) => entry.inventoryId === item.id),
     }));
 
     return itemsWithEntries;
-}
+  }
 
   async findInventoryById(inventoryId: string): Promise<Inventory | null> {
     return findInventoryById(this.inventoryRepository, inventoryId);
@@ -157,7 +166,6 @@ export class InventoryService {
       );
     }
 
-
     Object.assign(inventoryItem, updateInventoryDto);
     return this.inventoryRepository.save(inventoryItem);
   }
@@ -166,15 +174,12 @@ export class InventoryService {
     entryId: string,
     updateInventoryEntriesDto: UpdateInventoryEntriesDto,
   ): Promise<InventoryEntries> {
-
     const Entry = await this.inventoryEntriesRepository.findOne({
       where: { id: entryId },
     });
 
     if (!Entry) {
-      throw new NotFoundException(
-        `Entry not found with ID ${entryId}`,
-      );
+      throw new NotFoundException(`Entry not found with ID ${entryId}`);
     }
 
     const updatedEntry = {
@@ -184,21 +189,28 @@ export class InventoryService {
       totalValue: Entry.totalValue,
     };
 
-
-    if (updateInventoryEntriesDto.quantity !== undefined && updateInventoryEntriesDto.quantity !== Entry.quantity) {
+    if (
+      updateInventoryEntriesDto.quantity !== undefined &&
+      updateInventoryEntriesDto.quantity !== Entry.quantity
+    ) {
       updatedEntry.quantity = updateInventoryEntriesDto.quantity;
     }
-    
-    if (updateInventoryEntriesDto.costPerItem !== undefined && updateInventoryEntriesDto.costPerItem !== Entry.costPerItem) {
+
+    if (
+      updateInventoryEntriesDto.costPerItem !== undefined &&
+      updateInventoryEntriesDto.costPerItem !== Entry.costPerItem
+    ) {
       updatedEntry.costPerItem = updateInventoryEntriesDto.costPerItem;
     }
 
-    if (updateInventoryEntriesDto.dateReceived !== undefined && updateInventoryEntriesDto.dateReceived !== Entry.dateReceived) {
+    if (
+      updateInventoryEntriesDto.dateReceived !== undefined &&
+      updateInventoryEntriesDto.dateReceived !== Entry.dateReceived
+    ) {
       updatedEntry.dateReceived = updateInventoryEntriesDto.dateReceived;
     }
 
     updatedEntry.totalValue = updatedEntry.quantity * updatedEntry.costPerItem;
-
 
     Object.assign(Entry, updatedEntry);
 
@@ -212,20 +224,20 @@ export class InventoryService {
   //   const Entry = await this.inventoryEntriesRepository.findOne({
   //     where: { id: entryId },
   //   });
-  
+
   //   if (!Entry) {
   //     throw new NotFoundException(`Entry not found with ID ${entryId}`);
   //   }
-  
+
   //   const updatedEntry = { ...updateInventoryEntriesDto, totalValue: 0 };
-  
+
   //   if (updateInventoryEntriesDto?.quantity !== Entry.quantity) {
   //     updatedEntry.quantity = updateInventoryEntriesDto.quantity;
-  //   } 
+  //   }
   //   if (updateInventoryEntriesDto.quantity === undefined) {
   //     updatedEntry.quantity = Entry.quantity
   //   }
-    
+
   //   if (updateInventoryEntriesDto.costPerItem !== Entry.costPerItem) {
   //     updatedEntry.costPerItem = updateInventoryEntriesDto.costPerItem;
   //   }
@@ -239,21 +251,26 @@ export class InventoryService {
   //   if (updateInventoryEntriesDto.dateReceived === undefined) {
   //     updatedEntry.dateReceived = Entry.dateReceived
   //   }
-  
+
   //   updatedEntry.totalValue = updatedEntry.quantity * updatedEntry.costPerItem;
-  
+
   //   // Assuming you have a method to update the entry in the repository
   //   await this.inventoryEntriesRepository.update(entryId, updatedEntry);
-  
+
   //   // Assuming you need to return the updated inventory item
   //   // You might need to adjust this part based on your actual logic
   //   return this.inventoryRepository.findOne(entryId);
   // }
 
   async deleteInventoryItem(inventoryId: string): Promise<void> {
-    const inventoryItem = await findInventoryById(this.inventoryRepository, inventoryId);
+    const inventoryItem = await findInventoryById(
+      this.inventoryRepository,
+      inventoryId,
+    );
     if (!inventoryItem) {
-      throw new NotFoundException(`Inventory item not found with ID ${inventoryId}`);
+      throw new NotFoundException(
+        `Inventory item not found with ID ${inventoryId}`,
+      );
     }
 
     inventoryItem.deleteAt = new Date();

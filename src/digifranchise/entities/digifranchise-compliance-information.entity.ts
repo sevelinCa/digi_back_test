@@ -1,5 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
-import { DigifranchiseOwner } from './digifranchise-ownership.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  OneToOne,
+} from "typeorm";
+import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
 
 export class OtherComplianceDocs {
   docName: string;
@@ -7,58 +16,57 @@ export class OtherComplianceDocs {
   expiryDate: string;
 }
 
-
 @Entity()
 export class DigifranchiseComplianceInfo {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @OneToOne(() => DigifranchiseOwner, owner => owner.digifranchiseId)
-  @JoinColumn({ name: 'ownedDigifranchiseId' })
+  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId)
+  @JoinColumn({ name: "ownedDigifranchiseId" })
   digifranchiseOwner: DigifranchiseOwner;
 
   @Column({ nullable: true })
-  ownedDigifranchiseId: string
+  ownedDigifranchiseId: string;
 
   @Column({ nullable: true })
-  companyRegisterationNumber: string 
+  companyRegisterationNumber: string;
 
   @Column({ nullable: true })
-  taxNumber: string
+  taxNumber: string;
 
   @Column({ nullable: true })
-  taxClearencePin: string
+  taxClearencePin: string;
 
   @Column({ nullable: true })
-  taxClearenceExpiration: string
+  taxClearenceExpiration: string;
 
   @Column({ nullable: true })
-  coidaRegisteration: string
+  coidaRegisteration: string;
 
   @Column({ nullable: true })
-  vatNumber: string
+  vatNumber: string;
 
   @Column({ nullable: true })
-  uifRegistration: string
+  uifRegistration: string;
 
   @Column({ nullable: true })
-  workMansCompensation: string
+  workMansCompensation: string;
 
   @Column({ nullable: true })
-  sdlNumber: string
+  sdlNumber: string;
 
-  @Column({ type: 'json', nullable: true  })
-  otherComplianceDocs: OtherComplianceDocs[]
+  @Column({ type: "json", nullable: true })
+  otherComplianceDocs: OtherComplianceDocs[];
 
   // @Column({ type: 'json', nullable: true  })
   // uploadedDocs: UploadDocs[]
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 }

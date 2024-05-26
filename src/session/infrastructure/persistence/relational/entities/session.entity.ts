@@ -5,18 +5,17 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   DeleteDateColumn,
-} from 'typeorm';
-import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
-import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
-import { Session } from '../../../../domain/session';
+} from "typeorm";
+import { UserEntity } from "../../../../../users/infrastructure/persistence/relational/entities/user.entity";
+import { EntityRelationalHelper } from "src/utils/relational-entity-helper";
+import { Session } from "../../../../domain/session";
 
 @Entity({
-  name: 'session',
+  name: "session",
 })
 export class SessionEntity extends EntityRelationalHelper implements Session {
-
-@PrimaryGeneratedColumn('uuid')
-id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @ManyToOne(() => UserEntity, {
     eager: true,

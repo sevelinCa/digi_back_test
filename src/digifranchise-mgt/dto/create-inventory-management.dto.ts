@@ -1,24 +1,32 @@
-import { IsNotEmpty, IsString, IsEmail, IsOptional, Length, IsBoolean, IsDecimal } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  IsOptional,
+  Length,
+  IsBoolean,
+  IsDecimal,
+} from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateInventoryManagementDto {
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty({ example: 'New inventory' })
-    description: string;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({ example: "New inventory" })
+  description: string;
 
-    @IsNotEmpty()
-    @ApiProperty({ example: 5000.00 })
-    quantity: number;
+  @IsNotEmpty()
+  @ApiProperty({ example: 5000.0 })
+  quantity: number;
 }
 
 export class UpdateInventoryManagementDto {
-    @IsOptional()
-    @IsString()
-    @ApiProperty({ example: 'New Inventory' })
-    description?: string;
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ example: "New Inventory" })
+  description?: string;
 
-    @IsOptional()
-    @ApiProperty({ example: 5000.00 })
-    quantity?: number;
+  @IsOptional()
+  @ApiProperty({ example: 5000.0 })
+  quantity?: number;
 }

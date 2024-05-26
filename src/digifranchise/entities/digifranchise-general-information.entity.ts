@@ -1,67 +1,76 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
-import { DigifranchiseOwner } from './digifranchise-ownership.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  OneToOne,
+} from "typeorm";
+import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
 
 @Entity()
 export class DigifranchiseGeneralInfo {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   // General Information
-  @OneToOne(() => DigifranchiseOwner, owner => owner.digifranchiseId)
-  @JoinColumn({ name: 'ownedDigifranchiseId' })
+  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId)
+  @JoinColumn({ name: "ownedDigifranchiseId" })
   digifranchiseOwner: DigifranchiseOwner;
 
   @Column({ nullable: true })
-  ownedDigifranchiseId: string
+  ownedDigifranchiseId: string;
 
   @Column()
-  digifranchiseName: string
+  digifranchiseName: string;
 
   @Column()
-  facebookHandle: string
+  facebookHandle: string;
 
   @Column()
-  tiktokHandle: string
+  tiktokHandle: string;
 
   @Column()
-  instagramHandle: string
+  instagramHandle: string;
 
   @Column()
-  xHandle: string
+  xHandle: string;
 
   @Column()
-  address: string
+  address: string;
 
   @Column()
-  connectNumberWithOutCountryCode: string
+  connectNumberWithOutCountryCode: string;
 
   @Column()
-  connectNumber: string
+  connectNumber: string;
 
   @Column()
-  otherMobileNumberWithOutCountryCode: string
+  otherMobileNumberWithOutCountryCode: string;
 
   @Column()
-  otherMobileNumber: string
+  otherMobileNumber: string;
 
   @Column({ default: false })
-  useOtherMobileNumberForWebsite: boolean
+  useOtherMobileNumberForWebsite: boolean;
 
   @Column()
-  aboutCompany: string
+  aboutCompany: string;
 
   @Column()
-  location: string
+  location: string;
 
   @Column({ default: false })
-  digifranchisePublished: boolean
+  digifranchisePublished: boolean;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 }

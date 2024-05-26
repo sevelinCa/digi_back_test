@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Twilio } from 'twilio';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Twilio } from "twilio";
 
 interface StoredOtp {
   otp: string;
@@ -42,7 +42,7 @@ export class SmsService {
           status: HttpStatus.BAD_REQUEST,
           errors: error.message,
         },
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -61,7 +61,10 @@ export class SmsService {
     return false;
   }
 
-  async sendOrderCreationConfirmMessage(phoneNumber: string, message: string): Promise<void> {
+  async sendOrderCreationConfirmMessage(
+    phoneNumber: string,
+    message: string,
+  ): Promise<void> {
     try {
       await this.client.messages.create({
         body: message,
@@ -74,7 +77,7 @@ export class SmsService {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: error.message,
         },
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

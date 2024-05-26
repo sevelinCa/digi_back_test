@@ -1,16 +1,16 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateUserDto } from './create-user.dto';
+import { PartialType } from "@nestjs/swagger";
+import { CreateUserDto } from "./create-user.dto";
 
-import { Transform, Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, MinLength } from 'class-validator';
-import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
-import { RoleDto } from 'src/roles/dto/role.dto';
-import { StatusDto } from 'src/statuses/dto/status.dto';
+import { Transform, Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsEmail, IsOptional, MinLength } from "class-validator";
+import { lowerCaseTransformer } from "src/utils/transformers/lower-case.transformer";
+import { RoleDto } from "src/roles/dto/role.dto";
+import { StatusDto } from "src/statuses/dto/status.dto";
 // import { FileDto } from 'src/files/dto/file.dto';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @ApiProperty({ example: 'test1@example.com' })
+  @ApiProperty({ example: "test1@example.com" })
   @Transform(lowerCaseTransformer)
   @IsOptional()
   @IsEmail()
@@ -25,18 +25,18 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   socialId?: string | null;
 
-  @ApiProperty({ example: 'John' })
+  @ApiProperty({ example: "John" })
   @IsOptional()
   firstName?: string | null;
 
-  @ApiProperty({ example: 'Doe' })
+  @ApiProperty({ example: "Doe" })
   @IsOptional()
   lastName?: string | null;
 
-  @ApiProperty({ example: '2024-03-15' })
+  @ApiProperty({ example: "2024-03-15" })
   @IsOptional()
   dateOfBirth: Date;
-  
+
   // @ApiProperty({ type: FileDto })
   // @IsOptional()
   // photo?: FileDto | null;

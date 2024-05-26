@@ -1,4 +1,4 @@
-import { Unavailability } from 'src/digifranchise-mgt/entities/availability.entity';
+import { Unavailability } from "src/digifranchise-mgt/entities/availability.entity";
 import {
   IsArray,
   IsBoolean,
@@ -8,9 +8,9 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+} from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 
 export enum AllowedTimeSlotUnits {
   FIFTEEN_MINUTES = 15,
@@ -28,12 +28,12 @@ export enum BreakTimeBetweenBookedSlots {
 export class AvailabilityDayTimeDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '09:00' })
+  @ApiProperty({ example: "09:00" })
   startTime: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '17:00' })
+  @ApiProperty({ example: "17:00" })
   endTime: string;
 
   @IsBoolean()
@@ -45,7 +45,7 @@ export class AvailabilityDayTimeDto {
 export class AvailabilityWeekDaysDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: 'Monday' })
+  @ApiProperty({ example: "Monday" })
   day: string;
 
   @IsBoolean()
@@ -57,8 +57,8 @@ export class AvailabilityWeekDaysDto {
     type: [AvailabilityDayTimeDto],
     example: [
       {
-        startTime: '09:00',
-        endTime: '17:00',
+        startTime: "09:00",
+        endTime: "17:00",
         isBooked: false,
       },
     ],
@@ -73,17 +73,17 @@ export class AvailabilityWeekDaysDto {
 export class UnavailabilityDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '09:00' })
+  @ApiProperty({ example: "09:00" })
   startTime: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: '17:00' })
+  @ApiProperty({ example: "17:00" })
   endTime: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ example: 'Sunday' })
+  @ApiProperty({ example: "Sunday" })
   workingDate: string;
 }
 
@@ -107,59 +107,59 @@ export class SetWorkingHoursDto {
     type: [AvailabilityWeekDaysDto],
     example: [
       {
-        day: 'Monday',
+        day: "Monday",
         isDayFullBooked: false,
         availabilityDayTime: {
-          startTime: '09:00',
-          endTime: '12:00',
+          startTime: "09:00",
+          endTime: "12:00",
         },
       },
       {
-        day: 'Tuesday',
+        day: "Tuesday",
         isDayFullBooked: false,
         availabilityDayTime: {
-          startTime: '10:00',
-          endTime: '14:00',
+          startTime: "10:00",
+          endTime: "14:00",
         },
       },
       {
-        day: 'Wednesday',
+        day: "Wednesday",
         isDayFullBooked: false,
         availabilityDayTime: {
-          startTime: '08:00',
-          endTime: '11:00',
+          startTime: "08:00",
+          endTime: "11:00",
         },
       },
       {
-        day: 'Thursday',
+        day: "Thursday",
         isDayFullBooked: false,
         availabilityDayTime: {
-          startTime: '09:30',
-          endTime: '13:30',
+          startTime: "09:30",
+          endTime: "13:30",
         },
       },
       {
-        day: 'Friday',
+        day: "Friday",
         isDayFullBooked: false,
         availabilityDayTime: {
-          startTime: '10:00',
-          endTime: '15:00',
+          startTime: "10:00",
+          endTime: "15:00",
         },
       },
       {
-        day: 'Saturday',
+        day: "Saturday",
         isDayFullBooked: false,
         availabilityDayTime: {
-          startTime: '11:00',
-          endTime: '14:00',
+          startTime: "11:00",
+          endTime: "14:00",
         },
       },
       {
-        day: 'Sunday',
+        day: "Sunday",
         isDayFullBooked: false,
         availabilityDayTime: {
-          startTime: '12:00',
-          endTime: '16:00',
+          startTime: "12:00",
+          endTime: "16:00",
         },
       },
     ],
@@ -174,9 +174,9 @@ export class SetWorkingHoursDto {
     type: [UnavailabilityDto],
     example: [
       {
-        startTime: '10:00',
-        endTime: '14:00',
-        workingDate: '2024-10-20',
+        startTime: "10:00",
+        endTime: "14:00",
+        workingDate: "2024-10-20",
       },
     ],
     required: true,
@@ -188,7 +188,7 @@ export class SetWorkingHoursDto {
 }
 
 export class TimeSlotDTO {
-  @ApiProperty({ example: '7b9d2daf-3744-42fc-abf5-72f5d053e08e' })
+  @ApiProperty({ example: "7b9d2daf-3744-42fc-abf5-72f5d053e08e" })
   @IsNotEmpty()
   @IsString()
   id: string;
@@ -203,32 +203,32 @@ export class TimeSlotDTO {
   @IsBoolean()
   isSlotAvailable: boolean;
 
-  @ApiProperty({ example: '2024-05-09T05:46:08.735Z' })
+  @ApiProperty({ example: "2024-05-09T05:46:08.735Z" })
   @IsNotEmpty()
   @IsDateString()
   workingDate: string;
 
-  @ApiProperty({ example: 'Thursday' })
+  @ApiProperty({ example: "Thursday" })
   @IsNotEmpty()
   @IsString()
   day: string;
 
-  @ApiProperty({ example: '11:00:00' })
+  @ApiProperty({ example: "11:00:00" })
   @IsNotEmpty()
   @IsString()
   startTime: string;
 
-  @ApiProperty({ example: '11:30:00' })
+  @ApiProperty({ example: "11:30:00" })
   @IsNotEmpty()
   @IsString()
   endTime: string;
 
-  @ApiProperty({ example: '2024-05-07T05:46:09.154Z' })
+  @ApiProperty({ example: "2024-05-07T05:46:09.154Z" })
   @IsNotEmpty()
   @IsDateString()
   createdAt: string;
 
-  @ApiProperty({ example: '2024-05-07T05:46:09.154Z' })
+  @ApiProperty({ example: "2024-05-07T05:46:09.154Z" })
   @IsNotEmpty()
   @IsDateString()
   updatedAt: string;

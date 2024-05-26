@@ -1,37 +1,45 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  OneToOne,
+} from "typeorm";
 
 export class Documents {
-  documentName: string
-  link: string
-  renewalDate: string
+  documentName: string;
+  link: string;
+  renewalDate: string;
 }
 
 @Entity()
 export class DigifranchiseProfessionalBodyMembership {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
-  ownedDigifranchiseId: string
+  ownedDigifranchiseId: string;
 
   @Column()
-  professionalOrganizationId: string
+  professionalOrganizationId: string;
 
   @Column()
-  accreditationId: string
+  accreditationId: string;
 
   @Column()
-  renewalDate: string
+  renewalDate: string;
 
-  @Column({ type: 'json' })
-  documents: Documents[]
+  @Column({ type: "json" })
+  documents: Documents[];
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 }

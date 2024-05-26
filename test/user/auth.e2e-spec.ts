@@ -1,13 +1,13 @@
-import request from 'supertest';
+import request from "supertest";
 import {
   APP_URL,
   TESTER_EMAIL,
   TESTER_PASSWORD,
   MAIL_HOST,
   MAIL_PORT,
-} from '../utils/constants';
+} from "../utils/constants";
 
-describe('Auth Module', () => {
+describe("Auth Module", () => {
   const app = APP_URL;
   const mail = `http://${MAIL_HOST}:${MAIL_PORT}`;
   const newUserFirstName = `Tester${Date.now()}`;
@@ -15,15 +15,15 @@ describe('Auth Module', () => {
   const newUserEmail = `User.${Date.now()}@example.com`;
   const newUserPassword = `secret`;
 
-  describe('Registration', () => {
-    it('should fail with exists email: /api/v1/auth/email/register (POST)', () => {
+  describe("Registration", () => {
+    it("should fail with exists email: /api/v1/auth/email/register (POST)", () => {
       return request(app)
-        .post('/api/v1/auth/email/register')
+        .post("/api/v1/auth/email/register")
         .send({
           email: TESTER_EMAIL,
           password: TESTER_PASSWORD,
-          firstName: 'Tester',
-          lastName: 'E2E',
+          firstName: "Tester",
+          lastName: "E2E",
         })
         .expect(422)
         .expect(({ body }) => {
@@ -31,9 +31,9 @@ describe('Auth Module', () => {
         });
     });
 
-    it('should successfully: /api/v1/auth/email/register (POST)', async () => {
+    it("should successfully: /api/v1/auth/email/register (POST)", async () => {
       return request(app)
-        .post('/api/v1/auth/email/register')
+        .post("/api/v1/auth/email/register")
         .send({
           email: newUserEmail,
           password: newUserPassword,
@@ -43,10 +43,10 @@ describe('Auth Module', () => {
         .expect(204);
     });
 
-    describe('Login', () => {
-      it('should successfully with unconfirmed email: /api/v1/auth/email/login (POST)', () => {
+    describe("Login", () => {
+      it("should successfully with unconfirmed email: /api/v1/auth/email/login (POST)", () => {
         return request(app)
-          .post('/api/v1/auth/email/login')
+          .post("/api/v1/auth/email/login")
           .send({ email: newUserEmail, password: newUserPassword })
           .expect(200)
           .expect(({ body }) => {
@@ -55,10 +55,10 @@ describe('Auth Module', () => {
       });
     });
 
-    describe('Confirm email', () => {
-      it('should successfully: /api/v1/auth/email/confirm (POST)', async () => {
+    describe("Confirm email", () => {
+      it("should successfully: /api/v1/auth/email/confirm (POST)", async () => {
         const hash = await request(mail)
-          .get('/email')
+          .get("/email")
           .then(({ body }) =>
             body
               .find(
@@ -67,20 +67,20 @@ describe('Auth Module', () => {
                     newUserEmail.toLowerCase() &&
                   /.*confirm\-email\?hash\=(\S+).*/g.test(letter.text),
               )
-              ?.text.replace(/.*confirm\-email\?hash\=(\S+).*/g, '$1'),
+              ?.text.replace(/.*confirm\-email\?hash\=(\S+).*/g, "$1"),
           );
 
         return request(app)
-          .post('/api/v1/auth/email/confirm')
+          .post("/api/v1/auth/email/confirm")
           .send({
             hash,
           })
           .expect(204);
       });
 
-      it('should fail for already confirmed email: /api/v1/auth/email/confirm (POST)', async () => {
+      it("should fail for already confirmed email: /api/v1/auth/email/confirm (POST)", async () => {
         const hash = await request(mail)
-          .get('/email')
+          .get("/email")
           .then(({ body }) =>
             body
               .find(
@@ -89,11 +89,11 @@ describe('Auth Module', () => {
                     newUserEmail.toLowerCase() &&
                   /.*confirm\-email\?hash\=(\S+).*/g.test(letter.text),
               )
-              ?.text.replace(/.*confirm\-email\?hash\=(\S+).*/g, '$1'),
+              ?.text.replace(/.*confirm\-email\?hash\=(\S+).*/g, "$1"),
           );
 
         return request(app)
-          .post('/api/v1/auth/email/confirm')
+          .post("/api/v1/auth/email/confirm")
           .send({
             hash,
           })
@@ -102,10 +102,10 @@ describe('Auth Module', () => {
     });
   });
 
-  describe('Login', () => {
-    it('should successfully for user with confirmed email: /api/v1/auth/email/login (POST)', () => {
+  describe("Login", () => {
+    it("should successfully for user with confirmed email: /api/v1/auth/email/login (POST)", () => {
       return request(app)
-        .post('/api/v1/auth/email/login')
+        .post("/api/v1/auth/email/login")
         .send({ email: newUserEmail, password: newUserPassword })
         .expect(200)
         .expect(({ body }) => {
@@ -120,23 +120,23 @@ describe('Auth Module', () => {
     });
   });
 
-  describe('Logged in user', () => {
+  describe("Logged in user", () => {
     let newUserApiToken;
 
     beforeAll(async () => {
       await request(app)
-        .post('/api/v1/auth/email/login')
+        .post("/api/v1/auth/email/login")
         .send({ email: newUserEmail, password: newUserPassword })
         .then(({ body }) => {
           newUserApiToken = body.token;
         });
     });
 
-    it('should retrieve your own profile: /api/v1/auth/me (GET)', async () => {
+    it("should retrieve your own profile: /api/v1/auth/me (GET)", async () => {
       await request(app)
-        .get('/api/v1/auth/me')
+        .get("/api/v1/auth/me")
         .auth(newUserApiToken, {
-          type: 'bearer',
+          type: "bearer",
         })
         .send()
         .expect(({ body }) => {
@@ -148,16 +148,16 @@ describe('Auth Module', () => {
         });
     });
 
-    it('should get new refresh token: /api/v1/auth/refresh (GET)', async () => {
+    it("should get new refresh token: /api/v1/auth/refresh (GET)", async () => {
       const newUserRefreshToken = await request(app)
-        .post('/api/v1/auth/email/login')
+        .post("/api/v1/auth/email/login")
         .send({ email: newUserEmail, password: newUserPassword })
         .then(({ body }) => body.refreshToken);
 
       await request(app)
-        .post('/api/v1/auth/refresh')
+        .post("/api/v1/auth/refresh")
         .auth(newUserRefreshToken, {
-          type: 'bearer',
+          type: "bearer",
         })
         .send()
         .expect(({ body }) => {
@@ -167,18 +167,18 @@ describe('Auth Module', () => {
         });
     });
 
-    it('should update profile successfully: /api/v1/auth/me (PATCH)', async () => {
+    it("should update profile successfully: /api/v1/auth/me (PATCH)", async () => {
       const newUserNewName = Date.now();
-      const newUserNewPassword = 'new-secret';
+      const newUserNewPassword = "new-secret";
       const newUserApiToken = await request(app)
-        .post('/api/v1/auth/email/login')
+        .post("/api/v1/auth/email/login")
         .send({ email: newUserEmail, password: newUserPassword })
         .then(({ body }) => body.token);
 
       await request(app)
-        .patch('/api/v1/auth/me')
+        .patch("/api/v1/auth/me")
         .auth(newUserApiToken, {
-          type: 'bearer',
+          type: "bearer",
         })
         .send({
           firstName: newUserNewName,
@@ -187,9 +187,9 @@ describe('Auth Module', () => {
         .expect(422);
 
       await request(app)
-        .patch('/api/v1/auth/me')
+        .patch("/api/v1/auth/me")
         .auth(newUserApiToken, {
-          type: 'bearer',
+          type: "bearer",
         })
         .send({
           firstName: newUserNewName,
@@ -199,7 +199,7 @@ describe('Auth Module', () => {
         .expect(200);
 
       await request(app)
-        .post('/api/v1/auth/email/login')
+        .post("/api/v1/auth/email/login")
         .send({ email: newUserEmail, password: newUserNewPassword })
         .expect(200)
         .expect(({ body }) => {
@@ -207,26 +207,26 @@ describe('Auth Module', () => {
         });
 
       await request(app)
-        .patch('/api/v1/auth/me')
+        .patch("/api/v1/auth/me")
         .auth(newUserApiToken, {
-          type: 'bearer',
+          type: "bearer",
         })
         .send({ password: newUserPassword, oldPassword: newUserNewPassword })
         .expect(200);
     });
 
-    it('should delete profile successfully: /api/v1/auth/me (DELETE)', async () => {
+    it("should delete profile successfully: /api/v1/auth/me (DELETE)", async () => {
       const newUserApiToken = await request(app)
-        .post('/api/v1/auth/email/login')
+        .post("/api/v1/auth/email/login")
         .send({ email: newUserEmail, password: newUserPassword })
         .then(({ body }) => body.token);
 
-      await request(app).delete('/api/v1/auth/me').auth(newUserApiToken, {
-        type: 'bearer',
+      await request(app).delete("/api/v1/auth/me").auth(newUserApiToken, {
+        type: "bearer",
       });
 
       return request(app)
-        .post('/api/v1/auth/email/login')
+        .post("/api/v1/auth/email/login")
         .send({ email: newUserEmail, password: newUserPassword })
         .expect(422);
     });

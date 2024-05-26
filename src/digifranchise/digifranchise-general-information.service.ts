@@ -1,35 +1,51 @@
-import { ConflictException, Injectable, NotFoundException, } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DigifranchiseGeneralInfo } from './entities/digifranchise-general-information.entity';
-import { UpdateDigifranchiseGeneralInfoDto } from './dto/update-digifranchise-general-info.dto';
-import { isValidPhoneNumber, removeCountryCode } from 'src/utils/phone-number-validation';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { DigifranchiseGeneralInfo } from "./entities/digifranchise-general-information.entity";
+import { UpdateDigifranchiseGeneralInfoDto } from "./dto/update-digifranchise-general-info.dto";
+import {
+  isValidPhoneNumber,
+  removeCountryCode,
+} from "src/utils/phone-number-validation";
 
 @Injectable()
 export class DigifranchiseGeneralInfoService {
   constructor(
     @InjectRepository(DigifranchiseGeneralInfo)
     private readonly digifranchiseGeneralInfoRepository: Repository<DigifranchiseGeneralInfo>,
-  ) { }
+  ) {}
 
-  async getDigifranchiseGeneralInformation(userId: string, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
-    const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({ where: { ownedDigifranchiseId } })
+  async getDigifranchiseGeneralInformation(
+    userId: string,
+    ownedDigifranchiseId: string,
+  ): Promise<DigifranchiseGeneralInfo> {
+    const digifranchiseGeneralInfo =
+      await this.digifranchiseGeneralInfoRepository.findOne({
+        where: { ownedDigifranchiseId },
+      });
 
     if (!digifranchiseGeneralInfo) {
-      throw new NotFoundException(
-        `digifranchise info not found`,
-      );
+      throw new NotFoundException(`digifranchise info not found`);
     }
 
-    return digifranchiseGeneralInfo
+    return digifranchiseGeneralInfo;
   }
 
-  async updateDigifranchiseGeneralInformation(userId: string, dto: UpdateDigifranchiseGeneralInfoDto, ownedDigifranchiseId: string): Promise<DigifranchiseGeneralInfo> {
-    const digifranchiseGeneralInfo = await this.digifranchiseGeneralInfoRepository.findOne({ where: { ownedDigifranchiseId } })
+  async updateDigifranchiseGeneralInformation(
+    userId: string,
+    dto: UpdateDigifranchiseGeneralInfoDto,
+    ownedDigifranchiseId: string,
+  ): Promise<DigifranchiseGeneralInfo> {
+    const digifranchiseGeneralInfo =
+      await this.digifranchiseGeneralInfoRepository.findOne({
+        where: { ownedDigifranchiseId },
+      });
     if (!digifranchiseGeneralInfo) {
-      throw new NotFoundException(
-        `digifranchise info not found`,
-      );
+      throw new NotFoundException(`digifranchise info not found`);
     }
 
     if (
@@ -38,52 +54,55 @@ export class DigifranchiseGeneralInfoService {
       digifranchiseGeneralInfo.digifranchisePublished
     ) {
       throw new ConflictException(
-        "to update phone numbers for digifranchise, please first unpublish the current version, make the necessary changes, and then republish."
-      )
+        "to update phone numbers for digifranchise, please first unpublish the current version, make the necessary changes, and then republish.",
+      );
     }
 
     if (dto.connectNumber !== undefined) {
-      if (dto.connectNumber.trim() !== '') {
-        if (
-          !isValidPhoneNumber(dto.connectNumber)
-        ) {
-          throw new ConflictException(
-            "please include country code"
-          )
+      if (dto.connectNumber.trim() !== "") {
+        if (!isValidPhoneNumber(dto.connectNumber)) {
+          throw new ConflictException("please include country code");
         }
       }
     }
 
     if (dto.otherMobileNumber !== undefined) {
-      if (dto.otherMobileNumber.trim() !== '') {
+      if (dto.otherMobileNumber.trim() !== "") {
         if (!isValidPhoneNumber(dto.otherMobileNumber)) {
-          throw new ConflictException(
-            "please include country code"
-          )
+          throw new ConflictException("please include country code");
         }
       }
     }
 
-    const connectNumberWithoutCC = dto.connectNumber !== undefined ? removeCountryCode(dto.connectNumber) : ''
-    const otherMobileWithoutCC = dto.otherMobileNumber !== undefined ? removeCountryCode(dto.otherMobileNumber): ''
+    const connectNumberWithoutCC =
+      dto.connectNumber !== undefined
+        ? removeCountryCode(dto.connectNumber)
+        : "";
+    const otherMobileWithoutCC =
+      dto.otherMobileNumber !== undefined
+        ? removeCountryCode(dto.otherMobileNumber)
+        : "";
 
-    digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName
-    digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle
-    digifranchiseGeneralInfo.tiktokHandle = dto.tiktokHandle
-    digifranchiseGeneralInfo.instagramHandle = dto.instagramHandle
-    digifranchiseGeneralInfo.xHandle = dto.xHandle
-    digifranchiseGeneralInfo.address = dto.address
-    digifranchiseGeneralInfo.connectNumber = dto.connectNumber
-    digifranchiseGeneralInfo.otherMobileNumber = dto.otherMobileNumber
-    digifranchiseGeneralInfo.aboutCompany = dto.aboutCompany
-    digifranchiseGeneralInfo.location = dto.location
+    digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName;
+    digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle;
+    digifranchiseGeneralInfo.tiktokHandle = dto.tiktokHandle;
+    digifranchiseGeneralInfo.instagramHandle = dto.instagramHandle;
+    digifranchiseGeneralInfo.xHandle = dto.xHandle;
+    digifranchiseGeneralInfo.address = dto.address;
+    digifranchiseGeneralInfo.connectNumber = dto.connectNumber;
+    digifranchiseGeneralInfo.otherMobileNumber = dto.otherMobileNumber;
+    digifranchiseGeneralInfo.aboutCompany = dto.aboutCompany;
+    digifranchiseGeneralInfo.location = dto.location;
 
-    Object.assign(digifranchiseGeneralInfo, { connectNumberWithOutCountryCode: connectNumberWithoutCC })
-    Object.assign(digifranchiseGeneralInfo, { otherMobileNumberWithOutCountryCode: otherMobileWithoutCC })
+    Object.assign(digifranchiseGeneralInfo, {
+      connectNumberWithOutCountryCode: connectNumberWithoutCC,
+    });
+    Object.assign(digifranchiseGeneralInfo, {
+      otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
+    });
 
-    this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo)
+    this.digifranchiseGeneralInfoRepository.save(digifranchiseGeneralInfo);
 
-    return digifranchiseGeneralInfo
-
+    return digifranchiseGeneralInfo;
   }
 }

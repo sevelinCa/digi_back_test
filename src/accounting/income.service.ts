@@ -1,14 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Income } from './entities/income.entity';
-import { CreateIncomeDto } from './dto/Create-DTOs/create-income.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Income } from "./entities/income.entity";
+import { CreateIncomeDto } from "./dto/Create-DTOs/create-income.dto";
 import {
-  findIncomeById, getDigifranchiseAccountByUserId,
-} from 'src/helper/FindByFunctions';
-import { UpdateIncomeDto } from './dto/Update-DTOs/update-income.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+  findIncomeById,
+  getDigifranchiseAccountByUserId,
+} from "src/helper/FindByFunctions";
+import { UpdateIncomeDto } from "./dto/Update-DTOs/update-income.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 
 @Injectable()
 export class IncomeService {
@@ -53,23 +54,23 @@ export class IncomeService {
     startDate?: string,
     endDate?: string,
   ): Promise<{ incomes: Income[]; count: number }> {
-    const queryBuilder = this.incomeRepository.createQueryBuilder('income');
-  
-    queryBuilder.leftJoinAndSelect('income.franchiseId', 'franchise');
-  
-    queryBuilder.where('income.deleteAt IS NULL');
-  
+    const queryBuilder = this.incomeRepository.createQueryBuilder("income");
+
+    queryBuilder.leftJoinAndSelect("income.franchiseId", "franchise");
+
+    queryBuilder.where("income.deleteAt IS NULL");
+
     if (startDate) {
-      queryBuilder.andWhere('income.createdAt >= :startDate', { startDate });
+      queryBuilder.andWhere("income.createdAt >= :startDate", { startDate });
     }
-  
+
     if (endDate) {
-      queryBuilder.andWhere('income.createdAt <= :endDate', { endDate });
+      queryBuilder.andWhere("income.createdAt <= :endDate", { endDate });
     }
-  
+
     const incomes = await queryBuilder.getMany();
     const count = await queryBuilder.getCount();
-  
+
     return { incomes, count };
   }
 
@@ -105,8 +106,8 @@ export class IncomeService {
       throw new NotFoundException(`Income not found with ID ${incomeId}`);
     }
 
-    income.deleteAt = new Date(); 
+    income.deleteAt = new Date();
 
-    await this.incomeRepository.save(income); 
+    await this.incomeRepository.save(income);
   }
 }

@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsString, IsInt, Min, Max } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsInt, Min, Max } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateDepositDto {
-  @ApiProperty({ example: 'Monthly Payment' })
+  @ApiProperty({ example: "Monthly Payment" })
   @IsNotEmpty()
   @IsString()
   item: string;
@@ -25,7 +25,7 @@ export class CreateDepositDto {
   @Max(1000000)
   depositAmount: number;
 
-  @ApiProperty({ example: '2024-03-15T00:00:00Z' })
+  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
   @IsNotEmpty()
   depositedAt: Date;
 }

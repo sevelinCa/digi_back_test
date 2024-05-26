@@ -1,7 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
 export class WeekDaysAndTimes {
   day: string;
@@ -29,51 +37,53 @@ export enum MinTimeBetweenBookedSlots {
 
 @Entity()
 export class AvailableManagement {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: "userId" })
   userId: UserEntity;
 
   // @ManyToOne(() => Digifranchise, { nullable: true })
   // @JoinColumn({ name: 'digifranchiseId' })
   // digifranchiseId: Digifranchise | null;
 
-  @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.availability)
-  @JoinColumn({ name: 'ownedDigifranchise' })
+  @ManyToOne(
+    () => DigifranchiseOwner,
+    (ownedFranchise) => ownedFranchise.availability,
+  )
+  @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
-  @Column({ type: 'json' })
+  @Column({ type: "json" })
   weekDaysAndTimes: WeekDaysAndTimes[];
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: AllowedTimeSlotUnits,
     default: AllowedTimeSlotUnits.THIRTY_MINUTES,
   })
   allowedTimeSlotUnits: AllowedTimeSlotUnits;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: MinTimeBetweenBookedSlots,
     default: MinTimeBetweenBookedSlots.FIFTEEN_MINUTES,
   })
   minTimeBetweenBookedSlots: MinTimeBetweenBookedSlots;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: "boolean", default: false })
   allowBookingOnPublicHolidays: boolean;
 
-
-  @Column({ type: 'json' })
+  @Column({ type: "json" })
   unavailableTime: UnavailableTime[];
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 }

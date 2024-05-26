@@ -2,15 +2,18 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
-import { FixedExpenseCategory } from './entities/fixedExpenseCategory.entity';
-import { CreateFixedExpenseDto } from './dto/Create-DTOs/create-fixed-expense.dto';
-import { IsNull } from 'typeorm';
-import { getDigifranchiseAccountByUserId, findUserById } from 'src/helper/FindByFunctions';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Brackets, Repository } from "typeorm";
+import { FixedExpenseCategory } from "./entities/fixedExpenseCategory.entity";
+import { CreateFixedExpenseDto } from "./dto/Create-DTOs/create-fixed-expense.dto";
+import { IsNull } from "typeorm";
+import {
+  getDigifranchiseAccountByUserId,
+  findUserById,
+} from "src/helper/FindByFunctions";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 
 @Injectable()
 export class ManagerFixedExpensesService {
@@ -34,7 +37,7 @@ export class ManagerFixedExpensesService {
 
   async getAllFixedExpensesCategories(): Promise<FixedExpenseCategory[]> {
     return this.fixedExpenseRepository.find({
-      where: { userId: IsNull(),deleteAt: IsNull() },
+      where: { userId: IsNull(), deleteAt: IsNull() },
     });
   }
 
@@ -63,8 +66,8 @@ export class ManagerFixedExpensesService {
 
   async deleteFixedExpenses(fixedExpenseId: string): Promise<void> {
     const fixedExpense = await this.getFixedExpenses(fixedExpenseId);
-    fixedExpense.deleteAt = new Date(); 
-    await this.fixedExpenseRepository.save(fixedExpense); 
+    fixedExpense.deleteAt = new Date();
+    await this.fixedExpenseRepository.save(fixedExpense);
   }
 }
 
@@ -99,20 +102,20 @@ export class ClientFixedExpensesService {
     predefined: FixedExpenseCategory[];
   }> {
     await getDigifranchiseAccountByUserId(this.DigifranchiseRepository, userId);
-  
+
     const userSpecific = await this.fixedExpenseRepository
-      .createQueryBuilder('fixedExpense')
-      .leftJoin('fixedExpense.userId', 'user')
-      .where('user.id = :userId', { userId })
-      .andWhere('fixedExpense.deleteAt IS NULL') 
+      .createQueryBuilder("fixedExpense")
+      .leftJoin("fixedExpense.userId", "user")
+      .where("user.id = :userId", { userId })
+      .andWhere("fixedExpense.deleteAt IS NULL")
       .getMany();
-  
+
     const predefined = await this.fixedExpenseRepository
-      .createQueryBuilder('fixedExpense')
-      .where('fixedExpense.userId IS NULL')
-      .andWhere('fixedExpense.deleteAt IS NULL') 
+      .createQueryBuilder("fixedExpense")
+      .where("fixedExpense.userId IS NULL")
+      .andWhere("fixedExpense.deleteAt IS NULL")
       .getMany();
-  
+
     return {
       userSpecific,
       predefined,
@@ -126,12 +129,12 @@ export class ClientFixedExpensesService {
     await getDigifranchiseAccountByUserId(this.DigifranchiseRepository, userId);
 
     const fixedExpense = await this.fixedExpenseRepository
-      .createQueryBuilder('fixedExpense')
-      .leftJoinAndSelect('fixedExpense.userId', 'user')
-      .where('fixedExpense.id = :fixedExpenseId', { fixedExpenseId })
+      .createQueryBuilder("fixedExpense")
+      .leftJoinAndSelect("fixedExpense.userId", "user")
+      .where("fixedExpense.id = :fixedExpenseId", { fixedExpenseId })
       .andWhere(
         new Brackets((qb) => {
-          qb.where('user.id = :userId').orWhere('user.id IS NULL');
+          qb.where("user.id = :userId").orWhere("user.id IS NULL");
         }),
         { userId },
       )
@@ -164,13 +167,13 @@ export class ClientFixedExpensesService {
     fixedExpenseId: string,
   ): Promise<void> {
     const fixedExpense = await this.getFixedExpenses(userId, fixedExpenseId);
-  
+
     if (fixedExpense.userId?.id !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to delete this expense.',
+        "You do not have permission to delete this expense.",
       );
     }
-    fixedExpense.deleteAt = new Date(); 
-    await this.fixedExpenseRepository.save(fixedExpense); 
+    fixedExpense.deleteAt = new Date();
+    await this.fixedExpenseRepository.save(fixedExpense);
   }
 }

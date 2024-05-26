@@ -1,50 +1,48 @@
-import axios from 'axios';
+import axios from "axios";
 
 import {
   HttpException,
   HttpStatus,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import ms from 'ms';
-import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcryptjs';
-import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
-import { AuthUpdateDto } from './dto/auth-update.dto';
-import { RoleEnum } from 'src/roles/roles.enum';
-import { StatusEnum } from 'src/statuses/statuses.enum';
-import { AuthProvidersEnum } from './auth-providers.enum';
-import { SocialInterface } from '../social/interfaces/social.interface';
-import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
-import { MailService } from 'src/mail/mail.service';
-import { NullableType } from '../utils/types/nullable.type';
-import { LoginResponseType } from './types/login-response.type';
-import { ConfigService } from '@nestjs/config';
-import { AllConfigType } from 'src/config/config.type';
-import { JwtRefreshPayloadType } from './strategies/types/jwt-refresh-payload.type';
-import { JwtPayloadType } from './strategies/types/jwt-payload.type';
-import { User } from 'src/users/domain/user';
-import { Session } from 'src/session/domain/session';
-import { UsersService } from 'src/users/users.service';
-import { SessionService } from 'src/session/session.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { AuthPhoneRegisterDto } from './dto/auth-phone-register.dto';
-import { SmsService } from 'src/sms/sms.service';
-import { AuthConfirmPhoneDto } from './dto/auth-confirm-phone.dto';
-import { GoogleCreateUserDto } from './dto/google-create-user.dto';
-import { UserProfileDto } from 'src/user/dto/user.profile.dto';
-import { AuthPhoneLoginDto } from './dto/auth-phone-login.dto';
-import { FaceBookCreateUserDto } from './dto/facebook-create-user.dto';
-import { CustomerSubscriptionService } from 'src/digifranchise-subscription/customer-subscription.service';
-import { CustomerSubscription } from 'src/digifranchise-subscription/entities/customer-subscription.entity';
-import { AuthForgotPasswordForWebSiteDto } from './dto/auth-forgot-password-on-webs.dto';
-import { ForgotPasswordMailData } from 'forgot-password-mail-data.interface';
-import { Role } from 'src/roles/domain/role';
-import { RoleEntity } from 'src/roles/infrastructure/persistence/relational/entities/role.entity';
-
-
+} from "@nestjs/common";
+import ms from "ms";
+import { JwtService } from "@nestjs/jwt";
+import bcrypt from "bcryptjs";
+import { AuthEmailLoginDto } from "./dto/auth-email-login.dto";
+import { AuthUpdateDto } from "./dto/auth-update.dto";
+import { RoleEnum } from "src/roles/roles.enum";
+import { StatusEnum } from "src/statuses/statuses.enum";
+import { AuthProvidersEnum } from "./auth-providers.enum";
+import { SocialInterface } from "../social/interfaces/social.interface";
+import { AuthRegisterLoginDto } from "./dto/auth-register-login.dto";
+import { MailService } from "src/mail/mail.service";
+import { NullableType } from "../utils/types/nullable.type";
+import { LoginResponseType } from "./types/login-response.type";
+import { ConfigService } from "@nestjs/config";
+import { AllConfigType } from "src/config/config.type";
+import { JwtRefreshPayloadType } from "./strategies/types/jwt-refresh-payload.type";
+import { JwtPayloadType } from "./strategies/types/jwt-payload.type";
+import { User } from "src/users/domain/user";
+import { Session } from "src/session/domain/session";
+import { UsersService } from "src/users/users.service";
+import { SessionService } from "src/session/session.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Not, Repository } from "typeorm";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { AuthPhoneRegisterDto } from "./dto/auth-phone-register.dto";
+import { SmsService } from "src/sms/sms.service";
+import { AuthConfirmPhoneDto } from "./dto/auth-confirm-phone.dto";
+import { GoogleCreateUserDto } from "./dto/google-create-user.dto";
+import { UserProfileDto } from "src/user/dto/user.profile.dto";
+import { AuthPhoneLoginDto } from "./dto/auth-phone-login.dto";
+import { FaceBookCreateUserDto } from "./dto/facebook-create-user.dto";
+import { CustomerSubscriptionService } from "src/digifranchise-subscription/customer-subscription.service";
+import { CustomerSubscription } from "src/digifranchise-subscription/entities/customer-subscription.entity";
+import { AuthForgotPasswordForWebSiteDto } from "./dto/auth-forgot-password-on-webs.dto";
+import { ForgotPasswordMailData } from "forgot-password-mail-data.interface";
+import { Role } from "src/roles/domain/role";
+import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
 
 @Injectable()
 export class AuthService {
@@ -60,9 +58,7 @@ export class AuthService {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-  ) { }
-
-
+  ) {}
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({ email: loginDto.email });
@@ -71,7 +67,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: { email: 'notFound' },
+          errors: { email: "notFound" },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
@@ -81,7 +77,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
-          errors: { role: 'notAllowed' },
+          errors: { role: "notAllowed" },
         },
         HttpStatus.FORBIDDEN,
       );
@@ -101,19 +97,22 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: { password: 'incorrectPassword' },
+          errors: { password: "incorrectPassword" },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    const isValidPassword = await bcrypt.compare(loginDto.password, user.password);
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
 
     if (!isValidPassword) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: { password: 'incorrectPassword' },
+          errors: { password: "incorrectPassword" },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
@@ -128,19 +127,19 @@ export class AuthService {
     });
 
     let csrfToken: string;
-    let cookies: string = '';
+    let cookies: string = "";
     try {
       const csrfResponse = await axios.get(
-        `${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_CSRF_TOKEN_ENDPOINT')}`,
+        `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_CSRF_TOKEN_ENDPOINT")}`,
         { withCredentials: true },
       );
       csrfToken = csrfResponse.data.csrfToken;
-      cookies = csrfResponse.headers['set-cookie']?.join('; ') || '';
+      cookies = csrfResponse.headers["set-cookie"]?.join("; ") || "";
     } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: { login: 'AcademyCSRFTokenFetchFailed' },
+          errors: { login: "AcademyCSRFTokenFetchFailed" },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
@@ -148,18 +147,18 @@ export class AuthService {
 
     try {
       const academyResponse = await axios.post(
-        `${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_LOGIN_ENDPOINT')}`,
+        `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_LOGIN_ENDPOINT")}`,
         new URLSearchParams({
           email: loginDto.email,
-          next: '/',
+          next: "/",
           password: loginDto.password,
         }),
         {
           headers: {
-            'x-csrftoken': csrfToken,
-            'origin': this.configService.get('ACADEMY_ORIGIN_URL'),
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': cookies,
+            "x-csrftoken": csrfToken,
+            origin: this.configService.get("ACADEMY_ORIGIN_URL"),
+            "Content-Type": "application/x-www-form-urlencoded",
+            Cookie: cookies,
           },
           withCredentials: true,
         },
@@ -170,7 +169,7 @@ export class AuthService {
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: { login: 'AcademyLoginFailed' },
+            errors: { login: "AcademyLoginFailed" },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
@@ -188,15 +187,17 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: { login: 'AcademyLoginFailed' },
+          errors: { login: "AcademyLoginFailed" },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
   }
 
-
-  async customerEmailLogin(digifranchiseId: string, loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
+  async customerEmailLogin(
+    digifranchiseId: string,
+    loginDto: AuthEmailLoginDto,
+  ): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
       email: loginDto.email,
     });
@@ -206,7 +207,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'notFound',
+            email: "notFound",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -218,7 +219,7 @@ export class AuthService {
         {
           status: HttpStatus.FORBIDDEN,
           errors: {
-            role: 'notAllowed',
+            role: "notAllowed",
           },
         },
         HttpStatus.FORBIDDEN,
@@ -242,7 +243,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            password: 'incorrectPassword',
+            password: "incorrectPassword",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -259,7 +260,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            password: 'incorrectPassword',
+            password: "incorrectPassword",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -270,15 +271,19 @@ export class AuthService {
       user,
     });
 
-    const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+    const getCustomerSubscriptions =
+      await this.customerSubscription.getAllSubscriptions(user.id);
 
     getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
       if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
-        return
+        return;
       } else {
-        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+        await this.customerSubscription.createSubscription(
+          user.id,
+          digifranchiseId,
+        );
       }
-    })
+    });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
@@ -301,7 +306,10 @@ export class AuthService {
 
     if (user) {
       if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-        throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+        throw new HttpException(
+          "Only users with the digifranchise_super_admin role can log in through this method.",
+          HttpStatus.FORBIDDEN,
+        );
       }
 
       const session = await this.sessionService.create({
@@ -325,13 +333,13 @@ export class AuthService {
         this.usersRepository.create({
           ...googleUser,
           role: {
-            id: RoleEnum.digifranchise_super_admin
+            id: RoleEnum.digifranchise_super_admin,
           },
           status: {
-            id: StatusEnum.active
+            id: StatusEnum.active,
           },
           image: googleUser.profilePic,
-          provider: 'google',
+          provider: "google",
         }),
       );
 
@@ -341,7 +349,10 @@ export class AuthService {
 
       if (user) {
         if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
-          throw new HttpException('Only users with the digifranchise_super_admin role can log in through this method.', HttpStatus.FORBIDDEN);
+          throw new HttpException(
+            "Only users with the digifranchise_super_admin role can log in through this method.",
+            HttpStatus.FORBIDDEN,
+          );
         }
 
         const session = await this.sessionService.create({
@@ -358,48 +369,65 @@ export class AuthService {
           token,
           tokenExpires,
           newUser,
-        }
+        };
       }
     }
   }
 
-  async googleAuthCustomer(ownedDigifranchiseId: string, googleUser: GoogleCreateUserDto): Promise<any> {
-    const existingUserWithDifferentProvider = await this.usersRepository.findOne({
-      where: { email: googleUser.email as string, provider: Not('google') },
-    });
+  async googleAuthCustomer(
+    ownedDigifranchiseId: string,
+    googleUser: GoogleCreateUserDto,
+  ): Promise<any> {
+    const existingUserWithDifferentProvider =
+      await this.usersRepository.findOne({
+        where: { email: googleUser.email as string, provider: Not("google") },
+      });
 
     if (existingUserWithDifferentProvider) {
-      throw new HttpException('An account with this email address already exists, Please log in or use a different email address.', HttpStatus.CONFLICT);
+      throw new HttpException(
+        "An account with this email address already exists, Please log in or use a different email address.",
+        HttpStatus.CONFLICT,
+      );
     }
 
     const user = await this.usersRepository.findOne({
-      where: { email: googleUser.email as string, provider: 'google' },
+      where: { email: googleUser.email as string, provider: "google" },
     });
 
     if (user) {
       if (user.role?.id !== RoleEnum.customer) {
-        throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
+        throw new HttpException(
+          "Only users with the customer role can log in through this method.",
+          HttpStatus.FORBIDDEN,
+        );
       }
 
       const session = await this.sessionService.create({
         user,
       });
 
-      const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
+      const getCustomerSubscriptions =
+        await this.customerSubscription.getAllSubscriptions(user.id);
 
-      getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-        if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
-          return;
-        } else {
-          await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
-        }
-      });
+      getCustomerSubscriptions.map(
+        async (subscription: CustomerSubscription) => {
+          if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
+            return;
+          } else {
+            await this.customerSubscription.createSubscription(
+              user.id,
+              ownedDigifranchiseId,
+            );
+          }
+        },
+      );
 
-      const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
-        id: user.id,
-        role: user.role,
-        sessionId: session.id,
-      });
+      const { token, refreshToken, tokenExpires } =
+        await this.getTokensDataForGoogle({
+          id: user.id,
+          role: user.role,
+          sessionId: session.id,
+        });
 
       return {
         refreshToken,
@@ -418,7 +446,7 @@ export class AuthService {
             id: StatusEnum.active,
           },
           image: googleUser.profilePic,
-          provider: 'google',
+          provider: "google",
         }),
       );
 
@@ -428,28 +456,38 @@ export class AuthService {
 
       if (user) {
         if (user.role?.id !== RoleEnum.customer) {
-          throw new HttpException('Only users with the customer role can log in through this method.', HttpStatus.FORBIDDEN);
+          throw new HttpException(
+            "Only users with the customer role can log in through this method.",
+            HttpStatus.FORBIDDEN,
+          );
         }
 
         const session = await this.sessionService.create({
           user,
         });
 
-        const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id);
+        const getCustomerSubscriptions =
+          await this.customerSubscription.getAllSubscriptions(user.id);
 
-        getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-          if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
-            return;
-          } else {
-            await this.customerSubscription.createSubscription(user.id, ownedDigifranchiseId);
-          }
-        });
+        getCustomerSubscriptions.map(
+          async (subscription: CustomerSubscription) => {
+            if (subscription.digifranchiseOwnerId.id === ownedDigifranchiseId) {
+              return;
+            } else {
+              await this.customerSubscription.createSubscription(
+                user.id,
+                ownedDigifranchiseId,
+              );
+            }
+          },
+        );
 
-        const { token, refreshToken, tokenExpires } = await this.getTokensDataForGoogle({
-          id: user.id,
-          role: newUser.role,
-          sessionId: session.id,
-        });
+        const { token, refreshToken, tokenExpires } =
+          await this.getTokensDataForGoogle({
+            id: user.id,
+            role: newUser.role,
+            sessionId: session.id,
+          });
 
         return {
           refreshToken,
@@ -462,7 +500,9 @@ export class AuthService {
   }
 
   async getCsrfToken(): Promise<string> {
-    const response = await axios.get(`${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_CSRF_TOKEN_ENDPOINT')}`);
+    const response = await axios.get(
+      `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_CSRF_TOKEN_ENDPOINT")}`,
+    );
 
     return response.data.token;
   }
@@ -502,21 +542,21 @@ export class AuthService {
     const externalRegistrationData = {
       email: dto.email,
       name: `${dto.firstName} ${dto.lastName}`,
-      next: '/',
+      next: "/",
       username: `${dto.lastName}${Math.floor(Math.random() * 10000)}`,
       password: dto.password,
     };
 
     await axios.post(
-      `${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_REGISTER_ENDPOINT')}`,
+      `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_REGISTER_ENDPOINT")}`,
 
       new URLSearchParams(externalRegistrationData).toString(),
       {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-CSRFToken': csrfToken,
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrfToken,
         },
-      }
+      },
     );
 
     const hash = await this.jwtService.signAsync(
@@ -524,10 +564,10 @@ export class AuthService {
         confirmEmailUserId: user.id,
       },
       {
-        secret: this.configService.getOrThrow('auth.confirmEmailSecret', {
+        secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
           infer: true,
         }),
-        expiresIn: this.configService.getOrThrow('auth.confirmEmailExpires', {
+        expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
           infer: true,
         }),
       },
@@ -541,7 +581,11 @@ export class AuthService {
     });
   }
 
-  async customerRegister(digifranchiseId: string, dto: AuthRegisterLoginDto, websiteURL: string): Promise<void> {
+  async customerRegister(
+    digifranchiseId: string,
+    dto: AuthRegisterLoginDto,
+    websiteURL: string,
+  ): Promise<void> {
     const user = await this.usersService.create({
       ...dto,
       email: dto.email,
@@ -568,7 +612,7 @@ export class AuthService {
       criminalRecord: null,
       policeClearenceCertificate: null,
       crimes: null,
-      isProfileComplete: false
+      isProfileComplete: false,
     });
 
     const hash = await this.jwtService.signAsync(
@@ -576,34 +620,37 @@ export class AuthService {
         confirmEmailUserId: user.id,
       },
       {
-        secret: this.configService.getOrThrow('auth.confirmEmailSecret', {
+        secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
           infer: true,
         }),
-        expiresIn: this.configService.getOrThrow('auth.confirmEmailExpires', {
+        expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
           infer: true,
         }),
       },
     );
 
-    await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+    await this.customerSubscription.createSubscription(
+      user.id,
+      digifranchiseId,
+    );
 
     await this.mailService.customerSignUp({
       to: dto.email,
       data: {
         hash,
-        websiteUrl: websiteURL
+        websiteUrl: websiteURL,
       },
     });
   }
 
   async confirmEmail(hash: string): Promise<void> {
-    let userId: User['id'];
+    let userId: User["id"];
 
     try {
       const jwtData = await this.jwtService.verifyAsync<{
-        confirmEmailUserId: User['id'];
+        confirmEmailUserId: User["id"];
       }>(hash, {
-        secret: this.configService.getOrThrow('auth.confirmEmailSecret', {
+        secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
           infer: true,
         }),
       });
@@ -625,7 +672,6 @@ export class AuthService {
       id: userId,
     });
 
-
     if (!user || user?.status?.id !== StatusEnum.inactive) {
       throw new HttpException(
         {
@@ -640,8 +686,8 @@ export class AuthService {
       id: StatusEnum.active,
     };
 
-    Object.assign(user, { status: updatedStatus.id })
-    await this.usersRepository.save(user)
+    Object.assign(user, { status: updatedStatus.id });
+    await this.usersRepository.save(user);
   }
 
   async phoneRegister(dto: AuthPhoneRegisterDto) {
@@ -652,7 +698,7 @@ export class AuthService {
         {
           status: HttpStatus.CONFLICT,
           errors: {
-            message: 'Phone number already exists'
+            message: "Phone number already exists",
           },
         },
         HttpStatus.CONFLICT,
@@ -685,7 +731,7 @@ export class AuthService {
       criminalRecord: null,
       policeClearenceCertificate: null,
       crimes: null,
-      isProfileComplete: false
+      isProfileComplete: false,
     });
 
     if (!user) {
@@ -693,7 +739,7 @@ export class AuthService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            phoneNumber: 'failedToCreatUser',
+            phoneNumber: "failedToCreatUser",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -702,24 +748,26 @@ export class AuthService {
 
     if (user) {
       try {
-        await this.smsService.sendOTP(dto.phoneNumber)
+        await this.smsService.sendOTP(dto.phoneNumber);
       } catch (error) {
         throw new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             errors: {
-              phoneNumber: 'failed to send SMS',
-              message: 'user has been created but unable to SMS at this time'
+              phoneNumber: "failed to send SMS",
+              message: "user has been created but unable to SMS at this time",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
     }
-
   }
 
-  async phoneCustomerRegister(digifranchiseId: string, dto: AuthPhoneRegisterDto) {
+  async phoneCustomerRegister(
+    digifranchiseId: string,
+    dto: AuthPhoneRegisterDto,
+  ) {
     const { phoneNumber } = dto;
     const users = await this.usersService.findOne({ phoneNumber });
     if (users) {
@@ -727,7 +775,7 @@ export class AuthService {
         {
           status: HttpStatus.CONFLICT,
           errors: {
-            message: 'Phone number already exists'
+            message: "Phone number already exists",
           },
         },
         HttpStatus.CONFLICT,
@@ -760,7 +808,7 @@ export class AuthService {
       criminalRecord: null,
       policeClearenceCertificate: null,
       crimes: null,
-      isProfileComplete: false
+      isProfileComplete: false,
     });
 
     if (!user) {
@@ -768,7 +816,7 @@ export class AuthService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           errors: {
-            phoneNumber: 'failedToCreatUser',
+            phoneNumber: "failedToCreatUser",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -777,15 +825,18 @@ export class AuthService {
 
     if (user) {
       try {
-        await this.smsService.sendOTP(dto.phoneNumber)
-        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+        await this.smsService.sendOTP(dto.phoneNumber);
+        await this.customerSubscription.createSubscription(
+          user.id,
+          digifranchiseId,
+        );
       } catch (error) {
         throw new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             errors: {
-              phoneNumber: 'failed to send SMS',
-              message: 'user has been created but unable to SMS at this time'
+              phoneNumber: "failed to send SMS",
+              message: "user has been created but unable to SMS at this time",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -804,7 +855,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            phone: 'notFound',
+            phone: "notFound",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -828,21 +879,21 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            password: 'incorrectPassword',
+            password: "incorrectPassword",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    const isValidPassword = await bcrypt.compare(dto.password, user.password)
+    const isValidPassword = await bcrypt.compare(dto.password, user.password);
 
     if (!isValidPassword) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            password: 'incorrectPassword',
+            password: "incorrectPassword",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -867,7 +918,10 @@ export class AuthService {
     };
   }
 
-  async customerPhoneLogin(digifranchiseId: string, dto: AuthPhoneLoginDto): Promise<LoginResponseType> {
+  async customerPhoneLogin(
+    digifranchiseId: string,
+    dto: AuthPhoneLoginDto,
+  ): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
       phoneNumber: dto.phoneNumber,
     });
@@ -877,7 +931,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            phone: 'notFound',
+            phone: "notFound",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -901,21 +955,21 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            password: 'incorrectPassword',
+            password: "incorrectPassword",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    const isValidPassword = await bcrypt.compare(dto.password, user.password)
+    const isValidPassword = await bcrypt.compare(dto.password, user.password);
 
     if (!isValidPassword) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            password: 'incorrectPassword',
+            password: "incorrectPassword",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -926,15 +980,19 @@ export class AuthService {
       user,
     });
 
-    const getCustomerSubscriptions = await this.customerSubscription.getAllSubscriptions(user.id)
+    const getCustomerSubscriptions =
+      await this.customerSubscription.getAllSubscriptions(user.id);
 
     getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
       if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
-        return
+        return;
       } else {
-        await this.customerSubscription.createSubscription(user.id, digifranchiseId)
+        await this.customerSubscription.createSubscription(
+          user.id,
+          digifranchiseId,
+        );
       }
-    })
+    });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
@@ -951,10 +1009,15 @@ export class AuthService {
   }
 
   async verifyUserWithPhone(dto: AuthConfirmPhoneDto) {
-    const phoneIsVerified = await this.smsService.verifyOTP(dto.phoneNumber, dto.otp)
+    const phoneIsVerified = await this.smsService.verifyOTP(
+      dto.phoneNumber,
+      dto.otp,
+    );
 
     if (phoneIsVerified) {
-      const user = await this.usersService.findOne({ phoneNumber: dto.phoneNumber })
+      const user = await this.usersService.findOne({
+        phoneNumber: dto.phoneNumber,
+      });
       if (!user || user?.status?.id !== StatusEnum.inactive) {
         throw new HttpException(
           {
@@ -968,16 +1031,16 @@ export class AuthService {
       const updatedStatus = {
         id: StatusEnum.active,
       };
-      Object.assign(user, { status: updatedStatus.id })
-      await this.usersRepository.save(user)
+      Object.assign(user, { status: updatedStatus.id });
+      await this.usersRepository.save(user);
     } else {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          error: 'Wrong otp'
+          error: "Wrong otp",
         },
-        HttpStatus.BAD_REQUEST
-      )
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -991,7 +1054,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'email does not exist',
+            email: "email does not exist",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1003,10 +1066,10 @@ export class AuthService {
         forgotUserId: user.id,
       },
       {
-        secret: this.configService.getOrThrow('auth.forgotSecret', {
+        secret: this.configService.getOrThrow("auth.forgotSecret", {
           infer: true,
         }),
-        expiresIn: this.configService.getOrThrow('auth.forgotExpires', {
+        expiresIn: this.configService.getOrThrow("auth.forgotExpires", {
           infer: true,
         }),
       },
@@ -1020,8 +1083,9 @@ export class AuthService {
     });
   }
 
-
-  async forgetPasswordForWebs(dto: AuthForgotPasswordForWebSiteDto): Promise<void> {
+  async forgetPasswordForWebs(
+    dto: AuthForgotPasswordForWebSiteDto,
+  ): Promise<void> {
     const user = await this.usersService.findOne({
       email: dto.email,
     });
@@ -1031,7 +1095,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'email does not exist',
+            email: "email does not exist",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1053,8 +1117,12 @@ export class AuthService {
         forgotUserId: user.id,
       },
       {
-        secret: this.configService.getOrThrow('auth.forgotSecret', { infer: true }),
-        expiresIn: this.configService.getOrThrow('auth.forgotExpires', { infer: true }),
+        secret: this.configService.getOrThrow("auth.forgotSecret", {
+          infer: true,
+        }),
+        expiresIn: this.configService.getOrThrow("auth.forgotExpires", {
+          infer: true,
+        }),
       },
     );
 
@@ -1077,20 +1145,24 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'phoneNotExists',
+            email: "phoneNotExists",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    await this.smsService.sendOTP(phoneNumber)
+    await this.smsService.sendOTP(phoneNumber);
 
-    return { message: 'otp sent to phone, check messages' }
+    return { message: "otp sent to phone, check messages" };
   }
 
-  async resetPasswordWithPhone(otp: string, phoneNumber: string, newPassword: string): Promise<any> {
-    const phoneIsVerified = await this.smsService.verifyOTP(phoneNumber, otp)
+  async resetPasswordWithPhone(
+    otp: string,
+    phoneNumber: string,
+    newPassword: string,
+  ): Promise<any> {
+    const phoneIsVerified = await this.smsService.verifyOTP(phoneNumber, otp);
 
     if (!phoneIsVerified) {
       throw new HttpException(
@@ -1103,7 +1175,7 @@ export class AuthService {
     }
 
     if (phoneIsVerified) {
-      const user = await this.usersService.findOne({ phoneNumber })
+      const user = await this.usersService.findOne({ phoneNumber });
       if (!user) {
         throw new HttpException(
           {
@@ -1117,21 +1189,21 @@ export class AuthService {
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-      Object.assign(user, { password: hashedPassword })
-      await this.usersRepository.save(user)
+      Object.assign(user, { password: hashedPassword });
+      await this.usersRepository.save(user);
 
-      return { status: HttpStatus.OK, message: "password successfully reset" }
+      return { status: HttpStatus.OK, message: "password successfully reset" };
     }
   }
 
   async resetPassword(hash: string, password: string): Promise<void> {
-    let userId: User['id'];
+    let userId: User["id"];
 
     try {
       const jwtData = await this.jwtService.verifyAsync<{
-        forgotUserId: User['id'];
+        forgotUserId: User["id"];
       }>(hash, {
-        secret: this.configService.getOrThrow('auth.forgotSecret', {
+        secret: this.configService.getOrThrow("auth.forgotSecret", {
           infer: true,
         }),
       });
@@ -1168,10 +1240,9 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    Object.assign(user, { password: hashedPassword });
 
-    Object.assign(user, { password: hashedPassword })
-
-    await this.usersRepository.save(user)
+    await this.usersRepository.save(user);
   }
 
   async me(userJwtPayload: JwtPayloadType): Promise<NullableType<User>> {
@@ -1200,7 +1271,10 @@ export class AuthService {
       );
     }
 
-    if (updateUserProfileDto.email && updateUserProfileDto.email.trim().length > 0) {
+    if (
+      updateUserProfileDto.email &&
+      updateUserProfileDto.email.trim().length > 0
+    ) {
       const userObject = await this.usersService.findOne({
         email: updateUserProfileDto.email,
       });
@@ -1210,7 +1284,7 @@ export class AuthService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              email: 'email already exists',
+              email: "email already exists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1218,7 +1292,10 @@ export class AuthService {
       }
     }
 
-    if (updateUserProfileDto.phoneNumber && updateUserProfileDto.phoneNumber.trim().length > 0) {
+    if (
+      updateUserProfileDto.phoneNumber &&
+      updateUserProfileDto.phoneNumber.trim().length > 0
+    ) {
       const userObject = await this.usersService.findOne({
         phoneNumber: updateUserProfileDto.phoneNumber,
       });
@@ -1228,7 +1305,7 @@ export class AuthService {
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
             errors: {
-              phoneNumber: 'phone number already exists',
+              phoneNumber: "phone number already exists",
             },
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1256,8 +1333,9 @@ export class AuthService {
       documentId: updateUserProfileDto?.documentId,
       countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
       criminalRecord: updateUserProfileDto?.criminalRecord,
-      policeClearenceCertificate: updateUserProfileDto?.policeClearenceCertificate,
-      crimes: updateUserProfileDto?.crimes
+      policeClearenceCertificate:
+        updateUserProfileDto?.policeClearenceCertificate,
+      crimes: updateUserProfileDto?.crimes,
     });
 
     await this.usersRepository.save(user);
@@ -1290,21 +1368,20 @@ export class AuthService {
       !!updatedUser.countryOfOrigin
     ) {
       Object.assign(updatedUser, {
-        isProfileComplete: true
-      })
-      await this.usersRepository.save(updatedUser)
+        isProfileComplete: true,
+      });
+      await this.usersRepository.save(updatedUser);
     } else {
       Object.assign(updatedUser, {
-        isProfileComplete: false
-      })
-      await this.usersRepository.save(updatedUser)
+        isProfileComplete: false,
+      });
+      await this.usersRepository.save(updatedUser);
     }
-
   }
 
   async refreshToken(
-    data: Pick<JwtRefreshPayloadType, 'sessionId'>,
-  ): Promise<Omit<LoginResponseType, 'user'>> {
+    data: Pick<JwtRefreshPayloadType, "sessionId">,
+  ): Promise<Omit<LoginResponseType, "user">> {
     const session = await this.sessionService.findOne({
       id: data.sessionId,
     });
@@ -1330,18 +1407,18 @@ export class AuthService {
     await this.usersService.softDelete(user.id);
   }
 
-  async logout(data: Pick<JwtRefreshPayloadType, 'sessionId'>) {
+  async logout(data: Pick<JwtRefreshPayloadType, "sessionId">) {
     return this.sessionService.softDelete({
       id: data.sessionId,
     });
   }
 
   private async getTokensData(data: {
-    id: User['id'];
-    role: User['role'];
-    sessionId: Session['id'];
+    id: User["id"];
+    role: User["role"];
+    sessionId: Session["id"];
   }) {
-    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
+    const tokenExpiresIn = this.configService.getOrThrow("auth.expires", {
       infer: true,
     });
 
@@ -1355,7 +1432,7 @@ export class AuthService {
           sessionId: data.sessionId,
         },
         {
-          secret: this.configService.getOrThrow('auth.secret', { infer: true }),
+          secret: this.configService.getOrThrow("auth.secret", { infer: true }),
           expiresIn: tokenExpiresIn,
         },
       ),
@@ -1364,10 +1441,10 @@ export class AuthService {
           sessionId: data.sessionId,
         },
         {
-          secret: this.configService.getOrThrow('auth.refreshSecret', {
+          secret: this.configService.getOrThrow("auth.refreshSecret", {
             infer: true,
           }),
-          expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
+          expiresIn: this.configService.getOrThrow("auth.refreshExpires", {
             infer: true,
           }),
         },
@@ -1382,11 +1459,11 @@ export class AuthService {
   }
 
   private async getTokensDataForGoogle(data: {
-    id: User['id'];
-    role: User['role'];
-    sessionId: Session['id'];
+    id: User["id"];
+    role: User["role"];
+    sessionId: Session["id"];
   }) {
-    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
+    const tokenExpiresIn = this.configService.getOrThrow("auth.expires", {
       infer: true,
     });
 
@@ -1394,13 +1471,15 @@ export class AuthService {
 
     // Fetch the full RoleEntity using the role ID
     if (!data.role) {
-      throw new Error('Role is not defined'); // Or handle this case differently
+      throw new Error("Role is not defined"); // Or handle this case differently
     }
 
-    const roleEntity = await this.roleRepository.findOne({ where: { id: data.role.id } });
+    const roleEntity = await this.roleRepository.findOne({
+      where: { id: data.role.id },
+    });
 
     if (!roleEntity) {
-      throw new Error('Role entity not found');
+      throw new Error("Role entity not found");
     }
 
     const tokenPayload = {
@@ -1414,22 +1493,19 @@ export class AuthService {
     };
 
     const [token, refreshToken] = await Promise.all([
-      await this.jwtService.signAsync(
-        tokenPayload,
-        {
-          secret: this.configService.getOrThrow('auth.secret', { infer: true }),
-          expiresIn: tokenExpiresIn,
-        },
-      ),
+      await this.jwtService.signAsync(tokenPayload, {
+        secret: this.configService.getOrThrow("auth.secret", { infer: true }),
+        expiresIn: tokenExpiresIn,
+      }),
       await this.jwtService.signAsync(
         {
           sessionId: data.sessionId,
         },
         {
-          secret: this.configService.getOrThrow('auth.refreshSecret', {
+          secret: this.configService.getOrThrow("auth.refreshSecret", {
             infer: true,
           }),
-          expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
+          expiresIn: this.configService.getOrThrow("auth.refreshExpires", {
             infer: true,
           }),
         },

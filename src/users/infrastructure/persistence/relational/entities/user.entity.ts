@@ -8,22 +8,22 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
-import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
+} from "typeorm";
+import { RoleEntity } from "../../../../../roles/infrastructure/persistence/relational/entities/role.entity";
+import { StatusEntity } from "../../../../../statuses/infrastructure/persistence/relational/entities/status.entity";
 // import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';
-import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
-import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
+import { EntityRelationalHelper } from "src/utils/relational-entity-helper";
+import { AuthProvidersEnum } from "src/auth/auth-providers.enum";
 // We use class-transformer in ORM entity and domain entity.
 // We duplicate these rules because you can choose not to use adapters
 // in your project and return an ORM entity directly in response.
-import { Exclude, Expose } from 'class-transformer';
-import { User } from '../../../../domain/user';
+import { Exclude, Expose } from "class-transformer";
+import { User } from "../../../../domain/user";
 
 export class Qualifications {
   qualificationName: string;
   institution: string;
-  yearObtained: Date
+  yearObtained: Date;
   qualificationCopy: string;
 }
 
@@ -32,7 +32,7 @@ export class ProfessionalBody {
   certificateName: string;
   certificateCopy: string;
   dateObtained: Date;
-  expiryDate: Date
+  expiryDate: Date;
 }
 
 export class Crimes {
@@ -40,20 +40,20 @@ export class Crimes {
 }
 
 @Entity({
-  name: 'user',
+  name: "user",
 })
 export class UserEntity extends EntityRelationalHelper implements User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   // For "string | null" we need to use String type.
   // More info: https://github.com/typeorm/typeorm/issues/2567
   @Column({ type: String, unique: true, nullable: true })
-  @Expose({ groups: ['me', 'admin'] })
+  @Expose({ groups: ["me", "admin"] })
   email: string | null;
 
   @Column({ type: String, unique: true, nullable: true })
-  @Expose({ groups: ['me', 'admin'] })
+  @Expose({ groups: ["me", "admin"] })
   phoneNumber: string | null;
 
   @Column({ nullable: true })
@@ -69,12 +69,12 @@ export class UserEntity extends EntityRelationalHelper implements User {
   }
 
   @Column({ default: AuthProvidersEnum.email })
-  @Expose({ groups: ['me', 'admin'] })
+  @Expose({ groups: ["me", "admin"] })
   provider: string;
 
   @Index()
   @Column({ type: String, nullable: true })
-  @Expose({ groups: ['me', 'admin'] })
+  @Expose({ groups: ["me", "admin"] })
   socialId?: string | null;
 
   @Index()
@@ -85,8 +85,8 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @Column({ type: String, nullable: true })
   lastName: string | null;
 
-  @Column({ type: 'date', nullable: true })
-  @Expose({ groups: ['me', 'admin'] })
+  @Column({ type: "date", nullable: true })
+  @Expose({ groups: ["me", "admin"] })
   dateOfBirth?: Date | null;
 
   // @ManyToOne(() => FileEntity, {
@@ -104,10 +104,7 @@ export class UserEntity extends EntityRelationalHelper implements User {
   })
   status?: StatusEntity;
 
-
-
   // ***********************************************************
-
 
   @Index()
   @Column({ type: String, nullable: true })
@@ -141,33 +138,32 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @Column({ type: String, nullable: true })
   fieldOfStudy: string | null;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: "json", nullable: true })
   qualifications: Qualifications[] | null;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: "json", nullable: true })
   professionalBody: ProfessionalBody[] | null;
 
   @Column({ type: String, nullable: true })
-  southAfricanCitizen: boolean
+  southAfricanCitizen: boolean;
 
   @Column({ type: String, nullable: true })
-  documentId: string
+  documentId: string;
 
   @Column({ type: String, nullable: true })
-  countryOfOrigin: string
+  countryOfOrigin: string;
 
   @Column({ type: String, nullable: true })
   criminalRecord: boolean | null;
 
   @Column({ type: String, nullable: true })
-  policeClearenceCertificate: string
+  policeClearenceCertificate: string;
 
-  @Column({ type: 'json', nullable: true })
-  crimes: Crimes[] | null
+  @Column({ type: "json", nullable: true })
+  crimes: Crimes[] | null;
 
-  @Column({ type: 'boolean', nullable: true, default: false })
+  @Column({ type: "boolean", nullable: true, default: false })
   isProfileComplete: boolean;
-
 
   // *******************************************************************
 
@@ -180,7 +176,6 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
-
 }

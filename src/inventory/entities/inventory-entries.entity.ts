@@ -1,36 +1,44 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Inventory } from './inventory.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Inventory } from "./inventory.entity";
 
 @Entity()
 export class InventoryEntries {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ name: 'quantity' })
+  @Column({ name: "quantity" })
   quantity: number;
 
-  @Column({ name: 'costPerItem' })
+  @Column({ name: "costPerItem" })
   costPerItem: number;
 
-  @Column({ name: 'totalValue' })
+  @Column({ name: "totalValue" })
   totalValue?: number;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: "timestamp" })
   dateReceived: Date;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: "uuid" })
   inventoryId: string;
 
-  @ManyToOne(() => Inventory, inventory => inventory.entries)
-  @JoinColumn({ name: 'inventoryId' })
+  @ManyToOne(() => Inventory, (inventory) => inventory.entries)
+  @JoinColumn({ name: "inventoryId" })
   inventory: Inventory;
 }

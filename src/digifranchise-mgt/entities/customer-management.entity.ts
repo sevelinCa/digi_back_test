@@ -1,67 +1,78 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Digifranchise } from 'src/digifranchise/entities/digifranchise.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
 @Entity()
 export class CustomerManagement {
- @PrimaryGeneratedColumn('uuid')
- id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
- @ManyToOne(() => UserEntity)
- @JoinColumn({ name: 'userId' })
- userId: UserEntity;
- 
-//  @ManyToOne(() => Digifranchise, { nullable: true })
-//  @JoinColumn({ name: 'digifranchiseId' })
-//  digifranchiseId: Digifranchise | null;
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: "userId" })
+  userId: UserEntity;
 
- @ManyToOne(() => DigifranchiseOwner,ownedFranchise  => ownedFranchise.customer)
- @JoinColumn({ name: 'ownedDigifranchise' })
- ownedDigifranchise: DigifranchiseOwner | null;
+  //  @ManyToOne(() => Digifranchise, { nullable: true })
+  //  @JoinColumn({ name: 'digifranchiseId' })
+  //  digifranchiseId: Digifranchise | null;
 
- @IsNotEmpty()
- @IsString()
- @Column({ type: 'text' })
- fullNames: string;
- 
- @IsNotEmpty()
- @IsEmail()
- @Column()
- email: string;
+  @ManyToOne(
+    () => DigifranchiseOwner,
+    (ownedFranchise) => ownedFranchise.customer,
+  )
+  @JoinColumn({ name: "ownedDigifranchise" })
+  ownedDigifranchise: DigifranchiseOwner | null;
 
- @IsNotEmpty()
- @IsString()
- @Column()
- mobile_number: string;
+  @IsNotEmpty()
+  @IsString()
+  @Column({ type: "text" })
+  fullNames: string;
 
- @IsNotEmpty()
- @IsString()
- @Column()
- customer_type: string;
+  @IsNotEmpty()
+  @IsEmail()
+  @Column()
+  email: string;
 
- @IsOptional()
- @IsString()
- @Column({ nullable: true })
- company_registration_number?: string;
+  @IsNotEmpty()
+  @IsString()
+  @Column()
+  mobile_number: string;
 
- @IsOptional()
- @IsString()
- @Column({ nullable: true })
- vat_number?: string;
+  @IsNotEmpty()
+  @IsString()
+  @Column()
+  customer_type: string;
 
- @IsNotEmpty()
- @IsString()
- @Column({ type: 'text' })
- address: string;
+  @IsOptional()
+  @IsString()
+  @Column({ nullable: true })
+  company_registration_number?: string;
 
- @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
- createdAt: Date;
+  @IsOptional()
+  @IsString()
+  @Column({ nullable: true })
+  vat_number?: string;
 
- @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
- updatedAt: Date;
+  @IsNotEmpty()
+  @IsString()
+  @Column({ type: "text" })
+  address: string;
 
- @Column({ type: 'timestamp', nullable: true })
- deleteAt: Date | null;
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
+
+  @Column({ type: "timestamp", nullable: true })
+  deleteAt: Date | null;
 }

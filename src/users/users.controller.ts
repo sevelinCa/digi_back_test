@@ -11,28 +11,28 @@ import {
   HttpStatus,
   HttpCode,
   SerializeOptions,
-} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../roles/roles.decorator';
-import { RoleEnum } from '../roles/roles.enum';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/roles/roles.guard';
-import { infinityPagination } from 'src/utils/infinity-pagination';
-import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
-import { NullableType } from '../utils/types/nullable.type';
-import { QueryUserDto } from './dto/query-user.dto';
-import { User } from './domain/user';
-import { UsersService } from './users.service';
+} from "@nestjs/common";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from "@nestjs/swagger";
+import { Roles } from "../roles/roles.decorator";
+import { RoleEnum } from "../roles/roles.enum";
+import { AuthGuard } from "@nestjs/passport";
+import { RolesGuard } from "src/roles/roles.guard";
+import { infinityPagination } from "src/utils/infinity-pagination";
+import { InfinityPaginationResultType } from "../utils/types/infinity-pagination-result.type";
+import { NullableType } from "../utils/types/nullable.type";
+import { QueryUserDto } from "./dto/query-user.dto";
+import { User } from "./domain/user";
+import { UsersService } from "./users.service";
 
 @ApiBearerAuth()
 @Roles(RoleEnum.admin)
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard("jwt"), RolesGuard)
 // @ApiTags('Users')
 @Controller({
-  path: 'users',
-  version: '1',
+  path: "users",
+  version: "1",
 })
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -46,8 +46,6 @@ export class UsersController {
   //   return this.usersService.create(createProfileDto);
   // }
 
-
-  
   // @SerializeOptions({
   //   groups: ['admin'],
   // })

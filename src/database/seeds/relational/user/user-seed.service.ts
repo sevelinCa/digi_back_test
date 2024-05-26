@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { StatusEnum } from 'src/statuses/statuses.enum';
-import { Repository } from 'typeorm';
-import bcrypt from 'bcryptjs';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { RoleEnum } from 'src/roles/roles.enum';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { StatusEnum } from "src/statuses/statuses.enum";
+import { Repository } from "typeorm";
+import bcrypt from "bcryptjs";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { RoleEnum } from "src/roles/roles.enum";
 
 @Injectable()
 export class UserSeedService {
@@ -23,31 +23,29 @@ export class UserSeedService {
     });
 
     if (!countAdmin) {
-      
-      if(process.env.SUPER_ADMIN_PASS) {
+      if (process.env.SUPER_ADMIN_PASS) {
         const salt = await bcrypt.genSalt();
         const password = await bcrypt.hash(process.env.SUPER_ADMIN_PASS, salt);
 
         await this.repository.save(
           this.repository.create({
-            firstName: 'Super',
-            lastName: 'Admin',
-            email: 'admin@digifranchise.co.za',
+            firstName: "Super",
+            lastName: "Admin",
+            email: "admin@digifranchise.co.za",
             password,
             role: {
               id: RoleEnum.super_admin,
-              name: 'Super Admin',
+              name: "Super Admin",
             },
             status: {
               id: StatusEnum.active,
-              name: 'Active',
+              name: "Active",
             },
           }),
         );
       } else {
-        console.log("super admin password not provided")
+        console.log("super admin password not provided");
       }
-
     }
   }
 }

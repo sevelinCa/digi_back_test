@@ -1,41 +1,40 @@
-import { OrderTable } from 'src/payment/entities/order.entity';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { OrderTable } from "src/payment/entities/order.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    JoinColumn,
-    ManyToOne,
-    UpdateDateColumn,
-} from 'typeorm';
-
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  JoinColumn,
+  ManyToOne,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class RatingOrderTable {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @ManyToOne(() => UserEntity, { nullable: true })
-    @JoinColumn({ name: 'userId' })
-    userId: UserEntity | null;
+  @ManyToOne(() => UserEntity, { nullable: true })
+  @JoinColumn({ name: "userId" })
+  userId: UserEntity | null;
 
-    @ManyToOne(() => OrderTable, { nullable: true })
-    @JoinColumn({ name: 'orderId' })
-    orderId: OrderTable | null;
+  @ManyToOne(() => OrderTable, { nullable: true })
+  @JoinColumn({ name: "orderId" })
+  orderId: OrderTable | null;
 
-    @Column({ type: 'integer' })
-    rating: number;
+  @Column({ type: "integer" })
+  rating: number;
 
-    @Column({ type: 'text', nullable: true })
-    review: string | null;
+  @Column({ type: "text", nullable: true })
+  review: string | null;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  updatedAt: Date;
 
-    @Column({ type: 'timestamp', nullable: true })
-    deleteAt: Date | null;
+  @Column({ type: "timestamp", nullable: true })
+  deleteAt: Date | null;
 }

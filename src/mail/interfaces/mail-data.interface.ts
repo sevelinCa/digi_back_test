@@ -3,4 +3,3 @@ export interface MailData<T = never> {
   websiteUrl?: string;
   data: T;
 }
- 

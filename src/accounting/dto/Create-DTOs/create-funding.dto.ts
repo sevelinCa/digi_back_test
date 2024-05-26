@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsString, IsInt, Min, Max } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsInt, Min, Max } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateFundingDto {
-  @ApiProperty({ example: 'Investor A' })
+  @ApiProperty({ example: "Investor A" })
   @IsNotEmpty()
   @IsString()
   source: string;
@@ -25,7 +25,7 @@ export class CreateFundingDto {
   @Max(100)
   annualInterestRate: number;
 
-  @ApiProperty({ example: '2024-03-15T00:00:00Z' })
+  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
   @IsNotEmpty()
   fundedAt: Date;
 }

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 export class ManagerNotFoundException extends HttpException {
   constructor(managerId: string) {
@@ -14,7 +14,7 @@ export class UserNotFoundException extends HttpException {
 
 export class UnauthorizedAccessException extends HttpException {
   constructor() {
-    super('Unauthorized access', HttpStatus.UNAUTHORIZED);
+    super("Unauthorized access", HttpStatus.UNAUTHORIZED);
   }
 }
 
@@ -54,7 +54,7 @@ export class BalanceNotFoundException extends Error {
 }
 
 export class FixedExpeseNotFoundException extends HttpException {
-  constructor(message = 'Fixed Expense not found or not owned by user') {
+  constructor(message = "Fixed Expense not found or not owned by user") {
     super(message, HttpStatus.NOT_FOUND);
   }
 }
