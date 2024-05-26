@@ -57,7 +57,9 @@ export class AuthController {
         ...data.user,
         token: data.token,
         refreshToken: data.refreshToken,
-        tokenExpires: data.tokenExpires
+        tokenExpires: data.tokenExpires,
+        academy_jwt_token: data.academy_jwt_token,
+        academy_bearer_token: data.academy_bearer_token
       }
 
 
@@ -139,7 +141,7 @@ export class AuthController {
 
   @Post('email/digifranchise-customer/register')
   @HttpCode(HttpStatus.OK)
-  async registerCustomer(@Query('digifranchiseId') digifranchiseId: string,@Query('websiteUrl') websiteUrl: string, @Body() createUserDto: AuthRegisterLoginDto) {
+  async registerCustomer(@Query('digifranchiseId') digifranchiseId: string, @Query('websiteUrl') websiteUrl: string, @Body() createUserDto: AuthRegisterLoginDto) {
     await this.service.customerRegister(digifranchiseId, createUserDto, websiteUrl);
 
     return {
@@ -229,7 +231,7 @@ export class AuthController {
   async forgetPasswordForWebs(
     @Body() forgotPasswordForWebsDto: AuthForgotPasswordForWebSiteDto
   ): Promise<void> {
-    console.log(forgotPasswordForWebsDto,"=======>")
+    console.log(forgotPasswordForWebsDto, "=======>")
     return await this.service.forgetPasswordForWebs(forgotPasswordForWebsDto);
   }
 

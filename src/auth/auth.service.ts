@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import {
   HttpException,
   HttpStatus,
@@ -43,6 +45,7 @@ import { Role } from 'src/roles/domain/role';
 import { RoleEntity } from 'src/roles/infrastructure/persistence/relational/entities/role.entity';
 
 
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -59,18 +62,16 @@ export class AuthService {
     private readonly roleRepository: Repository<RoleEntity>,
   ) { }
 
+
+
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
-    const user = await this.usersService.findOne({
-      email: loginDto.email,
-    });
+    const user = await this.usersService.findOne({ email: loginDto.email });
 
     if (!user) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: 'notFound',
-          },
+          errors: { email: 'notFound' },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
@@ -80,9 +81,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
-          errors: {
-            role: 'notAllowed',
-          },
+          errors: { role: 'notAllowed' },
         },
         HttpStatus.FORBIDDEN,
       );
@@ -92,9 +91,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
+          errors: { email: `needLoginViaProvider:${user.provider}` },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
@@ -104,34 +101,25 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: 'incorrectPassword',
-          },
+          errors: { password: 'incorrectPassword' },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    const isValidPassword = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
+    const isValidPassword = await bcrypt.compare(loginDto.password, user.password);
 
     if (!isValidPassword) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: 'incorrectPassword',
-          },
+          errors: { password: 'incorrectPassword' },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    const session = await this.sessionService.create({
-      user,
-    });
+    const session = await this.sessionService.create({ user });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
@@ -139,13 +127,74 @@ export class AuthService {
       sessionId: session.id,
     });
 
-    return {
-      refreshToken,
-      token,
-      tokenExpires,
-      user,
-    };
+    let csrfToken: string;
+    let cookies: string = '';
+    try {
+      const csrfResponse = await axios.get(
+        `${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_CSRF_TOKEN_ENDPOINT')}`,
+        { withCredentials: true },
+      );
+      csrfToken = csrfResponse.data.csrfToken;
+      cookies = csrfResponse.headers['set-cookie']?.join('; ') || '';
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: { login: 'AcademyCSRFTokenFetchFailed' },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    try {
+      const academyResponse = await axios.post(
+        `${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_LOGIN_ENDPOINT')}`,
+        new URLSearchParams({
+          email: loginDto.email,
+          next: '/',
+          password: loginDto.password,
+        }),
+        {
+          headers: {
+            'x-csrftoken': csrfToken,
+            'origin': this.configService.get('ACADEMY_ORIGIN_URL'),
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': cookies,
+          },
+          withCredentials: true,
+        },
+      );
+
+      const academyData = academyResponse.data;
+      if (!academyData.success) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: { login: 'AcademyLoginFailed' },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
+      return {
+        refreshToken,
+        token,
+        tokenExpires,
+        user,
+        academy_jwt_token: academyData.jwt_token,
+        academy_bearer_token: academyData.bearer_token,
+      };
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: { login: 'AcademyLoginFailed' },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
   }
+
 
   async customerEmailLogin(digifranchiseId: string, loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({
@@ -412,7 +461,15 @@ export class AuthService {
     }
   }
 
+  async getCsrfToken(): Promise<string> {
+    const response = await axios.get(`${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_CSRF_TOKEN_ENDPOINT')}`);
+
+    return response.data.token;
+  }
+
   async register(dto: AuthRegisterLoginDto): Promise<void> {
+    const csrfToken = await this.getCsrfToken();
+
     const user = await this.usersService.create({
       ...dto,
       email: dto.email,
@@ -441,6 +498,26 @@ export class AuthService {
       crimes: null,
       isProfileComplete: false,
     });
+
+    const externalRegistrationData = {
+      email: dto.email,
+      name: `${dto.firstName} ${dto.lastName}`,
+      next: '/',
+      username: `${dto.lastName}${Math.floor(Math.random() * 10000)}`,
+      password: dto.password,
+    };
+
+    await axios.post(
+      `${this.configService.get('ACADEMY_API_BASE_URL')}${this.configService.get('ACADEMY_REGISTER_ENDPOINT')}`,
+
+      new URLSearchParams(externalRegistrationData).toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': csrfToken,
+        },
+      }
+    );
 
     const hash = await this.jwtService.signAsync(
       {
@@ -1158,7 +1235,6 @@ export class AuthService {
         );
       }
     }
-
 
     Object.assign(user, {
       image: updateUserProfileDto?.image,
