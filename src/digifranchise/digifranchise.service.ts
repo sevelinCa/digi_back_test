@@ -425,62 +425,6 @@ async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string, digifr
     await this.digifranchiseSubServiceOfferedRepository.remove(serviceOffered);
   }
 
-  // async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
-  //   const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
-  //     where: [
-  //       { connectNumberWithOutCountryCode: phoneNumber },
-  //       { otherMobileNumberWithOutCountryCode: phoneNumber }
-  //     ]
-  //   });
-
-  //   if (!getDigifranchiseGeneralInfoByPhone) {
-  //     throw new NotFoundException('digifranchise not found');
-  //   }
-
-  //   if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
-  //     throw new NotFoundException('digifranchise not yet published');
-  //   }
-
-  //   const ownedDigifranchiseId = getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId;
-
-  //   const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({
-  //     where: { id: ownedDigifranchiseId }
-  //   });
-
-  //   if (!getDigifranchiseInformation) {
-  //     throw new NotFoundException('digifranchise not found');
-  //   }
-
-  //   const getComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({
-  //     where: { ownedDigifranchiseId: ownedDigifranchiseId }
-  //   });
-
-  //   const getProfessionalBodyMemberships = await this.digifranchiseProfessionalBodyMembershipRepository.find({
-  //     where: { ownedDigifranchiseId: ownedDigifranchiseId }
-  //   });
-
-  //   const digifranchise = await this.digifranchiseRepository.findOne({
-  //     where: { id: getDigifranchiseInformation.digifranchiseId }
-  //   });
-
-  //   const digifranchiseOwner = await this.userRepository.findOne({
-  //     where: { id: getDigifranchiseInformation.userId }
-  //   });
-
-  //   const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId, ownedDigifranchiseId);
-  //   const digifranchiseServices = await this.getServicesAndSubServicesByDigifranchiseId(getDigifranchiseInformation.digifranchiseId, ownedDigifranchiseId);
-
-  //   return {
-  //     digifranchiseInfo: digifranchise,
-  //     ownerInfo: digifranchiseOwner,
-  //     generalInfo: getDigifranchiseGeneralInfoByPhone,
-  //     complainceInfo: getComplianceInfo,
-  //     professionalBodiesInfo: getProfessionalBodyMemberships,
-  //     products: digifranchiseProducts,
-  //     services: digifranchiseServices,
-  //   };
-  // }
-
   async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
     const getDigifranchiseGeneralInfoByPhone = await this.digifranchiseGeneralInfoRepository.findOne({
       where: [
@@ -488,53 +432,44 @@ async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string, digifr
         { otherMobileNumberWithOutCountryCode: phoneNumber }
       ]
     });
-  
+
     if (!getDigifranchiseGeneralInfoByPhone) {
       throw new NotFoundException('digifranchise not found');
     }
-  
+
     if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
       throw new NotFoundException('digifranchise not yet published');
     }
-  
+
     const ownedDigifranchiseId = getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId;
-  
+
     const getDigifranchiseInformation = await this.digifranchiseOwnershipRepository.findOne({
       where: { id: ownedDigifranchiseId }
     });
-  
+
     if (!getDigifranchiseInformation) {
       throw new NotFoundException('digifranchise not found');
     }
-  
+
     const getComplianceInfo = await this.digifranchiseComplianceInfoRepository.findOne({
       where: { ownedDigifranchiseId: ownedDigifranchiseId }
     });
-  
+
     const getProfessionalBodyMemberships = await this.digifranchiseProfessionalBodyMembershipRepository.find({
       where: { ownedDigifranchiseId: ownedDigifranchiseId }
     });
-  
+
     const digifranchise = await this.digifranchiseRepository.findOne({
       where: { id: getDigifranchiseInformation.digifranchiseId }
     });
-  
+
     const digifranchiseOwner = await this.userRepository.findOne({
       where: { id: getDigifranchiseInformation.userId }
     });
-  
-    const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(
-      getDigifranchiseInformation.digifranchiseId,
-      ownedDigifranchiseId,
-      true // pass true to filter by isSelected
-    );
-  
-    const digifranchiseServices = await this.getServicesAndSubServicesByDigifranchiseId(
-      getDigifranchiseInformation.digifranchiseId,
-      ownedDigifranchiseId,
-      true // pass true to filter by isSelected
-    );
-  
+
+    const digifranchiseProducts = await this.productService.getProductsAndSubProductsById(getDigifranchiseInformation.digifranchiseId, ownedDigifranchiseId);
+    const digifranchiseServices = await this.getServicesAndSubServicesByDigifranchiseId(getDigifranchiseInformation.digifranchiseId, ownedDigifranchiseId);
+
     return {
       digifranchiseInfo: digifranchise,
       ownerInfo: digifranchiseOwner,
@@ -545,6 +480,8 @@ async getServicesAndSubServicesByDigifranchiseId(digifranchiseId: string, digifr
       services: digifranchiseServices,
     };
   }
+
+
   
 
   async publishDigifranchiseWeb(digifranchiseId: string): Promise<any> {
