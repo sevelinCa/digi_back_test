@@ -1021,7 +1021,6 @@ export class OrderService {
       throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
     }
   
-    // Fetch all orders related to the ownedDigifranchiseId
     const orders = await this.orderRepository.find({
       where: {
         ownedDigifranchise: Equal(owned.id),
