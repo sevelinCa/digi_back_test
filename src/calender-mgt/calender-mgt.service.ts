@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateVenueDto, type UpdateVenueDto } from "./dto/create-venues.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Equal, IsNull, Repository } from "typeorm";
+import { Equal, In, IsNull, Repository } from "typeorm";
 import { CalenderVenue } from "./entities/calender-venues.entity";
 import { CalenderEvents } from "./entities/calender-events.entity";
 import { CreateEventDto, type UpdateEventDto } from "./dto/create-events.dto";
@@ -377,19 +377,22 @@ export class CalenderMgtService {
     await this.calenderEventGuestRepository.remove(guestEventAssociation);
   }
 
-  async getAllVenuwsByUserId(userId: string): Promise<CalenderVenue[]> {
-    const digifranchiseOwner = await this.ownedFranchiseRepository.findOne({
+  async getAllVenuesByUserId(userId: string): Promise<CalenderVenue[]> {
+    const digifranchiseOwners = await this.ownedFranchiseRepository.find({
       where: { userId: Equal(userId), deleteAt: IsNull() },
     });
-
-    if (!digifranchiseOwner) {
+  
+    if (!digifranchiseOwners || digifranchiseOwners.length === 0) {
       throw new NotFoundException(`DigifranchiseOwner with userId ${userId} not found.`);
     }
-
+  
+    const ownedFranchiseIds = digifranchiseOwners.map(owner => owner.id);
+  
     return this.venueRepository.find({
-      where: { ownedFranchiseId: Equal(digifranchiseOwner.id), deleteAt: IsNull() },
+      where: { ownedFranchiseId: In(ownedFranchiseIds), deleteAt: IsNull() },
     });
   }
+  
 }
 
 
