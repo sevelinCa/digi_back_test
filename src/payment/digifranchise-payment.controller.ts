@@ -266,13 +266,11 @@ async createOrderForSubs(
   async getAllOrdersWithAuthAndUser(
     @Req() req: Request,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
-  ): Promise<{ ordersCreatedByAuth: OrderTable[]; ordersCreatedWithoutAuth: OrderTable[]; count: number }> {
+  ): Promise<{ orders: OrderTable[]; count: number }> {
     const userId = (req.user as UserEntity).id;
-    return this.orderService.getAllOrdersWithAuthAndUser(
-      userId,
-      ownedFranchiseId,
-    );
+    return this.orderService.getAllOrdersWithAuthAndUser(userId, ownedFranchiseId);
   }
+  
   
 
   @ApiOperation({ summary: "Delete all orders" })
