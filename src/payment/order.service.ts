@@ -1008,7 +1008,7 @@ export class OrderService {
   async getAllOrdersWithAuthAndUser(
     userId: string,
     ownedDigifranchiseId: string,
-  ): Promise<{ ordersCreatedByAuth: OrderTable[]; ordersCreatedWithoutAuth: OrderTable[]; count: number }> {
+  ): Promise<{ orders: OrderTable[]; count: number }> {
     const owned = await this.digifranchiseOwnerRepository.findOne({
       where: { id: ownedDigifranchiseId },
     });
@@ -1035,24 +1035,16 @@ export class OrderService {
       ],
     });
   
-    const ordersCreatedByAuth: OrderTable[] = [];
-    const ordersCreatedWithoutAuth: OrderTable[] = [];
-  
     const userEmail = user.email;
   
-    orders.forEach(order => {
+    const filteredOrders = orders.filter(order => {
       const basicInfo = order.orderAdditionalInfo.find(info => info.basic_info);
-      if (order.userId?.id === userId) {
-        ordersCreatedByAuth.push(order);
-      } else if (basicInfo && basicInfo.basic_info.email === userEmail) {
-        ordersCreatedWithoutAuth.push(order);
-      }
+      return order.userId?.id === userId || (basicInfo && basicInfo.basic_info.email === userEmail);
     });
   
-    const combinedOrders = ordersCreatedByAuth.concat(ordersCreatedWithoutAuth);
-    
-    return { ordersCreatedByAuth, ordersCreatedWithoutAuth, count: combinedOrders.length };
+    return { orders: filteredOrders, count: filteredOrders.length };
   }
+  
   
   
   
