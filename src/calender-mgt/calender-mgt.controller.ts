@@ -356,7 +356,7 @@ export class CalenderMgtController {
   @ApiOperation({
     summary: "GET ALL - Retrieve all venue by user ID",
   })
-  @Get("venue/user/:userId")
+  @Get("get-all-venues-by-user/:userId")
   async getAllVenuwsByUserId(
     @Param("userId") userId: string,
   ): Promise<CalenderVenue[]> {
