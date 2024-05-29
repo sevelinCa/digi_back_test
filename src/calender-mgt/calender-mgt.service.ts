@@ -319,14 +319,14 @@ export class CalenderMgtService {
       where: { id: customerId },
     });
     if (!customer) {
-      throw new NotFoundException(`Customer with ID ${customerId} not found.`);
+      throw new NotFoundException(`Customer not found.`);
     }
 
     const event = await this.eventsRepository.findOne({
       where: { id: eventId },
     });
     if (!event) {
-      throw new NotFoundException(`Event with ID ${eventId} not found.`);
+      throw new NotFoundException(`Event not found.`);
     }
 
     const newCalenderEventGuest = this.calenderEventGuestRepository.create({
