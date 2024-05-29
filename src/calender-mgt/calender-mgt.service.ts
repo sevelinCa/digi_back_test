@@ -315,7 +315,7 @@ export class CalenderMgtService {
     customerId: string,
     eventId: string,
   ): Promise<CalenderEventGuest> {
-    const customer = await this.calenderEventGuestRepository.findOne({
+    const customer = await this.customerManagementRepository.findOne({
       where: { id: customerId },
     });
     if (!customer) {
