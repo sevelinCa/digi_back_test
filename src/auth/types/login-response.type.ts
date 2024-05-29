@@ -13,4 +13,6 @@ export type LoginResponseType = Readonly<{
     scope: string;
     refresh_token: string;
   };
+  success?: boolean
+  message?: string;
 }>;
