@@ -58,7 +58,141 @@ export class AuthService {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-  ) {}
+  ) { }
+
+  // async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
+  //   const user = await this.usersService.findOne({ email: loginDto.email });
+
+  //   if (!user) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: { email: "notFound" },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.FORBIDDEN,
+  //         errors: { role: "notAllowed" },
+  //       },
+  //       HttpStatus.FORBIDDEN,
+  //     );
+  //   }
+
+  //   if (user.provider !== AuthProvidersEnum.email) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: { email: `needLoginViaProvider:${user.provider}` },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   if (!user.password) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: { password: "incorrectPassword" },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   const isValidPassword = await bcrypt.compare(
+  //     loginDto.password,
+  //     user.password,
+  //   );
+
+  //   if (!isValidPassword) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: { password: "incorrectPassword" },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   const session = await this.sessionService.create({ user });
+
+  //   const { token, refreshToken, tokenExpires } = await this.getTokensData({
+  //     id: user.id,
+  //     role: user.role,
+  //     sessionId: session.id,
+  //   });
+
+  //   let csrfToken: string;
+  //   let cookies: string = "";
+  //   try {
+  //     const csrfResponse = await axios.get(
+  //       `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_CSRF_TOKEN_ENDPOINT")}`,
+  //       { withCredentials: true },
+  //     );
+  //     csrfToken = csrfResponse.data.csrfToken;
+  //     cookies = csrfResponse.headers["set-cookie"]?.join("; ") || "";
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: { login: "AcademyCSRFTokenFetchFailed" },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   try {
+  //     const academyResponse = await axios.post(
+  //       `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_LOGIN_ENDPOINT")}`,
+  //       new URLSearchParams({
+  //         email: loginDto.email,
+  //         next: "/",
+  //         password: loginDto.password,
+  //       }),
+  //       {
+  //         headers: {
+  //           "x-csrftoken": csrfToken,
+  //           origin: this.configService.get("ACADEMY_ORIGIN_URL"),
+  //           "Content-Type": "application/x-www-form-urlencoded",
+  //           Cookie: cookies,
+  //         },
+  //         withCredentials: true,
+  //       },
+  //     );
+
+  //     const academyData = academyResponse.data;
+  //     if (!academyData.success) {
+  //       throw new HttpException(
+  //         {
+  //           status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //           errors: { login: "AcademyLoginFailed" },
+  //         },
+  //         HttpStatus.UNPROCESSABLE_ENTITY,
+  //       );
+  //     }
+
+  //     return {
+  //       refreshToken,
+  //       token,
+  //       tokenExpires,
+  //       user,
+  //       academy_jwt_token: academyData.jwt_token,
+  //       academy_bearer_token: academyData.bearer_token,
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       {
+  //         status: HttpStatus.UNPROCESSABLE_ENTITY,
+  //         errors: { login: "AcademyLoginFailed" },
+  //       },
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+  // }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({ email: loginDto.email });
@@ -103,10 +237,7 @@ export class AuthService {
       );
     }
 
-    const isValidPassword = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
+    const isValidPassword = await bcrypt.compare(loginDto.password, user.password);
 
     if (!isValidPassword) {
       throw new HttpException(
@@ -130,7 +261,7 @@ export class AuthService {
     let cookies: string = "";
     try {
       const csrfResponse = await axios.get(
-        `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_CSRF_TOKEN_ENDPOINT")}`,
+        `${this.configService.get<string>("ACADEMY_API_BASE_URL")}${this.configService.get<string>("ACADEMY_CSRF_TOKEN_ENDPOINT")}`,
         { withCredentials: true },
       );
       csrfToken = csrfResponse.data.csrfToken;
@@ -147,7 +278,7 @@ export class AuthService {
 
     try {
       const academyResponse = await axios.post(
-        `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_LOGIN_ENDPOINT")}`,
+        `${this.configService.get<string>("ACADEMY_API_BASE_URL")}${this.configService.get<string>("ACADEMY_LOGIN_ENDPOINT")}`,
         new URLSearchParams({
           email: loginDto.email,
           next: "/",
@@ -156,7 +287,7 @@ export class AuthService {
         {
           headers: {
             "x-csrftoken": csrfToken,
-            origin: this.configService.get("ACADEMY_ORIGIN_URL"),
+            origin: this.configService.get<string>("ACADEMY_ORIGIN_URL"),
             "Content-Type": "application/x-www-form-urlencoded",
             Cookie: cookies,
           },
@@ -165,14 +296,16 @@ export class AuthService {
       );
 
       const academyData = academyResponse.data;
+
       if (!academyData.success) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: { login: "AcademyLoginFailed" },
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
+        return {
+          refreshToken,
+          token,
+          tokenExpires,
+          user,
+          success: false,
+          message: "Academy login failed",
+        };
       }
 
       return {
@@ -182,15 +315,18 @@ export class AuthService {
         user,
         academy_jwt_token: academyData.jwt_token,
         academy_bearer_token: academyData.bearer_token,
+        success: true,
+        message: "Login successful",
       };
     } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: { login: "AcademyLoginFailed" },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      return {
+        refreshToken,
+        token,
+        tokenExpires,
+        user,
+        success: false,
+        message: "Academy login failed",
+      };
     }
   }
 
@@ -507,7 +643,81 @@ export class AuthService {
     return response.data.token;
   }
 
-  async register(dto: AuthRegisterLoginDto): Promise<void> {
+  // async register(dto: AuthRegisterLoginDto): Promise<void> {
+  //   const csrfToken = await this.getCsrfToken();
+
+  //   const user = await this.usersService.create({
+  //     ...dto,
+  //     email: dto.email,
+  //     phoneNumber: null,
+  //     role: {
+  //       id: RoleEnum.digifranchise_super_admin,
+  //     },
+  //     status: {
+  //       id: StatusEnum.inactive,
+  //     },
+  //     image: null,
+  //     idImage: null,
+  //     gender: null,
+  //     race: null,
+  //     homeAddress: null,
+  //     educationLevel: null,
+  //     currentActivity: null,
+  //     fieldOfStudy: null,
+  //     qualifications: null,
+  //     professionalBody: null,
+  //     southAfricanCitizen: null,
+  //     documentId: null,
+  //     countryOfOrigin: null,
+  //     criminalRecord: null,
+  //     policeClearenceCertificate: null,
+  //     crimes: null,
+  //     isProfileComplete: false,
+  //   });
+
+  //   const externalRegistrationData = {
+  //     email: dto.email,
+  //     name: `${dto.firstName} ${dto.lastName}`,
+  //     next: "/",
+  //     username: `${dto.lastName}${Math.floor(Math.random() * 10000)}`,
+  //     password: dto.password,
+  //   };
+
+  //   await axios.post(
+  //     `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_REGISTER_ENDPOINT")}`,
+
+  //     new URLSearchParams(externalRegistrationData).toString(),
+  //     {
+  //       headers: {
+  //         "Content-Type": "application/x-www-form-urlencoded",
+  //         "X-CSRFToken": csrfToken,
+  //       },
+  //     },
+  //   );
+
+  //   const hash = await this.jwtService.signAsync(
+  //     {
+  //       confirmEmailUserId: user.id,
+  //     },
+  //     {
+  //       secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
+  //         infer: true,
+  //       }),
+  //       expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
+  //         infer: true,
+  //       }),
+  //     },
+  //   );
+
+  //   await this.mailService.userSignUp({
+  //     to: dto.email,
+  //     data: {
+  //       hash,
+  //     },
+  //   });
+  // }
+
+  async register(dto: AuthRegisterLoginDto): Promise<{ user: User, academyError: string | null }> {
     const csrfToken = await this.getCsrfToken();
 
     const user = await this.usersService.create({
@@ -547,17 +757,22 @@ export class AuthService {
       password: dto.password,
     };
 
-    await axios.post(
-      `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_REGISTER_ENDPOINT")}`,
+    let academyError: string | null = null;
 
-      new URLSearchParams(externalRegistrationData).toString(),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "X-CSRFToken": csrfToken,
+    try {
+      await axios.post(
+        `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_REGISTER_ENDPOINT")}`,
+        new URLSearchParams(externalRegistrationData).toString(),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": csrfToken,
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      academyError = "AcademyRegisterFailed";
+    }
 
     const hash = await this.jwtService.signAsync(
       {
@@ -579,7 +794,10 @@ export class AuthService {
         hash,
       },
     });
+
+    return { user, academyError };
   }
+
 
   async customerRegister(
     digifranchiseId: string,
