@@ -36,7 +36,7 @@ export class CalenderMgtService {
     private readonly bookingRepository: Repository<CalenderBooking>,
     @InjectRepository(DigifranchiseOwner)
     private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>,
-  ) {}
+  ) { }
 
   async createVenue(
     createVenueDto: CreateVenueDto,
@@ -376,4 +376,20 @@ export class CalenderMgtService {
 
     await this.calenderEventGuestRepository.remove(guestEventAssociation);
   }
+
+  async getAllVenuwsByUserId(userId: string): Promise<CalenderVenue[]> {
+    const digifranchiseOwner = await this.ownedFranchiseRepository.findOne({
+      where: { userId: Equal(userId), deleteAt: IsNull() },
+    });
+
+    if (!digifranchiseOwner) {
+      throw new NotFoundException(`DigifranchiseOwner with userId ${userId} not found.`);
+    }
+
+    return this.venueRepository.find({
+      where: { ownedFranchiseId: Equal(digifranchiseOwner.id), deleteAt: IsNull() },
+    });
+  }
 }
+
+

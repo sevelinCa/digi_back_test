@@ -351,6 +351,18 @@ export class CalenderMgtController {
       );
     }
   }
+
+
+  @ApiOperation({
+    summary: "GET ALL - Retrieve all venue by user ID",
+  })
+  @Get("venue/user/:userId")
+  async getAllVenuwsByUserId(
+    @Param("userId") userId: string,
+  ): Promise<CalenderVenue[]> {
+    return this.calenderMgtService.getAllVenuwsByUserId(userId);
+  }
+
 }
 
 @ApiTags("Calender - VENUE NO AUTH")
