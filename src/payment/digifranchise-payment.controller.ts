@@ -115,7 +115,7 @@ export class OrderController {
     @Param("productOrServiceId") productOrServiceId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
     @Body() createOrderTableDto: CreateOrderTableDto,
-  ): Promise<OrderTable> {
+  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
     return this.orderService.createOrder(
       createOrderTableDto,
       productOrServiceId,
@@ -171,23 +171,24 @@ export class OrderController {
     return this.orderService.deleteOrder(orderId);
   }
 
-  @ApiOperation({ summary: "Create a new order for subscriptions" })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: "Order for subscription has been successfully created.",
-  })
-  @ApiBody({ type: CreateOrderTableDto })
-  @Post("create-order-for-subs/:subProductOrSubServiceOrSubCategoryId")
-  async createOrderForSubs(
-    @Body() createOrderTableDto: CreateOrderTableDto,
-    @Param("subProductOrSubServiceOrSubCategoryId")
-    subProductOrSubServiceOrSubCategoryId: string,
-  ): Promise<OrderTable> {
-    return this.orderService.createOrderForSubs(
-      createOrderTableDto,
-      subProductOrSubServiceOrSubCategoryId,
-    );
-  }
+  @ApiOperation({ summary: "Create a new order for subs" })
+@ApiResponse({
+  status: HttpStatus.CREATED,
+  description: "Order for subs has been successfully created.",
+})
+@ApiBody({ type: CreateOrderTableDto })
+@Post("create-order-for-subs/:subProductOrSubServiceOrSubCategoryId")
+async createOrderForSubs(
+  @Body() createOrderTableDto: CreateOrderTableDto,
+  @Param("subProductOrSubServiceOrSubCategoryId")
+  subProductOrSubServiceOrSubCategoryId: string,
+): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+  return this.orderService.createOrderForSubs(
+    createOrderTableDto,
+    subProductOrSubServiceOrSubCategoryId,
+  );
+}
+
 
   @ApiOperation({
     summary: "GET - Retrieve an order by its number and owned franchise ID",
@@ -229,7 +230,7 @@ export class OrderController {
     @Param("productOrServiceOrCategoryId") productOrServiceOrCategoryId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
     @Body() createOrderTableDto: CreateOrderTableDto,
-  ): Promise<OrderTable> {
+  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
     const userId = (req.user as UserEntity).id;
     return this.orderService.createOrderWithAuth(
       createOrderTableDto,
@@ -238,6 +239,7 @@ export class OrderController {
       ownedFranchiseId,
     );
   }
+  
 
   @ApiOperation({ summary: "Get all orders for a user with authentication" })
   @ApiResponse({
