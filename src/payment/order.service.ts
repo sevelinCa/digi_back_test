@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Equal, IsNull, Repository } from "typeorm";
+import { Brackets, Equal, IsNull, Repository } from "typeorm";
 import { CreateOrderTableDto, UpdateOrderTableDto } from "./dto/order.dto";
 import { OrderTable } from "./entities/order.entity";
 import { checkIfUserExists } from "src/helper/FindByFunctions";
@@ -885,7 +885,7 @@ export class OrderService {
     };
   }
   
-  
+
   async getAllOrders(
     ownedDigifranchiseId: string,
   ): Promise<{ orders: OrderTable[]; count: number }> {
@@ -971,25 +971,58 @@ export class OrderService {
     return { orders, count: orders.length };
   }
 
+  // async getAllOrdersWithAuthAndUser(
+  //   userId: string,
+  //   ownedDigifranchiseId: string,
+  // ): Promise<{ orders: OrderTable[]; count: number }> {
+
+  //   const owned = await this.digifranchiseOwnerRepository.findOne({
+  //     where: { id: ownedDigifranchiseId },
+  //   });
+  //   if (!owned) {
+  //     throw new HttpException("Owned does not exist", HttpStatus.NOT_FOUND);
+  //   }
+  //   const user = await this.userRepository.findOne({where:{id:userId}})
+  //   if(!user){
+  //     throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
+
+  //   }
+  //   const orders = await this.orderRepository.find({
+  //     where: {
+  //       userId: Equal(userId),
+  //       ownedDigifranchise: Equal(owned.id),
+  //       deleteAt: IsNull(),
+  //     },
+  //     relations: [
+  //       "userId",
+  //       "productId",
+  //       "productId.productGalleryImages",
+  //       "serviceId",
+  //       "serviceId.serviceGalleryImages",
+  //     ],
+  //   });
+
+  //   return { orders, count: orders.length };
+  // }
+  
   async getAllOrdersWithAuthAndUser(
     userId: string,
     ownedDigifranchiseId: string,
-  ): Promise<{ orders: OrderTable[]; count: number }> {
-
+  ): Promise<{ ordersCreatedByAuth: OrderTable[]; ordersCreatedWithoutAuth: OrderTable[]; count: number }> {
     const owned = await this.digifranchiseOwnerRepository.findOne({
       where: { id: ownedDigifranchiseId },
     });
     if (!owned) {
       throw new HttpException("Owned does not exist", HttpStatus.NOT_FOUND);
     }
-    const user = await this.userRepository.findOne({where:{id:userId}})
-    if(!user){
+  
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
       throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
-
     }
+  
     const orders = await this.orderRepository.find({
       where: {
-        userId: Equal(userId),
         ownedDigifranchise: Equal(owned.id),
         deleteAt: IsNull(),
       },
@@ -1001,10 +1034,28 @@ export class OrderService {
         "serviceId.serviceGalleryImages",
       ],
     });
-
-    return { orders, count: orders.length };
+  
+    const ordersCreatedByAuth: OrderTable[] = [];
+    const ordersCreatedWithoutAuth: OrderTable[] = [];
+  
+    const userEmail = user.email;
+  
+    orders.forEach(order => {
+      const basicInfo = order.orderAdditionalInfo.find(info => info.basic_info);
+      if (order.userId?.id === userId) {
+        ordersCreatedByAuth.push(order);
+      } else if (basicInfo && basicInfo.basic_info.email === userEmail) {
+        ordersCreatedWithoutAuth.push(order);
+      }
+    });
+  
+    const combinedOrders = ordersCreatedByAuth.concat(ordersCreatedWithoutAuth);
+    
+    return { ordersCreatedByAuth, ordersCreatedWithoutAuth, count: combinedOrders.length };
   }
-
+  
+  
+  
   async deleteAllOrders(): Promise<void> {
     await this.orderRepository.delete({});
   }
