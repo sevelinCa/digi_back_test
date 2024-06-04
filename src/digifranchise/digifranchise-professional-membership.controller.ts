@@ -13,6 +13,7 @@ import {
   Put,
   Query,
   HttpException,
+  Patch,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
@@ -27,7 +28,10 @@ import { Roles } from "src/roles/roles.decorator";
 import { RoleEnum } from "src/roles/roles.enum";
 import { DigifranchiseProfessionalBodyMembershipService } from "./digranchise-professional-body-membership.service";
 import { DigifranchiseProfessionalBodyMembership } from "./entities/digifranchise-professional-body-membership.entity";
-import { AddProfessionalMembershipDto } from "./dto/add-digifranchise-professional-membership.dto";
+import {
+  AddProfessionalMembershipDto,
+  UpdateProfessionalMembershipDto,
+} from "./dto/add-digifranchise-professional-membership.dto";
 
 @ApiTags("Digifranchise Professional Membership")
 @ApiBearerAuth()
@@ -35,7 +39,7 @@ import { AddProfessionalMembershipDto } from "./dto/add-digifranchise-profession
 @Controller({ path: "digifranchise", version: "1" })
 export class DigifranchiseProfessionalMembershipController {
   constructor(
-    private readonly digifranchiseProfessionalMembershipService: DigifranchiseProfessionalBodyMembershipService,
+    private readonly digifranchiseProfessionalMembershipService: DigifranchiseProfessionalBodyMembershipService
   ) {}
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -47,10 +51,10 @@ export class DigifranchiseProfessionalMembershipController {
   @Get("get-professional-memberships-info")
   @HttpCode(HttpStatus.OK)
   async getProfessionalMembershipsInfo(
-    @Query("ownedDigifranchiseId") ownedDigifranchiseId: string,
+    @Query("ownedDigifranchiseId") ownedDigifranchiseId: string
   ): Promise<any[]> {
     return this.digifranchiseProfessionalMembershipService.getDigifranchiseProfessionalMemberships(
-      ownedDigifranchiseId,
+      ownedDigifranchiseId
     );
   }
 
@@ -64,11 +68,31 @@ export class DigifranchiseProfessionalMembershipController {
   @HttpCode(HttpStatus.OK)
   async addProfessionalMembership(
     @Query("ownedDigifranchiseId") ownedDigifranchiseId: string,
-    @Body() dto: AddProfessionalMembershipDto,
+    @Body() dto: AddProfessionalMembershipDto
   ): Promise<DigifranchiseProfessionalBodyMembership> {
     return this.digifranchiseProfessionalMembershipService.addDigifranchiseProfessionalMembership(
       ownedDigifranchiseId,
-      dto,
+      dto
+    );
+  }
+
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({
+    summary:
+      "PATCH - Update professional membership information of the digifranchise",
+  })
+  @ApiResponse({ status: HttpStatus.OK })
+  @Patch("update-professional-memberships-info/:membershipId")
+  @HttpCode(HttpStatus.OK)
+  async updateProfessionalMembership(
+    @Query("ownedDigifranchiseId") ownedDigifranchiseId: string,
+    @Param("membershipId") membershipId: string,
+    @Body() updateDto: UpdateProfessionalMembershipDto
+  ): Promise<DigifranchiseProfessionalBodyMembership> {
+    return this.digifranchiseProfessionalMembershipService.updateDigifranchiseProfessionalMembership(
+      ownedDigifranchiseId,
+      membershipId,
+      updateDto
     );
   }
 }

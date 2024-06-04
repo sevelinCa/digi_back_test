@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { DigifranchiseProfessionalBodyMembership } from "./entities/digifranchise-professional-body-membership.entity";
-import { AddProfessionalMembershipDto } from "./dto/add-digifranchise-professional-membership.dto";
+import { AddProfessionalMembershipDto, UpdateProfessionalMembershipDto } from "./dto/add-digifranchise-professional-membership.dto";
 import { ProfessionalBodyEntity } from "src/professional-bodies/entities/professional-body.entity";
 import { Accreditation } from "src/professional-bodies/entities/professional-accreditation.entity";
 
@@ -105,5 +105,51 @@ export class DigifranchiseProfessionalBodyMembershipService {
     return this.digifranchiseProfessionalMembershipRepository.save(
       createProfMembership,
     );
+  }
+
+  async updateDigifranchiseProfessionalMembership(
+    ownedDigifranchiseId: string,
+    membershipId: string,
+    dto: UpdateProfessionalMembershipDto,
+  ): Promise<DigifranchiseProfessionalBodyMembership> {
+    const membership =
+      await this.digifranchiseProfessionalMembershipRepository.findOne({
+        where: { id: membershipId, ownedDigifranchiseId },
+      });
+
+    if (!membership) {
+      throw new NotFoundException("Professional membership not found");
+    }
+
+    if (dto.professionalBodyId) {
+      const professionalBody =
+        await this.professionalBodyEntityRepository.findOne({
+          where: { id: dto.professionalBodyId },
+        });
+      if (!professionalBody) {
+        throw new ConflictException("Professional body does not exist");
+      }
+      membership.professionalOrganizationId = dto.professionalBodyId;
+    }
+
+    if (dto.accreditationId) {
+      const accreditation = await this.accreditationRepository.findOne({
+        where: { id: dto.accreditationId },
+      });
+      if (!accreditation) {
+        throw new ConflictException("Accreditation does not exist");
+      }
+      membership.accreditationId = dto.accreditationId;
+    }
+
+    if (dto.renewalDate) {
+      membership.renewalDate = dto.renewalDate;
+    }
+
+    if (dto.documents) {
+      membership.documents = dto.documents;
+    }
+
+    return this.digifranchiseProfessionalMembershipRepository.save(membership);
   }
 }
