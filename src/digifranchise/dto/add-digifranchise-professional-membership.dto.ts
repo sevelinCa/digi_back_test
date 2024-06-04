@@ -37,3 +37,33 @@ export class AddProfessionalMembershipDto {
   @IsArray()
   documents: Documents[];
 }
+
+export class UpdateProfessionalMembershipDto {
+  @ApiProperty({ example: "uuid" })
+  @IsOptional()
+  @IsString()
+  professionalBodyId?: string;
+
+  @ApiProperty({ example: "uuid" })
+  @IsOptional()
+  @IsString()
+  accreditationId?: string;
+
+  @ApiProperty({ example: "2024-10-10" })
+  @IsOptional()
+  @IsString()
+  renewalDate?: string;
+
+  @ApiProperty({
+    example: [
+      {
+        documentName: "document Name",
+        link: "https://linktodocument.pdf",
+        renewalDate: "2024-10-10",
+      },
+    ],
+  })
+  @IsOptional()
+  @IsArray()
+  documents?: Documents[];
+}
