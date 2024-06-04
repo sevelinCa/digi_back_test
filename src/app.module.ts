@@ -50,9 +50,11 @@ import { AssetMgtModule } from "./asset-mgt/asset-mgt.module";
 import { InventoryModule } from "./inventory/inventory.module";
 import { CalendarModule } from "./calendar/calendar.module";
 import { DigifranchiseAcademyModule } from "./digifranchise-academy/digifranchise-academy.module";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
