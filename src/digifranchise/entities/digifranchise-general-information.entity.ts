@@ -65,7 +65,7 @@ export class DigifranchiseGeneralInfo {
   @Column({ default: false })
   digifranchisePublished: boolean;
 
-  @Column({ default: false})
+  @Column({ default: true })
   digifranchisePublishedWithCC: boolean
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
