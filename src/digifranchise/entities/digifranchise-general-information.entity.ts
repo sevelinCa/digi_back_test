@@ -41,14 +41,14 @@ export class DigifranchiseGeneralInfo {
   @Column()
   address: string;
 
-  @Column()
-  connectNumberWithOutCountryCode: string;
+  @Column({ type: String, unique: true, nullable: true })
+  connectNumberWithOutCountryCode: string | null;
 
-  @Column()
-  connectNumber: string;
+  @Column({ type: String, unique: true, nullable: true })
+  connectNumber: string | null;
 
-  @Column()
-  otherMobileNumberWithOutCountryCode: string;
+  @Column({ type: String, unique: true, nullable: true })
+  otherMobileNumberWithOutCountryCode: string | null;
 
   @Column()
   otherMobileNumber: string;
