@@ -41,13 +41,13 @@ export class DigifranchiseGeneralInfo {
   @Column()
   address: string;
 
-  @Column({ type: String, unique: true, nullable: true })
+  @Column({ type: "varchar", unique: true, nullable: true })
   connectNumberWithOutCountryCode: string | null;
 
-  @Column({ type: String, unique: true, nullable: true })
+  @Column({ type: "varchar", unique: true, nullable: true })
   connectNumber: string | null;
 
-  @Column({ type: String, unique: true, nullable: true })
+  @Column({ type: "varchar", unique: true, nullable: true })
   otherMobileNumberWithOutCountryCode: string | null;
 
   @Column()

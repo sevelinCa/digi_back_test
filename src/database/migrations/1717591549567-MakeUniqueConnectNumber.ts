@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class MakeUniqueConnectNumber1717589705405 implements MigrationInterface {
-    name = 'MakeUniqueConnectNumber1717589705405'
+export class MakeUniqueConnectNumber1717591549567 implements MigrationInterface {
+    name = 'MakeUniqueConnectNumber1717591549567'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "digifranchise_general_info" ALTER COLUMN "connectNumberWithOutCountryCode" DROP NOT NULL`);
