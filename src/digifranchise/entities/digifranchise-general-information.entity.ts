@@ -42,13 +42,13 @@ export class DigifranchiseGeneralInfo {
   address: string;
 
   @Column({ type: "varchar", unique: true, nullable: true })
-  connectNumberWithOutCountryCode: string | null;
+  connectNumberWithOutCountryCode: string;
 
   @Column({ type: "varchar", unique: true, nullable: true })
-  connectNumber: string | null;
+  connectNumber: string;
 
   @Column({ type: "varchar", unique: true, nullable: true })
-  otherMobileNumberWithOutCountryCode: string | null;
+  otherMobileNumberWithOutCountryCode: string;
 
   @Column()
   otherMobileNumber: string;
