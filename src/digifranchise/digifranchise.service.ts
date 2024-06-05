@@ -535,7 +535,7 @@ export class DigifranchiseService {
           { otherMobileNumberWithOutCountryCode: phoneNumber },
         ],
       });
-
+      
     if (!getDigifranchiseGeneralInfoByPhone) {
       throw new NotFoundException("digifranchise not found");
     }

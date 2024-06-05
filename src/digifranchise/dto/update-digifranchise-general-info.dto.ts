@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UpdateDigifranchiseGeneralInfoDto {
   @ApiProperty({ example: "James' digifranchise" })
@@ -51,4 +51,9 @@ export class UpdateDigifranchiseGeneralInfoDto {
   @IsString()
   @IsOptional()
   location: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  digifranchisePublishedWithCC: boolean;
 }

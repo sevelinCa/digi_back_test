@@ -83,6 +83,28 @@ export class DigifranchiseGeneralInfoService {
         ? removeCountryCode(dto.otherMobileNumber)
         : "";
 
+    const findExistingCC = await this.digifranchiseGeneralInfoRepository.findOne({
+      where: { 
+        connectNumberWithOutCountryCode: connectNumberWithoutCC,
+        otherMobileNumberWithOutCountryCode: otherMobileWithoutCC
+      }
+    })
+
+    if ( findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId) {
+      throw new ConflictException("connect number is already being used by another digifranchise")
+    }
+
+    const findExistingOtherMobile = await this.digifranchiseGeneralInfoRepository.findOne({
+      where: { 
+        otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
+        connectNumberWithOutCountryCode: otherMobileWithoutCC
+      }
+    })
+
+    if ( findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId) {
+      throw new ConflictException("this number is already being used by another digifranchise")
+    }
+
     digifranchiseGeneralInfo.digifranchiseName = dto.digifranchiseName;
     digifranchiseGeneralInfo.facebookHandle = dto.facebookHandle;
     digifranchiseGeneralInfo.tiktokHandle = dto.tiktokHandle;
@@ -93,6 +115,7 @@ export class DigifranchiseGeneralInfoService {
     digifranchiseGeneralInfo.otherMobileNumber = dto.otherMobileNumber;
     digifranchiseGeneralInfo.aboutCompany = dto.aboutCompany;
     digifranchiseGeneralInfo.location = dto.location;
+    digifranchiseGeneralInfo.digifranchisePublishedWithCC = dto.digifranchisePublishedWithCC
 
     Object.assign(digifranchiseGeneralInfo, {
       connectNumberWithOutCountryCode: connectNumberWithoutCC,
