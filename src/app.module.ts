@@ -49,7 +49,6 @@ import { AccountingModule } from "./accounting/accounting.module";
 import { AssetMgtModule } from "./asset-mgt/asset-mgt.module";
 import { InventoryModule } from "./inventory/inventory.module";
 import { CalendarModule } from "./calendar/calendar.module";
-import { DigifranchiseAcademyModule } from "./digifranchise-academy/digifranchise-academy.module";
 import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
@@ -141,7 +140,6 @@ import { ScheduleModule } from "@nestjs/schedule";
     EnquiryMessageModule,
     RatingOrderModule,
     CalendarModule,
-    DigifranchiseAcademyModule,
     // ChatModule
   ],
 })
