@@ -90,9 +90,6 @@ export class DigifranchiseGeneralInfoService {
       }
     })
 
-    console.log("********", findExistingCC)
-    console.log(">>>>>>>>", ownedDigifranchiseId)
-
     if (findExistingCC !== null && findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId) {
       throw new ConflictException("connect number is already being used by another digifranchise")
     }
