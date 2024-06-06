@@ -119,7 +119,7 @@ export class DigifranchiseGeneralInfoService {
     digifranchiseGeneralInfo.otherMobileNumber = dto.otherMobileNumber;
     digifranchiseGeneralInfo.aboutCompany = dto.aboutCompany;
     digifranchiseGeneralInfo.location = dto.location;
-    // digifranchiseGeneralInfo.digifranchisePublishedWithCC = dto.digifranchisePublishedWithCC
+    digifranchiseGeneralInfo.digifranchisePublishedWithCC = dto.digifranchisePublishedWithCC
 
     Object.assign(digifranchiseGeneralInfo, {
       connectNumberWithOutCountryCode: connectNumberWithoutCC,
