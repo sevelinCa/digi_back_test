@@ -90,10 +90,10 @@ export class DigifranchiseGeneralInfoService {
       }
     })
 
-    console.log("********", findExistingCC?.ownedDigifranchiseId)
+    console.log("********", findExistingCC)
     console.log(">>>>>>>>", ownedDigifranchiseId)
 
-    if (findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId) {
+    if (findExistingCC !== null && findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId) {
       throw new ConflictException("connect number is already being used by another digifranchise")
     }
 
@@ -104,7 +104,7 @@ export class DigifranchiseGeneralInfoService {
       }
     })
 
-    if (findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId) {
+    if (findExistingOtherMobile !== null && findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId) {
       throw new ConflictException("this number is already being used by another digifranchise")
     }
 
