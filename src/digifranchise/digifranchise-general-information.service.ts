@@ -17,7 +17,7 @@ export class DigifranchiseGeneralInfoService {
   constructor(
     @InjectRepository(DigifranchiseGeneralInfo)
     private readonly digifranchiseGeneralInfoRepository: Repository<DigifranchiseGeneralInfo>,
-  ) {}
+  ) { }
 
   async getDigifranchiseGeneralInformation(
     userId: string,
@@ -84,24 +84,27 @@ export class DigifranchiseGeneralInfoService {
         : "";
 
     const findExistingCC = await this.digifranchiseGeneralInfoRepository.findOne({
-      where: { 
+      where: {
         connectNumberWithOutCountryCode: connectNumberWithoutCC,
         otherMobileNumberWithOutCountryCode: otherMobileWithoutCC
       }
     })
 
-    if ( findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId) {
+    console.log("********", findExistingCC?.ownedDigifranchiseId)
+    console.log(">>>>>>>>", ownedDigifranchiseId)
+
+    if (findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId) {
       throw new ConflictException("connect number is already being used by another digifranchise")
     }
 
     const findExistingOtherMobile = await this.digifranchiseGeneralInfoRepository.findOne({
-      where: { 
+      where: {
         otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
-        connectNumberWithOutCountryCode: otherMobileWithoutCC
+        connectNumberWithOutCountryCode: connectNumberWithoutCC
       }
     })
 
-    if ( findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId) {
+    if (findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId) {
       throw new ConflictException("this number is already being used by another digifranchise")
     }
 
