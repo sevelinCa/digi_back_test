@@ -88,23 +88,21 @@ export class DigifranchiseGeneralInfoService {
     }
 
     const findExistingCC = await this.digifranchiseGeneralInfoRepository.findOne({
-      where: {
-        connectNumberWithOutCountryCode: connectNumberWithoutCC,
-        otherMobileNumberWithOutCountryCode: connectNumberWithoutCC
-      }
+      where: [
+        { connectNumberWithOutCountryCode: connectNumberWithoutCC },
+        { otherMobileNumberWithOutCountryCode: connectNumberWithoutCC }
+      ]
     })
 
     if (findExistingCC !== null && findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId) {
       throw new ConflictException("connect number is already being used by another digifranchise")
     }
 
-    console.log(">>>>>>>>>", otherMobileWithoutCC)
-
     const findExistingOtherMobile = await this.digifranchiseGeneralInfoRepository.findOne({
-      where: {
-        otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
-        connectNumberWithOutCountryCode: otherMobileWithoutCC
-      }
+      where: [
+        { otherMobileNumberWithOutCountryCode: otherMobileWithoutCC },
+        { connectNumberWithOutCountryCode: otherMobileWithoutCC }
+      ]
     })
 
     if (findExistingOtherMobile !== null && findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId) {
