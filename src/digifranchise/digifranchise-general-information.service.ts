@@ -83,6 +83,10 @@ export class DigifranchiseGeneralInfoService {
         ? removeCountryCode(dto.otherMobileNumber)
         : "";
 
+    if (connectNumberWithoutCC === otherMobileWithoutCC) {
+      throw new ConflictException("connect number and other mobile should not be the same");
+    }
+
     const findExistingCC = await this.digifranchiseGeneralInfoRepository.findOne({
       where: {
         connectNumberWithOutCountryCode: connectNumberWithoutCC,
