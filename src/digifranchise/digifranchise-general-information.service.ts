@@ -90,7 +90,7 @@ export class DigifranchiseGeneralInfoService {
     const findExistingCC = await this.digifranchiseGeneralInfoRepository.findOne({
       where: {
         connectNumberWithOutCountryCode: connectNumberWithoutCC,
-        otherMobileNumberWithOutCountryCode: otherMobileWithoutCC
+        otherMobileNumberWithOutCountryCode: connectNumberWithoutCC
       }
     })
 
@@ -101,7 +101,7 @@ export class DigifranchiseGeneralInfoService {
     const findExistingOtherMobile = await this.digifranchiseGeneralInfoRepository.findOne({
       where: {
         otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
-        connectNumberWithOutCountryCode: connectNumberWithoutCC
+        connectNumberWithOutCountryCode: otherMobileWithoutCC
       }
     })
 
