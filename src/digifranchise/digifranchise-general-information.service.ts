@@ -98,6 +98,8 @@ export class DigifranchiseGeneralInfoService {
       throw new ConflictException("connect number is already being used by another digifranchise")
     }
 
+    console.log(">>>>>>>>>", otherMobileWithoutCC)
+
     const findExistingOtherMobile = await this.digifranchiseGeneralInfoRepository.findOne({
       where: {
         otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
