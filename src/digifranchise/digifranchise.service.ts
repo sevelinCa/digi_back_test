@@ -611,17 +611,17 @@ export class DigifranchiseService {
     }
   
     if (digifranchise.otherMobileNumberWithOutCountryCode === phoneNumber) {
-      if (digifranchise.digifranchisePublishedWithCC) {
-        throw new BadRequestException("Phone number found in other Mobile Number and CC is true");
-      }
+      // if (digifranchise.digifranchisePublishedWithCC) {
+      //   throw new BadRequestException("Phone number found in other Mobile Number and CC is true");
+      // }
     }
   
     if (digifranchise.connectNumberWithOutCountryCode === phoneNumber) {
-      if (digifranchise.digifranchisePublishedWithCC) {
-        return;
-      } else {
-        throw new BadRequestException("Phone number found in connect Number and CC is false");
-      }
+      // if (digifranchise.digifranchisePublishedWithCC) {
+      //   return;
+      // } else {
+      //   throw new BadRequestException("Phone number found in connect Number and CC is false");
+      // }
     }
   }
   
