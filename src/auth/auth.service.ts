@@ -208,7 +208,7 @@ export class AuthService {
       );
     }
 
-    if (user.status.id !== StatusEnum.active) {
+    if (user.status?.id !== StatusEnum.active) {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
