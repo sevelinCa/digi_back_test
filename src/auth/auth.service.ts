@@ -43,6 +43,7 @@ import { AuthForgotPasswordForWebSiteDto } from "./dto/auth-forgot-password-on-w
 import { ForgotPasswordMailData } from "forgot-password-mail-data.interface";
 import { Role } from "src/roles/domain/role";
 import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
+import { Status } from "src/statuses/domain/status";
 
 @Injectable()
 export class AuthService {
@@ -195,7 +196,7 @@ export class AuthService {
   // }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
-    const user = await this.usersService.findOne({ email: loginDto.email });
+    const user = await this.usersService.findOne({ email: loginDto.email })
 
     if (!user) {
       throw new HttpException(
@@ -204,6 +205,16 @@ export class AuthService {
           errors: { email: "notFound" },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (user.status.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your email or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN,
       );
     }
 
@@ -1077,6 +1088,16 @@ export class AuthService {
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (user.status.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your phone or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN,
       );
     }
 
