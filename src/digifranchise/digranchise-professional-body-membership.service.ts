@@ -37,7 +37,7 @@ export class DigifranchiseProfessionalBodyMembershipService {
       digifranchiseProfessionalMemberInfo.map(async (professionalBodyInfo) => {
         const getProfessionaOrg =
           await this.professionalBodyEntityRepository.findOne({
-            where: { id: professionalBodyInfo.professionalOrganizationId },
+            where: { id: professionalBodyInfo.id },
           });
         const getAccrediation = await this.accreditationRepository.findOne({
           where: { id: professionalBodyInfo.accreditationId },
