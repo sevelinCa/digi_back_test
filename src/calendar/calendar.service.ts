@@ -339,7 +339,7 @@ export class CalendarService {
       const slotsToDelete =
         await this.digifranchiseAvailableTimeSlotsRepository.find({
           where: {
-            workingDate: LessThan(endOfDay),
+            workingDate: LessThan(startOfDay),
           },
         });
 
