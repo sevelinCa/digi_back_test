@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Equal, IsNull, Repository } from "typeorm";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
@@ -527,7 +527,38 @@ export class DigifranchiseService {
     await this.digifranchiseSubServiceOfferedRepository.remove(serviceOffered);
   }
 
+  async checkPhoneNumber(phoneNumber: string): Promise<void> {
+    const digifranchise = await this.digifranchiseGeneralInfoRepository.findOne(
+      {
+        where: [
+          { connectNumberWithOutCountryCode: phoneNumber },
+          { otherMobileNumberWithOutCountryCode: phoneNumber },
+        ],
+      }
+    );
+  
+    if (!digifranchise) {
+      throw new NotFoundException("Phone number not found in any column");
+    }
+  
+    if (digifranchise.otherMobileNumberWithOutCountryCode === phoneNumber) {
+      if (digifranchise.digifranchisePublishedWithCC) {
+        throw new BadRequestException("Phone number found in other Mobile Number and CC is true");
+      }
+    }
+  
+    if (digifranchise.connectNumberWithOutCountryCode === phoneNumber) {
+      if (digifranchise.digifranchisePublishedWithCC) {
+        return;
+      } else {
+        throw new BadRequestException("Phone number found in connect Number and CC is false");
+      }
+    }
+  }
+  
   async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
+    await this.checkPhoneNumber(phoneNumber);
+  
     const getDigifranchiseGeneralInfoByPhone =
       await this.digifranchiseGeneralInfoRepository.findOne({
         where: [
@@ -535,56 +566,57 @@ export class DigifranchiseService {
           { otherMobileNumberWithOutCountryCode: phoneNumber },
         ],
       });
-
+  
     if (!getDigifranchiseGeneralInfoByPhone) {
       throw new NotFoundException("digifranchise not found");
     }
-
+  
     if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
       throw new NotFoundException("digifranchise not yet published");
     }
-
+  
     const ownedDigifranchiseId =
       getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId;
-
+  
     const getDigifranchiseInformation =
       await this.digifranchiseOwnershipRepository.findOne({
         where: { id: ownedDigifranchiseId },
       });
-
+  
     if (!getDigifranchiseInformation) {
       throw new NotFoundException("digifranchise not found");
     }
-
+  
     const getComplianceInfo =
       await this.digifranchiseComplianceInfoRepository.findOne({
         where: { ownedDigifranchiseId: ownedDigifranchiseId },
       });
-
+  
     const getProfessionalBodyMemberships =
       await this.digifranchiseProfessionalBodyMembershipRepository.find({
         where: { ownedDigifranchiseId: ownedDigifranchiseId },
       });
-
+  
     const digifranchise = await this.digifranchiseRepository.findOne({
       where: { id: getDigifranchiseInformation.digifranchiseId },
     });
-
+  
     const digifranchiseOwner = await this.userRepository.findOne({
       where: { id: getDigifranchiseInformation.userId },
     });
-
+  
     const digifranchiseProducts =
       await this.productService.getSelectedProductsAndSubProductsById(
         getDigifranchiseInformation.digifranchiseId,
-        ownedDigifranchiseId,
+        ownedDigifranchiseId
       );
+  
     const digifranchiseServices =
       await this.getSelectedServicesAndSubServicesByDigifranchiseId(
         getDigifranchiseInformation.digifranchiseId,
-        ownedDigifranchiseId,
+        ownedDigifranchiseId
       );
-
+  
     return {
       digifranchiseInfo: digifranchise,
       ownerInfo: digifranchiseOwner,
@@ -595,7 +627,7 @@ export class DigifranchiseService {
       services: digifranchiseServices,
     };
   }
-
+  
   async publishDigifranchiseWeb(digifranchiseId: string): Promise<any> {
     const digifranchiseGeneralInfo =
       await this.digifranchiseGeneralInfoRepository.findOne({
