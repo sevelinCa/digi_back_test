@@ -7,7 +7,7 @@ import { OptionalFunctionalService } from './optional-functional.service';
 export class OptionalFunctionalController {
     constructor(private readonly optionalFunctionalService: OptionalFunctionalService) {}
 
-    @Delete('delete/:connectNumber')
+    @Delete('delete-all-by-number/:connectNumber')
     async deleteAllByConnectNumber(@Param('connectNumber') connectNumber: string): Promise<void> {
       try {
         await this.optionalFunctionalService.deleteAllByConnectNumber(connectNumber);
