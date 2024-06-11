@@ -21,6 +21,40 @@ export class DigifranchiseProfessionalBodyMembershipService {
     private readonly digifranchiseProfessionalMembershipRepository: Repository<DigifranchiseProfessionalBodyMembership>,
   ) {}
 
+  // async getDigifranchiseProfessionalMemberships(
+  //   ownedDigifranchiseId: string,
+  // ): Promise<any[]> {
+  //   const digifranchiseProfessionalMemberInfo =
+  //     await this.digifranchiseProfessionalMembershipRepository.find({
+  //       where: { ownedDigifranchiseId },
+  //     });
+
+  //   if (!digifranchiseProfessionalMemberInfo) {
+  //     throw new NotFoundException(`digifranchise info not found`);
+  //   }
+
+  //   const accrediations = await Promise.all(
+  //     digifranchiseProfessionalMemberInfo.map(async (professionalBodyInfo) => {
+  //       const getProfessionaOrg =
+  //         await this.professionalBodyEntityRepository.findOne({
+  //           where: { id: professionalBodyInfo.id },
+  //         });
+  //       const getAccrediation = await this.accreditationRepository.findOne({
+  //         where: { id: professionalBodyInfo.accreditationId },
+  //       });
+  //       const accreditationInfo = {
+  //         ...getProfessionaOrg,
+  //         accrediation: getAccrediation,
+  //         renewalDate: professionalBodyInfo.renewalDate,
+  //         documents: professionalBodyInfo.documents,
+  //       };
+  //       return accreditationInfo;
+  //     }),
+  //   );
+
+  //   return accrediations;
+  // }
+
   async getDigifranchiseProfessionalMemberships(
     ownedDigifranchiseId: string,
   ): Promise<any[]> {
@@ -28,33 +62,39 @@ export class DigifranchiseProfessionalBodyMembershipService {
       await this.digifranchiseProfessionalMembershipRepository.find({
         where: { ownedDigifranchiseId },
       });
-
-    if (!digifranchiseProfessionalMemberInfo) {
+  
+    if (!digifranchiseProfessionalMemberInfo || digifranchiseProfessionalMemberInfo.length === 0) {
       throw new NotFoundException(`digifranchise info not found`);
     }
-
+  
     const accrediations = await Promise.all(
       digifranchiseProfessionalMemberInfo.map(async (professionalBodyInfo) => {
         const getProfessionaOrg =
           await this.professionalBodyEntityRepository.findOne({
-            where: { id: professionalBodyInfo.professionalOrganizationId },
+            where: { id: professionalBodyInfo.id },
           });
         const getAccrediation = await this.accreditationRepository.findOne({
           where: { id: professionalBodyInfo.accreditationId },
         });
         const accreditationInfo = {
-          ...getProfessionaOrg,
+         ...getProfessionaOrg,
           accrediation: getAccrediation,
           renewalDate: professionalBodyInfo.renewalDate,
           documents: professionalBodyInfo.documents,
         };
-        return accreditationInfo;
+  
+        // Include the DigifranchiseProfessionalBodyMembership entity in the returned object
+        const fullMembershipInfo = {
+         ...accreditationInfo,
+         ...professionalBodyInfo, // Spread the original membership info to include all properties
+        };
+  
+        return fullMembershipInfo;
       }),
     );
-
+  
     return accrediations;
   }
-
   async addDigifranchiseProfessionalMembership(
     ownedDigifranchiseId: string,
     dto: AddProfessionalMembershipDto,
