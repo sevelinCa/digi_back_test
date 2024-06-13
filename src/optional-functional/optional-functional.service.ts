@@ -15,36 +15,25 @@ export class OptionalFunctionalService {
     private readonly franchiseOwnerRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(DigifranchiseGeneralInfo)
     private readonly generalInfoRepository: Repository<DigifranchiseGeneralInfo>,
-<<<<<<< HEAD
     @InjectRepository(DigifranchiseComplianceInfo)
     private readonly complianceInfoRepository: Repository<DigifranchiseComplianceInfo>,
-=======
-    @InjectRepository(DigifranchiseComplianceInfo) 
-    private readonly complianceInfoRepository: Repository<DigifranchiseComplianceInfo>, 
- 
->>>>>>> cb32d997 (delete all by phone number)
   ) {}
 
-  async deleteUserByPhoneNumber(phoneNumber: string): Promise<void> {
-    if (!phoneNumber) {
+  async deleteUserByConnectNumber(connectNumber: string): Promise<void> {
+    if (!connectNumber) {
       throw new Error("Connect number must be provided");
     }
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> cb32d997 (delete all by phone number)
     const generalInfo = await this.generalInfoRepository.findOne({
       where: [
-        { connectNumberWithOutCountryCode: phoneNumber },
-        { otherMobileNumberWithOutCountryCode: phoneNumber },
+        { connectNumberWithOutCountryCode: connectNumber },
+        { otherMobileNumberWithOutCountryCode: connectNumber },
       ],
     });
-  
+
     if (!generalInfo) {
-<<<<<<< HEAD
       throw new NotFoundException(
-        `DigifranchiseGeneralInfo with connect number or other mobile number ${phoneNumber} not found`,
+        `DigifranchiseGeneralInfo with connect number or other mobile number ${connectNumber} not found`,
       );
     }
 
@@ -66,23 +55,49 @@ export class OptionalFunctionalService {
       );
     }
 
-=======
-      throw new NotFoundException(`DigifranchiseGeneralInfo with connect number or other mobile number ${phoneNumber} not found`);
-    }
-  
-    const franchiseOwner = await this.franchiseOwnerRepository.findOne({ where: { id: generalInfo.ownedDigifranchiseId }});
-    if (!franchiseOwner) {
-      throw new NotFoundException(`DigifranchiseOwner with ID ${generalInfo.ownedDigifranchiseId} not found`);
-    }
-  
-    const user = await this.userRepository.findOne({ where: { id: franchiseOwner.userId?.id }});
-    if (!user) {
-      throw new NotFoundException(`User with ID ${franchiseOwner.userId?.id} not found`);
-    }
-  
->>>>>>> cb32d997 (delete all by phone number)
     await this.franchiseOwnerRepository.remove(franchiseOwner);
     await this.userRepository.remove(user);
   }
 
+  async deleteByUserEmail(email: string): Promise<void> {
+    if (!email) {
+      throw new Error("Email must be provided");
+    }
+
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    const franchiseOwner = await this.franchiseOwnerRepository.findOne({
+      where: {
+        userId: Equal(user.id),
+        userEmail: email,
+      },
+    });
+
+    if (!franchiseOwner) {
+      throw new NotFoundException(
+        `DigifranchiseOwner with email ${email} not found`,
+      );
+    }
+
+    await this.franchiseOwnerRepository.remove(franchiseOwner);
+    await this.userRepository.remove(user);
+  }
+
+  async deleteByUserPhoneNumber(phoneNumber: string): Promise<void> {
+    if (!phoneNumber) {
+      throw new Error("Phone Number must be provided");
+    }
+
+    const user = await this.userRepository.findOne({ where: { phoneNumber } });
+    if (!user) {
+      throw new NotFoundException(
+        `User with Phone Number ${phoneNumber} not found`,
+      );
+    }
+
+    await this.userRepository.remove(user);
+  }
 }

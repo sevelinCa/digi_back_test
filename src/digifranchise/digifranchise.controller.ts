@@ -94,6 +94,12 @@ export class DigifranchiseController {
         digifranchiseId,
       );
     } catch (error) {
+      // Check if error is an instance of HttpException to handle NestJS exceptions
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      // Check for specific error message
       if (error.message === "User already own this digifranchise") {
         throw new HttpException(
           {
@@ -103,10 +109,14 @@ export class DigifranchiseController {
           HttpStatus.BAD_REQUEST,
         );
       } else {
+        // Log the error for debugging purposes
+        console.error(error);
+
+        // Throw a generic internal server error if the error is unexpected
         throw new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,
-            error: "Internal server error",
+            error: "An unexpected error occurred while processing the request.",
           },
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
