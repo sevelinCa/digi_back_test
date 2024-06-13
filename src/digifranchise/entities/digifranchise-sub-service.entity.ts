@@ -34,11 +34,12 @@ export class DigifranchiseSubServices {
 
   @ManyToOne(() => DigifranchiseOwner, (subs) => subs.subService, {
     nullable: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: "digifranchiseOwnedId" })
   digifranchiseOwnedId: DigifranchiseOwner | null;
 
-  @ManyToOne(() => UserEntity, { nullable: true })
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 

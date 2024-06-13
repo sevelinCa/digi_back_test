@@ -8,9 +8,9 @@
 //  @PrimaryGeneratedColumn('uuid')
 //  id: string;
 
-//  @ManyToOne(() => UserEntity)
-//  @JoinColumn({ name: 'userId' })
-//  userId: UserEntity;
+// @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
+// @JoinColumn({ name: "userId" })
+// userId: UserEntity | null;
 
 // //  @ManyToOne(() => Digifranchise, { nullable: true })
 // //  @JoinColumn({ name: 'digifranchiseId' })

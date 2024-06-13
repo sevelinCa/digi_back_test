@@ -14,9 +14,9 @@ export class Funding {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => DigifranchiseOwner)
-  @JoinColumn({ name: "franchiseId" })
-  franchiseId: DigifranchiseOwner;
+  @ManyToOne(() => DigifranchiseOwner, { onDelete: 'CASCADE' })
+@JoinColumn({ name: "franchiseId" })
+franchiseId: DigifranchiseOwner;
 
   @Column({ type: "varchar" })
   source: string;

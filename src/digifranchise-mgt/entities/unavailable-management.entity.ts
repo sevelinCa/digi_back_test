@@ -23,9 +23,9 @@ export class UnavailableManagement {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "userId" })
-  userId: UserEntity;
+  userId: UserEntity | null;
 
   // @ManyToOne(() => Digifranchise)
   // @JoinColumn({ name: 'digifranchiseId' })
@@ -34,6 +34,7 @@ export class UnavailableManagement {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.unavailability,
+    { onDelete: 'CASCADE' }
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;

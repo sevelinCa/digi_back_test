@@ -30,6 +30,7 @@ export class DigifranchiseWorkingHours {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
+    { onDelete: 'CASCADE' }
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;

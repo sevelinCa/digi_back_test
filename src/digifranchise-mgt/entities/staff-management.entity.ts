@@ -16,15 +16,19 @@ export class StaffManagement {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
-  userId: UserEntity;
+  userId: UserEntity | null;
 
   // @ManyToOne(() => Digifranchise)
   // @JoinColumn({ name: 'digifranchiseId' })
   // digifranchiseId: Digifranchise | null;
 
-  @ManyToOne(() => DigifranchiseOwner, (ownedFranchise) => ownedFranchise.staff)
+  @ManyToOne(
+    () => DigifranchiseOwner,
+    (ownedFranchise) => ownedFranchise.staff,
+    { onDelete: "CASCADE" }
+  )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 

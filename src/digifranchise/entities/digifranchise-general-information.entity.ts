@@ -16,7 +16,9 @@ export class DigifranchiseGeneralInfo {
   id: string;
 
   // General Information
-  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId)
+  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: "ownedDigifranchiseId" })
   digifranchiseOwner: DigifranchiseOwner;
 

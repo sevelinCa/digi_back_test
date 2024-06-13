@@ -56,7 +56,7 @@ export class DigifranchiseGalleryImage {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedItem) => ownedItem.digifranchiseGalleryImage,
-    { nullable: true },
+    { nullable: true, onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: "digifranchiseOwnedId" })
   digifranchiseOwnedId: DigifranchiseOwner | null;

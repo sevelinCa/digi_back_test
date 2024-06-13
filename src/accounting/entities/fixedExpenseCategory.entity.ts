@@ -19,7 +19,7 @@ export class FixedExpenseCategory {
   @Column({ type: "varchar", length: 255, unique: true, nullable: false })
   fixedExpense: string;
 
-  @ManyToOne(() => UserEntity, { nullable: true })
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 

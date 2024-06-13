@@ -26,12 +26,12 @@ import { DigifranchiseSelectProductOrServiceTable } from "src/digifranchise/enti
 import { DigifranchiseServiceOffered } from "src/digifranchise/entities/digifranchise-service-offered.entity";
 import { DigifranchiseSubProduct } from "src/digifranchise/entities/digifranchise-sub-product.entity";
 import { DigifranchiseSubServices } from "src/digifranchise/entities/digifranchise-sub-service.entity";
+import { DigifranchiseProduct } from "src/digifranchise/entities/digifranchise-product.entity";
+import { DigifranchiseComplianceInfo } from "src/digifranchise/entities/digifranchise-compliance-information.entity";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      UserEntity,
-      OrderTable,
       DigifranchiseGeneralInfo,
       DigifranchiseOwner,
       DigifranchiseGalleryImage,
@@ -39,6 +39,7 @@ import { DigifranchiseSubServices } from "src/digifranchise/entities/digifranchi
       DigifranchiseServiceOffered,
       DigifranchiseSubServices,
       DigifranchiseSubProduct,
+      DigifranchiseProduct,
       DigifranchiseSelectProductOrServiceTable,
       DigifranchiseWorkingHours,
       UnavailableManagement,
@@ -54,6 +55,7 @@ import { DigifranchiseSubServices } from "src/digifranchise/entities/digifranchi
       Unavailability,
       AvailabilitySlotsTimeOneOne,
       UserEntity,
+      DigifranchiseComplianceInfo,
     ]),
   ],
   controllers: [OptionalFunctionalController],

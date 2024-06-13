@@ -1,18 +1,24 @@
-import { Controller, Delete, HttpException, HttpStatus, Param } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { OptionalFunctionalService } from './optional-functional.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+
+  Param,
+  Query,
+} from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import { OptionalFunctionalService } from "./optional-functional.service";
 
 @ApiTags("OPTIONAL - FUNCTIONS")
-@Controller('optional-functional')
+@Controller("optional-functional")
 export class OptionalFunctionalController {
-    constructor(private readonly optionalFunctionalService: OptionalFunctionalService) {}
+  constructor(
+    private readonly optionalFunctionalService: OptionalFunctionalService
+  ) {}
+  @Delete('owner/:phoneNumber')
+  async removeOwner(@Param('phoneNumber') phoneNumber: string): Promise<void> {
+    return this.optionalFunctionalService.removeOwnerByPhoneNumber(phoneNumber);
+  }
 
-    @Delete('delete-all-by-number/:connectNumber')
-    async deleteAllByConnectNumber(@Param('connectNumber') connectNumber: string): Promise<void> {
-      try {
-        await this.optionalFunctionalService.deleteAllByConnectNumber(connectNumber);
-      } catch (error) {
-        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-      }
-    }
 }

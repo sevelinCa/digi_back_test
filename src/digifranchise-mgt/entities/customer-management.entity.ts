@@ -17,9 +17,9 @@ export class CustomerManagement {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "userId" })
-  userId: UserEntity;
+  userId: UserEntity | null;
 
   //  @ManyToOne(() => Digifranchise, { nullable: true })
   //  @JoinColumn({ name: 'digifranchiseId' })
@@ -28,6 +28,7 @@ export class CustomerManagement {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.customer,
+    { onDelete: 'CASCADE' }
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;

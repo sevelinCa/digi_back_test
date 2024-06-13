@@ -24,14 +24,14 @@ export class DigifranchiseServiceOffered {
   @JoinColumn({ name: "digifranchiseId" })
   digifranchiseId: Digifranchise;
 
-  @ManyToOne(() => UserEntity, { nullable: true })
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedItem) => ownedItem.serviceOffered,
-    { nullable: true },
+    { nullable: true, onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: "digifranchiseOwnedId" })
   ownedFranchise: DigifranchiseOwner | null;
