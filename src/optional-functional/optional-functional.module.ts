@@ -28,34 +28,36 @@ import { DigifranchiseSubProduct } from "src/digifranchise/entities/digifranchis
 import { DigifranchiseSubServices } from "src/digifranchise/entities/digifranchise-sub-service.entity";
 import { DigifranchiseProduct } from "src/digifranchise/entities/digifranchise-product.entity";
 import { DigifranchiseComplianceInfo } from "src/digifranchise/entities/digifranchise-compliance-information.entity";
+import { SessionEntity } from "src/session/infrastructure/persistence/relational/entities/session.entity";
+import { AvailableManagement } from "src/digifranchise-mgt/entities/available-management.entity";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      DigifranchiseGeneralInfo,
+      UserEntity,
       DigifranchiseOwner,
+      DigifranchiseComplianceInfo,
+      DigifranchiseGeneralInfo,
       DigifranchiseGalleryImage,
       DigifranchiseExpense,
-      DigifranchiseServiceOffered,
-      DigifranchiseSubServices,
-      DigifranchiseSubProduct,
-      DigifranchiseProduct,
       DigifranchiseSelectProductOrServiceTable,
-      DigifranchiseWorkingHours,
+      DigifranchiseServiceOffered,
+      AvailableManagement,
       UnavailableManagement,
-      CustomerManagement,
-      StaffManagement,
-      SupplierManagement,
       InventoryManagement,
-      CalenderVenue,
+      DigifranchiseSubServices,
       OrderTable,
+      DigifranchiseSubProduct,
+      StaffManagement,
+      CustomerManagement,
+      SupplierManagement,
+      CalenderVenue,
       Availability,
-      AvailabilityWeekDays,
       AvailabilityDayTime,
-      Unavailability,
       AvailabilitySlotsTimeOneOne,
-      UserEntity,
-      DigifranchiseComplianceInfo,
+      AvailabilityWeekDays,
+      Unavailability,
+      SessionEntity,
     ]),
   ],
   controllers: [OptionalFunctionalController],

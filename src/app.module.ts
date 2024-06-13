@@ -50,7 +50,7 @@ import { AssetMgtModule } from "./asset-mgt/asset-mgt.module";
 import { InventoryModule } from "./inventory/inventory.module";
 import { CalendarModule } from "./calendar/calendar.module";
 import { ScheduleModule } from "@nestjs/schedule";
-import { OptionalFunctionalModule } from './optional-functional/optional-functional.module';
+import { OptionalFunctionalModule } from "./optional-functional/optional-functional.module";
 
 @Module({
   imports: [

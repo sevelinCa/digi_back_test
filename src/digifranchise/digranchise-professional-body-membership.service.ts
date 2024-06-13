@@ -6,7 +6,10 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { DigifranchiseProfessionalBodyMembership } from "./entities/digifranchise-professional-body-membership.entity";
-import { AddProfessionalMembershipDto, UpdateProfessionalMembershipDto } from "./dto/add-digifranchise-professional-membership.dto";
+import {
+  AddProfessionalMembershipDto,
+  UpdateProfessionalMembershipDto,
+} from "./dto/add-digifranchise-professional-membership.dto";
 import { ProfessionalBodyEntity } from "src/professional-bodies/entities/professional-body.entity";
 import { Accreditation } from "src/professional-bodies/entities/professional-accreditation.entity";
 
@@ -62,11 +65,14 @@ export class DigifranchiseProfessionalBodyMembershipService {
       await this.digifranchiseProfessionalMembershipRepository.find({
         where: { ownedDigifranchiseId },
       });
-  
-    if (!digifranchiseProfessionalMemberInfo || digifranchiseProfessionalMemberInfo.length === 0) {
+
+    if (
+      !digifranchiseProfessionalMemberInfo ||
+      digifranchiseProfessionalMemberInfo.length === 0
+    ) {
       throw new NotFoundException(`digifranchise info not found`);
     }
-  
+
     const accrediations = await Promise.all(
       digifranchiseProfessionalMemberInfo.map(async (professionalBodyInfo) => {
         const getProfessionaOrg =
@@ -77,22 +83,22 @@ export class DigifranchiseProfessionalBodyMembershipService {
           where: { id: professionalBodyInfo.accreditationId },
         });
         const accreditationInfo = {
-         ...getProfessionaOrg,
+          ...getProfessionaOrg,
           accrediation: getAccrediation,
           renewalDate: professionalBodyInfo.renewalDate,
           documents: professionalBodyInfo.documents,
         };
-  
+
         // Include the DigifranchiseProfessionalBodyMembership entity in the returned object
         const fullMembershipInfo = {
-         ...accreditationInfo,
-         ...professionalBodyInfo, // Spread the original membership info to include all properties
+          ...accreditationInfo,
+          ...professionalBodyInfo, // Spread the original membership info to include all properties
         };
-  
+
         return fullMembershipInfo;
       }),
     );
-  
+
     return accrediations;
   }
   async addDigifranchiseProfessionalMembership(

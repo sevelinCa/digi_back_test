@@ -38,7 +38,7 @@ import { CalenderEventGuest } from "./entities/calender-event-guest.entity";
 @UseGuards(AuthGuard("jwt"), RolesGuard)
 @Controller({ path: "calender", version: "1" })
 export class CalenderMgtController {
-  constructor(private readonly calenderMgtService: CalenderMgtService) { }
+  constructor(private readonly calenderMgtService: CalenderMgtService) {}
 
   @ApiOperation({ summary: "CREATE - Create - Venue" })
   @ApiResponse({
@@ -352,7 +352,6 @@ export class CalenderMgtController {
     }
   }
 
-
   @ApiOperation({
     summary: "GET ALL - Retrieve all venue by user ID",
   })
@@ -362,13 +361,12 @@ export class CalenderMgtController {
   ): Promise<CalenderVenue[]> {
     return this.calenderMgtService.getAllVenuesByUserId(userId);
   }
-
 }
 
 @ApiTags("Calender - VENUE NO AUTH")
 @Controller({ path: "calender-venue-no-auth", version: "1" })
 export class CalenderMgtVenueNoAutController {
-  constructor(private readonly calenderMgtService: CalenderMgtService) { }
+  constructor(private readonly calenderMgtService: CalenderMgtService) {}
 
   @ApiOperation({ summary: "CREATE - Create - Venue" })
   @ApiResponse({

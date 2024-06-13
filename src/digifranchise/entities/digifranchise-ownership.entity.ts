@@ -46,7 +46,7 @@ export class DigifranchiseOwner {
   // @Column({ type: "varchar", length: 255 })
   // userId: string;
 
-  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 

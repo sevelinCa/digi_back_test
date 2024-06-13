@@ -17,7 +17,7 @@ export class SupplierManagement {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
@@ -28,7 +28,7 @@ export class SupplierManagement {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.supplier,
-    { onDelete: 'CASCADE' }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;

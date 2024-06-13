@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { OperatingParameters } from "./entities/operationParamenters.entity";
 import { CreateOperatingParametersDto } from "./dto/Create-DTOs/create-operating-parameters.dto";
 import { findOperatingParametersById } from "src/helper/FindByFunctions";
@@ -21,7 +21,7 @@ export class OperatingParametersService {
     userId: string,
   ): Promise<OperatingParameters> {
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
-      where: { userId: userId },
+      where: { userId: Equal(userId) },
     });
 
     if (!franchiseAccount) {

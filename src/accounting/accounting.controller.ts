@@ -32,7 +32,7 @@ import {
 } from "./fixed-expenses.service";
 import { CreateExpenseDto } from "./dto/Create-DTOs/create-expense.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { ExpenseService } from "./expenses.service";
 import { getDigifranchiseAccountByUserId } from "src/helper/FindByFunctions";
 import { Expense } from "./entities/expense.entity";
@@ -395,7 +395,7 @@ export class FundingsController {
   ) {
     const userId = (req.user as UserEntity).id;
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
-      where: { userId: userId },
+      where: { userId: Equal(userId) },
     });
 
     if (!franchiseAccount) {
@@ -479,7 +479,7 @@ export class DepositsController {
   ) {
     const userId = (req.user as UserEntity).id;
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
-      where: { userId: userId },
+      where: { userId: Equal(userId) },
     });
 
     if (!franchiseAccount) {
@@ -561,7 +561,7 @@ export class OperatingParametersController {
   ) {
     const userId = (req.user as UserEntity).id;
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
-      where: { userId: userId },
+      where: { userId: Equal(userId) },
     });
 
     if (!franchiseAccount) {

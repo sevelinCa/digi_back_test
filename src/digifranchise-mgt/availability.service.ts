@@ -873,7 +873,6 @@ export class AvailabilityService {
       relations: ["bookedSlots"],
     });
 
-
     const slotsTimeOneOne =
       await this.availabilitySlotsTimeOneOneRepository.find({
         where: { ownedDigifranchise: Equal(ownedDigifranchiseId) },

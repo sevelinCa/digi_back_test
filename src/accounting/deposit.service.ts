@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { Deposit } from "./entities/deposit.entity";
 import { CreateDepositDto } from "./dto/Create-DTOs/create-deposit.dto";
 import { findDepositById } from "src/helper/FindByFunctions";
@@ -21,7 +21,7 @@ export class DepositService {
     userId: string,
   ): Promise<Deposit> {
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
-      where: { userId: userId },
+      where: { userId: Equal(userId) },
     });
 
     if (!franchiseAccount) {

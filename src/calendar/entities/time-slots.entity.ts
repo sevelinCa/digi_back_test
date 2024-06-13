@@ -17,11 +17,10 @@ export class AvailabilityTimeSlots {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
-    { onDelete: 'CASCADE' }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
-  
 
   @Column({ type: "boolean", default: false })
   isSlotBooked: boolean;

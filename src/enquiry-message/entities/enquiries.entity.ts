@@ -14,7 +14,7 @@ export class EnquiriesTable {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => DigifranchiseOwner, { onDelete: 'CASCADE' })
+  @ManyToOne(() => DigifranchiseOwner, { onDelete: "CASCADE" })
   @JoinColumn({ name: "digifranchiseOwnerId" })
   digifranchiseOwnerId: DigifranchiseOwner;
 

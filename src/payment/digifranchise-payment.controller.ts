@@ -172,23 +172,22 @@ export class OrderController {
   }
 
   @ApiOperation({ summary: "Create a new order for subs" })
-@ApiResponse({
-  status: HttpStatus.CREATED,
-  description: "Order for subs has been successfully created.",
-})
-@ApiBody({ type: CreateOrderTableDto })
-@Post("create-order-for-subs/:subProductOrSubServiceOrSubCategoryId")
-async createOrderForSubs(
-  @Body() createOrderTableDto: CreateOrderTableDto,
-  @Param("subProductOrSubServiceOrSubCategoryId")
-  subProductOrSubServiceOrSubCategoryId: string,
-): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
-  return this.orderService.createOrderForSubs(
-    createOrderTableDto,
-    subProductOrSubServiceOrSubCategoryId,
-  );
-}
-
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: "Order for subs has been successfully created.",
+  })
+  @ApiBody({ type: CreateOrderTableDto })
+  @Post("create-order-for-subs/:subProductOrSubServiceOrSubCategoryId")
+  async createOrderForSubs(
+    @Body() createOrderTableDto: CreateOrderTableDto,
+    @Param("subProductOrSubServiceOrSubCategoryId")
+    subProductOrSubServiceOrSubCategoryId: string,
+  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+    return this.orderService.createOrderForSubs(
+      createOrderTableDto,
+      subProductOrSubServiceOrSubCategoryId,
+    );
+  }
 
   @ApiOperation({
     summary: "GET - Retrieve an order by its number and owned franchise ID",
@@ -239,7 +238,6 @@ async createOrderForSubs(
       ownedFranchiseId,
     );
   }
-  
 
   @ApiOperation({ summary: "Get all orders for a user with authentication" })
   @ApiResponse({
@@ -268,10 +266,11 @@ async createOrderForSubs(
     @Param("ownedFranchiseId") ownedFranchiseId: string,
   ): Promise<{ orders: OrderTable[]; count: number }> {
     const userId = (req.user as UserEntity).id;
-    return this.orderService.getAllOrdersWithAuthAndUser(userId, ownedFranchiseId);
+    return this.orderService.getAllOrdersWithAuthAndUser(
+      userId,
+      ownedFranchiseId,
+    );
   }
-  
-  
 
   @ApiOperation({ summary: "Delete all orders" })
   @ApiResponse({

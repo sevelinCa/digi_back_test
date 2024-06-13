@@ -16,7 +16,7 @@ export class CalenderVenue {
 
   @ManyToOne(() => DigifranchiseOwner, (owned) => owned.venue, {
     nullable: true,
-    onDelete: 'CASCADE',
+    onDelete: "CASCADE",
   })
   @JoinColumn({ name: "ownedFranchiseId" })
   ownedFranchiseId: DigifranchiseOwner | null;

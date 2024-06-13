@@ -14,7 +14,7 @@ export class Income {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => DigifranchiseOwner, { onDelete: 'CASCADE' })
+  @ManyToOne(() => DigifranchiseOwner, { onDelete: "CASCADE" })
   @JoinColumn({ name: "franchiseId" })
   franchiseId: DigifranchiseOwner;
 

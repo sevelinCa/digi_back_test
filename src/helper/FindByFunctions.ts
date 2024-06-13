@@ -36,7 +36,7 @@ export async function getDigifranchiseAccountByUserId(
   userId: string,
 ): Promise<DigifranchiseOwner | null> {
   const userDigifranchise = await DigifranchiseRepository.findOne({
-    where: { userId: userId },
+    where: { userId: Equal(userId) },
   });
   return userDigifranchise || null;
 }

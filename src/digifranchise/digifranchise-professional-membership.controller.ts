@@ -39,7 +39,7 @@ import {
 @Controller({ path: "digifranchise", version: "1" })
 export class DigifranchiseProfessionalMembershipController {
   constructor(
-    private readonly digifranchiseProfessionalMembershipService: DigifranchiseProfessionalBodyMembershipService
+    private readonly digifranchiseProfessionalMembershipService: DigifranchiseProfessionalBodyMembershipService,
   ) {}
 
   @Roles(RoleEnum.digifranchise_super_admin)
@@ -51,10 +51,10 @@ export class DigifranchiseProfessionalMembershipController {
   @Get("get-professional-memberships-info")
   @HttpCode(HttpStatus.OK)
   async getProfessionalMembershipsInfo(
-    @Query("ownedDigifranchiseId") ownedDigifranchiseId: string
+    @Query("ownedDigifranchiseId") ownedDigifranchiseId: string,
   ): Promise<any[]> {
     return this.digifranchiseProfessionalMembershipService.getDigifranchiseProfessionalMemberships(
-      ownedDigifranchiseId
+      ownedDigifranchiseId,
     );
   }
 
@@ -68,11 +68,11 @@ export class DigifranchiseProfessionalMembershipController {
   @HttpCode(HttpStatus.OK)
   async addProfessionalMembership(
     @Query("ownedDigifranchiseId") ownedDigifranchiseId: string,
-    @Body() dto: AddProfessionalMembershipDto
+    @Body() dto: AddProfessionalMembershipDto,
   ): Promise<DigifranchiseProfessionalBodyMembership> {
     return this.digifranchiseProfessionalMembershipService.addDigifranchiseProfessionalMembership(
       ownedDigifranchiseId,
-      dto
+      dto,
     );
   }
 
@@ -87,12 +87,12 @@ export class DigifranchiseProfessionalMembershipController {
   async updateProfessionalMembership(
     @Query("ownedDigifranchiseId") ownedDigifranchiseId: string,
     @Param("membershipId") membershipId: string,
-    @Body() updateDto: UpdateProfessionalMembershipDto
+    @Body() updateDto: UpdateProfessionalMembershipDto,
   ): Promise<DigifranchiseProfessionalBodyMembership> {
     return this.digifranchiseProfessionalMembershipService.updateDigifranchiseProfessionalMembership(
       ownedDigifranchiseId,
       membershipId,
-      updateDto
+      updateDto,
     );
   }
 }

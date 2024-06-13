@@ -17,8 +17,9 @@ export class SessionEntity extends EntityRelationalHelper implements Session {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity, {
+  @ManyToOne(() => UserEntity, (user) => user.sessions, {
     eager: true,
+    onDelete: "CASCADE",
   })
   @Index()
   user: UserEntity;
