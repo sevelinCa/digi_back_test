@@ -240,7 +240,7 @@ export class FilesController {
           const randomString = generateRandomString(6);
           callback(
             null,
-            `${userId}_${randomString}_qualifications-clearence${extname(file.originalname)}`,
+            `${userId}_${randomString}_qualifications_${extname(file.originalname)}`,
           );
         },
       }),
