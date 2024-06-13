@@ -40,7 +40,11 @@ import { SessionEntity } from "src/session/infrastructure/persistence/relational
       CustomerSubscription,
       Digifranchise,
       DigifranchiseOwner,
+<<<<<<< HEAD
       SessionEntity,
+=======
+      SessionEntity
+>>>>>>> cb32d997 (delete all by phone number)
     ]),
   ],
   controllers: [AuthController],

@@ -106,7 +106,11 @@ export class UserEntity extends EntityRelationalHelper implements User {
   })
   status?: StatusEntity;
 
+<<<<<<< HEAD
   @OneToMany(() => SessionEntity, (session) => session.user)
+=======
+  @OneToMany(() => SessionEntity, session => session.user)
+>>>>>>> cb32d997 (delete all by phone number)
   sessions: SessionEntity[];
 
   // ***********************************************************

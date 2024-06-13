@@ -17,7 +17,11 @@ export class SessionEntity extends EntityRelationalHelper implements Session {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+<<<<<<< HEAD
   @ManyToOne(() => UserEntity, (user) => user.sessions, {
+=======
+  @ManyToOne(() => UserEntity, user => user.sessions, {
+>>>>>>> cb32d997 (delete all by phone number)
     eager: true,
     onDelete: "CASCADE",
   })

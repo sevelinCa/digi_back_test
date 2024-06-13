@@ -240,7 +240,11 @@ export class FilesController {
           const randomString = generateRandomString(6);
           callback(
             null,
+<<<<<<< HEAD
             `${userId}_${randomString}_qualifications${extname(file.originalname)}`,
+=======
+            `${userId}_${randomString}_qualifications_${file.originalname.replace(extname(file.originalname), '')}`,
+>>>>>>> cb32d997 (delete all by phone number)
           );
         },
       }),
