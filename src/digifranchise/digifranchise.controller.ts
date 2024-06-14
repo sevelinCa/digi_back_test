@@ -98,7 +98,6 @@ export class DigifranchiseController {
       if (error instanceof HttpException) {
         throw error;
       }
-
       // Check for specific error message
       if (error.message === "User already own this digifranchise") {
         throw new HttpException(
@@ -111,7 +110,6 @@ export class DigifranchiseController {
       } else {
         // Log the error for debugging purposes
         console.error(error);
-
         // Throw a generic internal server error if the error is unexpected
         throw new HttpException(
           {
