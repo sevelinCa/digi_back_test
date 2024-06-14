@@ -21,7 +21,9 @@ export class DigifranchiseComplianceInfo {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId)
+  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "ownedDigifranchiseId" })
   digifranchiseOwner: DigifranchiseOwner;
 

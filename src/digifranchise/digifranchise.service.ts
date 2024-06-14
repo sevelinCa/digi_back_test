@@ -200,7 +200,7 @@ export class DigifranchiseService {
 
     const createComplianceInfoInstance =
       this.digifranchiseComplianceInfoRepository.create({
-        ownedDigifranchiseId: savedFranchiseOwner[0].id,
+        ownedDigifranchiseId: savedFranchiseOwner.id,
         companyRegisterationNumber: "",
         taxNumber: "",
         taxClearencePin: "",

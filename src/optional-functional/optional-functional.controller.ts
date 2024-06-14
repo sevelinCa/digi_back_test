@@ -19,12 +19,40 @@ export class OptionalFunctionalController {
     private readonly optionalFunctionalService: OptionalFunctionalService,
   ) {}
 
-  @Post("delete-user-by-phone-number/:phoneNumber")
-  async deleteUserByByPhoneNumber(
-    @Param("phoneNumber") phoneNumber: string,
+  @Delete("delete-user-by-phone-number/:connectNumber")
+  async deleteUserByConnectNumber(
+    @Param("connectNumber") connectNumber: string,
   ): Promise<void> {
     try {
-      await this.optionalFunctionalService.deleteUserByPhoneNumber(phoneNumber);
+      await this.optionalFunctionalService.deleteUserByConnectNumber(
+        connectNumber,
+      );
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Delete("delete-by-user-email/:email")
+  async deleteByUserEmail(@Param("email") email: string): Promise<void> {
+    try {
+      await this.optionalFunctionalService.deleteByUserEmail(email);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Delete("delete-by-user-phoneNumber/:phoneNumber")
+  async deleteByUserPhoneNumber(
+    @Param("phoneNumber") email: string,
+  ): Promise<void> {
+    try {
+      await this.optionalFunctionalService.deleteByUserPhoneNumber(email);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

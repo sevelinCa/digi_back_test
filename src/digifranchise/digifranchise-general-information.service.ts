@@ -83,18 +83,12 @@ export class DigifranchiseGeneralInfoService {
         ? removeCountryCode(dto.otherMobileNumber)
         : "";
 
-    if (connectNumberWithoutCC === otherMobileWithoutCC) {
-      throw new ConflictException(
-        "connect number and other mobile should not be the same",
-      );
-    }
-
     const findExistingCC =
       await this.digifranchiseGeneralInfoRepository.findOne({
-        where: [
-          { connectNumberWithOutCountryCode: connectNumberWithoutCC },
-          { otherMobileNumberWithOutCountryCode: connectNumberWithoutCC },
-        ],
+        where: {
+          connectNumberWithOutCountryCode: connectNumberWithoutCC,
+          otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
+        },
       });
 
     if (
@@ -108,10 +102,10 @@ export class DigifranchiseGeneralInfoService {
 
     const findExistingOtherMobile =
       await this.digifranchiseGeneralInfoRepository.findOne({
-        where: [
-          { otherMobileNumberWithOutCountryCode: otherMobileWithoutCC },
-          { connectNumberWithOutCountryCode: otherMobileWithoutCC },
-        ],
+        where: {
+          otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
+          connectNumberWithOutCountryCode: connectNumberWithoutCC,
+        },
       });
 
     if (
