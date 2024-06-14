@@ -1,20 +1,20 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DigifranchiseWorkingHours } from './entities/digifranchise-working-hours.entity';
-import { Between, LessThan, MoreThanOrEqual, Repository } from 'typeorm';
-import { AvailabilityTimeSlots } from './entities/time-slots.entity';
-import * as schedule from 'node-schedule';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DigifranchiseWorkingHours } from "./entities/digifranchise-working-hours.entity";
+import { Between, LessThan, MoreThanOrEqual, Repository } from "typeorm";
+import { AvailabilityTimeSlots } from "./entities/time-slots.entity";
+import * as schedule from "node-schedule";
 // import { DigifranchiseUnavailableTimes } from './entities/unavailable-times.entity';
 import {
   AvailabilityWeekDaysDto,
   SetWorkingHoursDto,
-} from './dto/availability.dto';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { response } from 'express';
-import { exit } from 'process';
-import { startOfToday } from 'date-fns';
-import dayjs from 'dayjs';
-import { Cron, CronExpression } from '@nestjs/schedule';
+} from "./dto/availability.dto";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { response } from "express";
+import { exit } from "process";
+import { startOfToday } from "date-fns";
+import dayjs from "dayjs";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
 @Injectable()
 export class CalendarService {
@@ -24,12 +24,12 @@ export class CalendarService {
     @InjectRepository(DigifranchiseWorkingHours)
     private readonly digifranchiseWorkingHoursRepository: Repository<DigifranchiseWorkingHours>,
     @InjectRepository(AvailabilityTimeSlots)
-    private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>
+    private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
   ) {}
 
   async createWorkingHoursForDigifranchise(
     setWorkingHoursDto: SetWorkingHoursDto,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ) {
     const {
       allowedTimeSlotUnits,
@@ -48,9 +48,9 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
     const isTimeSlotsExists =
@@ -84,15 +84,15 @@ export class CalendarService {
     for (let j = 0; j < remainingDays; j++) {
       for (let i = 0; i < availabilityWeekDays!.length; i++) {
         const day = availabilityWeekDays![i];
-        const dayOfWeek = currentDate.toLocaleDateString('en-US', {
-          weekday: 'long',
+        const dayOfWeek = currentDate.toLocaleDateString("en-US", {
+          weekday: "long",
         });
         if (day.day === dayOfWeek) {
           const slots = this.calculateAvailableTimeSlots(
             day.availabilityDayTime!.startTime,
             day.availabilityDayTime!.endTime,
             allowedTimeSlotUnits,
-            breakTimeBetweenBookedSlots
+            breakTimeBetweenBookedSlots,
           );
           for (const slot of slots) {
             await this.createTimeSlot(
@@ -102,7 +102,7 @@ export class CalendarService {
               false,
               true,
               slot.startTime,
-              slot.endTime
+              slot.endTime,
             );
           }
         }
@@ -113,7 +113,7 @@ export class CalendarService {
       for (const unAvail of unavailability) {
         const setUnavailability = await this.getTimeSlots(
           ownedDigifranchiseId,
-          unAvail.workingDate
+          unAvail.workingDate,
         );
         for (const unSlot of setUnavailability) {
           if (
@@ -124,7 +124,7 @@ export class CalendarService {
           ) {
             await this.digifranchiseAvailableTimeSlotsRepository.update(
               unSlot.id,
-              { isSlotAvailable: false }
+              { isSlotAvailable: false },
             );
           }
         }
@@ -135,28 +135,28 @@ export class CalendarService {
     startTime: string,
     endTime: string,
     slotDuration: number,
-    breakTime: number
+    breakTime: number,
   ) => {
     const startDate = dayjs(`2024-01-01T${startTime}`);
     const endDate = dayjs(`2024-01-01T${endTime}`);
 
-    const durationInMinutes = endDate.diff(startDate, 'minute');
+    const durationInMinutes = endDate.diff(startDate, "minute");
     const timeSlotDuration = slotDuration;
     const breakTimeDuration = breakTime;
     const numberOfSlots = Math.floor(
-      durationInMinutes / (timeSlotDuration + breakTimeDuration)
+      durationInMinutes / (timeSlotDuration + breakTimeDuration),
     );
     const availableTimeSlots: any = [];
     let currentTime = startDate;
     for (let i = 0; i < numberOfSlots; i++) {
-      const slotStartTime = currentTime.format('HH:mm');
-      currentTime = currentTime.add(timeSlotDuration, 'minute');
-      const slotEndTime = currentTime.format('HH:mm');
+      const slotStartTime = currentTime.format("HH:mm");
+      currentTime = currentTime.add(timeSlotDuration, "minute");
+      const slotEndTime = currentTime.format("HH:mm");
       availableTimeSlots.push({
         startTime: slotStartTime,
         endTime: slotEndTime,
       });
-      currentTime = currentTime.add(breakTimeDuration, 'minute');
+      currentTime = currentTime.add(breakTimeDuration, "minute");
     }
     return availableTimeSlots;
   };
@@ -167,7 +167,7 @@ export class CalendarService {
     isSlotBooked: boolean,
     isSlotAvailable: boolean,
     startTime: string,
-    endTime: string
+    endTime: string,
   ): Promise<any> {
     const startOfDay = new Date(workingDate);
     startOfDay.setHours(0, 0, 0, 0);
@@ -196,7 +196,7 @@ export class CalendarService {
           endTime: endTime,
         });
       return this.digifranchiseAvailableTimeSlotsRepository.save(
-        newAvailability
+        newAvailability,
       );
     }
   }
@@ -210,14 +210,14 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
     const workingDays = await this.digifranchiseWorkingHoursRepository.findOne({
       where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
-      relations: ['ownedDigifranchise'],
+      relations: ["ownedDigifranchise"],
     });
     return workingDays;
   }
@@ -234,14 +234,14 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
     const today = new Date();
     const currentTime =
-      today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const timeSlots = await this.digifranchiseAvailableTimeSlotsRepository.find(
       {
         where: {
@@ -249,25 +249,25 @@ export class CalendarService {
           isSlotAvailable: true,
           isSlotBooked: false,
           workingDate: Between(startOfDay, endOfDay),
-          ...(workingDate === today.toISOString().split('T')[0] && {
+          ...(workingDate === today.toISOString().split("T")[0] && {
             startTime: MoreThanOrEqual(currentTime),
           }),
         },
-      }
+      },
     );
     const workingHours = await this.digifranchiseWorkingHoursRepository.findOne(
       {
         where: {
           ownedDigifranchise: { id: ownedDigifranchiseId },
         },
-      }
+      },
     );
     return timeSlots;
   }
 
   async updateWorkingHoursForDigifranchise(
     setWorkingHoursDto: SetWorkingHoursDto,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ) {
     const getOwnedDigifranchise: DigifranchiseOwner | null =
       await this.digifranchiseOwnerRepository.findOne({
@@ -277,15 +277,15 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
     const workingHours = await this.digifranchiseWorkingHoursRepository.findOne(
       {
         where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
-      }
+      },
     );
     await this.digifranchiseWorkingHoursRepository.delete(workingHours!.id);
 
@@ -301,7 +301,7 @@ export class CalendarService {
     try {
       const data = await this.createWorkingHoursForDigifranchise(
         setWorkingHoursDto,
-        ownedDigifranchiseId
+        ownedDigifranchiseId,
       );
       return data;
     } catch (error) {
@@ -318,9 +318,9 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
     for (const slot of timeslots) {
@@ -333,8 +333,8 @@ export class CalendarService {
   }
   private async deleteSlotsAtEndOfDay() {
     try {
-      const startOfDay = dayjs().startOf('day').toDate();
-      const endOfDay = dayjs().endOf('day').toDate();
+      const startOfDay = dayjs().startOf("day").toDate();
+      const endOfDay = dayjs().endOf("day").toDate();
 
       const slotsToDelete =
         await this.digifranchiseAvailableTimeSlotsRepository.find({
@@ -347,17 +347,17 @@ export class CalendarService {
         await this.digifranchiseAvailableTimeSlotsRepository.delete(slot.id);
       }
     } catch (error) {
-      console.error('Error deleting slots:', error);
+      console.error("Error deleting slots:", error);
     }
   }
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  async handleDelete(){
-    await this.deleteSlotsAtEndOfDay()
+  async handleDelete() {
+    await this.deleteSlotsAtEndOfDay();
   }
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   async handleClone() {
     const digis = await this.digifranchiseWorkingHoursRepository.find({
-      relations: ['ownedDigifranchise'],
+      relations: ["ownedDigifranchise"],
     });
     for (const digi of digis) {
       console.log(digi);
@@ -377,7 +377,7 @@ export class CalendarService {
       };
       await this.updateWorkingHoursForDigifranchise(
         payload,
-        digi.ownedDigifranchise!.id
+        digi.ownedDigifranchise!.id,
       );
     }
   }

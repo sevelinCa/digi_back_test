@@ -31,7 +31,7 @@ export class OrderTable {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity, { nullable: true })
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
@@ -60,7 +60,11 @@ export class OrderTable {
   @JoinColumn({ name: "subService" })
   subService: DigifranchiseSubServices | null;
 
-  @ManyToOne(() => DigifranchiseOwner, (ownedFranchise) => ownedFranchise.order)
+  @ManyToOne(
+    () => DigifranchiseOwner,
+    (ownedFranchise) => ownedFranchise.order,
+    { onDelete: "CASCADE" },
+  )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 

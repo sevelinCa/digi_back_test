@@ -21,6 +21,7 @@ import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
 import { Role } from "src/roles/domain/role";
+import { SessionEntity } from "src/session/infrastructure/persistence/relational/entities/session.entity";
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { Role } from "src/roles/domain/role";
       CustomerSubscription,
       Digifranchise,
       DigifranchiseOwner,
+      SessionEntity,
     ]),
   ],
   controllers: [AuthController],

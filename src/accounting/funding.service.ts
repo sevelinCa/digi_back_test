@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { Funding } from "./entities/funding.entity";
 import { CreateFundingDto } from "./dto/Create-DTOs/create-funding.dto";
 import { findFundingById } from "src/helper/FindByFunctions";
@@ -24,7 +24,7 @@ export class FundingService {
     userId: string,
   ): Promise<Funding> {
     const franchiseAccount = await this.DigifranchiseRepository.findOne({
-      where: { userId: userId },
+      where: { userId: Equal(userId) },
     });
 
     if (!franchiseAccount) {

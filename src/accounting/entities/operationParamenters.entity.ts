@@ -14,7 +14,7 @@ export class OperatingParameters {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => DigifranchiseOwner)
+  @ManyToOne(() => DigifranchiseOwner, { onDelete: "CASCADE" })
   @JoinColumn({ name: "franchiseId" })
   franchiseId: DigifranchiseOwner;
 

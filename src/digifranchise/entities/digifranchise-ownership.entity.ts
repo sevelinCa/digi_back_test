@@ -36,14 +36,19 @@ import {
   Unavailability,
 } from "src/digifranchise-mgt/entities/availability.entity";
 import { DigifranchiseWorkingHours } from "src/calendar/entities/digifranchise-working-hours.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 
 @Entity()
 export class DigifranchiseOwner {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: "varchar", length: 255 })
-  userId: string;
+  // @Column({ type: "varchar", length: 255 })
+  // userId: string;
+
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
+  @JoinColumn({ name: "userId" })
+  userId: UserEntity | null;
 
   @Column({ type: "varchar", length: 255 })
   userEmail: string;

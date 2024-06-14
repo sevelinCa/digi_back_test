@@ -16,11 +16,11 @@ export class CustomerSubscription {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
-  userId: UserEntity;
+  userId: UserEntity | null;
 
-  @ManyToOne(() => DigifranchiseOwner)
+  @ManyToOne(() => DigifranchiseOwner, { onDelete: "CASCADE" })
   @JoinColumn({ name: "digifranchiseOwnerId" })
   digifranchiseOwnerId: DigifranchiseOwner;
 

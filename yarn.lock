@@ -1890,7 +1890,7 @@
     webpack "5.90.1"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^10.3.3":
+"@nestjs/common@^10.3.9":
   version "10.3.9"
   resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.3.9.tgz#4e85d8fa6ae201a1c5f49d4d09b205bc3672ed1f"
   integrity sha512-JAQONPagMa+sy/fcIqh/Hn3rkYQ9pQM51vXCFNOM5ujefxUVqn3gwFRMN8Y1+MxdUHipV+8daEj2jEm0IqJzOA==
@@ -9957,6 +9957,11 @@ typescript@5.3.3:
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.3.3.tgz#b3ce6ba258e72e6305ba66f5c9b452aaee3ffe37"
   integrity sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==
+
+typescript@^5.4.5:
+  version "5.4.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
+  integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
 
 uglify-js@^3.1.4:
   version "3.17.4"

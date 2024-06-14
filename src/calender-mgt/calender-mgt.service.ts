@@ -36,7 +36,7 @@ export class CalenderMgtService {
     private readonly bookingRepository: Repository<CalenderBooking>,
     @InjectRepository(DigifranchiseOwner)
     private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>,
-  ) { }
+  ) {}
 
   async createVenue(
     createVenueDto: CreateVenueDto,
@@ -381,18 +381,17 @@ export class CalenderMgtService {
     const digifranchiseOwners = await this.ownedFranchiseRepository.find({
       where: { userId: Equal(userId), deleteAt: IsNull() },
     });
-  
+
     if (!digifranchiseOwners || digifranchiseOwners.length === 0) {
-      throw new NotFoundException(`DigifranchiseOwner with userId ${userId} not found.`);
+      throw new NotFoundException(
+        `DigifranchiseOwner with userId ${userId} not found.`,
+      );
     }
-  
-    const ownedFranchiseIds = digifranchiseOwners.map(owner => owner.id);
-  
+
+    const ownedFranchiseIds = digifranchiseOwners.map((owner) => owner.id);
+
     return this.venueRepository.find({
       where: { ownedFranchiseId: In(ownedFranchiseIds), deleteAt: IsNull() },
     });
   }
-  
 }
-
-

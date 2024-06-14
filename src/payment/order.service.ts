@@ -190,11 +190,11 @@ export class OrderService {
   ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
     let productOrService;
     let productOrServiceType;
-  
+
     productOrService = await this.digifranchiseProductRepository.findOne({
       where: { id: productOrServiceId },
     });
-  
+
     if (productOrService) {
       productOrServiceType = "product";
     } else {
@@ -210,55 +210,55 @@ export class OrderService {
         );
       }
     }
-  
+
     const franchise = await this.digifranchiseRepository.findOne({
       where: { id: productOrService.franchiseId },
     });
     if (!franchise) {
       throw new HttpException("Franchise does not exist", HttpStatus.NOT_FOUND);
     }
-  
+
     const vatRateRecord = await this.rateTableRepository.findOne({
       where: { rateName: "VAT", deleteAt: IsNull() },
     });
-  
+
     if (!vatRateRecord) {
       throw new HttpException("VAT rate not found", HttpStatus.NOT_FOUND);
     }
-  
+
     const vatRate = vatRateRecord.rateNumber;
-  
+
     let unitPrice;
     if (productOrServiceType === "product") {
       unitPrice = productOrService.unitPrice;
     } else if (productOrServiceType === "service") {
       unitPrice = productOrService.unitPrice;
     }
-  
+
     const quantity = createOrderTableDto.quantity;
     const totalAmount = Number(unitPrice) * Number(quantity);
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
-  
+
     const lastOrder = await this.orderRepository.find({
       order: { orderNumber: "DESC" },
       take: 1,
     });
-  
+
     const nextOrderNumber =
       lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
-  
+
     const owned = await this.digifranchiseOwnerRepository.findOne({
       where: { id: Equal(ownedDigifranchiseId) },
     });
-  
+
     if (!owned) {
       throw new HttpException(
         "Digifranchise owner not found",
         HttpStatus.NOT_FOUND,
       );
     }
-  
+
     const newOrder = this.orderRepository.create({
       ...createOrderTableDto,
       productId: productOrServiceType === "product" ? productOrService : null,
@@ -270,7 +270,7 @@ export class OrderService {
       orderCode: uniqid(),
       ownedDigifranchise: owned,
     });
-  
+
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
@@ -278,13 +278,13 @@ export class OrderService {
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-  
+
     const savedOrder = await this.orderRepository.save(newOrder);
     const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-  
+
     let emailStatus = "Email not provided";
     let smsStatus = "SMS not provided";
-  
+
     if (userEmail) {
       try {
         await this.mailService.sendMailToConfirmCreatedOrder({
@@ -299,7 +299,7 @@ export class OrderService {
         emailStatus = "Failed to send email";
       }
     }
-  
+
     if (userPhoneNumber) {
       try {
         await this.smsService.sendOrderCreationConfirmMessage(
@@ -311,14 +311,13 @@ export class OrderService {
         smsStatus = "Failed to send SMS";
       }
     }
-  
+
     return {
       order: savedOrder,
       emailStatus,
       smsStatus,
     };
   }
-  
 
   // async createOrderForSubs(
   //   createOrderTableDto: CreateOrderTableDto,
@@ -423,7 +422,7 @@ export class OrderService {
   ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
     let subProductOrSubServiceOrSubCategory;
     let subProductOrSubServiceOrSubCategoryType;
-  
+
     subProductOrSubServiceOrSubCategory =
       await this.digifranchiseSubProductRepository.findOne({
         where: { id: subProductOrSubServiceOrSubCategoryId },
@@ -454,44 +453,44 @@ export class OrderService {
         }
       }
     }
-  
+
     const franchise = await this.digifranchiseRepository.findOne({
       where: { id: subProductOrSubServiceOrSubCategory.franchiseId },
     });
     if (!franchise) {
       throw new HttpException("Franchise does not exist", HttpStatus.NOT_FOUND);
     }
-  
+
     const vatRateRecord = await this.rateTableRepository.findOne({
       where: { rateName: "VAT", deleteAt: IsNull() },
     });
-  
+
     if (!vatRateRecord) {
       throw new HttpException("VAT rate not found", HttpStatus.NOT_FOUND);
     }
-  
+
     const vatRate = vatRateRecord.rateNumber;
-  
+
     let unitPrice;
     if (subProductOrSubServiceOrSubCategoryType === "subProduct") {
       unitPrice = subProductOrSubServiceOrSubCategory.unitPrice;
     } else if (subProductOrSubServiceOrSubCategoryType === "subService") {
       unitPrice = subProductOrSubServiceOrSubCategory.unitPrice;
     }
-  
+
     const quantity = createOrderTableDto.quantity;
     const totalAmount = Number(unitPrice) * Number(quantity);
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
-  
+
     const lastOrder = await this.orderRepository.find({
       order: { orderNumber: "DESC" },
       take: 1,
     });
-  
+
     const nextOrderNumber =
       lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
-  
+
     const newOrder = this.orderRepository.create({
       ...createOrderTableDto,
       subProduct:
@@ -508,12 +507,12 @@ export class OrderService {
       orderNumber: nextOrderNumber,
       orderCode: uniqid(),
     });
-  
+
     const savedOrder = await this.orderRepository.save(newOrder);
-  
+
     let emailStatus = "Email not provided";
     let smsStatus = "SMS not provided";
-  
+
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
@@ -521,9 +520,9 @@ export class OrderService {
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-  
+
     const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-  
+
     if (userEmail) {
       try {
         await this.mailService.sendMailToConfirmCreatedOrder({
@@ -538,7 +537,7 @@ export class OrderService {
         emailStatus = `Failed to send email: ${error.message}`;
       }
     }
-  
+
     if (userPhoneNumber) {
       try {
         await this.smsService.sendOrderCreationConfirmMessage(
@@ -550,15 +549,13 @@ export class OrderService {
         smsStatus = `Failed to send SMS: ${error.message}`;
       }
     }
-  
+
     return {
       order: savedOrder,
       emailStatus,
       smsStatus,
     };
   }
-
-  
 
   // async createOrderWithAuth(
   //   createOrderTableDto: CreateOrderTableDto,
@@ -727,10 +724,10 @@ export class OrderService {
     if (!user) {
       throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
     }
-  
+
     let productOrServiceOrCategory;
     let productOrServiceOrCategoryType;
-  
+
     productOrServiceOrCategory =
       await this.digifranchiseProductRepository.findOne({
         where: { id: productOrServiceOrCategoryId },
@@ -761,62 +758,62 @@ export class OrderService {
         }
       }
     }
-  
+
     if (!productOrServiceOrCategory) {
       throw new HttpException(
         "Product, service category, or service offered does not exist",
         HttpStatus.NOT_FOUND,
       );
     }
-  
+
     const franchise = await this.digifranchiseRepository.findOne({
       where: { id: productOrServiceOrCategory.franchiseId },
     });
     if (!franchise) {
       throw new HttpException("Franchise does not exist", HttpStatus.NOT_FOUND);
     }
-  
+
     const vatRateRecord = await this.rateTableRepository.findOne({
       where: { rateName: "VAT", deleteAt: IsNull() },
     });
-  
+
     if (!vatRateRecord) {
       throw new HttpException("VAT rate not found", HttpStatus.NOT_FOUND);
     }
-  
+
     const vatRate = vatRateRecord.rateNumber;
-  
+
     let unitPrice;
     if (productOrServiceOrCategoryType === "product") {
       unitPrice = productOrServiceOrCategory.unitPrice;
     } else if (productOrServiceOrCategoryType === "service") {
       unitPrice = productOrServiceOrCategory.unitPrice;
     }
-  
+
     const quantity = createOrderTableDto.quantity;
     const totalAmount = Number(unitPrice) * Number(quantity);
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
-  
+
     const lastOrder = await this.orderRepository.find({
       order: { orderNumber: "DESC" },
       take: 1,
     });
-  
+
     const nextOrderNumber =
       lastOrder.length > 0 ? lastOrder[0].orderNumber + 1 : 1;
-  
+
     const owned = await this.digifranchiseOwnerRepository.findOne({
       where: { id: Equal(ownedDigifranchiseId) },
     });
-  
+
     if (!owned) {
       throw new HttpException(
         "Digifranchise owner not found",
         HttpStatus.NOT_FOUND,
       );
     }
-  
+
     const newOrder = this.orderRepository.create({
       ...createOrderTableDto,
       userId: user,
@@ -835,12 +832,12 @@ export class OrderService {
       orderCode: uniqid(),
       ownedDigifranchise: owned,
     });
-  
+
     const savedOrder = await this.orderRepository.save(newOrder);
-  
+
     let emailStatus = "Email not provided";
     let smsStatus = "SMS not provided";
-  
+
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
@@ -848,9 +845,9 @@ export class OrderService {
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-  
+
     const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-  
+
     if (userEmail) {
       try {
         await this.mailService.sendMailToConfirmCreatedOrder({
@@ -865,7 +862,7 @@ export class OrderService {
         emailStatus = `Failed to send email: ${error.message}`;
       }
     }
-  
+
     if (userPhoneNumber) {
       try {
         await this.smsService.sendOrderCreationConfirmMessage(
@@ -877,14 +874,13 @@ export class OrderService {
         smsStatus = `Failed to send SMS: ${error.message}`;
       }
     }
-  
+
     return {
       order: savedOrder,
       emailStatus,
       smsStatus,
     };
   }
-  
 
   async getAllOrders(
     ownedDigifranchiseId: string,
@@ -1004,7 +1000,7 @@ export class OrderService {
 
   //   return { orders, count: orders.length };
   // }
-  
+
   async getAllOrdersWithAuthAndUser(
     userId: string,
     ownedDigifranchiseId: string,
@@ -1015,12 +1011,12 @@ export class OrderService {
     if (!owned) {
       throw new HttpException("Owned does not exist", HttpStatus.NOT_FOUND);
     }
-  
+
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
     }
-  
+
     const orders = await this.orderRepository.find({
       where: {
         ownedDigifranchise: Equal(owned.id),
@@ -1034,20 +1030,22 @@ export class OrderService {
         "serviceId.serviceGalleryImages",
       ],
     });
-  
+
     const userEmail = user.email;
-  
-    const filteredOrders = orders.filter(order => {
-      const basicInfo = order.orderAdditionalInfo.find(info => info.basic_info);
-      return order.userId?.id === userId || (basicInfo && basicInfo.basic_info.email === userEmail);
+
+    const filteredOrders = orders.filter((order) => {
+      const basicInfo = order.orderAdditionalInfo.find(
+        (info) => info.basic_info,
+      );
+      return (
+        order.userId?.id === userId ||
+        (basicInfo && basicInfo.basic_info.email === userEmail)
+      );
     });
-  
+
     return { orders: filteredOrders, count: filteredOrders.length };
   }
-  
-  
-  
-  
+
   async deleteAllOrders(): Promise<void> {
     await this.orderRepository.delete({});
   }

@@ -39,10 +39,9 @@ export enum MinTimeBetweenBookedSlots {
 export class AvailableManagement {
   @PrimaryGeneratedColumn("uuid")
   id: string;
-
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
-  userId: UserEntity;
+  userId: UserEntity | null;
 
   // @ManyToOne(() => Digifranchise, { nullable: true })
   // @JoinColumn({ name: 'digifranchiseId' })
@@ -51,6 +50,7 @@ export class AvailableManagement {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;

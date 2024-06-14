@@ -16,9 +16,9 @@ export class InventoryManagement {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
-  userId: UserEntity;
+  userId: UserEntity | null;
 
   // @ManyToOne(() => Digifranchise)
   // @JoinColumn({ name: 'digifranchiseId' })
@@ -27,6 +27,7 @@ export class InventoryManagement {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.inventory,
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;

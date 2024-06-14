@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Equal, IsNull, Repository } from "typeorm";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
@@ -84,7 +88,10 @@ export class DigifranchiseService {
 
     const existingOwnership =
       await this.digifranchiseOwnershipRepository.findOne({
-        where: { userId, digifranchiseId: Equal(digifranchiseId) },
+        where: {
+          userId: Equal(userId),
+          digifranchiseId: Equal(digifranchiseId),
+        },
       });
     if (existingOwnership) {
       throw new Error("User already own this digifranchise");
@@ -106,7 +113,7 @@ export class DigifranchiseService {
     }
 
     const newFranchiseOwner = this.digifranchiseOwnershipRepository.create({
-      userId,
+      userId: user,
       userEmail: user?.email ?? "",
       digifranchiseId: digifranchiseId,
       digifranchise: digifranchise,
@@ -193,7 +200,7 @@ export class DigifranchiseService {
 
     const createComplianceInfoInstance =
       this.digifranchiseComplianceInfoRepository.create({
-        ownedDigifranchiseId: savedFranchiseOwner.id,
+        ownedDigifranchiseId: savedFranchiseOwner[0].id,
         companyRegisterationNumber: "",
         taxNumber: "",
         taxClearencePin: "",
@@ -378,7 +385,7 @@ export class DigifranchiseService {
 
   async findAllOwnedDigifranchiseByUserId(userId: string): Promise<any[]> {
     const ownershipRecords = await this.digifranchiseOwnershipRepository.find({
-      where: { userId },
+      where: { userId: Equal(userId) },
       relations: [
         "digifranchise",
         "digifranchiseGeneralInfo",
@@ -426,7 +433,10 @@ export class DigifranchiseService {
   ): Promise<DigifranchiseOwner | null> {
     const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne(
       {
-        where: { userId, digifranchiseId },
+        where: {
+          userId: Equal(userId),
+          digifranchiseId: Equal(digifranchiseId),
+        },
         relations: ["digifranchise", "digifranchiseGeneralInfo"],
       },
     );
@@ -534,31 +544,35 @@ export class DigifranchiseService {
           { connectNumberWithOutCountryCode: phoneNumber },
           { otherMobileNumberWithOutCountryCode: phoneNumber },
         ],
-      }
+      },
     );
-  
+
     if (!digifranchise) {
       throw new NotFoundException("Phone number not found in any column");
     }
-  
+
     if (digifranchise.otherMobileNumberWithOutCountryCode === phoneNumber) {
       if (digifranchise.digifranchisePublishedWithCC) {
-        throw new BadRequestException("Phone number found in other Mobile Number and CC is true");
+        throw new BadRequestException(
+          "Phone number found in other Mobile Number and CC is true",
+        );
       }
     }
-  
+
     if (digifranchise.connectNumberWithOutCountryCode === phoneNumber) {
       if (digifranchise.digifranchisePublishedWithCC) {
         return;
       } else {
-        throw new BadRequestException("Phone number found in connect Number and CC is false");
+        throw new BadRequestException(
+          "Phone number found in connect Number and CC is false",
+        );
       }
     }
   }
-  
+
   async getDigifranchiseByPhoneNumber(phoneNumber: string): Promise<any> {
     await this.checkPhoneNumber(phoneNumber);
-  
+
     const getDigifranchiseGeneralInfoByPhone =
       await this.digifranchiseGeneralInfoRepository.findOne({
         where: [
@@ -566,57 +580,57 @@ export class DigifranchiseService {
           { otherMobileNumberWithOutCountryCode: phoneNumber },
         ],
       });
-  
+
     if (!getDigifranchiseGeneralInfoByPhone) {
       throw new NotFoundException("digifranchise not found");
     }
-  
+
     if (!getDigifranchiseGeneralInfoByPhone.digifranchisePublished) {
       throw new NotFoundException("digifranchise not yet published");
     }
-  
+
     const ownedDigifranchiseId =
       getDigifranchiseGeneralInfoByPhone.ownedDigifranchiseId;
-  
+
     const getDigifranchiseInformation =
       await this.digifranchiseOwnershipRepository.findOne({
         where: { id: ownedDigifranchiseId },
       });
-  
+
     if (!getDigifranchiseInformation) {
       throw new NotFoundException("digifranchise not found");
     }
-  
+
     const getComplianceInfo =
       await this.digifranchiseComplianceInfoRepository.findOne({
         where: { ownedDigifranchiseId: ownedDigifranchiseId },
       });
-  
+
     const getProfessionalBodyMemberships =
       await this.digifranchiseProfessionalBodyMembershipRepository.find({
         where: { ownedDigifranchiseId: ownedDigifranchiseId },
       });
-  
+
     const digifranchise = await this.digifranchiseRepository.findOne({
       where: { id: getDigifranchiseInformation.digifranchiseId },
     });
-  
+
     const digifranchiseOwner = await this.userRepository.findOne({
-      where: { id: getDigifranchiseInformation.userId },
+      where: { id: (getDigifranchiseInformation.userId || "").toString() },
     });
-  
+
     const digifranchiseProducts =
       await this.productService.getSelectedProductsAndSubProductsById(
         getDigifranchiseInformation.digifranchiseId,
-        ownedDigifranchiseId
+        ownedDigifranchiseId,
       );
-  
+
     const digifranchiseServices =
       await this.getSelectedServicesAndSubServicesByDigifranchiseId(
         getDigifranchiseInformation.digifranchiseId,
-        ownedDigifranchiseId
+        ownedDigifranchiseId,
       );
-  
+
     return {
       digifranchiseInfo: digifranchise,
       ownerInfo: digifranchiseOwner,
@@ -627,7 +641,7 @@ export class DigifranchiseService {
       services: digifranchiseServices,
     };
   }
-  
+
   async publishDigifranchiseWeb(digifranchiseId: string): Promise<any> {
     const digifranchiseGeneralInfo =
       await this.digifranchiseGeneralInfoRepository.findOne({

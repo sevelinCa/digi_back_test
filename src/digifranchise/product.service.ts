@@ -110,62 +110,73 @@ export class ProductService {
     return productsWithSubProducts.flat();
   }
 
-  async getSelectedProductsAndSubProductsById(digifranchiseId: string, digifranchiseOwnerId: string): Promise<any> {
-    const owedFranchise = await this.digifranchiseOwnershipRepository.findOne({ where: { id: digifranchiseOwnerId } });
+  async getSelectedProductsAndSubProductsById(
+    digifranchiseId: string,
+    digifranchiseOwnerId: string,
+  ): Promise<any> {
+    const owedFranchise = await this.digifranchiseOwnershipRepository.findOne({
+      where: { id: digifranchiseOwnerId },
+    });
     if (!owedFranchise) {
-      throw new Error('Owned digifranchise does not exist');
+      throw new Error("Owned digifranchise does not exist");
     }
-  
-    const parentDigifranchise = await this.digifranchiseRepository.findOne({ where: { id: digifranchiseId } });
+
+    const parentDigifranchise = await this.digifranchiseRepository.findOne({
+      where: { id: digifranchiseId },
+    });
     if (!parentDigifranchise) {
-      throw new Error('Digifranchise does not exist');
+      throw new Error("Digifranchise does not exist");
     }
-  
+
     const productsOffered = await this.digifranchiseProductRepository.find({
       where: {
         digifranchiseId: Equal(parentDigifranchise.id),
         userId: IsNull(),
       },
-      relations: ['digifranchiseId'],
+      relations: ["digifranchiseId"],
     });
-  
-    const productsWithSubProducts = await Promise.all(productsOffered.map(async (product) => {
-      const subProducts = await this.digifranchiseSubProductRepository.find({
-        where: {
-          digifranchiseProductId: Equal(product.id),
-          digifranchiseOwnedId: Equal(digifranchiseOwnerId),
-        },
-        relations: ['digifranchiseOwnedId'],
-      });
-  
-      const productGalleryImages = await this.digifranchiseGalleryImageRepository.find({
-        where: {
-          digifranchiseProductId: Equal(product.id),
-          digifranchiseOwnedId: Equal(digifranchiseOwnerId),
-        },
-      });
-  
-      const selectedProduct = await this.digifranchiseSelectItemRepository.find({
-        where: {
-          franchiseProduct: Equal(product.id),
-          ownerDigifranchise: Equal(digifranchiseOwnerId),
-          isSelected: true,
-        },
-      });
-  
-      if (selectedProduct.length === 0) {
-        return null;
-      }
-  
-      return {
-        ...product,
-        subProducts,
-        productGalleryImages,
-        selectedProduct,
-      };
-    }));
-  
-    return productsWithSubProducts.filter(product => product !== null).flat();
+
+    const productsWithSubProducts = await Promise.all(
+      productsOffered.map(async (product) => {
+        const subProducts = await this.digifranchiseSubProductRepository.find({
+          where: {
+            digifranchiseProductId: Equal(product.id),
+            digifranchiseOwnedId: Equal(digifranchiseOwnerId),
+          },
+          relations: ["digifranchiseOwnedId"],
+        });
+
+        const productGalleryImages =
+          await this.digifranchiseGalleryImageRepository.find({
+            where: {
+              digifranchiseProductId: Equal(product.id),
+              digifranchiseOwnedId: Equal(digifranchiseOwnerId),
+            },
+          });
+
+        const selectedProduct =
+          await this.digifranchiseSelectItemRepository.find({
+            where: {
+              franchiseProduct: Equal(product.id),
+              ownerDigifranchise: Equal(digifranchiseOwnerId),
+              isSelected: true,
+            },
+          });
+
+        if (selectedProduct.length === 0) {
+          return null;
+        }
+
+        return {
+          ...product,
+          subProducts,
+          productGalleryImages,
+          selectedProduct,
+        };
+      }),
+    );
+
+    return productsWithSubProducts.filter((product) => product !== null).flat();
   }
 
   async createSubDigifranchiseProduct(

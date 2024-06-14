@@ -8,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
 import { RoleEntity } from "../../../../../roles/infrastructure/persistence/relational/entities/role.entity";
 import { StatusEntity } from "../../../../../statuses/infrastructure/persistence/relational/entities/status.entity";
@@ -19,6 +20,7 @@ import { AuthProvidersEnum } from "src/auth/auth-providers.enum";
 // in your project and return an ORM entity directly in response.
 import { Exclude, Expose } from "class-transformer";
 import { User } from "../../../../domain/user";
+import { SessionEntity } from "src/session/infrastructure/persistence/relational/entities/session.entity";
 
 export class Qualifications {
   qualificationName: string;
@@ -103,6 +105,9 @@ export class UserEntity extends EntityRelationalHelper implements User {
     eager: true,
   })
   status?: StatusEntity;
+
+  @OneToMany(() => SessionEntity, (session) => session.user)
+  sessions: SessionEntity[];
 
   // ***********************************************************
 

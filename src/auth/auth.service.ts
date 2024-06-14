@@ -59,7 +59,7 @@ export class AuthService {
     private readonly usersRepository: Repository<User>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-  ) { }
+  ) {}
 
   // async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
   //   const user = await this.usersService.findOne({ email: loginDto.email });
@@ -196,7 +196,7 @@ export class AuthService {
   // }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
-    const user = await this.usersService.findOne({ email: loginDto.email })
+    const user = await this.usersService.findOne({ email: loginDto.email });
 
     if (!user) {
       throw new HttpException(
@@ -248,7 +248,10 @@ export class AuthService {
       );
     }
 
-    const isValidPassword = await bcrypt.compare(loginDto.password, user.password);
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
 
     if (!isValidPassword) {
       throw new HttpException(
@@ -728,7 +731,9 @@ export class AuthService {
   //   });
   // }
 
-  async register(dto: AuthRegisterLoginDto): Promise<{ user: User, academyError: string | null }> {
+  async register(
+    dto: AuthRegisterLoginDto,
+  ): Promise<{ user: User; academyError: string | null }> {
     const csrfToken = await this.getCsrfToken();
 
     const user = await this.usersService.create({
@@ -808,7 +813,6 @@ export class AuthService {
 
     return { user, academyError };
   }
-
 
   async customerRegister(
     digifranchiseId: string,

@@ -16,7 +16,9 @@ export class DigifranchiseGeneralInfo {
   id: string;
 
   // General Information
-  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId)
+  @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "ownedDigifranchiseId" })
   digifranchiseOwner: DigifranchiseOwner;
 
@@ -66,7 +68,7 @@ export class DigifranchiseGeneralInfo {
   digifranchisePublished: boolean;
 
   @Column({ default: true })
-  digifranchisePublishedWithCC: boolean
+  digifranchisePublishedWithCC: boolean;
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
