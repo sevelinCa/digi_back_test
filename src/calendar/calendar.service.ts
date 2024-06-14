@@ -339,7 +339,7 @@ export class CalendarService {
       const slotsToDelete =
         await this.digifranchiseAvailableTimeSlotsRepository.find({
           where: {
-            workingDate: LessThan(endOfDay),
+            workingDate: LessThan(startOfDay),
           },
         });
 
@@ -360,7 +360,6 @@ export class CalendarService {
       relations: ["ownedDigifranchise"],
     });
     for (const digi of digis) {
-      console.log(digi);
       const payload = {
         allowBookingOnPublicHolidays: digi.allowBookingOnPublicHolidays,
         allowedTimeSlotUnits: digi.allowedTimeSlotUnits,
