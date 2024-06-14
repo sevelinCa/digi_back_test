@@ -615,8 +615,12 @@ export class DigifranchiseService {
       where: { id: getDigifranchiseInformation.digifranchiseId },
     });
 
+    // const digifranchiseOwner = await this.userRepository.findOne({
+    //   where: { id: (getDigifranchiseInformation.userId || "").toString() },
+    // });
+
     const digifranchiseOwner = await this.userRepository.findOne({
-      where: { id: (getDigifranchiseInformation.userId || "").toString() },
+      where: { id: getDigifranchiseInformation.userId? getDigifranchiseInformation.userId.toString() : undefined },
     });
 
     const digifranchiseProducts =
