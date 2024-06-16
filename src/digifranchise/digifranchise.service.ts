@@ -595,33 +595,26 @@ export class DigifranchiseService {
     const getDigifranchiseInformation =
       await this.digifranchiseOwnershipRepository.findOne({
         where: { id: ownedDigifranchiseId },
+        relations: ["userId"],
       });
 
     if (!getDigifranchiseInformation) {
       throw new NotFoundException("digifranchise not found");
     }
 
-    const getComplianceInfo =
-      await this.digifranchiseComplianceInfoRepository.findOne({
-        where: { ownedDigifranchiseId: ownedDigifranchiseId },
-      });
-
-    const getProfessionalBodyMemberships =
-      await this.digifranchiseProfessionalBodyMembershipRepository.find({
-        where: { ownedDigifranchiseId: ownedDigifranchiseId },
-      });
-
-    const digifranchise = await this.digifranchiseRepository.findOne({
-      where: { id: getDigifranchiseInformation.digifranchiseId },
-    });
-
     if (!getDigifranchiseInformation.userId) {
-      throw new Error("User ID is missing");
+      throw new NotFoundException(
+        "User ID is not associated with the digifranchise"
+      );
     }
 
     const digifranchiseOwner = await this.userRepository.findOne({
-      where: { id: Equal(getDigifranchiseInformation.userId.id) },
+      where: { id: getDigifranchiseInformation.userId.id },
     });
+
+    if (!digifranchiseOwner) {
+      throw new NotFoundException("digifranchise owner not found");
+    }
 
     const digifranchiseProducts =
       await this.productService.getSelectedProductsAndSubProductsById(
@@ -635,11 +628,25 @@ export class DigifranchiseService {
         ownedDigifranchiseId
       );
 
+    const digifranchise = await this.digifranchiseRepository.findOne({
+      where: { id: getDigifranchiseInformation.digifranchiseId },
+    });
+
+    const getComplianceInfo =
+      await this.digifranchiseComplianceInfoRepository.findOne({
+        where: { ownedDigifranchiseId: ownedDigifranchiseId },
+      });
+
+    const getProfessionalBodyMemberships =
+      await this.digifranchiseProfessionalBodyMembershipRepository.find({
+        where: { ownedDigifranchiseId: ownedDigifranchiseId },
+      });
+
     return {
       digifranchiseInfo: digifranchise,
       ownerInfo: digifranchiseOwner,
       generalInfo: getDigifranchiseGeneralInfoByPhone,
-      complainceInfo: getComplianceInfo,
+      complianceInfo: getComplianceInfo,
       professionalBodiesInfo: getProfessionalBodyMemberships,
       products: digifranchiseProducts,
       services: digifranchiseServices,
