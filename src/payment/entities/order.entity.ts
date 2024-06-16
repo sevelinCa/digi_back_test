@@ -25,6 +25,9 @@ export enum OrderStatus {
   SHIPPED = "SHIPPED",
   DELIVERED = "DELIVERED",
   CANCELLED = "CANCELLED",
+  RETURNED = "RETURNED",
+  DECLINED = "DECLINED",
+  COMPLETE = "COMPLETE",
 }
 @Entity()
 export class OrderTable {
@@ -63,7 +66,7 @@ export class OrderTable {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.order,
-    { onDelete: "CASCADE" },
+    { onDelete: "CASCADE" }
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
