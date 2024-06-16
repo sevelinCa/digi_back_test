@@ -8,6 +8,7 @@
         "digifranchise",
         "Professiona",
         "typeorm",
-        "unavailabilities"
+        "unavailabilities",
+        "uuidv"
     ]
 }
