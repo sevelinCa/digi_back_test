@@ -58,14 +58,14 @@ export class DigifranchiseService {
     @InjectRepository(DigifranchiseSubServices)
     private readonly digifranchiseSubServicesRepository: Repository<DigifranchiseSubServices>,
     @InjectRepository(DigifranchiseSelectProductOrServiceTable)
-    private readonly digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>,
+    private readonly digifranchiseSelectItemRepository: Repository<DigifranchiseSelectProductOrServiceTable>
   ) {}
 
   async createDigifranchise(
-    createDigifranchiseDto: CreateDigifranchiseDto,
+    createDigifranchiseDto: CreateDigifranchiseDto
   ): Promise<Digifranchise> {
     const newDigifranchise = this.digifranchiseRepository.create(
-      createDigifranchiseDto,
+      createDigifranchiseDto
     );
     return this.digifranchiseRepository.save(newDigifranchise);
   }
@@ -76,7 +76,7 @@ export class DigifranchiseService {
 
   async ownDigifranchise(
     userId: string,
-    digifranchiseId: string,
+    digifranchiseId: string
   ): Promise<DigifranchiseOwner> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
@@ -99,7 +99,7 @@ export class DigifranchiseService {
 
     const digifranchiseExists = await checkIfDigifranchiseExists(
       this.digifranchiseRepository,
-      digifranchiseId,
+      digifranchiseId
     );
     if (!digifranchiseExists) {
       throw new Error("Digifranchise not found");
@@ -158,7 +158,7 @@ export class DigifranchiseService {
             description: category.description,
           });
         await this.digifranchiseServiceCategoryRepository.save(
-          ownedServiceCategory,
+          ownedServiceCategory
         );
       }
 
@@ -173,7 +173,7 @@ export class DigifranchiseService {
             digifranchiseServiceId: ownedService,
           });
         await this.digifranchiseGalleryImageRepository.save(
-          ownedServiceGalleryImage,
+          ownedServiceGalleryImage
         );
       }
     }
@@ -195,7 +195,7 @@ export class DigifranchiseService {
         location: "",
       });
     await this.digifranchiseGeneralInfoRepository.save(
-      createGeneralInfoInstance,
+      createGeneralInfoInstance
     );
 
     const createComplianceInfoInstance =
@@ -213,14 +213,14 @@ export class DigifranchiseService {
         otherComplianceDocs: [],
       });
     await this.digifranchiseComplianceInfoRepository.save(
-      createComplianceInfoInstance,
+      createComplianceInfoInstance
     );
 
     return savedFranchiseOwner;
   }
 
   async getDigifranchiseByDigifranchiseId(
-    digifranchiseId: string,
+    digifranchiseId: string
   ): Promise<Digifranchise> {
     const digifranchise = await this.digifranchiseRepository.findOne({
       where: { id: digifranchiseId },
@@ -232,7 +232,7 @@ export class DigifranchiseService {
   }
 
   async findAllServiceOfferedByDigifranchiseId(
-    digifranchiseId: string,
+    digifranchiseId: string
   ): Promise<DigifranchiseServiceOffered[]> {
     return await this.digifranchiseServiceOfferedRepository.find({
       where: {
@@ -250,7 +250,7 @@ export class DigifranchiseService {
 
   async getServicesAndSubServicesByDigifranchiseId(
     digifranchiseId: string,
-    digifranchiseOwnerId: string,
+    digifranchiseOwnerId: string
   ): Promise<any> {
     const owedFranchise = await this.digifranchiseOwnershipRepository.findOne({
       where: { id: digifranchiseOwnerId },
@@ -307,7 +307,7 @@ export class DigifranchiseService {
           serviceGalleryImages,
           selectedService,
         };
-      }),
+      })
     );
 
     return servicesWithSubServices.flat();
@@ -315,7 +315,7 @@ export class DigifranchiseService {
 
   async getSelectedServicesAndSubServicesByDigifranchiseId(
     digifranchiseId: string,
-    digifranchiseOwnerId: string,
+    digifranchiseOwnerId: string
   ): Promise<any> {
     const owedFranchise = await this.digifranchiseOwnershipRepository.findOne({
       where: { id: digifranchiseOwnerId },
@@ -377,7 +377,7 @@ export class DigifranchiseService {
           serviceGalleryImages,
           selectedService,
         };
-      }),
+      })
     );
 
     return servicesWithSubServices.filter((service) => service !== null).flat();
@@ -421,7 +421,7 @@ export class DigifranchiseService {
             services,
           },
         };
-      }),
+      })
     );
 
     return results.flat();
@@ -429,7 +429,7 @@ export class DigifranchiseService {
 
   async findOneOwnedDigifranchiseByUserId(
     userId: string,
-    digifranchiseId: string,
+    digifranchiseId: string
   ): Promise<DigifranchiseOwner | null> {
     const ownershipRecord = await this.digifranchiseOwnershipRepository.findOne(
       {
@@ -438,7 +438,7 @@ export class DigifranchiseService {
           digifranchiseId: Equal(digifranchiseId),
         },
         relations: ["digifranchise", "digifranchiseGeneralInfo"],
-      },
+      }
     );
     return ownershipRecord || null;
   }
@@ -446,7 +446,7 @@ export class DigifranchiseService {
     createDigifranchiseSubServiceOfferedDto: CreateDigifranchiseSubServiceOfferedDto,
     userId: string,
     digifranchiseServiceId: string,
-    digifranchiseOwnerId: string,
+    digifranchiseOwnerId: string
   ): Promise<DigifranchiseSubServices> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -477,7 +477,7 @@ export class DigifranchiseService {
       });
 
     return this.digifranchiseSubServiceOfferedRepository.save(
-      newDigifranchiseSubServiceOffered,
+      newDigifranchiseSubServiceOffered
     );
   }
 
@@ -489,7 +489,7 @@ export class DigifranchiseService {
 
   async getOneSubServiceById(
     userId: string,
-    id: string,
+    id: string
   ): Promise<DigifranchiseSubServices> {
     const serviceOffered =
       await this.digifranchiseSubServiceOfferedRepository.findOne({
@@ -503,7 +503,7 @@ export class DigifranchiseService {
   async updateSubService(
     userId: string,
     id: string,
-    updateDigifranchiseServiceDto: UpdateDigifranchiseSubServiceDto,
+    updateDigifranchiseServiceDto: UpdateDigifranchiseSubServiceDto
   ): Promise<DigifranchiseSubServices> {
     const serviceOffered =
       await this.digifranchiseSubServiceOfferedRepository.findOne({
@@ -517,7 +517,7 @@ export class DigifranchiseService {
 
     try {
       return await this.digifranchiseSubServiceOfferedRepository.save(
-        serviceOffered,
+        serviceOffered
       );
     } catch (error) {
       console.error("Error updating sub service:", error);
@@ -544,7 +544,7 @@ export class DigifranchiseService {
           { connectNumberWithOutCountryCode: phoneNumber },
           { otherMobileNumberWithOutCountryCode: phoneNumber },
         ],
-      },
+      }
     );
 
     if (!digifranchise) {
@@ -554,7 +554,7 @@ export class DigifranchiseService {
     if (digifranchise.otherMobileNumberWithOutCountryCode === phoneNumber) {
       if (digifranchise.digifranchisePublishedWithCC) {
         throw new BadRequestException(
-          "Phone number found in other Mobile Number and CC is true",
+          "Phone number found in other Mobile Number and CC is true"
         );
       }
     }
@@ -564,7 +564,7 @@ export class DigifranchiseService {
         return;
       } else {
         throw new BadRequestException(
-          "Phone number found in connect Number and CC is false",
+          "Phone number found in connect Number and CC is false"
         );
       }
     }
@@ -615,24 +615,24 @@ export class DigifranchiseService {
       where: { id: getDigifranchiseInformation.digifranchiseId },
     });
 
-    // const digifranchiseOwner = await this.userRepository.findOne({
-    //   where: { id: (getDigifranchiseInformation.userId || "").toString() },
-    // });
+    if (!getDigifranchiseInformation.userId) {
+      throw new Error("User ID is missing");
+    }
 
     const digifranchiseOwner = await this.userRepository.findOne({
-      where: { id: getDigifranchiseInformation.userId? getDigifranchiseInformation.userId.toString() : undefined },
+      where: { id: Equal(getDigifranchiseInformation.userId.id) },
     });
 
     const digifranchiseProducts =
       await this.productService.getSelectedProductsAndSubProductsById(
         getDigifranchiseInformation.digifranchiseId,
-        ownedDigifranchiseId,
+        ownedDigifranchiseId
       );
 
     const digifranchiseServices =
       await this.getSelectedServicesAndSubServicesByDigifranchiseId(
         getDigifranchiseInformation.digifranchiseId,
-        ownedDigifranchiseId,
+        ownedDigifranchiseId
       );
 
     return {
@@ -697,7 +697,7 @@ export class DigifranchiseService {
   }
 
   async getDigifranchiseServiceCategoryById(
-    serviceCategoryById: string,
+    serviceCategoryById: string
   ): Promise<DigifranchiseServiceCategory> {
     const category = await this.digifranchiseServiceCategoryRepository.findOne({
       where: { id: serviceCategoryById },
@@ -705,14 +705,14 @@ export class DigifranchiseService {
     });
     if (!category) {
       throw new NotFoundException(
-        `DigifranchiseServiceCategory with ID ${serviceCategoryById} not found`,
+        `DigifranchiseServiceCategory with ID ${serviceCategoryById} not found`
       );
     }
     return category;
   }
 
   async getDigifranchiseServiceOfferedById(
-    serviceOfferedId: string,
+    serviceOfferedId: string
   ): Promise<DigifranchiseServiceOffered> {
     const serviceOffered =
       await this.digifranchiseServiceOfferedRepository.findOne({
@@ -726,14 +726,14 @@ export class DigifranchiseService {
       });
     if (!serviceOffered) {
       throw new NotFoundException(
-        `DigifranchiseServiceOffered with service Id ${serviceOfferedId} not found`,
+        `DigifranchiseServiceOffered with service Id ${serviceOfferedId} not found`
       );
     }
     return serviceOffered;
   }
 
   async getDigifranchiseProductById(
-    productId: string,
+    productId: string
   ): Promise<DigifranchiseProduct> {
     const product = await this.digifranchiseProductRepository.findOne({
       where: { id: productId },
@@ -741,7 +741,7 @@ export class DigifranchiseService {
     });
     if (!product) {
       throw new NotFoundException(
-        `DigifranchiseServiceOffered with service Id ${productId} not found`,
+        `DigifranchiseServiceOffered with service Id ${productId} not found`
       );
     }
     return product;
@@ -749,7 +749,7 @@ export class DigifranchiseService {
 
   async getSelectedItemByOwnerAndUserId(
     ownerId: string,
-    userId: string,
+    userId: string
   ): Promise<DigifranchiseSelectProductOrServiceTable[]> {
     const owner = await this.digifranchiseOwnershipRepository.findOne({
       where: { id: ownerId },
