@@ -9,21 +9,18 @@ import { RoleEnum } from "src/roles/roles.enum";
 @Injectable()
 export class UserSeedService {
   constructor(
-
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async run() {
-    const countAdmin = await this.userRepository.count({
+    const adminExists = await this.userRepository.findOne({
       where: {
-        role: {
-          id: RoleEnum.admin,
-        },
+        email: "admin@digifranchise.co.za",
       },
     });
 
-    if (!countAdmin) {
+    if (!adminExists) {
       if (process.env.SUPER_ADMIN_PASS) {
         const salt = await bcrypt.genSalt();
         const password = await bcrypt.hash(process.env.SUPER_ADMIN_PASS, salt);
@@ -45,12 +42,11 @@ export class UserSeedService {
           }),
         );
       } else {
-        console.log("super admin password not provided");
+        console.log("Super admin password not provided");
       }
     }
 
     await this.seedUsers();
-
   }
 
   private async seedUsers() {
@@ -255,7 +251,9 @@ export class UserSeedService {
     for (const userData of users) {
       const userExists = await this.userRepository.findOne({ where: { email: userData.email } });
       if (!userExists) {
-        const user = this.userRepository.create(userData);
+        const salt = await bcrypt.genSalt();
+        const password = await bcrypt.hash(userData.password, salt);
+        const user = this.userRepository.create({ ...userData, password });
         await this.userRepository.save(user);
       }
     }
