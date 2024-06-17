@@ -15,7 +15,6 @@ export class DigifranchiseGeneralInfo {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  // General Information
   @OneToOne(() => DigifranchiseOwner, (owner) => owner.digifranchiseId, {
     onDelete: "CASCADE",
   })

@@ -7,8 +7,6 @@ import {
   UpdateDateColumn,
   JoinColumn,
 } from "typeorm";
-import { Digifranchise } from "./digifranchise.entity";
-import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { DigifranchiseServiceOffered } from "./digifranchise-service-offered.entity";
 
 @Entity()
@@ -28,7 +26,9 @@ export class DigifranchiseServiceCategory {
   @ManyToOne(
     () => DigifranchiseServiceOffered,
     (service) => service.serviceCategories,
+    { onDelete: "CASCADE" }
   )
+  @JoinColumn({ name: "serviceId" })
   service: DigifranchiseServiceOffered;
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

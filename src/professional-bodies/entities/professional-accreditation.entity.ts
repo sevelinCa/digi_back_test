@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { ProfessionalBodyEntity } from "./professional-body.entity";
 
 @Entity()
@@ -9,7 +9,8 @@ export class Accreditation {
   @Column()
   accreditationName: string;
 
-  @ManyToOne(() => ProfessionalBodyEntity)
+  @ManyToOne(() => ProfessionalBodyEntity, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "professionalBodyId" })
   professionalBody: ProfessionalBodyEntity;
 
   @Column()

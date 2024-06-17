@@ -23,10 +23,7 @@ export class FixedExpenseCategory {
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
-  @OneToMany(
-    () => DigifranchiseExpense,
-    (expenseCateogry) => expenseCateogry.fixedExpenseCategory,
-  )
+  @OneToMany(() => DigifranchiseExpense, (expenseCateogry) => expenseCateogry.fixedExpenseCategory, { cascade: true, onDelete: "CASCADE" })
   digifranchiseExpense: DigifranchiseExpense[];
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

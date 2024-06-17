@@ -19,7 +19,7 @@ export class RatingOrderTable {
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
-  @ManyToOne(() => OrderTable, { nullable: true })
+  @ManyToOne(() => OrderTable, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "orderId" })
   orderId: OrderTable | null;
 

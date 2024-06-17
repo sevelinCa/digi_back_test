@@ -18,7 +18,7 @@ export class DigifranchiseSubProduct {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => DigifranchiseProduct)
+  @ManyToOne(() => DigifranchiseProduct, { onDelete: "CASCADE" })
   @JoinColumn({ name: "digifranchiseProductId" })
   digifranchiseProductId: DigifranchiseProduct;
 
@@ -26,7 +26,11 @@ export class DigifranchiseSubProduct {
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
-  @OneToMany(() => DigifranchiseGalleryImage, (image) => image.subProduct)
+  @OneToMany(
+    () => DigifranchiseGalleryImage,
+    (image) => image.subProduct,
+    { cascade: true, onDelete: "CASCADE" }
+  )
   subProductGalleryImages: DigifranchiseGalleryImage[];
 
   @ManyToOne(() => DigifranchiseOwner, (subs) => subs.subProduct, {

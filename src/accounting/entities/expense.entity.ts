@@ -19,6 +19,7 @@ export class MonthAmount {
   month: string;
   amount: number;
 }
+
 @Entity()
 export class Expense {
   @PrimaryGeneratedColumn("uuid")
@@ -28,7 +29,7 @@ export class Expense {
   @JoinColumn({ name: "franchiseId" })
   franchiseId: DigifranchiseOwner;
 
-  @ManyToOne(() => FixedExpenseCategory)
+  @ManyToOne(() => FixedExpenseCategory, { onDelete: "CASCADE" })
   @JoinColumn({ name: "fixedExpenseId" })
   fixedExpenseCategoryId: FixedExpenseCategory;
 

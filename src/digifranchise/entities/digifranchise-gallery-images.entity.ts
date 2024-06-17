@@ -24,7 +24,7 @@ export class DigifranchiseGalleryImage {
   @ManyToOne(
     () => DigifranchiseServiceOffered,
     (service) => service.serviceGalleryImages,
-    { nullable: true },
+    { nullable: true, onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "digifranchiseServiceId" })
   digifranchiseServiceId: DigifranchiseServiceOffered | null;
@@ -32,7 +32,7 @@ export class DigifranchiseGalleryImage {
   @ManyToOne(
     () => DigifranchiseProduct,
     (product) => product.productGalleryImages,
-    { nullable: true },
+    { nullable: true, onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "digifranchiseProductId" })
   digifranchiseProductId: DigifranchiseProduct | null;
@@ -40,7 +40,7 @@ export class DigifranchiseGalleryImage {
   @ManyToOne(
     () => DigifranchiseSubServices,
     (service) => service.subServiceGalleryImages,
-    { nullable: true },
+    { nullable: true, onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "subServiceId" })
   subService: DigifranchiseSubServices | null;
@@ -48,7 +48,7 @@ export class DigifranchiseGalleryImage {
   @ManyToOne(
     () => DigifranchiseSubProduct,
     (product) => product.subProductGalleryImages,
-    { nullable: true },
+    { nullable: true, onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "subProductId" })
   subProduct: DigifranchiseSubProduct | null;
