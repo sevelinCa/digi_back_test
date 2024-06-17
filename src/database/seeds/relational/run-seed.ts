@@ -7,6 +7,7 @@ import { FixedExpenseSeedService } from "./fixed-expense/seedFixedExpense-seeds.
 import { DigifranchiseServiceSeedService } from "./digifranchise-service/digifranchise-service-seed.service";
 import { DigifranchiseProductSeedService } from "./digifranchise-product/digifranchise-product-seed.service";
 import { ProfessionalBodySeedService } from "./professional-body/professional-body-seed.service";
+import { OrderSeedService } from "./order/order-seeds.service";
 
 const runSeed = async () => {
   const app = await NestFactory.create(SeedModule);
@@ -19,6 +20,7 @@ const runSeed = async () => {
   await app.get(DigifranchiseServiceSeedService).run();
   await app.get(DigifranchiseProductSeedService).run();
   await app.get(ProfessionalBodySeedService).run();
+  await app.get(OrderSeedService).run();
 
   await app.close();
 };
