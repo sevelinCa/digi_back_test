@@ -28,12 +28,14 @@ export class DigifranchiseSelectProductOrServiceTable {
   @ManyToOne(
     () => DigifranchiseServiceOffered,
     (service) => service.selectedItem,
-    { nullable: true },
+    { nullable: true, onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "digifranchiseService" })
   digifranchiseService: DigifranchiseServiceOffered | null;
 
-  @ManyToOne(() => DigifranchiseProduct, (product) => product.selectedItem)
+  @ManyToOne(() => DigifranchiseProduct, (product) => product.selectedItem, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "franchiseProduct" })
   franchiseProduct: DigifranchiseProduct;
 

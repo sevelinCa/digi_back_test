@@ -1,5 +1,5 @@
 import { OrderTable } from "src/payment/entities/order.entity";
-import {} from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -16,11 +16,11 @@ export class OrderIssueTable {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @OneToMany(() => OrderComplaintsTable, (complaints) => complaints.order)
+  @OneToMany(() => OrderComplaintsTable, (complaints) => complaints.orderIssue, { cascade: true, onDelete: "CASCADE" })
   complaints: OrderComplaintsTable[];
 
-  @ManyToOne(() => OrderTable, (order) => order.basicInfos)
-  @JoinColumn({ name: "order" })
+  @ManyToOne(() => OrderTable, (order) => order.issues, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "orderId" })
   order: OrderTable;
 
   @Column({ type: "text" })
@@ -47,9 +47,13 @@ export class OrderComplaintsTable {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => OrderTable, (order) => order.basicInfos)
-  @JoinColumn({ name: "order" })
+  @ManyToOne(() => OrderTable, (order) => order.Complaints, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "orderId" })
   order: OrderTable;
+
+  @ManyToOne(() => OrderIssueTable, (issue) => issue.complaints, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "orderIssueId" })
+  orderIssue: OrderIssueTable;
 
   @Column({ type: "json", nullable: true })
   issues: any[];

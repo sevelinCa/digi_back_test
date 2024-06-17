@@ -19,17 +19,22 @@ export class DigifranchiseSubServices {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => DigifranchiseServiceOffered)
+  @ManyToOne(() => DigifranchiseServiceOffered, { onDelete: "CASCADE" })
   @JoinColumn({ name: "digifranchiseServiceId" })
   digifranchiseServiceId: DigifranchiseServiceOffered;
 
   @OneToMany(
     () => DigifranchiseSubServiceCategory,
     (subCategory) => subCategory.subService,
+    { cascade: true, onDelete: "CASCADE" }
   )
   subServiceCategories: DigifranchiseSubServiceCategory[];
 
-  @OneToMany(() => DigifranchiseGalleryImage, (image) => image.subService)
+  @OneToMany(
+    () => DigifranchiseGalleryImage,
+    (image) => image.subService,
+    { cascade: true, onDelete: "CASCADE" }
+  )
   subServiceGalleryImages: DigifranchiseGalleryImage[];
 
   @ManyToOne(() => DigifranchiseOwner, (subs) => subs.subService, {

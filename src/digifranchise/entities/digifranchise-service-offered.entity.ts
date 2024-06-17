@@ -20,7 +20,7 @@ export class DigifranchiseServiceOffered {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => Digifranchise)
+  @ManyToOne(() => Digifranchise, { onDelete: "CASCADE" })
   @JoinColumn({ name: "digifranchiseId" })
   digifranchiseId: Digifranchise;
 
@@ -31,7 +31,7 @@ export class DigifranchiseServiceOffered {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedItem) => ownedItem.serviceOffered,
-    { nullable: true, onDelete: "CASCADE" },
+    { nullable: true, onDelete: "CASCADE" }
   )
   @JoinColumn({ name: "digifranchiseOwnedId" })
   ownedFranchise: DigifranchiseOwner | null;
@@ -39,13 +39,14 @@ export class DigifranchiseServiceOffered {
   @OneToMany(
     () => DigifranchiseGalleryImage,
     (image) => image.digifranchiseServiceId,
+    { cascade: true, onDelete: "CASCADE" }
   )
   serviceGalleryImages: DigifranchiseGalleryImage[];
 
   @OneToMany(
     () => DigifranchiseSelectProductOrServiceTable,
     (selectItem) => selectItem.digifranchiseService,
-    { nullable: true },
+    { cascade: true, onDelete: "CASCADE" }
   )
   selectedItem: DigifranchiseSelectProductOrServiceTable[];
 
@@ -58,7 +59,11 @@ export class DigifranchiseServiceOffered {
   @Column({ type: "varchar", length: 255 })
   unitPrice: string;
 
-  @OneToMany(() => DigifranchiseServiceCategory, (category) => category.service)
+  @OneToMany(
+    () => DigifranchiseServiceCategory,
+    (category) => category.service,
+    { cascade: true, onDelete: "CASCADE" }
+  )
   serviceCategories: DigifranchiseServiceCategory[];
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

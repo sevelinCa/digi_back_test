@@ -26,7 +26,9 @@ export class DigifranchiseSubServiceCategory {
   @ManyToOne(
     () => DigifranchiseSubServices,
     (subService) => subService.subServiceCategories,
+    { onDelete: "CASCADE" }
   )
+  @JoinColumn({ name: "subServiceId" })
   subService: DigifranchiseSubServices;
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
