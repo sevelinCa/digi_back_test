@@ -220,6 +220,16 @@ export class AuthService {
       );
     }
 
+    if (user.status?.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your email or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
     if (user.role && user.role.id !== RoleEnum.customer) {
       throw new HttpException(
         {
