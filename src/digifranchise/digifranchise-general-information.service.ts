@@ -17,7 +17,7 @@ export class DigifranchiseGeneralInfoService {
   constructor(
     @InjectRepository(DigifranchiseGeneralInfo)
     private readonly digifranchiseGeneralInfoRepository: Repository<DigifranchiseGeneralInfo>,
-  ) {}
+  ) { }
 
   async getDigifranchiseGeneralInformation(
     userId: string,
@@ -83,12 +83,18 @@ export class DigifranchiseGeneralInfoService {
         ? removeCountryCode(dto.otherMobileNumber)
         : "";
 
+    if (connectNumberWithoutCC === otherMobileWithoutCC) {
+      throw new ConflictException(
+        "connect number and other number cannot be the same",
+      );
+    }
+
     const findExistingCC =
       await this.digifranchiseGeneralInfoRepository.findOne({
-        where: {
-          connectNumberWithOutCountryCode: connectNumberWithoutCC,
-          otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
-        },
+        where: [
+          { connectNumberWithOutCountryCode: connectNumberWithoutCC },
+          { otherMobileNumberWithOutCountryCode: connectNumberWithoutCC },
+        ]
       });
 
     if (
@@ -102,11 +108,12 @@ export class DigifranchiseGeneralInfoService {
 
     const findExistingOtherMobile =
       await this.digifranchiseGeneralInfoRepository.findOne({
-        where: {
-          otherMobileNumberWithOutCountryCode: otherMobileWithoutCC,
-          connectNumberWithOutCountryCode: connectNumberWithoutCC,
-        },
+        where: [
+          { otherMobileNumberWithOutCountryCode: otherMobileWithoutCC },
+          { connectNumberWithOutCountryCode: otherMobileWithoutCC }
+        ],
       });
+
 
     if (
       findExistingOtherMobile !== null &&
