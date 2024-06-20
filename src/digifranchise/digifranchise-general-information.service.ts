@@ -120,7 +120,7 @@ export class DigifranchiseGeneralInfoService {
       findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId
     ) {
       throw new ConflictException(
-        "this number is already being used by another digifranchise",
+        "other number is already being used by another digifranchise",
       );
     }
 
