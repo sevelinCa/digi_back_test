@@ -98,6 +98,7 @@ export class DigifranchiseGeneralInfoService {
       });
 
     if (
+      connectNumberWithoutCC !== '' &&
       findExistingCC !== null &&
       findExistingCC?.ownedDigifranchiseId !== ownedDigifranchiseId
     ) {
@@ -105,8 +106,8 @@ export class DigifranchiseGeneralInfoService {
         "connect number is already being used by another digifranchise",
       );
     }
-
-    const findExistingOtherMobile =
+    
+    const findExistingOtherMobile = 
       await this.digifranchiseGeneralInfoRepository.findOne({
         where: [
           { otherMobileNumberWithOutCountryCode: otherMobileWithoutCC },
@@ -114,8 +115,9 @@ export class DigifranchiseGeneralInfoService {
         ],
       });
 
-
+      console.log('......', otherMobileWithoutCC)
     if (
+      otherMobileWithoutCC == '' &&
       findExistingOtherMobile !== null &&
       findExistingOtherMobile?.ownedDigifranchiseId !== ownedDigifranchiseId
     ) {
