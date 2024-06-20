@@ -115,7 +115,6 @@ export class DigifranchiseGeneralInfoService {
         ],
       });
 
-      console.log('......', otherMobileWithoutCC)
     if (
       otherMobileWithoutCC !== '' &&
       findExistingOtherMobile !== null &&
