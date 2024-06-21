@@ -614,11 +614,6 @@ export class OrderService {
         "productId.productGalleryImages",
         "serviceId",
         "serviceId.serviceGalleryImages",
-        "subProduct",
-        "subService",
-        "subProduct.DigifranchiseGalleryImage",
-        "subService.DigifranchiseSubServiceCategory",
-        "subService.DigifranchiseGalleryImage",
       ],
     });
 
@@ -636,6 +631,7 @@ export class OrderService {
 
     return { orders: filteredOrders, count: filteredOrders.length };
   }
+
 
   async deleteAllOrders(): Promise<void> {
     await this.orderRepository.delete({});

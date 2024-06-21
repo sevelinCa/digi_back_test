@@ -59,7 +59,7 @@ export class OptionalFunctionalService {
     await this.userRepository.remove(user);
   }
 
-  async deleteByUserEmail(email: string): Promise<void> {
+  async deleteByFranchiseOwnerEmail(email: string): Promise<void> {
     if (!email) {
       throw new Error("Email must be provided");
     }
@@ -95,6 +95,21 @@ export class OptionalFunctionalService {
     if (!user) {
       throw new NotFoundException(
         `User with Phone Number ${phoneNumber} not found`,
+      );
+    }
+
+    await this.userRepository.remove(user);
+  }
+
+  async deleteByUserEmail(email: string): Promise<void> {
+    if (!email) {
+      throw new Error("Email must be provided");
+    }
+
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(
+        `User with Email ${email} not found`,
       );
     }
 
