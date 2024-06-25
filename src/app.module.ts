@@ -51,10 +51,18 @@ import { InventoryModule } from "./inventory/inventory.module";
 import { CalendarModule } from "./calendar/calendar.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { OptionalFunctionalModule } from "./optional-functional/optional-functional.module";
+import { BullModule } from "@nestjs/bull";
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+    BullModule.forRoot({
+      redis:{
+        host: 'redis-16016.c91.us-east-1-3.ec2.redns.redis-cloud.com',
+        port: 16016,
+        password:'AfCOiBFLIS5QXR2ywRncSnLWjx1GhGep'
+      }
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

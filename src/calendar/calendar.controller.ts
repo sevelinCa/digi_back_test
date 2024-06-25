@@ -29,8 +29,8 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @ApiOperation({ summary: "Set Working Hours" })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard("jwt"), RolesGuard)
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Digifranchise Owner is able to set Working Hours.",

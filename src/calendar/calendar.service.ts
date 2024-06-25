@@ -15,6 +15,8 @@ import { exit } from "process";
 import { startOfToday } from "date-fns";
 import dayjs from "dayjs";
 import { Cron, CronExpression } from "@nestjs/schedule";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
 
 @Injectable()
 export class CalendarService {
@@ -25,6 +27,7 @@ export class CalendarService {
     private readonly digifranchiseWorkingHoursRepository: Repository<DigifranchiseWorkingHours>,
     @InjectRepository(AvailabilityTimeSlots)
     private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
+    @InjectQueue('time-slots') private readonly timeSlotsQueue: Queue,
   ) {}
 
   async createWorkingHoursForDigifranchise(
@@ -173,31 +176,43 @@ export class CalendarService {
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(workingDate);
     endOfDay.setHours(23, 59, 59, 999);
-    const existingSlot =
-      await this.digifranchiseAvailableTimeSlotsRepository.findOne({
-        where: {
-          ownedDigifranchise: { id: ownedDigifranchise.id },
-          day: day,
-          startTime: startTime,
-          endTime: endTime,
-          isSlotBooked: true,
-          workingDate: Between(startOfDay, endOfDay),
-        },
+    // const existingSlot =
+    //   await this.digifranchiseAvailableTimeSlotsRepository.findOne({
+    //     where: {
+    //       ownedDigifranchise: { id: ownedDigifranchise.id },
+    //       day: day,
+    //       startTime: startTime,
+    //       endTime: endTime,
+    //       isSlotBooked: true,
+    //       workingDate: Between(startOfDay, endOfDay),
+    //     },
+    //   });
+    if (1==1) {
+      // const newAvailability =
+      //   this.digifranchiseAvailableTimeSlotsRepository.create({
+      //     ownedDigifranchise: ownedDigifranchise,
+      //     isSlotBooked: isSlotBooked,
+      //     day: day,
+      //     workingDate: workingDate,
+      //     isSlotAvailable: isSlotAvailable,
+      //     startTime: startTime,
+      //     endTime: endTime,
+      //   });
+      // return this.digifranchiseAvailableTimeSlotsRepository.save(
+      //   newAvailability,
+      // );
+      console.log('======slot before creation');
+      await this.timeSlotsQueue.add({
+            ownedDigifranchise: ownedDigifranchise,
+            isSlotBooked: isSlotBooked,
+            day: day,
+            workingDate: workingDate,
+            isSlotAvailable: isSlotAvailable,
+            startTime: startTime,
+            endTime: endTime,
       });
-    if (!existingSlot) {
-      const newAvailability =
-        this.digifranchiseAvailableTimeSlotsRepository.create({
-          ownedDigifranchise: ownedDigifranchise,
-          isSlotBooked: isSlotBooked,
-          day: day,
-          workingDate: workingDate,
-          isSlotAvailable: isSlotAvailable,
-          startTime: startTime,
-          endTime: endTime,
-        });
-      return this.digifranchiseAvailableTimeSlotsRepository.save(
-        newAvailability,
-      );
+      console.log(await this.timeSlotsQueue.client.status);
+      
     }
   }
 
