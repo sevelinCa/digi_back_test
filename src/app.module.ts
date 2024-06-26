@@ -1,67 +1,67 @@
-import { Module } from "@nestjs/common";
-import { UsersModule } from "./users/users.module";
+import { Module } from '@nestjs/common';
+import { UsersModule } from './users/users.module';
 // import { FilesModule } from './files/files.module';
-import { AuthModule } from "./auth/auth.module";
-import databaseConfig from "./database/config/database.config";
-import authConfig from "./auth/config/auth.config";
-import appConfig from "./config/app.config";
-import mailConfig from "./mail/config/mail.config";
+import { AuthModule } from './auth/auth.module';
+import databaseConfig from './database/config/database.config';
+import authConfig from './auth/config/auth.config';
+import appConfig from './config/app.config';
+import mailConfig from './mail/config/mail.config';
 // import fileConfig from './files/config/file.config';
 // import facebookConfig from './auth-facebook/config/facebook.config';
 // import googleConfig from './auth-google/config/google.config';
 // import twitterConfig from './auth-twitter/config/twitter.config';
 // import appleConfig from './auth-apple/config/apple.config';
-import path from "path";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
+import path from 'path';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 // import { AuthAppleModule } from './auth-apple/auth-apple.module';
 // import { AuthFacebookModule } from './auth-facebook/auth-facebook.module';
 // import { AuthGoogleModule } from './auth-google/auth-google.module';
 // import { AuthTwitterModule } from './auth-twitter/auth-twitter.module';
 // import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
-import { HeaderResolver, I18nModule } from "nestjs-i18n";
-import { TypeOrmConfigService } from "./database/typeorm-config.service";
-import { MailModule } from "./mail/mail.module";
-import { HomeModule } from "./home/home.module";
-import { DataSource, DataSourceOptions } from "typeorm";
-import { AllConfigType } from "./config/config.type";
-import { SessionModule } from "./session/session.module";
-import { MailerModule } from "./mailer/mailer.module";
-import { MongooseModule } from "@nestjs/mongoose";
-import { DatabaseConfig } from "./database/config/database-config.type";
+import { HeaderResolver, I18nModule } from 'nestjs-i18n';
+import { TypeOrmConfigService } from './database/typeorm-config.service';
+import { MailModule } from './mail/mail.module';
+import { HomeModule } from './home/home.module';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { AllConfigType } from './config/config.type';
+import { SessionModule } from './session/session.module';
+import { MailerModule } from './mailer/mailer.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { DatabaseConfig } from './database/config/database-config.type';
 // import { AccountingModule } from './accounting/accounting.module';
 // import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
-import { DigifranchiseModule } from "./digifranchise/digifranchise.module";
+import { DigifranchiseModule } from './digifranchise/digifranchise.module';
 // import { InventoryModule } from './inventory/inventory.module';
 // import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
-import { SmsModule } from "./sms/sms.module";
-import { UserModule } from "./user/user.module";
-import { ProfessionalBodiesModule } from "./professional-bodies/professional-bodies.module";
-import { CalenderMgtModule } from "./calender-mgt/calender-mgt.module";
-import { FilesModule } from "./files/files.module";
-import { DigifranchiseMgtModule } from "./digifranchise-mgt/digifranchise-mgt.module";
-import { DigifranchiseSubscriptionModule } from "./digifranchise-subscription/digifranchise-subscription.module";
-import { DigifranchisePaymentModule } from "./payment/digifranchise-payment.module";
+import { SmsModule } from './sms/sms.module';
+import { UserModule } from './user/user.module';
+import { ProfessionalBodiesModule } from './professional-bodies/professional-bodies.module';
+import { CalenderMgtModule } from './calender-mgt/calender-mgt.module';
+import { FilesModule } from './files/files.module';
+import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.module';
+import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/digifranchise-subscription.module';
+import { DigifranchisePaymentModule } from './payment/digifranchise-payment.module';
 // import { ChatModule } from './chat/chat.module';
-import { EnquiryMessageModule } from "./enquiry-message/enquiry-message.module";
-import { RatingOrderModule } from "./rating/rating-order.module";
-import { AccountingModule } from "./accounting/accounting.module";
-import { AssetMgtModule } from "./asset-mgt/asset-mgt.module";
-import { InventoryModule } from "./inventory/inventory.module";
-import { CalendarModule } from "./calendar/calendar.module";
-import { ScheduleModule } from "@nestjs/schedule";
-import { OptionalFunctionalModule } from "./optional-functional/optional-functional.module";
-import { BullModule } from "@nestjs/bull";
+import { EnquiryMessageModule } from './enquiry-message/enquiry-message.module';
+import { RatingOrderModule } from './rating/rating-order.module';
+import { AccountingModule } from './accounting/accounting.module';
+import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { CalendarModule } from './calendar/calendar.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { OptionalFunctionalModule } from './optional-functional/optional-functional.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     BullModule.forRoot({
-      redis:{
-        host: 'redis-16016.c91.us-east-1-3.ec2.redns.redis-cloud.com',
-        port: 16016,
-        password:'AfCOiBFLIS5QXR2ywRncSnLWjx1GhGep'
-      }
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT || ''),
+        password: process.env.REDIS_PASSWORD,
+      },
     }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -76,7 +76,7 @@ import { BullModule } from "@nestjs/bull";
         // twitterConfig,
         // appleConfig,
       ],
-      envFilePath: [".env"],
+      envFilePath: ['.env'],
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
@@ -87,13 +87,13 @@ import { BullModule } from "@nestjs/bull";
 
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => {
-        const i18nPath = path.join(__dirname, "../i18n/");
+        const i18nPath = path.join(__dirname, '../i18n/');
 
         const fallbackLanguage = configService.getOrThrow(
-          "app.fallbackLanguage",
+          'app.fallbackLanguage',
           {
             infer: true,
-          },
+          }
         );
 
         const loaderOptions = {
@@ -111,7 +111,7 @@ import { BullModule } from "@nestjs/bull";
           use: HeaderResolver,
           useFactory: (configService: ConfigService<AllConfigType>) => {
             return [
-              configService.get("app.headerLanguage", {
+              configService.get('app.headerLanguage', {
                 infer: true,
               }),
             ];
