@@ -42,6 +42,22 @@ export class CreateOrderTableDto {
         },
       },
       {
+        availability: [
+          {
+            createdAt: "2024-06-18T12:45:30.529Z",
+            day: "Thursday",
+            deleteAt: null,
+            endTime: "03:58:00",
+            id: "080fbe27-e1a3-4364-a252-c13a032c300e",
+            isSlotAvailable: true,
+            isSlotBooked: false,
+            startTime: "03:43:00",
+            updatedAt: "2024-06-18T12:45:30.529Z",
+            workingDate: "2024-06-27T12:44:25.432Z",
+          },
+        ],
+      },
+      {
         academicLevel: "High School",
         subjectToBeTutored: "Mathematics",
         grade: "10",
@@ -75,6 +91,22 @@ export class UpdateOrderTableDto {
         Name: "Alex Smith",
         Email: "alex.smith@example.com",
         Address: "123 Main St, Anytown, AT 12345",
+      },
+      {
+        availability: [
+          {
+            createdAt: "2024-06-18T12:45:30.529Z",
+            day: "Thursday",
+            deleteAt: null,
+            endTime: "03:58:00",
+            id: "080fbe27-e1a3-4364-a252-c13a032c300e",
+            isSlotAvailable: true,
+            isSlotBooked: false,
+            startTime: "03:43:00",
+            updatedAt: "2024-06-18T12:45:30.529Z",
+            workingDate: "2024-06-27T12:44:25.432Z",
+          },
+        ],
       },
       {
         AcademicLevel: "High School",

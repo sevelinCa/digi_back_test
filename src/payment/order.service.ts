@@ -8,7 +8,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { Brackets, Equal, IsNull, Repository } from "typeorm";
 import { CreateOrderTableDto, UpdateOrderTableDto } from "./dto/order.dto";
-import { OrderTable } from "./entities/order.entity";
+import { OrderStatus, OrderTable } from "./entities/order.entity";
 import { checkIfUserExists } from "src/helper/FindByFunctions";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { DigifranchiseProduct } from "src/digifranchise/entities/digifranchise-product.entity";
@@ -23,6 +23,7 @@ import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-own
 import { MailService } from "src/mail/mail.service";
 import { SmsService } from "src/sms/sms.service";
 import uniqid from "uniqid";
+import { AvailabilityTimeSlots } from "src/calendar/entities/time-slots.entity";
 
 @Injectable()
 export class OrderService {
@@ -50,6 +51,9 @@ export class OrderService {
     private readonly digifranchiseSubServicesRepository: Repository<DigifranchiseSubServices>,
     @InjectRepository(DigifranchiseSubServiceCategory)
     private readonly digifranchiseServiceSubCategoryRepository: Repository<DigifranchiseSubServiceCategory>,
+    @InjectRepository(AvailabilityTimeSlots)
+    private readonly availabilityTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
+  
 
     @Inject(MailService)
     private readonly mailService: MailService,
@@ -536,7 +540,7 @@ export class OrderService {
 
   async updateOrder(
     orderId: string,
-    updateOrderTableDto: UpdateOrderTableDto
+    updateOrderTableDto: UpdateOrderTableDto,
   ): Promise<OrderTable> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
@@ -544,10 +548,45 @@ export class OrderService {
     if (!order) {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
+  
+    const availabilityIds: string[] = [];
+  
+    order.orderAdditionalInfo.forEach(info => {
+      if (Array.isArray(info.availability)) {
+        info.availability.forEach(avail => {
+          if (avail.id) {
+            availabilityIds.push(avail.id);
+          }
+        });
+      } else if ('availability' in info && info.availability) {
+        if (info.availability.id) {
+          availabilityIds.push(info.availability.id);
+        }
+      }
+    });
+    
+    const previousStatus = order.status;
     this.orderRepository.merge(order, updateOrderTableDto);
-    return this.orderRepository.save(order);
+    await this.orderRepository.save(order);
+  
+    if (updateOrderTableDto.status === OrderStatus.CANCELLED && previousStatus !== OrderStatus.CANCELLED) {
+      for (const availId of availabilityIds) {
+        const slot = await this.availabilityTimeSlotsRepository.findOne({ where: { id: availId } });
+        if (slot) {
+          slot.isSlotBooked = false;
+          slot.isSlotAvailable = true;
+          await this.availabilityTimeSlotsRepository.save(slot);
+        }
+      }
+    }
+  
+    return order;
   }
 
+  async cancelOrder(){
+
+    
+  }
   async deleteOrder(orderId: string): Promise<void> {
     const result = await this.orderRepository.delete(orderId);
     if (result.affected === 0) {

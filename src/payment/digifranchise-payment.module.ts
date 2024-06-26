@@ -21,6 +21,7 @@ import { DigifranchiseSubServiceCategory } from "src/digifranchise/entities/digi
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { MailModule } from "src/mail/mail.module";
 import { SmsModule } from "src/sms/sms.module";
+import { AvailabilityTimeSlots } from "src/calendar/entities/time-slots.entity";
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { SmsModule } from "src/sms/sms.module";
       DigifranchiseSubProduct,
       DigifranchiseSubServiceCategory,
       DigifranchiseOwner,
+      AvailabilityTimeSlots,
     ]),
   ],
   providers: [OrderService, RateService, OrderBasicInfoService],
