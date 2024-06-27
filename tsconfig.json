@@ -23,6 +23,6 @@
       "typeorm": ["node_modules/typeorm"]
     }
   },
-  "include": ["src/**/*", "src/auth/auth.service.spec.ts"],
+  "include": ["src/**/*", "test/unit testing/Auth/auth.service.spec.ts"],
   "exclude": ["node_modules", "dist"]
 }
