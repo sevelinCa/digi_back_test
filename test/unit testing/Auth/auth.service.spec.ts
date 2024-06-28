@@ -29,7 +29,7 @@ describe("AuthController", () => {
   describe("register", () => {
     it("should call AuthService.register with the correct parameters and return the result", async () => {
       const dto: AuthRegisterLoginDto = {
-        email: "test@example.com",
+        email: "testing@gmail.com",
         password: "strongPassword",
         firstName: "John",
         lastName: "Doe",

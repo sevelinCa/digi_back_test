@@ -7,6 +7,8 @@ import {
   IsOptional,
   IsArray,
   IsString,
+  IsNumber,
+  MinLength,
 } from "class-validator";
 
 export enum OrderStatus {
@@ -29,7 +31,7 @@ export class CreateOrderTableDto {
 
   @ApiProperty({ example: "2024-03-15T00:00:00Z" })
   @IsNotEmpty()
-  OrderDate: Date;
+  orderDate: Date;
 
   @ApiProperty({
     example: [
@@ -67,6 +69,12 @@ export class CreateOrderTableDto {
   })
   @IsArray()
   orderAdditionalInfo: any[];
+
+  @ApiProperty({ example: 100.0 })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  price: number;
 }
 
 export class UpdateOrderTableDto {
@@ -120,7 +128,14 @@ export class UpdateOrderTableDto {
   @IsOptional()
   @IsArray()
   orderAdditionalInfo?: any[];
+
+  @ApiProperty({ example: 100.0, required: false })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  price?: number;
 }
+
 export class CreateOrderBasicInfo {
   @ApiProperty({ example: "John Doe" })
   @IsNotEmpty()
