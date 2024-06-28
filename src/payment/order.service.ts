@@ -114,7 +114,9 @@ export class OrderService {
     }
 
     const quantity = createOrderTableDto.quantity;
-    const totalAmount = Number(unitPrice) * Number(quantity);
+    // const totalAmount = Number(unitPrice) * Number(quantity);
+    const totalAmount = Number(createOrderTableDto.price);
+
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
 
@@ -260,7 +262,9 @@ export class OrderService {
     }
 
     const quantity = createOrderTableDto.quantity;
-    const totalAmount = Number(unitPrice) * Number(quantity);
+    // const totalAmount = Number(unitPrice) * Number(quantity);
+    const totalAmount = Number(createOrderTableDto.price);
+
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
 
@@ -415,7 +419,9 @@ export class OrderService {
     }
 
     const quantity = createOrderTableDto.quantity;
-    const totalAmount = Number(unitPrice) * Number(quantity);
+    // const totalAmount = Number(unitPrice) * Number(quantity);
+    const totalAmount = Number(createOrderTableDto.price);
+
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
 
@@ -720,7 +726,9 @@ export class OrderService {
 
     const vatRate = vatRateRecord.rateNumber;
     const quantity = createOrderTableDto.quantity;
-    const totalAmount = Number(unitPrice) * Number(quantity);
+    // const totalAmount = Number(unitPrice) * Number(quantity);
+    const totalAmount = Number(createOrderTableDto.price);
+
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
 
@@ -843,7 +851,9 @@ export class OrderService {
 
     const vatRate = vatRateRecord.rateNumber;
     const quantity = createOrderTableDto.quantity;
-    const totalAmount = Number(unitPrice) * Number(quantity);
+    // const totalAmount = Number(unitPrice) * Number(quantity);
+    const totalAmount = Number(createOrderTableDto.price);
+
     const vatAmount =
       Number(unitPrice) * Number(quantity) * ((vatRate as number) / 100);
 
