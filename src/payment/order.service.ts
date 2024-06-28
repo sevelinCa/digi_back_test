@@ -851,7 +851,7 @@ export class OrderService {
 
     const vatRate = vatRateRecord.rateNumber;
     const quantity = createOrderTableDto.quantity;
-    // const totalAmount = Number(unitPrice) * Number(quantity);
+    // const totalAmount = Number(unitPrice) * Number(quantity);\\\\
     const totalAmount = Number(createOrderTableDto.price);
 
     const vatAmount =
