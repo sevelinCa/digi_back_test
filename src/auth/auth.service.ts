@@ -254,6 +254,16 @@ export class AuthService {
       );
     }
 
+    if (user.status?.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your email or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
     if (!user.password) {
       throw new HttpException(
         {
@@ -899,6 +909,16 @@ export class AuthService {
       );
     }
 
+    if (user.status?.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your email or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
     if (!user.password) {
       throw new HttpException(
         {
@@ -984,6 +1004,16 @@ export class AuthService {
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    if (user.status?.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your email or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN,
       );
     }
 
