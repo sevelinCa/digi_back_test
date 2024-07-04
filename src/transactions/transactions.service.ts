@@ -11,6 +11,67 @@ export class TransactionsService {
   ) {}
   
 
+  async createTransaction(createTransactionDto: CreateTransactionDto): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    console.log('Access Token:', accessToken);
+
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const mutation = gql`
+      mutation transactionCreate(
+        $title: String!,
+        $description: String!,
+        $industry: Industry!,
+        $currency: Currency!,
+        $feeAllocation: FeeAllocation!,
+        $allocations: [CreateAllocationInput!]!,
+        $parties: [PartyInput!]!
+      ) {
+        transactionCreate(input: {
+          title: $title,
+          description: $description,
+          industry: $industry,
+          currency: $currency,
+          feeAllocation: $feeAllocation,
+          allocations: { create: $allocations },
+          parties: { create: $parties }
+        }) {
+          id
+          title
+          createdAt
+        }
+      }
+    `;
+
+    const variables = {
+      title: createTransactionDto.title,
+      description: createTransactionDto.description,
+      industry: createTransactionDto.industry,
+      currency: createTransactionDto.currency,
+      feeAllocation: createTransactionDto.feeAllocation,
+      allocations: createTransactionDto.allocations,
+      parties: createTransactionDto.parties,
+    };
+
+    console.log('Request Variables:', variables);
+
+    try {
+      const response = await client.request(mutation, variables);
+      console.log('GraphQL Response:', response);
+      return response;
+    } catch (error) {
+      console.error('GraphQL Error:', error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
 
 
   async createToken(createTokenDto: CreateTokenDto): Promise<any> {
