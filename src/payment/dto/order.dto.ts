@@ -75,11 +75,6 @@ export class CreateOrderTableDto {
   @IsNumber()
   @Min(0)
   price: number;
-
-  @ApiProperty({ example: false, required: false })
-  @IsOptional()
-  @IsBoolean()
-  useEscrow?: boolean;
 }
 
 export class UpdateOrderTableDto {

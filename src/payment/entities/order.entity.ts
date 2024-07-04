@@ -98,9 +98,6 @@ export class OrderTable {
 
   @Column({ type: "decimal", precision: 10, scale: 2, nullable: true })
   vatAmount: number | null;
-
-  @Column({ default: false })
-  useEscrow: boolean;
   
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

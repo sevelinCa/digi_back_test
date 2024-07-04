@@ -51,6 +51,7 @@ import { InventoryModule } from "./inventory/inventory.module";
 import { CalendarModule } from "./calendar/calendar.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { OptionalFunctionalModule } from "./optional-functional/optional-functional.module";
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -142,6 +143,7 @@ import { OptionalFunctionalModule } from "./optional-functional/optional-functio
     RatingOrderModule,
     CalendarModule,
     OptionalFunctionalModule,
+    TransactionsModule,
     // ChatModule
   ],
 })
