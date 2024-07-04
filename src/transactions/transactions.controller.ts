@@ -9,7 +9,10 @@ import { CreateTokenDto } from './dto/transaction-token.dto';
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
   
-
+  @Post('create-transaction')
+  async create(@Body() createTransactionDto: CreateTransactionDto): Promise<any> {
+    return this.transactionsService.createTransaction(createTransactionDto);
+  }
 
   @Post('create-token')
   async createToken(@Body() createTokenDto: CreateTokenDto): Promise<any> {
