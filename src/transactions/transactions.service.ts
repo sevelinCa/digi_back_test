@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionsAuthService } from './transactions-auth.service';
 import { GraphQLClient, gql } from 'graphql-request';
+import { CreateTransactionDto } from './dto/transactions.dto';
 import { CreateTokenDto } from './dto/transaction-token.dto';
 
 @Injectable()
@@ -9,6 +10,9 @@ export class TransactionsService {
     private transactionsAuthService: TransactionsAuthService,
   ) {}
   
+
+
+
   async createToken(createTokenDto: CreateTokenDto): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
@@ -37,5 +41,43 @@ export class TransactionsService {
     return client.request(mutation, variables);
   }
 
+  async getTokens(): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
 
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const query = gql`
+      query {
+        tokens {
+          data {
+            id
+            name
+            reference
+            user {
+              givenName
+              familyName
+              email
+              mobile
+            }
+            organization {
+              name
+              tradeName
+              type
+              registration
+              taxNumber
+            }
+          }
+        }
+      }
+    `;
+
+    return client.request(query);
+  }
 }

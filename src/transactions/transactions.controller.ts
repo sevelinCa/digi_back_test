@@ -1,5 +1,6 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body,Get } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
+import { CreateTransactionDto } from './dto/transactions.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateTokenDto } from './dto/transaction-token.dto';
 
@@ -7,6 +8,7 @@ import { CreateTokenDto } from './dto/transaction-token.dto';
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
+  
 
 
   @Post('create-token')
@@ -14,4 +16,8 @@ export class TransactionsController {
     return this.transactionsService.createToken(createTokenDto);
   }
 
+  @Get('tokens')
+  async getTokens(): Promise<any> {
+    return this.transactionsService.getTokens();
+  }
 }
