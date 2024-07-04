@@ -8,7 +8,7 @@ import {
   IsArray,
   IsString,
   IsNumber,
-  MinLength,
+  IsBoolean,
 } from "class-validator";
 
 export enum OrderStatus {

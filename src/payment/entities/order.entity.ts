@@ -98,7 +98,7 @@ export class OrderTable {
 
   @Column({ type: "decimal", precision: 10, scale: 2, nullable: true })
   vatAmount: number | null;
-
+  
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
