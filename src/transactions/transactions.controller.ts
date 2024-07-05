@@ -29,5 +29,8 @@ export class TransactionsController {
     return this.transactionsService.getAllTransactions();
   }
 
-
+  @Get('getOnTransaction/:id')
+  async getOneTransaction(@Param('id') transactionId: string): Promise<any> {
+    return this.transactionsService.getOneTransaction(transactionId);
+  }
 }
