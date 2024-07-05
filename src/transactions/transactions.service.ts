@@ -141,4 +141,42 @@ export class TransactionsService {
 
     return client.request(query);
   }
+
+  async getAllTransactions(): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const query = gql`
+      query transactions {
+        transactions {
+          data {
+            title
+            description
+            industry
+            state
+            createdAt
+          }
+        }
+      }
+    `;
+  
+    try {
+      const response = await client.request(query);
+      console.log('GraphQL Response:', response);
+      return response;
+    } catch (error) {
+      console.error('GraphQL Error:', error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
+
+
 }
