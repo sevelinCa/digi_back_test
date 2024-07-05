@@ -1,4 +1,4 @@
-import { Controller, Post, Body,Get } from '@nestjs/common';
+import { Controller, Post, Body,Get, Param } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/transactions.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -22,5 +22,15 @@ export class TransactionsController {
   @Get('tokens')
   async getTokens(): Promise<any> {
     return this.transactionsService.getTokens();
+  }
+
+  @Get('getAllTransaction')
+  async getAllTransactions(): Promise<any> {
+    return this.transactionsService.getAllTransactions();
+  }
+
+  @Get('getOnTransaction/:id')
+  async getOneTransaction(@Param('id') transactionId: string): Promise<any> {
+    return this.transactionsService.getOneTransaction(transactionId);
   }
 }

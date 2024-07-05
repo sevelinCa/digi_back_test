@@ -141,4 +141,95 @@ export class TransactionsService {
 
     return client.request(query);
   }
+
+  async getAllTransactions(): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const query = gql`
+      query transactions {
+        transactions {
+          data {
+            id
+            title
+            description
+            industry
+            state
+            createdAt
+          }
+        }
+      }
+    `;
+  
+    try {
+      const response = await client.request(query);
+      console.log('GraphQL Response:', response);
+  
+      if (!response || !response.transactions || !response.transactions.data) {
+        throw new Error('Invalid response structure');
+      }
+  
+      return response.transactions.data;
+    } catch (error) {
+      if (error.response?.errors) {
+        console.error('GraphQL Error:', error.response.errors);
+        throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      } else {
+        console.error('Error:', error);
+        throw new Error(`Unexpected Error: ${error.message}`);
+      }
+    }
+  }
+
+  async getOneTransaction(transactionId: string): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const query = gql`
+    query transaction($id: ID!) {
+      transaction(id: $id) {
+        id
+        title
+        createdAt
+        parties {
+          id
+          name
+          role
+          details {
+            user {
+              givenName
+              familyName
+              email
+            }
+          }
+        }
+      }
+    }
+  `;
+  
+  try {
+    const response = await client.request(query, { id: transactionId });
+    console.log('GraphQL Response:', response);
+    return response;
+  } catch (error) {
+    console.error('GraphQL Error:', error.response.errors);
+    throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+  }
+  }
 }
