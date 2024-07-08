@@ -43,14 +43,15 @@ import { DigifranchiseMgtModule } from './digifranchise-mgt/digifranchise-mgt.mo
 import { DigifranchiseSubscriptionModule } from './digifranchise-subscription/digifranchise-subscription.module';
 import { DigifranchisePaymentModule } from './payment/digifranchise-payment.module';
 // import { ChatModule } from './chat/chat.module';
-import { EnquiryMessageModule } from './enquiry-message/enquiry-message.module';
-import { RatingOrderModule } from './rating/rating-order.module';
-import { AccountingModule } from './accounting/accounting.module';
-import { AssetMgtModule } from './asset-mgt/asset-mgt.module';
-import { InventoryModule } from './inventory/inventory.module';
-import { CalendarModule } from './calendar/calendar.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { OptionalFunctionalModule } from './optional-functional/optional-functional.module';
+import { EnquiryMessageModule } from "./enquiry-message/enquiry-message.module";
+import { RatingOrderModule } from "./rating/rating-order.module";
+import { AccountingModule } from "./accounting/accounting.module";
+import { AssetMgtModule } from "./asset-mgt/asset-mgt.module";
+import { InventoryModule } from "./inventory/inventory.module";
+import { CalendarModule } from "./calendar/calendar.module";
+import { ScheduleModule } from "@nestjs/schedule";
+import { OptionalFunctionalModule } from "./optional-functional/optional-functional.module";
+import { TransactionsModule } from './transactions/transactions.module';
 import { BullModule } from '@nestjs/bull';
 
 @Module({
@@ -150,6 +151,7 @@ import { BullModule } from '@nestjs/bull';
     RatingOrderModule,
     CalendarModule,
     OptionalFunctionalModule,
+    TransactionsModule,
     // ChatModule
   ],
 })

@@ -217,7 +217,7 @@ export class CalendarService {
   async handleDelete() {
     await this.deleteSlotsAtEndOfDay();
   }
-  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  @Cron('0 0 25 * *')
   async handleClone() {
     const digis = await this.digifranchiseWorkingHoursRepository.find({
       relations: ['ownedDigifranchise'],

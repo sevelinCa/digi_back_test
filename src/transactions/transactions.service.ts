@@ -1,0 +1,331 @@
+import { Injectable } from '@nestjs/common';
+import { TransactionsAuthService } from './transactions-auth.service';
+import { GraphQLClient, gql } from 'graphql-request';
+import { CreateTransactionDto } from './dto/transactions.dto';
+import { CreateTokenDto } from './dto/transaction-token.dto';
+import { CreateDepositDto } from './dto/deposit.dto';
+
+@Injectable()
+export class TransactionsService {
+  constructor(
+    private transactionsAuthService: TransactionsAuthService,
+  ) {}
+  
+
+  async createTransaction(createTransactionDto: CreateTransactionDto): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    console.log('Access Token:', accessToken);
+
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const mutation = gql`
+      mutation transactionCreate(
+        $title: String!,
+        $description: String!,
+        $industry: Industry!,
+        $currency: Currency!,
+        $feeAllocation: FeeAllocation!,
+        $allocations: [CreateAllocationInput!]!,
+        $parties: [PartyInput!]!
+      ) {
+        transactionCreate(input: {
+          title: $title,
+          description: $description,
+          industry: $industry,
+          currency: $currency,
+          feeAllocation: $feeAllocation,
+          allocations: { create: $allocations },
+          parties: { create: $parties }
+        }) {
+          id
+          title
+          createdAt
+        }
+      }
+    `;
+
+    const variables = {
+      title: createTransactionDto.title,
+      description: createTransactionDto.description,
+      industry: createTransactionDto.industry,
+      currency: createTransactionDto.currency,
+      feeAllocation: createTransactionDto.feeAllocation,
+      allocations: createTransactionDto.allocations,
+      parties: createTransactionDto.parties,
+    };
+
+    console.log('Request Variables:', variables);
+
+    try {
+      const response = await client.request(mutation, variables);
+      console.log('GraphQL Response:', response);
+      return response;
+    } catch (error) {
+      console.error('GraphQL Error:', error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
+
+
+  async createToken(createTokenDto: CreateTokenDto): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const mutation = gql`
+      mutation tokenCreate($input: TokenInput!) {
+        tokenCreate(input: $input) {
+          id
+          name
+        }
+      }
+    `;
+
+    const variables = {
+      input: createTokenDto,
+    };
+
+    return client.request(mutation, variables);
+  }
+
+  async getTokens(): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const query = gql`
+      query {
+        tokens {
+          data {
+            id
+            name
+            reference
+            user {
+              givenName
+              familyName
+              email
+              mobile
+            }
+            organization {
+              name
+              tradeName
+              type
+              registration
+              taxNumber
+            }
+          }
+        }
+      }
+    `;
+
+    return client.request(query);
+  }
+
+  async getAllTransactions(): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const query = gql`
+      query transactions {
+        transactions {
+          data {
+            id
+            title
+            description
+            industry
+            state
+            createdAt
+          }
+        }
+      }
+    `;
+  
+    try {
+      const response = await client.request(query);
+      console.log('GraphQL Response:', response);
+  
+      if (!response || !response.transactions || !response.transactions.data) {
+        throw new Error('Invalid response structure');
+      }
+  
+      return response.transactions.data;
+    } catch (error) {
+      if (error.response?.errors) {
+        console.error('GraphQL Error:', error.response.errors);
+        throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      } else {
+        console.error('Error:', error);
+        throw new Error(`Unexpected Error: ${error.message}`);
+      }
+    }
+  }
+
+  async getOneTransaction(transactionId: string): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const query = gql`
+    query transaction($id: ID!) {
+      transaction(id: $id) {
+        id
+        title
+        createdAt
+        parties {
+          id
+          name
+          role
+          details {
+            user {
+              givenName
+              familyName
+              email
+            }
+          }
+        }
+      }
+    }
+  `;
+  
+  try {
+    const response = await client.request(query, { id: transactionId });
+    console.log('GraphQL Response:', response);
+    return response;
+  } catch (error) {
+    console.error('GraphQL Error:', error.response.errors);
+    throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+  }
+  }
+
+
+  async createDeposit(createDepositDto: CreateDepositDto): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const mutation = gql`
+      mutation transactionDeposit(
+        $id: ID!,
+        $method: DepositMethod!,
+        $cardholderName: String!,
+        $cardNumber: String!,
+        $expiryDate: String!,
+        $cvv: String!
+      ) {
+        transactionDeposit(
+          id: $id,
+          method: $method,
+          cardholderName: $cardholderName,
+          cardNumber: $cardNumber,
+          expiryDate: $expiryDate,
+          cvv: $cvv
+        ) {
+          id
+          processed
+        }
+      }
+    `;
+
+    const variables = {
+      id: createDepositDto.transactionId,
+      method: 'Visa',
+      cardholderName: createDepositDto.cardholderName,
+      cardNumber: createDepositDto.cardNumber,
+      expiryDate: createDepositDto.expiryDate,
+      cvv: createDepositDto.cvv,
+    };
+
+    try {
+      const response = await client.request(mutation, variables);
+      return response.transactionDeposit;
+    } catch (error) {
+      console.error('GraphQL Error:', error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
+
+
+  async deleteTransaction(transactionId: string): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+  
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const mutation = gql`
+      mutation transactionDelete($id: ID!) {
+        transactionDelete(id: $id) {
+          id
+          state
+          createdAt
+          updatedAt
+          # Specify other fields you need
+        }
+      }
+    `;
+  
+    const variables = {
+      id: transactionId,
+    };
+  
+    try {
+      const response = await client.request(mutation, variables);
+      console.log('GraphQL Response:', response);
+      return response.transactionDelete;
+    } catch (error) {
+      console.error('GraphQL Error:', error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
+}
