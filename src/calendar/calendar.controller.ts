@@ -10,141 +10,141 @@ import {
   Put,
   Query,
   UseGuards,
-} from "@nestjs/common";
-import { CalendarService } from "./calendar.service";
+} from '@nestjs/common';
+import { CalendarService } from './calendar.service';
 import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiResponse,
   ApiTags,
-} from "@nestjs/swagger";
-import { SetWorkingHoursDto, TimeSlotDTO } from "./dto/availability.dto";
-import { AuthGuard } from "@nestjs/passport";
-import { RolesGuard } from "src/roles/roles.guard";
+} from '@nestjs/swagger';
+import { SetWorkingHoursDto, TimeSlotDTO } from './dto/availability.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/roles/roles.guard';
 
-@ApiTags("Digifranchise Working Hours")
-@Controller("calendar")
+@ApiTags('Digifranchise Working Hours')
+@Controller('calendar')
 export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
-  @ApiOperation({ summary: "Set Working Hours" })
+  @ApiOperation({ summary: 'Set Working Hours' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Digifranchise Owner is able to set Working Hours.",
+    description: 'Digifranchise Owner is able to set Working Hours.',
   })
   @ApiBody({ type: SetWorkingHoursDto })
-  @Post("set-working-hours/:ownedFranchiseId")
+  @Post('set-working-hours/:ownedFranchiseId')
   async setWorkingHours(
-    @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() workingHoursDto: SetWorkingHoursDto,
+    @Param('ownedFranchiseId') ownedFranchiseId: string,
+    @Body() workingHoursDto: SetWorkingHoursDto
   ): Promise<any> {
     try {
       await this.calendarService.createWorkingHoursForDigifranchise(
         workingHoursDto,
-        ownedFranchiseId,
+        ownedFranchiseId
       );
       return {
-        message: "Availability created successfully",
+        message: 'Availability created successfully',
         availabilities: workingHoursDto,
       };
     } catch (error) {
       console.error(error);
       throw new HttpException(
         {
-          message: "Error creating availability",
+          message: 'Error creating availability',
           error: error?.response?.error,
         },
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
   }
-  @ApiOperation({ summary: "Get timeslots" })
+  @ApiOperation({ summary: 'Get timeslots' })
   @ApiResponse({
     status: HttpStatus.OK,
     description:
-      "Users can retrieve availabile slots by date and digifranchise",
+      'Users can retrieve availabile slots by date and digifranchise',
   })
-  @Get("get-timeslots/:ownedFranchiseId")
+  @Get('get-timeslots/:ownedFranchiseId')
   async getTimeSlots(
-    @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Query("date") workingDate: string,
+    @Param('ownedFranchiseId') ownedFranchiseId: string,
+    @Query('date') workingDate: string
   ): Promise<any> {
     try {
       const timeSlots = await this.calendarService.getTimeSlots(
         ownedFranchiseId,
-        workingDate,
+        workingDate
       );
-      return { message: "Timeslots fetched successfully", timeSlots };
+      return { message: 'Timeslots fetched successfully', timeSlots };
     } catch (error) {
-      return { message: "Error fetching availability", error: error?.response };
+      return { message: 'Error fetching availability', error: error?.response };
     }
   }
-  @ApiOperation({ summary: "Get Working Hours" })
+  @ApiOperation({ summary: 'Get Working Hours' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiResponse({
     status: HttpStatus.OK,
     description:
-      "Digifranchise Owner is able to to retrieve their working hours",
+      'Digifranchise Owner is able to to retrieve their working hours',
   })
-  @Get("get-working-hours/:ownedFranchiseId")
+  @Get('get-working-hours/:ownedFranchiseId')
   async getWorkingHours(
-    @Param("ownedFranchiseId") ownedFranchiseId: string,
+    @Param('ownedFranchiseId') ownedFranchiseId: string
   ): Promise<any> {
     try {
       const availabilities =
         await this.calendarService.getWorkingHours(ownedFranchiseId);
-      return { message: "Availability fetched successfully", availabilities };
+      return { message: 'Availability fetched successfully', availabilities };
     } catch (error) {
-      return { message: "Error fetching availability", error: error?.response };
+      return { message: 'Error fetching availability', error: error?.response };
     }
   }
-  @ApiOperation({ summary: "Update Working Hours" })
+  @ApiOperation({ summary: 'Update Working Hours' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Digifranchise Owner is able to update Working Hours.",
+    description: 'Digifranchise Owner is able to update Working Hours.',
   })
   @ApiBody({ type: SetWorkingHoursDto })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Patch("update-working-hours/:ownedFranchiseId")
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Patch('update-working-hours/:ownedFranchiseId')
   async updateWorkingHours(
-    @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() workingHoursDto: SetWorkingHoursDto,
+    @Param('ownedFranchiseId') ownedFranchiseId: string,
+    @Body() workingHoursDto: SetWorkingHoursDto
   ): Promise<any> {
     try {
       const updatedSlots =
         await this.calendarService.updateWorkingHoursForDigifranchise(
           workingHoursDto,
-          ownedFranchiseId,
+          ownedFranchiseId
         );
-      return { message: "Availability updated successfully", updatedSlots };
+      return { message: 'Availability updated successfully', updatedSlots };
     } catch (error) {
-      return { message: "Error updating availability", error: error };
+      return { message: 'Error updating availability', error };
     }
   }
-  @ApiOperation({ summary: "Book Timeslots" })
+  @ApiOperation({ summary: 'Book Timeslots' })
   @ApiBody({ type: [TimeSlotDTO] })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "Users can book timeslots",
+    description: 'Users can book timeslots',
   })
-  @Put("book-timeslot/:ownedFranchiseId")
+  @Put('book-timeslot/:ownedFranchiseId')
   async bookTimeSlot(
-    @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() timeslots: TimeSlotDTO[],
+    @Param('ownedFranchiseId') ownedFranchiseId: string,
+    @Body() timeslots: TimeSlotDTO[]
   ): Promise<any> {
     try {
       await this.calendarService.bookAvailabilitySlot(
         timeslots,
-        ownedFranchiseId,
+        ownedFranchiseId
       );
-      return { message: "Availability Booked successfully" };
+      return { message: 'Availability Booked successfully' };
     } catch (error) {
-      return { message: "Error creating availability", error: error };
+      return { message: 'Error creating availability', error: error };
     }
   }
 }
