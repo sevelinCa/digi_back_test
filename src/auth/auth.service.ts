@@ -913,7 +913,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
-          errors: { role: "verify your email or contact super admin" },
+          errors: { role: "verify your phone or contact super admin" },
         },
         HttpStatus.FORBIDDEN,
       );
@@ -1011,7 +1011,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
-          errors: { role: "verify your email or contact super admin" },
+          errors: { role: "verify your phone or contact super admin" },
         },
         HttpStatus.FORBIDDEN,
       );
