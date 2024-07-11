@@ -1200,7 +1200,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: "phoneNotExists",
+            phone: "phone does not exist",
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
