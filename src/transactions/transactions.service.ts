@@ -338,5 +338,46 @@ export class TransactionsService {
     }
   }
 
+  async checkWalletBalance(tokenId: string): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const query = gql`
+      query token($id: ID!) {
+        token(id: $id) {
+          id
+          name
+          reference
+          balance
+          user {
+            givenName
+            familyName
+            email
+            mobile
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      id: tokenId,
+    };
+
+    try {
+      const response = await client.request(query, variables);
+      return response.token;
+    } catch (error) {
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
+
 
 }
