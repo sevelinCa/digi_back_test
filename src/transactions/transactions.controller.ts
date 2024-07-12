@@ -45,6 +45,9 @@ export class TransactionsController {
     return checkoutLink;
   }
 
-
+  @Post('process-wallet-deposit/:transactionId')
+  async processWalletDeposit(@Param('transactionId') transactionId: string): Promise<any> {
+    return this.transactionsService.processWalletDeposit(transactionId);
+  }
 
 }
