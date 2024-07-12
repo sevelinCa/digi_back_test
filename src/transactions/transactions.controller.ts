@@ -55,5 +55,9 @@ export class TransactionsController {
     return this.transactionsService.checkWalletBalance(tokenId);
   }
 
+  @Post('request-withdrawal/:tokenId')
+  async requestWithdrawal(@Param('tokenId') tokenId: string, @Body('value') value: number): Promise<boolean> {
+    return this.transactionsService.requestWithdrawal(tokenId, value);
+  }
 
 }
