@@ -23,7 +23,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start:dev": "nest start",
+    "start:dev": "nest start --watch",
     "start:dev:watch": "nest start --watch",
     "start:swc": "nest start -b swc -w",
     "start:debug": "nest start --debug --watch",

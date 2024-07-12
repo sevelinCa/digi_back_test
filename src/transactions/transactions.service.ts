@@ -3,7 +3,7 @@ import { TransactionsAuthService } from './transactions-auth.service';
 import { GraphQLClient, gql } from 'graphql-request';
 import { CreateTransactionDto } from './dto/transactions.dto';
 import { CreateTokenDto } from './dto/transaction-token.dto';
-import { CreateDepositDto } from './dto/deposit.dto';
+
 
 @Injectable()
 export class TransactionsService {
@@ -62,14 +62,10 @@ export class TransactionsService {
       parties: createTransactionDto.parties,
     };
 
-    console.log('Request Variables:', variables);
-
     try {
       const response = await client.request(mutation, variables);
-      console.log('GraphQL Response:', response);
       return response;
     } catch (error) {
-      console.error('GraphQL Error:', error.response.errors);
       throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
@@ -235,61 +231,6 @@ export class TransactionsService {
   }
 
 
-  async createDeposit(createDepositDto: CreateDepositDto): Promise<any> {
-    const accessToken = await this.transactionsAuthService.getAccessToken();
-
-    if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
-    }
-
-    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    const mutation = gql`
-      mutation transactionDeposit(
-        $id: ID!,
-        $method: DepositMethod!,
-        $cardholderName: String!,
-        $cardNumber: String!,
-        $expiryDate: String!,
-        $cvv: String!
-      ) {
-        transactionDeposit(
-          id: $id,
-          method: $method,
-          cardholderName: $cardholderName,
-          cardNumber: $cardNumber,
-          expiryDate: $expiryDate,
-          cvv: $cvv
-        ) {
-          id
-          processed
-        }
-      }
-    `;
-
-    const variables = {
-      id: createDepositDto.transactionId,
-      method: 'Visa',
-      cardholderName: createDepositDto.cardholderName,
-      cardNumber: createDepositDto.cardNumber,
-      expiryDate: createDepositDto.expiryDate,
-      cvv: createDepositDto.cvv,
-    };
-
-    try {
-      const response = await client.request(mutation, variables);
-      return response.transactionDeposit;
-    } catch (error) {
-      console.error('GraphQL Error:', error.response.errors);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
-    }
-  }
-
-
   async deleteTransaction(transactionId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
   
@@ -328,4 +269,39 @@ export class TransactionsService {
       throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
+
+  async getCheckoutLink(transactionId: string, paymentMethods: string[] = []): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const mutation = gql`
+      mutation checkoutLink($transactionId: ID!, $paymentMethods: [DepositMethod!]) {
+        checkoutLink(transactionId: $transactionId, paymentMethods: $paymentMethods)
+      }
+    `;
+  
+    const variables = {
+      transactionId,
+      paymentMethods,
+    };
+  
+    try {
+      const response = await client.request(mutation, variables);
+      console.log('Checkout Link:', response);
+      return response.checkoutLink;
+    } catch (error) {
+      console.error('GraphQL Error:', error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
+
+
 }

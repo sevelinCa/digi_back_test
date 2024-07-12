@@ -3,7 +3,6 @@ import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/transactions.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateTokenDto } from './dto/transaction-token.dto';
-import { CreateDepositDto } from './dto/deposit.dto';
 
 @ApiTags('TRANSACTION')
 @Controller('transactions')
@@ -35,13 +34,16 @@ export class TransactionsController {
     return this.transactionsService.getOneTransaction(transactionId);
   }
 
-  @Post('create-deposit')
-  async createDeposit(@Body() createDepositDto: CreateDepositDto): Promise<any> {
-    return this.transactionsService.createDeposit(createDepositDto);
-  }
-
   @Delete('delete-transaction/:id')
   async deleteTransaction(@Param('id') transactionId: string): Promise<any> {
     return this.transactionsService.deleteTransaction(transactionId);
   }
+
+  @Post('checkout-link/:transactionId')
+  async getCheckoutLink(@Param('transactionId') transactionId: string, @Body('paymentMethods') paymentMethods: string[]): Promise<string> {
+    const checkoutLink = await this.transactionsService.getCheckoutLink(transactionId, paymentMethods);
+    return checkoutLink;
+  }
+
+
 }
