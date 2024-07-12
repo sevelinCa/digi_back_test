@@ -50,4 +50,11 @@ export class TransactionsController {
     return this.transactionsService.processWalletDeposit(transactionId);
   }
 
+  @Get('check-wallet-balance/:tokenId')
+  async checkWalletBalance(@Param('tokenId') tokenId: string): Promise<any> {
+    return this.transactionsService.checkWalletBalance(tokenId);
+  }
+
+
+
 }
