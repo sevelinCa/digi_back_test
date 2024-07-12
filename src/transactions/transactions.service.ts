@@ -379,5 +379,35 @@ export class TransactionsService {
     }
   }
 
+  async requestWithdrawal(tokenId: string, value: number): Promise<boolean> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
+    }
 
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const mutation = gql`
+      mutation tokenAccountWithdraw($id: ID!, $value: Float!) {
+        tokenAccountWithdraw(id: $id, value: $value)
+      }
+    `;
+
+    const variables = {
+      id: tokenId,
+      value: value,
+    };
+
+    try {
+      const response = await client.request(mutation, variables);
+      return response.tokenAccountWithdraw === true;
+    } catch (error) {
+      console.error('GraphQL Error:', error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
 }
