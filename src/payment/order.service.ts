@@ -662,15 +662,16 @@ export class OrderService {
       ],
     });
 
-    const userEmail = user.email;
-
+    const userEmail = user?.email;
+    const userPhone = user?.phoneNumber;
     const filteredOrders = orders.filter((order) => {
       const basicInfo = order.orderAdditionalInfo.find(
         (info) => info.basic_info
       );
       return (
         order.userId?.id === userId ||
-        (basicInfo && basicInfo.basic_info.email === userEmail)
+        (basicInfo && basicInfo.basic_info.email === userEmail) ||
+        (basicInfo && basicInfo.basic_info.phoneNumber === userPhone)
       );
     });
 
