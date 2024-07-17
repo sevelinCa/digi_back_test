@@ -502,7 +502,90 @@ export class TransactionsService {
 
 
 
-
+  async createTransactionWithAuth(
+    userId: string,
+    orderId: string
+  ): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+    }
+  
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+  
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ["serviceId", "ownedDigifranchise", "ownedDigifranchise.digifranchise"],
+    });
+    if (!order || !order.ownedDigifranchise) {
+      throw new NotFoundException("Order or ownedDigifranchise not found");
+    }
+  
+    let totalAmount;
+    if (typeof order.totalAmount === 'string') {
+        totalAmount = parseFloat(order.totalAmount);
+    } else {
+        totalAmount = order.totalAmount;
+    }
+  
+    const tokenResponse = await this.createTransactionToken(userId, order.ownedDigifranchise.id);
+    const tokenId = tokenResponse.tokenCreate.id;
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const mutation = gql`
+      mutation createTransaction($input: CreateTransactionInput!) {
+        transactionCreate(input: $input) {
+          id
+          title
+          createdAt
+        }
+      }
+    `;
+  
+    const variables = {
+      input: {
+        title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
+        description: order.ownedDigifranchise.digifranchise?.description,
+        industry: "GENERAL_GOODS_SERVICES",
+        currency: "ZAR",
+        feeAllocation: "SELLER",
+        allocations: {
+          create: [
+            {
+              title: order.serviceId?.serviceName,
+              description: order.serviceId?.description,
+              value: totalAmount, 
+              daysToDeliver: 7,
+              daysToInspect: 7,
+            },
+          ],
+        },
+        parties: {
+          create: [
+            {
+              token: tokenId, 
+              role: "BUYER",
+            },
+          ],
+        },
+      },
+    };
+  
+    try {
+      const response = await client.request(mutation, variables);
+      return response;
+    } catch (error) {
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
   
   
 }
