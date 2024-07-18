@@ -53,6 +53,7 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { OptionalFunctionalModule } from "./optional-functional/optional-functional.module";
 import { TransactionsModule } from './transactions/transactions.module';
 import { BullModule } from '@nestjs/bull';
+import { ConsultationModule } from './consultation/consultation.module';
 
 @Module({
   imports: [
@@ -152,6 +153,7 @@ import { BullModule } from '@nestjs/bull';
     CalendarModule,
     OptionalFunctionalModule,
     TransactionsModule,
+    ConsultationModule,
     // ChatModule
   ],
 })
