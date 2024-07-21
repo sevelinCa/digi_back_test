@@ -57,32 +57,18 @@ export class CreateConsultationTableDto {
   @IsNotEmpty()
   contactInfo: object;
 
-  @ApiProperty({
-    description: 'Creation timestamp',
-    type: String,
-    format: 'date-time',
-    example: '2024-06-18T12:45:30.529Z',
-  })
+  @ApiProperty({ example: "2024-05-07T05:46:09.154Z" })
+  @IsNotEmpty()
   @IsDateString()
-  createdAt: Date;
+  createdAt: string;
 
-  @ApiProperty({
-    description: 'Update timestamp',
-    type: String,
-    format: 'date-time',
-    example: '2024-06-18T12:45:30.529Z',
-  })
+  @ApiProperty({ example: "2024-05-07T05:46:09.154Z" })
+  @IsNotEmpty()
   @IsDateString()
-  updatedAt: Date;
+  updatedAt: string;
 
-  @ApiProperty({
-    description: 'Deletion timestamp',
-    type: String,
-    format: 'date-time',
-    required: false,
-    example: '2024-06-18T12:45:30.529Z',
-  })
-  @IsDateString()
+  @ApiProperty({ example: null })
   @IsOptional()
-  deleteAt: Date | null;
+  @IsDateString()
+  deleteAt: string | null;
 }
