@@ -83,6 +83,18 @@ export class TransactionsController {
     return this.transactionsService.createTransactionBuyerToken(userId);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Post("create-seller-token/:franchiseOwnerId")
+  async createTransactionSellerToken(
+    @Req() req: Request,
+    @Param("franchiseOwnerId") franchiseOwnerId: string
+  ): Promise<any> {
+    return this.transactionsService.createTransactionSellerToken(
+      franchiseOwnerId
+    );
+  }
+
 
 
   @Post("checkout-link/:transactionId")
