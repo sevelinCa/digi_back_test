@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Put,
 } from "@nestjs/common";
 import { TransactionsService } from "./transactions.service";
 import { CreateTransactionDto } from "./dto/transactions.dto";
@@ -16,6 +17,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard } from "src/roles/roles.guard";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { Request } from "express";
+import { UpdatingOrderStatusDto } from "./dto/updating-order-status.dto";
 
 @ApiTags("TRANSACTION")
 @Controller("transactions")
@@ -117,5 +119,14 @@ export class TransactionsController {
       paymentMethods
     );
     return checkoutLink;
+  }
+
+
+  @Put("update-order-status/:orderId")
+  async updateOrderStatus(
+    @Param("orderId") orderId: string,
+    @Body() updatingOrderStatusDto: UpdatingOrderStatusDto
+  ): Promise<any> {
+    return this.transactionsService.updateOrderStatus(orderId, updatingOrderStatusDto);
   }
 }
