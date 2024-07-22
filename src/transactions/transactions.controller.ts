@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, Param, Delete, UseGuards, Req } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from "@nestjs/common";
 import { TransactionsService } from "./transactions.service";
 import { CreateTransactionDto } from "./dto/transactions.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -45,8 +54,6 @@ export class TransactionsController {
     return this.transactionsService.deleteTransaction(transactionId);
   }
 
-
-
   @Post("process-wallet-deposit/:transactionId")
   async processWalletDeposit(
     @Param("transactionId") transactionId: string
@@ -68,35 +75,17 @@ export class TransactionsController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post('create-token/:franchiseOwnerId')
-  async createTransactionToken(
-    @Req() req: Request,
-    @Param('franchiseOwnerId') franchiseOwnerId: string
-  ): Promise<any> {
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Post("create-buy-token")
+  async createTransactionBuyerToken(@Req() req: Request): Promise<any> {
     const userId = (req.user as UserEntity).id;
 
-    return this.transactionsService.createTransactionToken(
-      userId,
-      franchiseOwnerId
-    );
+    return this.transactionsService.createTransactionBuyerToken(userId);
   }
 
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post('create-transaction-with-auth/:orderId')
-  async createTransactionWithAuth(
-    @Req() req: Request,
-    @Param('orderId') orderId: string
-  ): Promise<any> {
-    const userId = (req.user as UserEntity).id;
 
-    return this.transactionsService.createTransactionWithAuth(
-      userId,
-      orderId
-    );
-  }
+
 
   @Post("checkout-link/:transactionId")
   async getCheckoutLink(
