@@ -8,6 +8,7 @@ import { UserEntity } from "src/users/infrastructure/persistence/relational/enti
 import { Repository } from "typeorm";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { OrderTable } from "src/payment/entities/order.entity";
+import { UpdatingOrderStatusDto } from "./dto/updating-order-status.dto";
 
 @Injectable()
 export class TransactionsService {
@@ -281,8 +282,6 @@ export class TransactionsService {
     }
   }
 
-
-
   async processWalletDeposit(transactionId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
@@ -460,8 +459,6 @@ export class TransactionsService {
   //   return client.request(mutation, variables);
   // }
 
-
-
   // async createTransactionWithAuth(
   //   userId: string,
   //   orderId: string
@@ -470,12 +467,12 @@ export class TransactionsService {
   //   if (!process.env.TRADE_SAFE_API_URL) {
   //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
   //   }
-  
+
   //   const user = await this.userRepository.findOne({ where: { id: userId } });
   //   if (!user) {
   //     throw new NotFoundException("User not found");
   //   }
-  
+
   //   const order = await this.orderRepository.findOne({
   //     where: { id: orderId },
   //     relations: ["serviceId", "ownedDigifranchise", "ownedDigifranchise.digifranchise"],
@@ -483,23 +480,23 @@ export class TransactionsService {
   //   if (!order || !order.ownedDigifranchise) {
   //     throw new NotFoundException("Order or ownedDigifranchise not found");
   //   }
-  
+
   //   let totalAmount;
   //   if (typeof order.totalAmount === 'string') {
   //       totalAmount = parseFloat(order.totalAmount);
   //   } else {
   //       totalAmount = order.totalAmount;
   //   }
-  
+
   //   const tokenResponse = await this.createTransactionToken(userId, order.ownedDigifranchise.id);
   //   const tokenId = tokenResponse.tokenCreate.id;
-  
+
   //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
   //     headers: {
   //       Authorization: `Bearer ${accessToken}`,
   //     },
   //   });
-  
+
   //   const mutation = gql`
   //     mutation createTransaction($input: CreateTransactionInput!) {
   //       transactionCreate(input: $input) {
@@ -509,7 +506,7 @@ export class TransactionsService {
   //       }
   //     }
   //   `;
-  
+
   //   const variables = {
   //     input: {
   //       title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
@@ -523,7 +520,7 @@ export class TransactionsService {
   //           {
   //             title: order.serviceId?.serviceName,
   //             description: order.serviceId?.description,
-  //             value: totalAmount, 
+  //             value: totalAmount,
   //             daysToDeliver: 7,
   //             daysToInspect: 7,
   //           },
@@ -532,14 +529,14 @@ export class TransactionsService {
   //       parties: {
   //         create: [
   //           {
-  //             token: tokenId, 
+  //             token: tokenId,
   //             role: "BUYER",
   //           },
   //         ],
   //       },
   //     },
   //   };
-  
+
   //   try {
   //     const response = await client.request(mutation, variables);
   //     return response;
@@ -548,24 +545,23 @@ export class TransactionsService {
   //   }
   // }
 
-
   // async createTransactionBuyerToken(userId: string): Promise<any> {
   //   const accessToken = await this.transactionsAuthService.getAccessToken();
   //   if (!process.env.TRADE_SAFE_API_URL) {
   //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
   //   }
-  
+
   //   const user = await this.userRepository.findOne({ where: { id: userId } });
   //   if (!user) {
   //     throw new NotFoundException("User not found");
   //   }
-  
+
   //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
   //     headers: {
   //       Authorization: `Bearer ${accessToken}`,
   //     },
   //   });
-  
+
   //   const mutation = gql`
   //     mutation tokenCreate($input: TokenInput!) {
   //       tokenCreate(input: $input) {
@@ -574,7 +570,7 @@ export class TransactionsService {
   //       }
   //     }
   //   `;
-  
+
   //   const variables = {
   //     input: {
   //       user: {
@@ -603,16 +599,16 @@ export class TransactionsService {
   //       },
   //     },
   //   };
-  
+
   //   return client.request(mutation, variables);
   // }
-  
+
   // async createTransactionSellerToken(franchiseOwnerId: string): Promise<any> {
   //   const accessToken = await this.transactionsAuthService.getAccessToken();
   //   if (!process.env.TRADE_SAFE_API_URL) {
   //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
   //   }
-  
+
   //   const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
   //     where: { id: franchiseOwnerId },
   //     relations: ["digifranchise"],
@@ -620,13 +616,13 @@ export class TransactionsService {
   //   if (!franchiseOwner) {
   //     throw new NotFoundException("Franchise owner not found");
   //   }
-  
+
   //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
   //     headers: {
   //       Authorization: `Bearer ${accessToken}`,
   //     },
   //   });
-  
+
   //   const mutation = gql`
   //     mutation tokenCreate($input: TokenInput!) {
   //       tokenCreate(input: $input) {
@@ -635,7 +631,7 @@ export class TransactionsService {
   //       }
   //     }
   //   `;
-  
+
   //   const variables = {
   //     input: {
   //       organization: {
@@ -658,10 +654,10 @@ export class TransactionsService {
   //       },
   //     },
   //   };
-  
+
   //   return client.request(mutation, variables);
   // }
-  
+
   // async createTransactionWithAuth(
   //   userId: string,
   //   orderId: string
@@ -670,12 +666,12 @@ export class TransactionsService {
   //   if (!process.env.TRADE_SAFE_API_URL) {
   //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
   //   }
-  
+
   //   const user = await this.userRepository.findOne({ where: { id: userId } });
   //   if (!user) {
   //     throw new NotFoundException("User not found");
   //   }
-  
+
   //   const order = await this.orderRepository.findOne({
   //     where: { id: orderId },
   //     relations: ["serviceId", "ownedDigifranchise", "ownedDigifranchise.digifranchise"],
@@ -683,26 +679,26 @@ export class TransactionsService {
   //   if (!order || !order.ownedDigifranchise) {
   //     throw new NotFoundException("Order or ownedDigifranchise not found");
   //   }
-  
+
   //   let totalAmount;
   //   if (typeof order.totalAmount === 'string') {
   //     totalAmount = parseFloat(order.totalAmount);
   //   } else {
   //     totalAmount = order.totalAmount;
   //   }
-  
+
   //   const buyerTokenResponse = await this.createTransactionBuyerToken(userId);
   //   const buyerTokenId = buyerTokenResponse.tokenCreate.id;
-  
+
   //   const sellerTokenResponse = await this.createTransactionSellerToken(order.ownedDigifranchise.id);
   //   const sellerTokenId = sellerTokenResponse.tokenCreate.id;
-  
+
   //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
   //     headers: {
   //       Authorization: `Bearer ${accessToken}`,
   //     },
   //   });
-  
+
   //   const mutation = gql`
   //     mutation createTransaction($input: CreateTransactionInput!) {
   //       transactionCreate(input: $input) {
@@ -712,7 +708,7 @@ export class TransactionsService {
   //       }
   //     }
   //   `;
-  
+
   //   const variables = {
   //     input: {
   //       title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
@@ -746,7 +742,7 @@ export class TransactionsService {
   //       },
   //     },
   //   };
-  
+
   //   try {
   //     const response = await client.request(mutation, variables);
   //     return response;
@@ -755,25 +751,23 @@ export class TransactionsService {
   //   }
   // }
 
-
-
   async createTransactionBuyerToken(userId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-  
+
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException("User not found");
     }
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
         tokenCreate(input: $input) {
@@ -782,7 +776,7 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const variables = {
       input: {
         user: {
@@ -792,7 +786,7 @@ export class TransactionsService {
           mobile: user.phoneNumber,
         },
         bankAccount: {
-          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000", 
+          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000",
           accountType: "CHEQUE",
           bank: "SBSA",
         },
@@ -804,7 +798,7 @@ export class TransactionsService {
         },
       },
     };
-  
+
     try {
       return await client.request(mutation, variables);
     } catch (error) {
@@ -812,7 +806,6 @@ export class TransactionsService {
       throw new Error("Failed to create buyer token");
     }
   }
-  
 
   async getDigifranchiseOwnerInfo(franchiseOwnerId: string): Promise<any> {
     const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
@@ -820,14 +813,16 @@ export class TransactionsService {
       relations: ["userId"],
     });
     if (!franchiseOwner || !franchiseOwner.userId) {
-      throw new NotFoundException("Franchise owner or associated user not found");
+      throw new NotFoundException(
+        "Franchise owner or associated user not found"
+      );
     }
-  
+
     const userResult = await this.userRepository.manager.query(
       `SELECT "firstName", "lastName", "email", "phoneNumber" FROM "user" WHERE "id" = $1`,
       [franchiseOwner.userId.id]
     );
-  
+
     if (!userResult.length) {
       throw new NotFoundException("User not found");
     }
@@ -838,13 +833,13 @@ export class TransactionsService {
       phoneNumber: userResult[0].phonenumber,
     };
   }
-  
+
   async createTransactionSellerToken(franchiseOwnerId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-  
+
     const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
       where: { id: franchiseOwnerId },
       relations: ["digifranchise"],
@@ -852,14 +847,15 @@ export class TransactionsService {
     if (!franchiseOwner) {
       throw new NotFoundException("Franchise owner not found");
     }
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
-    const getFranchiseOwnerInfo = await this.getDigifranchiseOwnerInfo(franchiseOwnerId);
+
+    const getFranchiseOwnerInfo =
+      await this.getDigifranchiseOwnerInfo(franchiseOwnerId);
 
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
@@ -869,7 +865,7 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const variables = {
       input: {
         user: {
@@ -882,11 +878,12 @@ export class TransactionsService {
           name: franchiseOwner.digifranchise.digifranchiseName,
           tradeName: franchiseOwner.digifranchise.digifranchiseName,
           type: "PRIVATE",
-          registrationNumber: process.env.DEFAULT_REGISTRATION_NUMBER || "0000/000000/00", 
-          taxNumber: process.env.DEFAULT_TAX_NUMBER || "000000000", 
+          registrationNumber:
+            process.env.DEFAULT_REGISTRATION_NUMBER || "0000/000000/00",
+          taxNumber: process.env.DEFAULT_TAX_NUMBER || "000000000",
         },
         bankAccount: {
-          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000", 
+          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000",
           accountType: "CHEQUE",
           bank: "SBSA",
         },
@@ -898,7 +895,7 @@ export class TransactionsService {
         },
       },
     };
-  
+
     try {
       return await client.request(mutation, variables);
     } catch (error) {
@@ -906,7 +903,7 @@ export class TransactionsService {
       throw new Error("Failed to create seller token");
     }
   }
-  
+
   async createTransactionWithAuth(
     userId: string,
     orderId: string
@@ -915,39 +912,45 @@ export class TransactionsService {
     if (!process.env.TRADE_SAFE_API_URL) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-  
+
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException("User not found");
     }
-  
+
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
-      relations: ["serviceId", "ownedDigifranchise", "ownedDigifranchise.digifranchise"],
+      relations: [
+        "serviceId",
+        "ownedDigifranchise",
+        "ownedDigifranchise.digifranchise",
+      ],
     });
     if (!order || !order.ownedDigifranchise) {
       throw new NotFoundException("Order or ownedDigifranchise not found");
     }
-  
+
     let totalAmount;
-    if (typeof order.totalAmount === 'string') {
+    if (typeof order.totalAmount === "string") {
       totalAmount = parseFloat(order.totalAmount);
     } else {
       totalAmount = order.totalAmount;
     }
-  
+
     const buyerTokenResponse = await this.createTransactionBuyerToken(userId);
     const buyerTokenId = buyerTokenResponse.tokenCreate.id;
-  
-    const sellerTokenResponse = await this.createTransactionSellerToken(order.ownedDigifranchise.id);
+
+    const sellerTokenResponse = await this.createTransactionSellerToken(
+      order.ownedDigifranchise.id
+    );
     const sellerTokenId = sellerTokenResponse.tokenCreate.id;
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const mutation = gql`
       mutation createTransaction($input: CreateTransactionInput!) {
         transactionCreate(input: $input) {
@@ -957,7 +960,7 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const variables = {
       input: {
         title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
@@ -991,7 +994,7 @@ export class TransactionsService {
         },
       },
     };
-  
+
     try {
       const response = await client.request(mutation, variables);
       return response;
@@ -1000,8 +1003,6 @@ export class TransactionsService {
       throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
-  
-  
 
   async getCheckoutLink(
     transactionId: string,
@@ -1043,5 +1044,22 @@ export class TransactionsService {
       console.error("GraphQL Error:", error.response.errors);
       throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
+  }
+
+  async updateOrderStatus(
+    orderId: string,
+    updatingOrderStatusDto: UpdatingOrderStatusDto,
+  ): Promise<OrderTable> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
+  
+    if (!order) {
+      throw new NotFoundException("Order not found");
+    }
+  
+    Object.assign(order, updatingOrderStatusDto);
+  
+    return this.orderRepository.save(order);
   }
 }
