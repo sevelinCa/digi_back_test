@@ -45,17 +45,7 @@ export class TransactionsController {
     return this.transactionsService.deleteTransaction(transactionId);
   }
 
-  @Post("checkout-link/:transactionId")
-  async getCheckoutLink(
-    @Param("transactionId") transactionId: string,
-    @Body("paymentMethods") paymentMethods: string[]
-  ): Promise<string> {
-    const checkoutLink = await this.transactionsService.getCheckoutLink(
-      transactionId,
-      paymentMethods
-    );
-    return checkoutLink;
-  }
+
 
   @Post("process-wallet-deposit/:transactionId")
   async processWalletDeposit(
@@ -106,5 +96,17 @@ export class TransactionsController {
       userId,
       orderId
     );
+  }
+
+  @Post("checkout-link/:transactionId")
+  async getCheckoutLink(
+    @Param("transactionId") transactionId: string,
+    @Body("paymentMethods") paymentMethods: string[]
+  ): Promise<string> {
+    const checkoutLink = await this.transactionsService.getCheckoutLink(
+      transactionId,
+      paymentMethods
+    );
+    return checkoutLink;
   }
 }
