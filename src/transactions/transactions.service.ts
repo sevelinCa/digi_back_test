@@ -5,7 +5,7 @@ import { CreateTransactionDto } from "./dto/transactions.dto";
 import { CreateTokenDto } from "./dto/transaction-token.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
-import { Equal, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { OrderTable } from "src/payment/entities/order.entity";
 
@@ -281,47 +281,7 @@ export class TransactionsService {
     }
   }
 
-  async getCheckoutLink(
-    transactionId: string,
-    paymentMethods: string[] = []
-  ): Promise<any> {
-    const accessToken = await this.transactionsAuthService.getAccessToken();
-    if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
-    }
 
-    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    const mutation = gql`
-      mutation checkoutLink(
-        $transactionId: ID!
-        $paymentMethods: [DepositMethod!]
-      ) {
-        checkoutLink(
-          transactionId: $transactionId
-          paymentMethods: $paymentMethods
-        )
-      }
-    `;
-
-    const variables = {
-      transactionId,
-      paymentMethods,
-    };
-
-    try {
-      const response = await client.request(mutation, variables);
-      console.log("Checkout Link:", response);
-      return response.checkoutLink;
-    } catch (error) {
-      console.error("GraphQL Error:", error.response.errors);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
-    }
-  }
 
   async processWalletDeposit(transactionId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
@@ -500,8 +460,6 @@ export class TransactionsService {
     return client.request(mutation, variables);
   }
 
-
-
   async createTransactionWithAuth(
     userId: string,
     orderId: string
@@ -557,6 +515,7 @@ export class TransactionsService {
         industry: "GENERAL_GOODS_SERVICES",
         currency: "ZAR",
         feeAllocation: "SELLER",
+        reference: order.id,
         allocations: {
           create: [
             {
@@ -586,6 +545,46 @@ export class TransactionsService {
       throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
-  
-  
+
+  async getCheckoutLink(
+    transactionId: string,
+    paymentMethods: string[] = []
+  ): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+    }
+
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const mutation = gql`
+      mutation checkoutLink(
+        $transactionId: ID!
+        $paymentMethods: [DepositMethod!]
+      ) {
+        checkoutLink(
+          transactionId: $transactionId
+          paymentMethods: $paymentMethods
+        )
+      }
+    `;
+
+    const variables = {
+      transactionId,
+      paymentMethods,
+    };
+
+    try {
+      const response = await client.request(mutation, variables);
+      console.log("Checkout Link:", response);
+      return response.checkoutLink;
+    } catch (error) {
+      console.error("GraphQL Error:", error.response.errors);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
 }
