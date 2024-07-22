@@ -839,6 +839,74 @@ export class TransactionsService {
     };
   }
   
+  async createTransactionSellerToken(franchiseOwnerId: string): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+    }
+  
+    const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
+      where: { id: franchiseOwnerId },
+      relations: ["digifranchise"],
+    });
+    if (!franchiseOwner) {
+      throw new NotFoundException("Franchise owner not found");
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const getFranchiseOwnerInfo = await this.getDigifranchiseOwnerInfo(franchiseOwnerId);
+
+    const mutation = gql`
+      mutation tokenCreate($input: TokenInput!) {
+        tokenCreate(input: $input) {
+          id
+          name
+        }
+      }
+    `;
+  
+    const variables = {
+      input: {
+        user: {
+          givenName: getFranchiseOwnerInfo.firstName,
+          familyName: getFranchiseOwnerInfo.lastName,
+          email: getFranchiseOwnerInfo.email,
+          mobile: getFranchiseOwnerInfo.phoneNumber,
+        },
+        organization: {
+          name: franchiseOwner.digifranchise.digifranchiseName,
+          tradeName: franchiseOwner.digifranchise.digifranchiseName,
+          type: "PRIVATE",
+          registrationNumber: process.env.DEFAULT_REGISTRATION_NUMBER || "0000/000000/00", 
+          taxNumber: process.env.DEFAULT_TAX_NUMBER || "000000000", 
+        },
+        bankAccount: {
+          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000", 
+          accountType: "CHEQUE",
+          bank: "SBSA",
+        },
+        settings: {
+          payout: {
+            interval: "IMMEDIATE",
+            refund: "WALLET",
+          },
+        },
+      },
+    };
+  
+    try {
+      return await client.request(mutation, variables);
+    } catch (error) {
+      console.error(`Failed to create seller token: ${error}`);
+      throw new Error("Failed to create seller token");
+    }
+  }
+  
 
   
   
