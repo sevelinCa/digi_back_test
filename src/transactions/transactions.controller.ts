@@ -121,7 +121,6 @@ export class TransactionsController {
     return checkoutLink;
   }
 
-
   @Put("update-order-status/:orderId")
   async updateOrderStatus(
     @Param("orderId") orderId: string,
