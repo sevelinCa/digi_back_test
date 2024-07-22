@@ -391,134 +391,76 @@ export class TransactionsService {
     }
   }
 
-  async createTransactionToken(
-    userId: string,
-    franchiseOwnerId: string
-  ): Promise<any> {
-    const accessToken = await this.transactionsAuthService.getAccessToken();
-    if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
-    }
+  // async createTransactionToken(
+  //   userId: string,
+  //   franchiseOwnerId: string
+  // ): Promise<any> {
+  //   const accessToken = await this.transactionsAuthService.getAccessToken();
+  //   if (!process.env.TRADE_SAFE_API_URL) {
+  //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+  //   }
 
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+  //   const user = await this.userRepository.findOne({ where: { id: userId } });
+  //   if (!user) {
+  //     throw new NotFoundException("User not found");
+  //   }
 
-    const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
-      where: { id: franchiseOwnerId },
-      relations: ["digifranchise"],
-    });
-    if (!franchiseOwner) {
-      throw new NotFoundException("Franchise owner not found");
-    }
+  //   const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
+  //     where: { id: franchiseOwnerId },
+  //     relations: ["digifranchise"],
+  //   });
+  //   if (!franchiseOwner) {
+  //     throw new NotFoundException("Franchise owner not found");
+  //   }
 
-    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   });
 
-    const mutation = gql`
-      mutation tokenCreate($input: TokenInput!) {
-        tokenCreate(input: $input) {
-          id
-          name
-        }
-      }
-    `;
+  //   const mutation = gql`
+  //     mutation tokenCreate($input: TokenInput!) {
+  //       tokenCreate(input: $input) {
+  //         id
+  //         name
+  //       }
+  //     }
+  //   `;
 
-    const variables = {
-      input: {
-        user: {
-          givenName: user.firstName,
-          familyName: user.lastName,
-          email: user.email,
-          mobile: user.phoneNumber || "+27000000000",
-        },
-        organization: {
-          name: franchiseOwner.digifranchise.digifranchiseName,
-          tradeName: franchiseOwner.digifranchise.digifranchiseName,
-          type: "PRIVATE",
-          registrationNumber: "0000/000000/00",
-          taxNumber: "000000000",
-        },
-        bankAccount: {
-          accountNumber: "0000000000",
-          accountType: "CHEQUE",
-          bank: "SBSA",
-        },
-        settings: {
-          payout: {
-            interval: "IMMEDIATE",
-            refund: "WALLET",
-          },
-        },
-      },
-    };
+  //   const variables = {
+  //     input: {
+  //       user: {
+  //         givenName: user.firstName,
+  //         familyName: user.lastName,
+  //         email: user.email,
+  //         mobile: user.phoneNumber || "+27000000000",
+  //       },
+  //       organization: {
+  //         name: franchiseOwner.digifranchise.digifranchiseName,
+  //         tradeName: franchiseOwner.digifranchise.digifranchiseName,
+  //         type: "PRIVATE",
+  //         registrationNumber: "0000/000000/00",
+  //         taxNumber: "000000000",
+  //       },
+  //       bankAccount: {
+  //         accountNumber: "0000000000",
+  //         accountType: "CHEQUE",
+  //         bank: "SBSA",
+  //       },
+  //       settings: {
+  //         payout: {
+  //           interval: "IMMEDIATE",
+  //           refund: "WALLET",
+  //         },
+  //       },
+  //     },
+  //   };
 
-    return client.request(mutation, variables);
-  }
+  //   return client.request(mutation, variables);
+  // }
 
 
-  async createTransactionBuyerToken(userId: string): Promise<any> {
-    const accessToken = await this.transactionsAuthService.getAccessToken();
-    if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
-    }
-  
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-  
-    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-  
-    const mutation = gql`
-      mutation tokenCreate($input: TokenInput!) {
-        tokenCreate(input: $input) {
-          id
-          name
-        }
-      }
-    `;
-  
-    const variables = {
-      input: {
-        user: {
-          givenName: user.firstName,
-          familyName: user.lastName,
-          email: user.email,
-          mobile: user.phoneNumber,
-        },
-        // organization: {
-        //   name: franchiseOwner.digifranchise.digifranchiseName,
-        //   tradeName: franchiseOwner.digifranchise.digifranchiseName,
-        //   type: "PRIVATE",
-        //   registrationNumber: "0000/000000/00",
-        //   taxNumber: "000000000",
-        // },
-        bankAccount: {
-          accountNumber: "0000000000",
-          accountType: "CHEQUE",
-          bank: "SBSA",
-        },
-        settings: {
-          payout: {
-            interval: "IMMEDIATE",
-            refund: "WALLET",
-          },
-        },
-      },
-    };
-  
-    return client.request(mutation, variables);
-  }
-  
 
   // async createTransactionWithAuth(
   //   userId: string,
@@ -606,10 +548,216 @@ export class TransactionsService {
   //   }
   // }
 
-  async createTransactionWithAuth(
-    userId: string,
-    orderId: string
-  ): Promise<any> {
+
+  // async createTransactionBuyerToken(userId: string): Promise<any> {
+  //   const accessToken = await this.transactionsAuthService.getAccessToken();
+  //   if (!process.env.TRADE_SAFE_API_URL) {
+  //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+  //   }
+  
+  //   const user = await this.userRepository.findOne({ where: { id: userId } });
+  //   if (!user) {
+  //     throw new NotFoundException("User not found");
+  //   }
+  
+  //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   });
+  
+  //   const mutation = gql`
+  //     mutation tokenCreate($input: TokenInput!) {
+  //       tokenCreate(input: $input) {
+  //         id
+  //         name
+  //       }
+  //     }
+  //   `;
+  
+  //   const variables = {
+  //     input: {
+  //       user: {
+  //         givenName: user.firstName,
+  //         familyName: user.lastName,
+  //         email: user.email,
+  //         mobile: user.phoneNumber,
+  //       },
+  //       // organization: {
+  //       //   name: franchiseOwner.digifranchise.digifranchiseName,
+  //       //   tradeName: franchiseOwner.digifranchise.digifranchiseName,
+  //       //   type: "PRIVATE",
+  //       //   registrationNumber: "0000/000000/00",
+  //       //   taxNumber: "000000000",
+  //       // },
+  //       bankAccount: {
+  //         accountNumber: "0000000000",
+  //         accountType: "CHEQUE",
+  //         bank: "SBSA",
+  //       },
+  //       settings: {
+  //         payout: {
+  //           interval: "IMMEDIATE",
+  //           refund: "WALLET",
+  //         },
+  //       },
+  //     },
+  //   };
+  
+  //   return client.request(mutation, variables);
+  // }
+  
+  // async createTransactionSellerToken(franchiseOwnerId: string): Promise<any> {
+  //   const accessToken = await this.transactionsAuthService.getAccessToken();
+  //   if (!process.env.TRADE_SAFE_API_URL) {
+  //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+  //   }
+  
+  //   const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
+  //     where: { id: franchiseOwnerId },
+  //     relations: ["digifranchise"],
+  //   });
+  //   if (!franchiseOwner) {
+  //     throw new NotFoundException("Franchise owner not found");
+  //   }
+  
+  //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   });
+  
+  //   const mutation = gql`
+  //     mutation tokenCreate($input: TokenInput!) {
+  //       tokenCreate(input: $input) {
+  //         id
+  //         name
+  //       }
+  //     }
+  //   `;
+  
+  //   const variables = {
+  //     input: {
+  //       organization: {
+  //         name: franchiseOwner.digifranchise.digifranchiseName,
+  //         tradeName: franchiseOwner.digifranchise.digifranchiseName,
+  //         type: "PRIVATE",
+  //         registrationNumber: "0000/000000/00",
+  //         taxNumber: "000000000",
+  //       },
+  //       bankAccount: {
+  //         accountNumber: "0000000000",
+  //         accountType: "CHEQUE",
+  //         bank: "SBSA",
+  //       },
+  //       settings: {
+  //         payout: {
+  //           interval: "IMMEDIATE",
+  //           refund: "WALLET",
+  //         },
+  //       },
+  //     },
+  //   };
+  
+  //   return client.request(mutation, variables);
+  // }
+  
+  // async createTransactionWithAuth(
+  //   userId: string,
+  //   orderId: string
+  // ): Promise<any> {
+  //   const accessToken = await this.transactionsAuthService.getAccessToken();
+  //   if (!process.env.TRADE_SAFE_API_URL) {
+  //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+  //   }
+  
+  //   const user = await this.userRepository.findOne({ where: { id: userId } });
+  //   if (!user) {
+  //     throw new NotFoundException("User not found");
+  //   }
+  
+  //   const order = await this.orderRepository.findOne({
+  //     where: { id: orderId },
+  //     relations: ["serviceId", "ownedDigifranchise", "ownedDigifranchise.digifranchise"],
+  //   });
+  //   if (!order || !order.ownedDigifranchise) {
+  //     throw new NotFoundException("Order or ownedDigifranchise not found");
+  //   }
+  
+  //   let totalAmount;
+  //   if (typeof order.totalAmount === 'string') {
+  //     totalAmount = parseFloat(order.totalAmount);
+  //   } else {
+  //     totalAmount = order.totalAmount;
+  //   }
+  
+  //   const buyerTokenResponse = await this.createTransactionBuyerToken(userId);
+  //   const buyerTokenId = buyerTokenResponse.tokenCreate.id;
+  
+  //   const sellerTokenResponse = await this.createTransactionSellerToken(order.ownedDigifranchise.id);
+  //   const sellerTokenId = sellerTokenResponse.tokenCreate.id;
+  
+  //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   });
+  
+  //   const mutation = gql`
+  //     mutation createTransaction($input: CreateTransactionInput!) {
+  //       transactionCreate(input: $input) {
+  //         id
+  //         title
+  //         createdAt
+  //       }
+  //     }
+  //   `;
+  
+  //   const variables = {
+  //     input: {
+  //       title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
+  //       description: order.ownedDigifranchise.digifranchise?.description,
+  //       industry: "GENERAL_GOODS_SERVICES",
+  //       currency: "ZAR",
+  //       feeAllocation: "SELLER",
+  //       reference: order.id,
+  //       allocations: {
+  //         create: [
+  //           {
+  //             title: order.serviceId?.serviceName,
+  //             description: order.serviceId?.description,
+  //             value: totalAmount,
+  //             daysToDeliver: 7,
+  //             daysToInspect: 7,
+  //           },
+  //         ],
+  //       },
+  //       parties: {
+  //         create: [
+  //           {
+  //             token: buyerTokenId,
+  //             role: "BUYER",
+  //           },
+  //           {
+  //             token: sellerTokenId,
+  //             role: "SELLER",
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   };
+  
+  //   try {
+  //     const response = await client.request(mutation, variables);
+  //     return response;
+  //   } catch (error) {
+  //     throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+  //   }
+  // }
+
+
+
+  async createTransactionBuyerToken(userId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
@@ -620,27 +768,6 @@ export class TransactionsService {
       throw new NotFoundException("User not found");
     }
   
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId },
-      relations: ["serviceId", "ownedDigifranchise", "ownedDigifranchise.digifranchise"],
-    });
-    if (!order || !order.ownedDigifranchise) {
-      throw new NotFoundException("Order or ownedDigifranchise not found");
-    }
-  
-    let totalAmount;
-    if (typeof order.totalAmount === 'string') {
-      totalAmount = parseFloat(order.totalAmount);
-    } else {
-      totalAmount = order.totalAmount;
-    }
-  
-    const buyerTokenResponse = await this.createTransactionBuyerToken(userId);
-    const buyerTokenId = buyerTokenResponse.tokenCreate.id;
-  
-    // const sellerTokenResponse = await this.createTransactionSellerToken(order.ownedDigifranchise.id);
-    // const sellerTokenId = sellerTokenResponse.tokenCreate.id;
-  
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -648,56 +775,72 @@ export class TransactionsService {
     });
   
     const mutation = gql`
-      mutation createTransaction($input: CreateTransactionInput!) {
-        transactionCreate(input: $input) {
+      mutation tokenCreate($input: TokenInput!) {
+        tokenCreate(input: $input) {
           id
-          title
-          createdAt
+          name
         }
       }
     `;
   
     const variables = {
       input: {
-        title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
-        description: order.ownedDigifranchise.digifranchise?.description,
-        industry: "GENERAL_GOODS_SERVICES",
-        currency: "ZAR",
-        feeAllocation: "SELLER",
-        reference: order.id,
-        allocations: {
-          create: [
-            {
-              title: order.serviceId?.serviceName,
-              description: order.serviceId?.description,
-              value: totalAmount,
-              daysToDeliver: 7,
-              daysToInspect: 7,
-            },
-          ],
+        user: {
+          givenName: user.firstName,
+          familyName: user.lastName,
+          email: user.email,
+          mobile: user.phoneNumber,
         },
-        parties: {
-          create: [
-            {
-              token: buyerTokenId,
-              role: "BUYER",
-            },
-            // {
-            //   token: sellerTokenId,
-            //   role: "SELLER",
-            // },
-          ],
+        bankAccount: {
+          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000", 
+          accountType: "CHEQUE",
+          bank: "SBSA",
+        },
+        settings: {
+          payout: {
+            interval: "IMMEDIATE",
+            refund: "WALLET",
+          },
         },
       },
     };
   
     try {
-      const response = await client.request(mutation, variables);
-      return response;
+      return await client.request(mutation, variables);
     } catch (error) {
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      console.error(`Failed to create buyer token: ${error}`);
+      throw new Error("Failed to create buyer token");
     }
   }
+  
+
+  async getDigifranchiseOwnerInfo(franchiseOwnerId: string): Promise<any> {
+    const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
+      where: { id: franchiseOwnerId },
+      relations: ["userId"],
+    });
+    if (!franchiseOwner || !franchiseOwner.userId) {
+      throw new NotFoundException("Franchise owner or associated user not found");
+    }
+  
+    const userResult = await this.userRepository.manager.query(
+      `SELECT "firstName", "lastName", "email", "phoneNumber" FROM "user" WHERE "id" = $1`,
+      [franchiseOwner.userId.id]
+    );
+  
+    if (!userResult.length) {
+      throw new NotFoundException("User not found");
+    }
+    return {
+      firstname: userResult[0].firstname,
+      lastname: userResult[0].lastname,
+      email: userResult[0].email,
+      phoneNumber: userResult[0].phonenumber,
+    };
+  }
+  
+
+  
   
 
   async getCheckoutLink(
