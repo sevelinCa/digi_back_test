@@ -95,7 +95,17 @@ export class TransactionsController {
     );
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Post("create-transaction-with-auth/:orderId")
+  async createTransactionWithAuth(
+    @Req() req: Request,
+    @Param("orderId") orderId: string
+  ): Promise<any> {
+    const userId = (req.user as UserEntity).id;
 
+    return this.transactionsService.createTransactionWithAuth(userId, orderId);
+  }
 
   @Post("checkout-link/:transactionId")
   async getCheckoutLink(
