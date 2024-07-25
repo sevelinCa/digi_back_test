@@ -812,16 +812,16 @@ export class TransactionsService {
   // }
 
   async createTransactionBuyerToken(orderId: string): Promise<any> {
-    // Validate environment variables
+    
     const tradeSafeApiUrl = process.env.TRADE_SAFE_API_URL;
     if (!tradeSafeApiUrl) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
   
-    // Fetch access token
+    
     const accessToken = await this.transactionsAuthService.getAccessToken();
   
-    // Fetch the specific order using the provided orderId
+    
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
     });
@@ -830,7 +830,7 @@ export class TransactionsService {
       throw new NotFoundException("Order or ownedDigifranchise not found");
     }
   
-    // Find the basic_info object within orderAdditionalInfo
+    
     const basicInfoObj = order.orderAdditionalInfo.find(info => info.basic_info !== undefined);
   
     if (!basicInfoObj || !basicInfoObj.basic_info) {
@@ -840,14 +840,14 @@ export class TransactionsService {
     const { name, email, phoneNumber } = basicInfoObj.basic_info;
     const [givenName, familyName] = name.includes(' ') ? name.split(' ') : [name, ''];
   
-    // Initialize GraphQL client
+    
     const client = new GraphQLClient(tradeSafeApiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
   
-    // Define GraphQL mutation
+    
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
         tokenCreate(input: $input) {
@@ -857,7 +857,7 @@ export class TransactionsService {
       }
     `;
   
-    // Prepare variables for the mutation
+    
     const variables = {
       input: {
         user: {
@@ -881,11 +881,11 @@ export class TransactionsService {
     };
   
     try {
-      // Execute the GraphQL mutation
+      
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-      // Enhanced error logging
+      
       console.error('GraphQL Request Error:', error);
       if (error.response?.errors) {
         console.error('GraphQL Error Details:', error.response.errors);
