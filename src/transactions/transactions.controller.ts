@@ -8,6 +8,7 @@ import {
   UseGuards,
   Req,
   Put,
+  BadRequestException,
 } from "@nestjs/common";
 import { TransactionsService } from "./transactions.service";
 import { CreateTransactionDto } from "./dto/transactions.dto";
@@ -133,5 +134,13 @@ export class TransactionsController {
     @Body() updatingOrderStatusDto: UpdatingOrderStatusDto
   ): Promise<any> {
     return this.transactionsService.updateOrderStatus(orderId, updatingOrderStatusDto);
+  }
+
+
+  @Post('create-transaction-and-checkout-link/:orderId')
+  async createTransactionAndGetCheckoutLink(
+    @Param('orderId') orderId: string,
+  ): Promise<any> {
+    return await this.transactionsService.createTransactionAndGetCheckoutLink(orderId);
   }
 }

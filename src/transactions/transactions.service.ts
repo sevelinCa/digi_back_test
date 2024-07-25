@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { TransactionsAuthService } from "./transactions-auth.service";
 import { GraphQLClient, gql } from "graphql-request";
 import { CreateTransactionDto } from "./dto/transactions.dto";
@@ -1232,4 +1232,34 @@ export class TransactionsService {
   
     return this.orderRepository.save(order);
   }
+
+
+  async createTransactionAndGetCheckoutLink(orderId: string): Promise<any> {
+    try {
+      const transactionResponse = await this.createTransactionWithoutAuth(orderId);
+  
+      if (!transactionResponse || !transactionResponse.transactionCreate || !transactionResponse.transactionCreate.id) {
+        throw new BadRequestException("Failed to create transaction or transaction ID not found.");
+      }
+  
+      const transactionId = transactionResponse.transactionCreate.id;
+      const title = transactionResponse.transactionCreate.title;
+      const createdAt = transactionResponse.transactionCreate.createdAt;
+  
+      const checkoutLink = await this.getCheckoutLink(transactionId);
+  
+      return {
+        transactionCreate: {
+          id: transactionId,
+          title,
+          createdAt,
+        },
+        checkoutLink,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
 }
