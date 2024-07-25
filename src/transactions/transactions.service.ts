@@ -751,23 +751,96 @@ export class TransactionsService {
   //   }
   // }
 
-  async createTransactionBuyerToken(userId: string): Promise<any> {
+  // async createTransactionBuyerToken(orderId: string): Promise<any> {
+  //   const accessToken = await this.transactionsAuthService.getAccessToken();
+  //   if (!process.env.TRADE_SAFE_API_URL) {
+  //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+  //   }
+
+
+  //   const order = await this.orderRepository.findOne({
+  //     where: { id: orderId }
+  //   });
+  //   if (!order || !order.ownedDigifranchise) {
+  //     throw new NotFoundException("Order or ownedDigifranchise not found");
+  //   }
+
+
+  //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+  //     headers: {
+  //       Authorization: `Bearer ${accessToken}`,
+  //     },
+  //   });
+
+  //   const mutation = gql`
+  //     mutation tokenCreate($input: TokenInput!) {
+  //       tokenCreate(input: $input) {
+  //         id
+  //         name
+  //       }
+  //     }
+  //   `;
+
+  //   const variables = {
+  //     input: {
+  //       user: {
+  //         givenName: order.orderAdditionalInfo.basic_info.name,
+  //         familyName: order.orderAdditionalInfo.basic_info.name,,
+  //         email: order.orderAdditionalInfo.basic_info.email,
+  //         mobile: order.orderAdditionalInfo.basic_info.name.phoneNumber,
+  //       },
+  //       bankAccount: {
+  //         accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000",
+  //         accountType: "CHEQUE",
+  //         bank: "SBSA",
+  //       },
+  //       settings: {
+  //         payout: {
+  //           interval: "IMMEDIATE",
+  //           refund: "WALLET",
+  //         },
+  //       },
+  //     },
+  //   };
+
+  //   try {
+  //     return await client.request(mutation, variables);
+  //   } catch (error) {
+  //     console.error(`Failed to create buyer token: ${error}`);
+  //     throw new Error("Failed to create buyer token");
+  //   }
+  // }
+
+  async createTransactionBuyerToken(orderId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException("User not found");
+      // Fetch the specific order using the provided orderId
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
+  
+    if (!order) {
+      throw new NotFoundException("Order or ownedDigifranchise not found");
     }
-
+  
+    // Find the basic_info object within orderAdditionalInfo
+    const basicInfoObj = order.orderAdditionalInfo.find(info => info.basic_info !== undefined);
+  
+    if (!basicInfoObj || !basicInfoObj.basic_info) {
+      throw new Error("Basic info not found in orderAdditionalInfo");
+    }
+  
+    const { name, email, phoneNumber } = basicInfoObj.basic_info;
+    const [givenName, familyName] = name.split(' ').length > 1 ? name.split(' ') : [name, ''];
+  
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
+  
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
         tokenCreate(input: $input) {
@@ -776,14 +849,14 @@ export class TransactionsService {
         }
       }
     `;
-
+  
     const variables = {
       input: {
         user: {
-          givenName: user.firstName,
-          familyName: user.lastName,
-          email: user.email,
-          mobile: user.phoneNumber,
+          givenName,
+          familyName,
+          email,
+          mobile: phoneNumber,
         },
         bankAccount: {
           accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000",
@@ -798,7 +871,7 @@ export class TransactionsService {
         },
       },
     };
-
+  
     try {
       return await client.request(mutation, variables);
     } catch (error) {
@@ -806,6 +879,8 @@ export class TransactionsService {
       throw new Error("Failed to create buyer token");
     }
   }
+  
+  
 
   async getDigifranchiseOwnerInfo(franchiseOwnerId: string): Promise<any> {
     const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
