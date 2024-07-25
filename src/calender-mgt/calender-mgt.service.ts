@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateVenueDto, type UpdateVenueDto } from "./dto/create-venues.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Equal, In, IsNull, Repository } from "typeorm";
@@ -47,6 +47,17 @@ export class CalenderMgtService {
     });
     if (!owned) {
       throw new Error("Owner not exist");
+    }
+    const location = await this.venueRepository.findOne({
+      where: { location: createVenueDto.location },
+    });
+    if(location){
+      throw new HttpException(
+        {
+          message: 'Location already exists ',
+        },
+        HttpStatus.CONFLICT
+      );
     }
     const newVenue = this.venueRepository.create({
       ...createVenueDto,
