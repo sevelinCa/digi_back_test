@@ -812,11 +812,16 @@ export class TransactionsService {
   // }
 
   async createTransactionBuyerToken(orderId: string): Promise<any> {
-    const accessToken = await this.transactionsAuthService.getAccessToken();
-    if (!process.env.TRADE_SAFE_API_URL) {
+    // Validate environment variables
+    const tradeSafeApiUrl = process.env.TRADE_SAFE_API_URL;
+    if (!tradeSafeApiUrl) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-      // Fetch the specific order using the provided orderId
+  
+    // Fetch access token
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+  
+    // Fetch the specific order using the provided orderId
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
     });
@@ -833,14 +838,16 @@ export class TransactionsService {
     }
   
     const { name, email, phoneNumber } = basicInfoObj.basic_info;
-    const [givenName, familyName] = name.split(' ').length > 1 ? name.split(' ') : [name, ''];
+    const [givenName, familyName] = name.includes(' ') ? name.split(' ') : [name, ''];
   
-    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+    // Initialize GraphQL client
+    const client = new GraphQLClient(tradeSafeApiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
   
+    // Define GraphQL mutation
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
         tokenCreate(input: $input) {
@@ -850,6 +857,7 @@ export class TransactionsService {
       }
     `;
   
+    // Prepare variables for the mutation
     const variables = {
       input: {
         user: {
@@ -873,10 +881,19 @@ export class TransactionsService {
     };
   
     try {
-      return await client.request(mutation, variables);
+      // Execute the GraphQL mutation
+      const response = await client.request(mutation, variables);
+      return response;
     } catch (error) {
-      console.error(`Failed to create buyer token: ${error}`);
-      throw new Error("Failed to create buyer token");
+      // Enhanced error logging
+      console.error('GraphQL Request Error:', error);
+      if (error.response?.errors) {
+        console.error('GraphQL Error Details:', error.response.errors);
+        throw new Error(`Failed to create buyer token: ${error.response.errors[0].message}`);
+      } else {
+        console.error('Network or Unknown Error:', error.message);
+        throw new Error("Failed to create buyer token");
+      }
     }
   }
   
