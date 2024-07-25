@@ -76,26 +76,24 @@ export class TransactionsController {
     return this.transactionsService.requestWithdrawal(tokenId, value);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Post("create-buy-token")
-  async createTransactionBuyerToken(@Req() req: Request): Promise<any> {
-    const userId = (req.user as UserEntity).id;
 
-    return this.transactionsService.createTransactionBuyerToken(userId);
+  @Post("create-buy-token/:orderId")
+  async createTransactionBuyerToken(@Param("orderId") orderId: string): Promise<any> {
+    return this.transactionsService.createTransactionBuyerToken(orderId);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+
+
   @Post("create-seller-token/:franchiseOwnerId")
   async createTransactionSellerToken(
-    @Req() req: Request,
     @Param("franchiseOwnerId") franchiseOwnerId: string
   ): Promise<any> {
     return this.transactionsService.createTransactionSellerToken(
       franchiseOwnerId
     );
   }
+  
+
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
