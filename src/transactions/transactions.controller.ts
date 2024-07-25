@@ -107,6 +107,14 @@ export class TransactionsController {
     return this.transactionsService.createTransactionWithAuth(userId, orderId);
   }
 
+
+  @Post("create-transaction-without-auth/:orderId")
+  async createTransactionWithoutAuth(
+    @Param("orderId") orderId: string
+  ): Promise<any> {
+    return this.transactionsService.createTransactionWithoutAuth(orderId);
+  }
+
   @Post("checkout-link/:transactionId")
   async getCheckoutLink(
     @Param("transactionId") transactionId: string,
