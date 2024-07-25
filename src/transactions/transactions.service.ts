@@ -1012,7 +1012,7 @@ export class TransactionsService {
       totalAmount = order.totalAmount;
     }
 
-    const buyerTokenResponse = await this.createTransactionBuyerToken(userId);
+    const buyerTokenResponse = await this.createTransactionBuyerToken(order.id);
     const buyerTokenId = buyerTokenResponse.tokenCreate.id;
 
     const sellerTokenResponse = await this.createTransactionSellerToken(
