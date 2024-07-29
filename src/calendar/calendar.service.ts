@@ -65,7 +65,6 @@ export class CalendarService {
       setWorkingHours: setWorkingHoursDto,
     });
   }
-
   async getWorkingHours(ownedDigifranchiseId: string) {
     const getOwnedDigifranchise: DigifranchiseOwner | null =
       await this.digifranchiseOwnerRepository.findOne({
@@ -217,30 +216,33 @@ export class CalendarService {
   async handleDelete() {
     await this.deleteSlotsAtEndOfDay();
   }
-  @Cron('0 0 25 * *')
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleClone() {
-    const digis = await this.digifranchiseWorkingHoursRepository.find({
-      relations: ['ownedDigifranchise'],
-    });
-    for (const digi of digis) {
-      const payload = {
-        allowBookingOnPublicHolidays: digi.allowBookingOnPublicHolidays,
-        allowedTimeSlotUnits: digi.allowedTimeSlotUnits,
-        breakTimeBetweenBookedSlots: digi.breakTimeBetweenBookedSlots,
-        unavailability: digi.unavailability,
-        availabilityWeekDays: digi.availabilityWeekDays.map((dayInfo) => ({
-          day: dayInfo.day,
-          isDayFullBooked: false,
-          availabilityDayTime: {
-            startTime: dayInfo.startTime,
-            endTime: dayInfo.endTime,
-          },
-        })),
-      };
-      await this.updateWorkingHoursForDigifranchise(
-        payload,
-        digi.ownedDigifranchise!.id
-      );
+    const today = new Date()
+    if(today.getDate()===31){
+      const digis = await this.digifranchiseWorkingHoursRepository.find({
+        relations: ['ownedDigifranchise'],
+      });
+      for (const digi of digis) {
+        const payload = {
+          allowBookingOnPublicHolidays: digi.allowBookingOnPublicHolidays,
+          allowedTimeSlotUnits: digi.allowedTimeSlotUnits,
+          breakTimeBetweenBookedSlots: digi.breakTimeBetweenBookedSlots,
+          unavailability: digi.unavailability,
+          availabilityWeekDays: digi.availabilityWeekDays.map((dayInfo) => ({
+            day: dayInfo.day,
+            isDayFullBooked: false,
+            availabilityDayTime: {
+              startTime: dayInfo.startTime,
+              endTime: dayInfo.endTime,
+            },
+          })),
+        };
+        await this.updateWorkingHoursForDigifranchise(
+          payload,
+          digi.ownedDigifranchise!.id
+        );
+      }
     }
   }
 }

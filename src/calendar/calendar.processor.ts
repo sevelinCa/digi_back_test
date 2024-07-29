@@ -53,20 +53,25 @@ export class TimeSlotsProcessor {
     setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
     setWorkingHours.availabilityWeekDays = workingDays;
     await this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
-    let currentDate = new Date();
-    const currentDay = dayjs().date();
-    const endOfMonth = dayjs().daysInMonth();
-    const remainingDays = endOfMonth - currentDay + 1;
-    for (let j = 0; j < remainingDays; j++) {
+  
+    let currentDate = dayjs();
+    const currentDay = currentDate.date();
+    const endOfCurrentMonth = currentDate.endOf('month').date();
+    let daysToCreateSlotsFor = endOfCurrentMonth - currentDay + 1;
+  
+    if (currentDay >= 25) {
+      const endOfNextMonth = currentDate.add(1, 'month').endOf('month').date();
+      daysToCreateSlotsFor += endOfNextMonth;
+    }
+  
+    for (let j = 0; j < daysToCreateSlotsFor; j++) {
       for (
         let i = 0;
         i < data.setWorkingHours.availabilityWeekDays!.length;
         i++
       ) {
         const day = data.setWorkingHours.availabilityWeekDays![i];
-        const dayOfWeek = currentDate.toLocaleDateString('en-US', {
-          weekday: 'long',
-        });
+        const dayOfWeek = currentDate.format('dddd');
         if (day.day === dayOfWeek) {
           const slots = this.calculateAvailableTimeSlots(
             day.availabilityDayTime!.startTime,
@@ -74,8 +79,8 @@ export class TimeSlotsProcessor {
             data.setWorkingHours.allowedTimeSlotUnits,
             data.setWorkingHours.breakTimeBetweenBookedSlots
           );
+          console.log(slots)
           for (const slot of slots) {
-            console.log(getOwnedDigifranchise, '=====owned digiiiiii');
             await this.createTimeSlot(
               getOwnedDigifranchise,
               day.day,
@@ -88,28 +93,7 @@ export class TimeSlotsProcessor {
           }
         }
       }
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    if (data.setWorkingHours.unavailability) {
-      for (const unAvail of data.setWorkingHours.unavailability) {
-        const setUnavailability = await this.calendarService.getTimeSlots(
-          data.ownedDigifranchiseId,
-          unAvail.workingDate
-        );
-        for (const unSlot of setUnavailability) {
-          if (
-            (unSlot.startTime < unAvail.endTime &&
-              unSlot.endTime > unAvail.startTime) ||
-            (unSlot.startTime === unAvail.startTime &&
-              unSlot.endTime === unAvail.endTime)
-          ) {
-            await this.digifranchiseAvailableTimeSlotsRepository.update(
-              unSlot.id,
-              { isSlotAvailable: false }
-            );
-          }
-        }
-      }
+      currentDate = currentDate.add(1, 'day');
     }
   }
   calculateAvailableTimeSlots = (
