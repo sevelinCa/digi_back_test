@@ -18,7 +18,7 @@ export class DigifranchiseExpense {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.digifranchiseExpense,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner;
@@ -26,7 +26,7 @@ export class DigifranchiseExpense {
   @ManyToOne(
     () => FixedExpenseCategory,
     (expenseCategory) => expenseCategory.digifranchiseExpense,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "fixedExpense" })
   fixedExpenseCategory: FixedExpenseCategory;

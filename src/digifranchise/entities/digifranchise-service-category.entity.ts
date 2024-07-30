@@ -26,7 +26,7 @@ export class DigifranchiseServiceCategory {
   @ManyToOne(
     () => DigifranchiseServiceOffered,
     (service) => service.serviceCategories,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "serviceId" })
   service: DigifranchiseServiceOffered;

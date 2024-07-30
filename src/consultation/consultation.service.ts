@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateConsultationTableDto } from './dto/consultations.dto';
-import { ConsultationTable } from './entities/consultation.entity';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { AvailabilityTimeSlots } from 'src/calendar/entities/time-slots.entity';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CreateConsultationTableDto } from "./dto/consultations.dto";
+import { ConsultationTable } from "./entities/consultation.entity";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { AvailabilityTimeSlots } from "src/calendar/entities/time-slots.entity";
 
 @Injectable()
 export class ConsultationService {
@@ -19,7 +19,7 @@ export class ConsultationService {
 
   async createConsultation(
     consultation: CreateConsultationTableDto,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ) {
     const getOwnedDigifranchise: DigifranchiseOwner | null =
       await this.digifranchiseOwnerRepository.findOne({
@@ -29,9 +29,9 @@ export class ConsultationService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
     const data = { ...consultation, ownedDigifranchise: ownedDigifranchiseId };
@@ -46,7 +46,7 @@ export class ConsultationService {
       }
       const response = await this.consultationRepository.save(data);
       return {
-        message: 'Consultation saved successfully',
+        message: "Consultation saved successfully",
         data: response,
       };
     } catch (error) {
@@ -57,7 +57,7 @@ export class ConsultationService {
   async getConsultations() {
     try {
       const response = await this.consultationRepository.find();
-      return { message: 'Consultations', data: response };
+      return { message: "Consultations", data: response };
     } catch (error) {
       console.log(error);
     }

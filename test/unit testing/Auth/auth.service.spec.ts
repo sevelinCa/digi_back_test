@@ -15,7 +15,7 @@ describe("AuthController", () => {
           provide: AuthService,
           useValue: {
             register: jest.fn().mockResolvedValue({
-              message: "sign up is successful, check your email to verify!!"
+              message: "sign up is successful, check your email to verify!!",
             }),
           },
         },
@@ -38,7 +38,9 @@ describe("AuthController", () => {
       const result = await authController.register(dto);
 
       expect(authService.register).toHaveBeenCalledWith(dto);
-      expect(result).toEqual({ message: "sign up is successful, check your email to verify!!" });
+      expect(result).toEqual({
+        message: "sign up is successful, check your email to verify!!",
+      });
     });
   });
 });

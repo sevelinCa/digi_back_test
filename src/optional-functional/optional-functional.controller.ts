@@ -36,7 +36,9 @@ export class OptionalFunctionalController {
   }
 
   @Delete("delete-by-franchiseOwner-email/:email")
-  async deleteByFranchiseOwnerEmail(@Param("email") email: string): Promise<void> {
+  async deleteByFranchiseOwnerEmail(
+    @Param("email") email: string,
+  ): Promise<void> {
     try {
       await this.optionalFunctionalService.deleteByFranchiseOwnerEmail(email);
     } catch (error) {
@@ -61,11 +63,8 @@ export class OptionalFunctionalController {
     }
   }
 
-
   @Delete("delete-by-user-email/:email")
-  async deleteByUserEmail(
-    @Param("email") email: string,
-  ): Promise<void> {
+  async deleteByUserEmail(@Param("email") email: string): Promise<void> {
     try {
       await this.optionalFunctionalService.deleteByUserEmail(email);
     } catch (error) {

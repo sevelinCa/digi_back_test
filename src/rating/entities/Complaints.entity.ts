@@ -16,7 +16,11 @@ export class OrderIssueTable {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @OneToMany(() => OrderComplaintsTable, (complaints) => complaints.orderIssue, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(
+    () => OrderComplaintsTable,
+    (complaints) => complaints.orderIssue,
+    { cascade: true, onDelete: "CASCADE" },
+  )
   complaints: OrderComplaintsTable[];
 
   @ManyToOne(() => OrderTable, (order) => order.issues, { onDelete: "CASCADE" })
@@ -47,11 +51,15 @@ export class OrderComplaintsTable {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => OrderTable, (order) => order.Complaints, { onDelete: "CASCADE" })
+  @ManyToOne(() => OrderTable, (order) => order.Complaints, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "orderId" })
   order: OrderTable;
 
-  @ManyToOne(() => OrderIssueTable, (issue) => issue.complaints, { onDelete: "CASCADE" })
+  @ManyToOne(() => OrderIssueTable, (issue) => issue.complaints, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "orderIssueId" })
   orderIssue: OrderIssueTable;
 

@@ -1,18 +1,24 @@
-import { IsString, IsNumber, IsArray, ValidateNested, IsEnum } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-import { Currency, FeeAllocation, Industry } from '../enums';
+import {
+  IsString,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+  IsEnum,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
+import { Currency, FeeAllocation, Industry } from "../enums";
 
 export class CreateAllocationDto {
-  @ApiProperty({ example: 'Allocation Title' })
+  @ApiProperty({ example: "Allocation Title" })
   @IsString()
   title: string;
 
-  @ApiProperty({ example: 'This is an allocation description.' })
+  @ApiProperty({ example: "This is an allocation description." })
   @IsString()
   description: string;
 
-  @ApiProperty({ example: 10000.00 })
+  @ApiProperty({ example: 10000.0 })
   @IsNumber()
   value: number;
 
@@ -26,21 +32,21 @@ export class CreateAllocationDto {
 }
 
 export class CreatePartyDto {
-  @ApiProperty({ example: '15Ndyzw4lUfWnTTeV0ggOY' })
+  @ApiProperty({ example: "15Ndyzw4lUfWnTTeV0ggOY" })
   @IsString()
   token: string;
 
-  @ApiProperty({ example: 'BUYER' })
+  @ApiProperty({ example: "BUYER" })
   @IsString()
   role: string;
 }
 
 export class CreateTransactionDto {
-  @ApiProperty({ example: 'Transaction Title' })
+  @ApiProperty({ example: "Transaction Title" })
   @IsString()
   title: string;
 
-  @ApiProperty({ example: 'This is a transaction description.' })
+  @ApiProperty({ example: "This is a transaction description." })
   @IsString()
   description: string;
 

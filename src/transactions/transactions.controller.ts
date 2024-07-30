@@ -27,7 +27,7 @@ export class TransactionsController {
 
   @Post("create-transaction")
   async create(
-    @Body() createTransactionDto: CreateTransactionDto
+    @Body() createTransactionDto: CreateTransactionDto,
   ): Promise<any> {
     return this.transactionsService.createTransaction(createTransactionDto);
   }
@@ -59,7 +59,7 @@ export class TransactionsController {
 
   @Post("process-wallet-deposit/:transactionId")
   async processWalletDeposit(
-    @Param("transactionId") transactionId: string
+    @Param("transactionId") transactionId: string,
   ): Promise<any> {
     return this.transactionsService.processWalletDeposit(transactionId);
   }
@@ -72,46 +72,42 @@ export class TransactionsController {
   @Post("request-withdrawal/:tokenId")
   async requestWithdrawal(
     @Param("tokenId") tokenId: string,
-    @Body("value") value: number
+    @Body("value") value: number,
   ): Promise<boolean> {
     return this.transactionsService.requestWithdrawal(tokenId, value);
   }
 
-
   @Post("create-buy-token/:orderId")
-  async createTransactionBuyerToken(@Param("orderId") orderId: string): Promise<any> {
+  async createTransactionBuyerToken(
+    @Param("orderId") orderId: string,
+  ): Promise<any> {
     return this.transactionsService.createTransactionBuyerToken(orderId);
   }
 
-
-
   @Post("create-seller-token/:franchiseOwnerId")
   async createTransactionSellerToken(
-    @Param("franchiseOwnerId") franchiseOwnerId: string
+    @Param("franchiseOwnerId") franchiseOwnerId: string,
   ): Promise<any> {
     return this.transactionsService.createTransactionSellerToken(
-      franchiseOwnerId
+      franchiseOwnerId,
     );
   }
-  
-
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Post("create-transaction-with-auth/:orderId")
   async createTransactionWithAuth(
     @Req() req: Request,
-    @Param("orderId") orderId: string
+    @Param("orderId") orderId: string,
   ): Promise<any> {
     const userId = (req.user as UserEntity).id;
 
     return this.transactionsService.createTransactionWithAuth(userId, orderId);
   }
 
-
   @Post("create-transaction-without-auth/:orderId")
   async createTransactionWithoutAuth(
-    @Param("orderId") orderId: string
+    @Param("orderId") orderId: string,
   ): Promise<any> {
     return this.transactionsService.createTransactionWithoutAuth(orderId);
   }
@@ -119,11 +115,11 @@ export class TransactionsController {
   @Post("checkout-link/:transactionId")
   async getCheckoutLink(
     @Param("transactionId") transactionId: string,
-    @Body("paymentMethods") paymentMethods: string[]
+    @Body("paymentMethods") paymentMethods: string[],
   ): Promise<string> {
     const checkoutLink = await this.transactionsService.getCheckoutLink(
       transactionId,
-      paymentMethods
+      paymentMethods,
     );
     return checkoutLink;
   }
@@ -131,16 +127,20 @@ export class TransactionsController {
   @Put("update-order-status/:orderId")
   async updateOrderStatus(
     @Param("orderId") orderId: string,
-    @Body() updatingOrderStatusDto: UpdatingOrderStatusDto
+    @Body() updatingOrderStatusDto: UpdatingOrderStatusDto,
   ): Promise<any> {
-    return this.transactionsService.updateOrderStatus(orderId, updatingOrderStatusDto);
+    return this.transactionsService.updateOrderStatus(
+      orderId,
+      updatingOrderStatusDto,
+    );
   }
 
-
-  @Post('create-transaction-and-checkout-link/:orderId')
+  @Post("create-transaction-and-checkout-link/:orderId")
   async createTransactionAndGetCheckoutLink(
-    @Param('orderId') orderId: string,
+    @Param("orderId") orderId: string,
   ): Promise<any> {
-    return await this.transactionsService.createTransactionAndGetCheckoutLink(orderId);
+    return await this.transactionsService.createTransactionAndGetCheckoutLink(
+      orderId,
+    );
   }
 }

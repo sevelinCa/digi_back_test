@@ -12,7 +12,7 @@ export class ProfessionalBodyEntity {
   @OneToMany(
     () => Accreditation,
     (accreditation) => accreditation.professionalBody,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   accreditations: Accreditation[];
 }

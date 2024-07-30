@@ -8,7 +8,7 @@ import { OrderTable, OrderStatus } from "src/payment/entities/order.entity";
 export class OrderSeedService {
   constructor(
     @InjectRepository(OrderTable)
-    private readonly orderRepository: Repository<OrderTable>
+    private readonly orderRepository: Repository<OrderTable>,
   ) {}
 
   async run() {
@@ -317,7 +317,7 @@ export class OrderSeedService {
         await this.orderRepository.save(order);
       } else {
         console.log(
-          `Order with code ${orderData.orderCode} already exists. Skipping.`
+          `Order with code ${orderData.orderCode} already exists. Skipping.`,
         );
       }
     }

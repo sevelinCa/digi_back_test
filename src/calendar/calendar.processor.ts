@@ -1,18 +1,18 @@
-import { Process, Processor } from '@nestjs/bull';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Job } from 'bull';
-import { AvailabilityTimeSlots } from './entities/time-slots.entity';
-import { Between, Repository } from 'typeorm';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import dayjs from 'dayjs';
-import { SetWorkingHoursDto } from './dto/availability.dto';
-import { DigifranchiseWorkingHours } from './entities/digifranchise-working-hours.entity';
-import { CalendarService } from './calendar.service';
+import { Process, Processor } from "@nestjs/bull";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Job } from "bull";
+import { AvailabilityTimeSlots } from "./entities/time-slots.entity";
+import { Between, Repository } from "typeorm";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import dayjs from "dayjs";
+import { SetWorkingHoursDto } from "./dto/availability.dto";
+import { DigifranchiseWorkingHours } from "./entities/digifranchise-working-hours.entity";
+import { CalendarService } from "./calendar.service";
 interface ExtendedSetWorkingHoursDto {
   setWorkingHours: SetWorkingHoursDto;
   ownedDigifranchiseId: string;
 }
-@Processor('time-slots')
+@Processor("time-slots")
 export class TimeSlotsProcessor {
   constructor(
     @InjectRepository(DigifranchiseOwner)
@@ -21,7 +21,7 @@ export class TimeSlotsProcessor {
     private readonly digifranchiseWorkingHoursRepository: Repository<DigifranchiseWorkingHours>,
     @InjectRepository(AvailabilityTimeSlots)
     private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
-    private readonly calendarService: CalendarService
+    private readonly calendarService: CalendarService,
   ) {}
   @Process()
   async createTimeSlots(job: Job<ExtendedSetWorkingHoursDto>) {
@@ -48,22 +48,22 @@ export class TimeSlotsProcessor {
         where: { id: data!.ownedDigifranchiseId },
       });
     const setWorkingHours = this.digifranchiseWorkingHoursRepository.create(
-      data.setWorkingHours
+      data.setWorkingHours,
     );
     setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
     setWorkingHours.availabilityWeekDays = workingDays;
     await this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
-  
+
     let currentDate = dayjs();
     const currentDay = currentDate.date();
-    const endOfCurrentMonth = currentDate.endOf('month').date();
+    const endOfCurrentMonth = currentDate.endOf("month").date();
     let daysToCreateSlotsFor = endOfCurrentMonth - currentDay + 1;
-  
+
     if (currentDay >= 25) {
-      const endOfNextMonth = currentDate.add(1, 'month').endOf('month').date();
+      const endOfNextMonth = currentDate.add(1, "month").endOf("month").date();
       daysToCreateSlotsFor += endOfNextMonth;
     }
-  
+
     for (let j = 0; j < daysToCreateSlotsFor; j++) {
       for (
         let i = 0;
@@ -71,15 +71,15 @@ export class TimeSlotsProcessor {
         i++
       ) {
         const day = data.setWorkingHours.availabilityWeekDays![i];
-        const dayOfWeek = currentDate.format('dddd');
+        const dayOfWeek = currentDate.format("dddd");
         if (day.day === dayOfWeek) {
           const slots = this.calculateAvailableTimeSlots(
             day.availabilityDayTime!.startTime,
             day.availabilityDayTime!.endTime,
             data.setWorkingHours.allowedTimeSlotUnits,
-            data.setWorkingHours.breakTimeBetweenBookedSlots
+            data.setWorkingHours.breakTimeBetweenBookedSlots,
           );
-          console.log(slots)
+          console.log(slots);
           for (const slot of slots) {
             await this.createTimeSlot(
               getOwnedDigifranchise,
@@ -88,40 +88,40 @@ export class TimeSlotsProcessor {
               false,
               true,
               slot.startTime,
-              slot.endTime
+              slot.endTime,
             );
           }
         }
       }
-      currentDate = currentDate.add(1, 'day');
+      currentDate = currentDate.add(1, "day");
     }
   }
   calculateAvailableTimeSlots = (
     startTime: string,
     endTime: string,
     slotDuration: number,
-    breakTime: number
+    breakTime: number,
   ) => {
     const startDate = dayjs(`2024-01-01T${startTime}`);
     const endDate = dayjs(`2024-01-01T${endTime}`);
 
-    const durationInMinutes = endDate.diff(startDate, 'minute');
+    const durationInMinutes = endDate.diff(startDate, "minute");
     const timeSlotDuration = slotDuration;
     const breakTimeDuration = breakTime;
     const numberOfSlots = Math.floor(
-      durationInMinutes / (timeSlotDuration + breakTimeDuration)
+      durationInMinutes / (timeSlotDuration + breakTimeDuration),
     );
     const availableTimeSlots: any = [];
     let currentTime = startDate;
     for (let i = 0; i < numberOfSlots; i++) {
-      const slotStartTime = currentTime.format('HH:mm');
-      currentTime = currentTime.add(timeSlotDuration, 'minute');
-      const slotEndTime = currentTime.format('HH:mm');
+      const slotStartTime = currentTime.format("HH:mm");
+      currentTime = currentTime.add(timeSlotDuration, "minute");
+      const slotEndTime = currentTime.format("HH:mm");
       availableTimeSlots.push({
         startTime: slotStartTime,
         endTime: slotEndTime,
       });
-      currentTime = currentTime.add(breakTimeDuration, 'minute');
+      currentTime = currentTime.add(breakTimeDuration, "minute");
     }
     return availableTimeSlots;
   };
@@ -132,7 +132,7 @@ export class TimeSlotsProcessor {
     isSlotBooked: boolean,
     isSlotAvailable: boolean,
     startTime: string,
-    endTime: string
+    endTime: string,
   ): Promise<any> {
     const startOfDay = new Date(workingDate);
     startOfDay.setHours(0, 0, 0, 0);
@@ -161,7 +161,7 @@ export class TimeSlotsProcessor {
           endTime: endTime,
         });
       await this.digifranchiseAvailableTimeSlotsRepository.save(
-        newAvailability
+        newAvailability,
       );
     }
   }

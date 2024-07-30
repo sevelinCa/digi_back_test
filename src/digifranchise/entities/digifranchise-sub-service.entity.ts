@@ -26,15 +26,14 @@ export class DigifranchiseSubServices {
   @OneToMany(
     () => DigifranchiseSubServiceCategory,
     (subCategory) => subCategory.subService,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   subServiceCategories: DigifranchiseSubServiceCategory[];
 
-  @OneToMany(
-    () => DigifranchiseGalleryImage,
-    (image) => image.subService,
-    { cascade: true, onDelete: "CASCADE" }
-  )
+  @OneToMany(() => DigifranchiseGalleryImage, (image) => image.subService, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   subServiceGalleryImages: DigifranchiseGalleryImage[];
 
   @ManyToOne(() => DigifranchiseOwner, (subs) => subs.subService, {

@@ -60,28 +60,28 @@ export class DigifranchiseOwner {
   @OneToOne(
     () => DigifranchiseGeneralInfo,
     (digifranchiseInfo) => digifranchiseInfo.digifranchiseOwner,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   digifranchiseGeneralInfo: DigifranchiseGeneralInfo;
 
   @OneToOne(
     () => DigifranchiseComplianceInfo,
     (digifranchiseInfo) => digifranchiseInfo.digifranchiseOwner,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   digifranchiseComplianceInfo: DigifranchiseComplianceInfo;
 
   @OneToMany(
     () => DigifranchiseGalleryImage,
     (image) => image.digifranchiseOwnedId,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   digifranchiseGalleryImage: DigifranchiseGalleryImage[];
 
   @OneToMany(
     () => DigifranchiseServiceOffered,
     (service) => service.ownedFranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   serviceOffered: DigifranchiseServiceOffered[];
 
@@ -94,42 +94,42 @@ export class DigifranchiseOwner {
   @OneToMany(
     () => DigifranchiseSubServices,
     (owner) => owner.digifranchiseOwnedId,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   subService: DigifranchiseSubServices[];
 
   @OneToMany(
     () => DigifranchiseSubProduct,
     (owner) => owner.digifranchiseOwnedId,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   subProduct: DigifranchiseSubProduct[];
 
   @OneToMany(
     () => DigifranchiseExpense,
     (ownedFranchise) => ownedFranchise.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   digifranchiseExpense: DigifranchiseExpense[];
 
   @OneToMany(
     () => DigifranchiseSelectProductOrServiceTable,
     (selectItem) => selectItem.ownerDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   selectItem: DigifranchiseSelectProductOrServiceTable[];
 
   @OneToMany(
     () => DigifranchiseWorkingHours,
     (availability) => availability.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   availability: DigifranchiseWorkingHours[];
 
   @OneToMany(
     () => UnavailableManagement,
     (unavailability) => unavailability.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   unavailability: UnavailableManagement[];
 
@@ -139,7 +139,7 @@ export class DigifranchiseOwner {
   @OneToMany(
     () => CustomerManagement,
     (customer) => customer.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   customer: CustomerManagement[];
 
@@ -152,14 +152,14 @@ export class DigifranchiseOwner {
   @OneToMany(
     () => SupplierManagement,
     (supplier) => supplier.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   supplier: SupplierManagement[];
 
   @OneToMany(
     () => InventoryManagement,
     (inventory) => inventory.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   inventory: InventoryManagement[];
 
@@ -178,35 +178,35 @@ export class DigifranchiseOwner {
   @OneToMany(
     () => Availability,
     (availability) => availability.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   availabilityTime: Availability[];
 
   @OneToMany(
     () => AvailabilityWeekDays,
     (availableWeekDay) => availableWeekDay.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   availableWeekDay: AvailabilityWeekDays[];
 
   @OneToMany(
     () => AvailabilityDayTime,
     (availableDay) => availableDay.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   availableDay: AvailabilityDayTime[];
 
   @OneToMany(
     () => Unavailability,
     (unavailability) => unavailability.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   unavailabilityTime: Unavailability[];
 
   @OneToMany(
     () => AvailabilitySlotsTimeOneOne,
     (singleSlot) => singleSlot.availability,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   singleSlot: AvailabilitySlotsTimeOneOne[];
 
@@ -216,7 +216,7 @@ export class DigifranchiseOwner {
   @OneToMany(
     () => Unavailability,
     (unavailableDay) => unavailableDay.ownedDigifranchise,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   unavailableDay: Unavailability[];
 

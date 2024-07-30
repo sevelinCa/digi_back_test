@@ -108,9 +108,7 @@ export class OptionalFunctionalService {
 
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new NotFoundException(
-        `User with Email ${email} not found`,
-      );
+      throw new NotFoundException(`User with Email ${email} not found`);
     }
 
     await this.userRepository.remove(user);

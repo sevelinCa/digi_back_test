@@ -1,67 +1,67 @@
-import { IsString, IsObject, ValidateNested } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { IsString, IsObject, ValidateNested } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 
 class PayoutSettingsDto {
-  @ApiProperty({ example: 'IMMEDIATE' })
+  @ApiProperty({ example: "IMMEDIATE" })
   @IsString()
   interval: string;
 
-  @ApiProperty({ example: 'WALLET' })
+  @ApiProperty({ example: "WALLET" })
   @IsString()
   refund: string;
 }
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'First Name' })
+  @ApiProperty({ example: "First Name" })
   @IsString()
   givenName: string;
 
-  @ApiProperty({ example: 'Last Name' })
+  @ApiProperty({ example: "Last Name" })
   @IsString()
   familyName: string;
 
-  @ApiProperty({ example: 'email@example.net' })
+  @ApiProperty({ example: "email@example.net" })
   @IsString()
   email: string;
 
-  @ApiProperty({ example: '+27000000000' })
+  @ApiProperty({ example: "+27000000000" })
   @IsString()
   mobile: string;
 }
 
 export class CreateOrganizationDto {
-  @ApiProperty({ example: 'Org Name' })
+  @ApiProperty({ example: "Org Name" })
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'Trading As name' })
+  @ApiProperty({ example: "Trading As name" })
   @IsString()
   tradeName: string;
 
-  @ApiProperty({ example: 'PRIVATE' })
+  @ApiProperty({ example: "PRIVATE" })
   @IsString()
   type: string;
 
-  @ApiProperty({ example: '0000/000000/00' })
+  @ApiProperty({ example: "0000/000000/00" })
   @IsString()
   registrationNumber: string;
 
-  @ApiProperty({ example: '000000000' })
+  @ApiProperty({ example: "000000000" })
   @IsString()
   taxNumber: string;
 }
 
 export class CreateBankAccountDto {
-  @ApiProperty({ example: '0000000000' })
+  @ApiProperty({ example: "0000000000" })
   @IsString()
   accountNumber: string;
 
-  @ApiProperty({ example: 'CHEQUE' })
+  @ApiProperty({ example: "CHEQUE" })
   @IsString()
   accountType: string;
 
-  @ApiProperty({ example: 'SBSA' })
+  @ApiProperty({ example: "SBSA" })
   @IsString()
   bank: string;
 }

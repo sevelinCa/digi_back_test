@@ -39,32 +39,57 @@ export class OrderTable {
   @JoinColumn({ name: "userId" })
   userId: UserEntity | null;
 
-  @ManyToOne(() => DigifranchiseProduct, { nullable: true, onDelete: "CASCADE" })
+  @ManyToOne(() => DigifranchiseProduct, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "productId" })
   productId: DigifranchiseProduct | null;
 
-  @ManyToOne(() => DigifranchiseServiceOffered, { nullable: true, onDelete: "CASCADE" })
+  @ManyToOne(() => DigifranchiseServiceOffered, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "serviceId" })
   serviceId: DigifranchiseServiceOffered | null;
 
-  @OneToMany(() => OrderBasicInfo, (basicInfo) => basicInfo.order, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => OrderBasicInfo, (basicInfo) => basicInfo.order, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   basicInfos: OrderBasicInfo[];
 
-  @OneToMany(() => OrderComplaintsTable, (complaints) => complaints.order, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => OrderComplaintsTable, (complaints) => complaints.order, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   Complaints: OrderComplaintsTable[];
 
-  @OneToMany(() => OrderIssueTable, (issue) => issue.order, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => OrderIssueTable, (issue) => issue.order, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   issues: OrderIssueTable[];
 
-  @ManyToOne(() => DigifranchiseSubProduct, { nullable: true, onDelete: "CASCADE" })
+  @ManyToOne(() => DigifranchiseSubProduct, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "subProduct" })
   subProduct: DigifranchiseSubProduct | null;
 
-  @ManyToOne(() => DigifranchiseSubServices, { nullable: true, onDelete: "CASCADE" })
+  @ManyToOne(() => DigifranchiseSubServices, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "subService" })
   subService: DigifranchiseSubServices | null;
 
-  @ManyToOne(() => DigifranchiseOwner, (ownedFranchise) => ownedFranchise.order, { onDelete: "CASCADE" })
+  @ManyToOne(
+    () => DigifranchiseOwner,
+    (ownedFranchise) => ownedFranchise.order,
+    { onDelete: "CASCADE" },
+  )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
@@ -98,7 +123,7 @@ export class OrderTable {
 
   @Column({ type: "decimal", precision: 10, scale: 2, nullable: true })
   vatAmount: number | null;
-  
+
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
@@ -114,7 +139,9 @@ export class OrderBasicInfo {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => OrderTable, (order) => order.basicInfos, { onDelete: "CASCADE" })
+  @ManyToOne(() => OrderTable, (order) => order.basicInfos, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "order" })
   order: OrderTable;
 
