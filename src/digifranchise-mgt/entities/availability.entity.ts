@@ -36,24 +36,34 @@ export class Availability {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
-  @OneToMany(() => AvailabilityWeekDays, (weekDay) => weekDay.availability, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => AvailabilityWeekDays, (weekDay) => weekDay.availability, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   weekDays: AvailabilityWeekDays[];
 
-  @OneToMany(() => AvailabilityDayTime, (dayTime) => dayTime.availability, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => AvailabilityDayTime, (dayTime) => dayTime.availability, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   dayTime: AvailabilityDayTime[];
 
-  @OneToMany(() => AvailabilitySlotsDetails, (dayTime) => dayTime.availability, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(
+    () => AvailabilitySlotsDetails,
+    (dayTime) => dayTime.availability,
+    { cascade: true, onDelete: "CASCADE" },
+  )
   slotDetails: AvailabilitySlotsDetails[];
 
   @OneToMany(
     () => Unavailability,
     (unavailability) => unavailability.availability,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   unavailabilities: Unavailability[];
 
@@ -89,17 +99,22 @@ export class AvailabilityWeekDays {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => Availability, (availability) => availability.weekDays, { onDelete: "CASCADE" })
+  @ManyToOne(() => Availability, (availability) => availability.weekDays, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "availabilityId" })
   availability: Availability;
 
-  @OneToMany(() => AvailabilityDayTime, (dayTime) => dayTime.weekDay, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => AvailabilityDayTime, (dayTime) => dayTime.weekDay, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   dayTime: AvailabilityDayTime[];
 
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
@@ -107,18 +122,21 @@ export class AvailabilityWeekDays {
   @ManyToOne(
     () => Unavailability,
     (workingDay) => workingDay.availabilityWeekDays,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   unavailability: Unavailability[];
 
   @ManyToOne(
     () => AvailabilitySlotsDetails,
     (slotDetails) => slotDetails.availabilityWeekDays,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   availabilitySlotsDetails: AvailabilitySlotsDetails[];
 
-  @OneToMany(() => AvailabilityDayTime, (dayTime) => dayTime.weekDay, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => AvailabilityDayTime, (dayTime) => dayTime.weekDay, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   dayTimeSlots: AvailabilityDayTime[];
 
   @Column({ type: "varchar", length: 255 })
@@ -148,18 +166,22 @@ export class AvailabilityDayTime {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @ManyToOne(() => AvailabilityWeekDays, (weekDay) => weekDay.dayTime, { onDelete: "CASCADE" })
+  @ManyToOne(() => AvailabilityWeekDays, (weekDay) => weekDay.dayTime, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "weekDay" })
   weekDay: AvailabilityWeekDays | null;
 
-  @ManyToOne(() => Availability, (availability) => availability.dayTime, { onDelete: "CASCADE" })
+  @ManyToOne(() => Availability, (availability) => availability.dayTime, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "availabilityId" })
   availability: Availability;
 
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
@@ -167,7 +189,7 @@ export class AvailabilityDayTime {
   @ManyToOne(
     () => AvailabilitySlotsDetails,
     (slotDetails) => slotDetails.availabilityDayTime,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   availabilitySlotsDetails: AvailabilitySlotsDetails[];
 
@@ -205,19 +227,22 @@ export class Unavailability {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
-  @ManyToOne(() => AvailabilityWeekDays, { nullable: true, onDelete: "CASCADE" })
+  @ManyToOne(() => AvailabilityWeekDays, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "availabilityWeekDaysId" })
   availabilityWeekDays: AvailabilityWeekDays;
 
   @ManyToOne(
     () => Availability,
     (availability) => availability.unavailabilities,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "availabilityId" })
   availability: Availability;
@@ -249,7 +274,7 @@ export class AvailabilitySlotsDetails {
   @ManyToOne(
     () => AvailabilityDayTime,
     (workingHour) => workingHour.availabilitySlotsDetails,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "availabilityDayTime" })
   availabilityDayTime: AvailabilityDayTime | null;
@@ -257,7 +282,7 @@ export class AvailabilitySlotsDetails {
   @ManyToOne(
     () => AvailabilityWeekDays,
     (workingDay) => workingDay.availabilitySlotsDetails,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "availabilityWeekDays" })
   availabilityWeekDays: AvailabilityWeekDays | null;
@@ -265,12 +290,16 @@ export class AvailabilitySlotsDetails {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
-  @ManyToOne(() => Availability, (ownedFranchise) => ownedFranchise.slotDetails, { onDelete: "CASCADE" })
+  @ManyToOne(
+    () => Availability,
+    (ownedFranchise) => ownedFranchise.slotDetails,
+    { onDelete: "CASCADE" },
+  )
   @JoinColumn({ name: "availabilityId" })
   availability: Availability | null;
 
@@ -310,7 +339,7 @@ export class AvailabilitySlotsTimeOneOne {
   @ManyToOne(
     () => AvailabilityDayTime,
     (workingHour) => workingHour.availabilitySlotsDetails,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "availabilityDayTime" })
   availabilityDayTime: AvailabilityDayTime | null;
@@ -318,7 +347,7 @@ export class AvailabilitySlotsTimeOneOne {
   @ManyToOne(
     () => AvailabilityWeekDays,
     (workingDay) => workingDay.availabilitySlotsDetails,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "availabilityWeekDays" })
   availabilityWeekDays: AvailabilityWeekDays | null;
@@ -326,12 +355,16 @@ export class AvailabilitySlotsTimeOneOne {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.availability,
-    { onDelete: "CASCADE" }
+    { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
-  @ManyToOne(() => Availability, (ownedFranchise) => ownedFranchise.slotDetails, { onDelete: "CASCADE" })
+  @ManyToOne(
+    () => Availability,
+    (ownedFranchise) => ownedFranchise.slotDetails,
+    { onDelete: "CASCADE" },
+  )
   @JoinColumn({ name: "availabilityId" })
   availability: Availability | null;
 

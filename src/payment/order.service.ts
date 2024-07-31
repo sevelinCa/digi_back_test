@@ -53,18 +53,17 @@ export class OrderService {
     private readonly digifranchiseServiceSubCategoryRepository: Repository<DigifranchiseSubServiceCategory>,
     @InjectRepository(AvailabilityTimeSlots)
     private readonly availabilityTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
-  
 
     @Inject(MailService)
     private readonly mailService: MailService,
 
-    private smsService: SmsService
+    private smsService: SmsService,
   ) {}
 
   async createOrder(
     createOrderTableDto: CreateOrderTableDto,
     productOrServiceId: string,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
     let productOrService;
     let productOrServiceType;
@@ -84,7 +83,7 @@ export class OrderService {
       } else {
         throw new HttpException(
           "Product or service offered does not exist",
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
     }
@@ -135,7 +134,7 @@ export class OrderService {
     if (!owned) {
       throw new HttpException(
         "Digifranchise owner not found",
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -154,7 +153,7 @@ export class OrderService {
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
+        (info.basic_info.email || info.basic_info.phoneNumber),
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
@@ -184,7 +183,7 @@ export class OrderService {
       try {
         await this.smsService.sendOrderCreationConfirmMessage(
           userPhoneNumber,
-          thankYouMessage
+          thankYouMessage,
         );
         smsStatus = "SMS sent successfully";
       } catch (error) {
@@ -201,7 +200,7 @@ export class OrderService {
 
   async createOrderForSubs(
     createOrderTableDto: CreateOrderTableDto,
-    subProductOrSubServiceOrSubCategoryId: string
+    subProductOrSubServiceOrSubCategoryId: string,
   ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
     let subProductOrSubServiceOrSubCategory;
     let subProductOrSubServiceOrSubCategoryType;
@@ -231,7 +230,7 @@ export class OrderService {
         } else {
           throw new HttpException(
             "Sub-product, sub-service category, or sub-service offered does not exist",
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
       }
@@ -301,7 +300,7 @@ export class OrderService {
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
+        (info.basic_info.email || info.basic_info.phoneNumber),
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
@@ -327,7 +326,7 @@ export class OrderService {
       try {
         await this.smsService.sendOrderCreationConfirmMessage(
           userPhoneNumber,
-          thankYouMessage
+          thankYouMessage,
         );
         smsStatus = "SMS sent successfully";
       } catch (error) {
@@ -346,7 +345,7 @@ export class OrderService {
     createOrderTableDto: CreateOrderTableDto,
     userId: string,
     productOrServiceOrCategoryId: string,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
@@ -381,7 +380,7 @@ export class OrderService {
         } else {
           throw new HttpException(
             "Product, service category, or service offered does not exist",
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
       }
@@ -390,7 +389,7 @@ export class OrderService {
     if (!productOrServiceOrCategory) {
       throw new HttpException(
         "Product, service category, or service offered does not exist",
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -440,7 +439,7 @@ export class OrderService {
     if (!owned) {
       throw new HttpException(
         "Digifranchise owner not found",
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -471,7 +470,7 @@ export class OrderService {
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
+        (info.basic_info.email || info.basic_info.phoneNumber),
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
@@ -497,7 +496,7 @@ export class OrderService {
       try {
         await this.smsService.sendOrderCreationConfirmMessage(
           userPhoneNumber,
-          thankYouMessage
+          thankYouMessage,
         );
         smsStatus = "SMS sent successfully";
       } catch (error) {
@@ -513,7 +512,7 @@ export class OrderService {
   }
 
   async getAllOrders(
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ): Promise<{ orders: OrderTable[]; count: number }> {
     const orders = await this.orderRepository.find({
       where: {
@@ -554,30 +553,35 @@ export class OrderService {
     if (!order) {
       throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
-  
+
     const availabilityIds: string[] = [];
-  
-    order.orderAdditionalInfo.forEach(info => {
+
+    order.orderAdditionalInfo.forEach((info) => {
       if (Array.isArray(info.availability)) {
-        info.availability.forEach(avail => {
+        info.availability.forEach((avail) => {
           if (avail.id) {
             availabilityIds.push(avail.id);
           }
         });
-      } else if ('availability' in info && info.availability) {
+      } else if ("availability" in info && info.availability) {
         if (info.availability.id) {
           availabilityIds.push(info.availability.id);
         }
       }
     });
-    
+
     const previousStatus = order.status;
     this.orderRepository.merge(order, updateOrderTableDto);
     await this.orderRepository.save(order);
-  
-    if (updateOrderTableDto.status === OrderStatus.CANCELLED && previousStatus !== OrderStatus.CANCELLED) {
+
+    if (
+      updateOrderTableDto.status === OrderStatus.CANCELLED &&
+      previousStatus !== OrderStatus.CANCELLED
+    ) {
       for (const availId of availabilityIds) {
-        const slot = await this.availabilityTimeSlotsRepository.findOne({ where: { id: availId } });
+        const slot = await this.availabilityTimeSlotsRepository.findOne({
+          where: { id: availId },
+        });
         if (slot) {
           slot.isSlotBooked = false;
           slot.isSlotAvailable = true;
@@ -585,14 +589,11 @@ export class OrderService {
         }
       }
     }
-  
+
     return order;
   }
 
-  async cancelOrder(){
-
-    
-  }
+  async cancelOrder() {}
   async deleteOrder(orderId: string): Promise<void> {
     const result = await this.orderRepository.delete(orderId);
     if (result.affected === 0) {
@@ -602,7 +603,7 @@ export class OrderService {
 
   async getOrderByOrderNumber(
     orderCode: string,
-    ownedFranchiseId: string
+    ownedFranchiseId: string,
   ): Promise<OrderTable | null> {
     return this.orderRepository.findOne({
       where: {
@@ -614,7 +615,7 @@ export class OrderService {
   }
 
   async getAllOrdersWithAuth(
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ): Promise<{ orders: OrderTable[]; count: number }> {
     const orders = await this.orderRepository.find({
       where: {
@@ -634,7 +635,7 @@ export class OrderService {
 
   async getAllOrdersWithAuthAndUser(
     userId: string,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ): Promise<{ orders: OrderTable[]; count: number }> {
     const owned = await this.digifranchiseOwnerRepository.findOne({
       where: { id: ownedDigifranchiseId },
@@ -666,7 +667,7 @@ export class OrderService {
     const userPhone = user?.phoneNumber;
     const filteredOrders = orders.filter((order) => {
       const basicInfo = order.orderAdditionalInfo.find(
-        (info) => info.basic_info
+        (info) => info.basic_info,
       );
       return (
         order.userId?.id === userId ||
@@ -678,7 +679,6 @@ export class OrderService {
     return { orders: filteredOrders, count: filteredOrders.length };
   }
 
-
   async deleteAllOrders(): Promise<void> {
     await this.orderRepository.delete({});
   }
@@ -686,7 +686,7 @@ export class OrderService {
   async createOrderByCategory(
     createOrderTableDto: CreateOrderTableDto,
     serviceCategoryId: string,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ): Promise<OrderTable> {
     let serviceCategory;
     let serviceOffered;
@@ -696,13 +696,13 @@ export class OrderService {
       {
         where: { id: serviceCategoryId },
         relations: ["service"],
-      }
+      },
     );
 
     if (!serviceCategory) {
       throw new HttpException(
         "Service category does not exist",
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -748,7 +748,7 @@ export class OrderService {
     if (!owned) {
       throw new HttpException(
         "Digifranchise owner not found",
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -768,7 +768,7 @@ export class OrderService {
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
+        (info.basic_info.email || info.basic_info.phoneNumber),
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
@@ -788,14 +788,14 @@ export class OrderService {
     if (userPhoneNumber) {
       await this.smsService.sendOrderCreationConfirmMessage(
         userPhoneNumber,
-        thankYouMessage
+        thankYouMessage,
       );
     }
 
     if (!userEmail && !userPhoneNumber) {
       throw new HttpException(
         "Neither email nor phone number is provided in order additional info",
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -806,7 +806,7 @@ export class OrderService {
     createOrderTableDto: CreateOrderTableDto,
     userId: string,
     serviceCategoryId: string,
-    ownedDigifranchiseId: string
+    ownedDigifranchiseId: string,
   ): Promise<OrderTable> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
@@ -821,13 +821,13 @@ export class OrderService {
       {
         where: { id: serviceCategoryId },
         relations: ["service"],
-      }
+      },
     );
 
     if (!serviceCategory) {
       throw new HttpException(
         "Service category does not exist",
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -873,7 +873,7 @@ export class OrderService {
     if (!owned) {
       throw new HttpException(
         "Digifranchise owner not found",
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -894,7 +894,7 @@ export class OrderService {
     const userInfo = createOrderTableDto.orderAdditionalInfo.find(
       (info) =>
         info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
+        (info.basic_info.email || info.basic_info.phoneNumber),
     );
     const userEmail = userInfo?.basic_info?.email;
     const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
@@ -914,14 +914,14 @@ export class OrderService {
     if (userPhoneNumber) {
       await this.smsService.sendOrderCreationConfirmMessage(
         userPhoneNumber,
-        thankYouMessage
+        thankYouMessage,
       );
     }
 
     if (!userEmail && !userPhoneNumber) {
       throw new HttpException(
         "Neither email nor phone number is provided in order additional info",
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
     return savedOrder;

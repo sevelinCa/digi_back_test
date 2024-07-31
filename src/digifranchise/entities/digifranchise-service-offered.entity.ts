@@ -31,7 +31,7 @@ export class DigifranchiseServiceOffered {
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedItem) => ownedItem.serviceOffered,
-    { nullable: true, onDelete: "CASCADE" }
+    { nullable: true, onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "digifranchiseOwnedId" })
   ownedFranchise: DigifranchiseOwner | null;
@@ -39,14 +39,14 @@ export class DigifranchiseServiceOffered {
   @OneToMany(
     () => DigifranchiseGalleryImage,
     (image) => image.digifranchiseServiceId,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   serviceGalleryImages: DigifranchiseGalleryImage[];
 
   @OneToMany(
     () => DigifranchiseSelectProductOrServiceTable,
     (selectItem) => selectItem.digifranchiseService,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   selectedItem: DigifranchiseSelectProductOrServiceTable[];
 
@@ -62,7 +62,7 @@ export class DigifranchiseServiceOffered {
   @OneToMany(
     () => DigifranchiseServiceCategory,
     (category) => category.service,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   serviceCategories: DigifranchiseServiceCategory[];
 

@@ -3,25 +3,25 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { CreateVenueDto, type UpdateVenueDto } from './dto/create-venues.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, IsNull, Repository } from 'typeorm';
-import { CalenderVenue } from './entities/calender-venues.entity';
-import { CalenderEvents } from './entities/calender-events.entity';
-import { CreateEventDto, type UpdateEventDto } from './dto/create-events.dto';
-import { checkIfUserExists } from '../helper/FindByFunctions';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { CalenderEventOwner } from './entities/calender-event-owner.entity';
-import { CalenderBooking } from './entities/calender-bookings.entity';
+} from "@nestjs/common";
+import { CreateVenueDto, type UpdateVenueDto } from "./dto/create-venues.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Equal, In, IsNull, Repository } from "typeorm";
+import { CalenderVenue } from "./entities/calender-venues.entity";
+import { CalenderEvents } from "./entities/calender-events.entity";
+import { CreateEventDto, type UpdateEventDto } from "./dto/create-events.dto";
+import { checkIfUserExists } from "../helper/FindByFunctions";
+import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
+import { CalenderEventOwner } from "./entities/calender-event-owner.entity";
+import { CalenderBooking } from "./entities/calender-bookings.entity";
 import type {
   CreateBookingDto,
   UpdateBookingDto,
-} from './dto/create-bookings.dto';
-import { CalenderEventGuest } from './entities/calender-event-guest.entity';
-import { CustomerManagement } from 'src/digifranchise-mgt/entities/customer-management.entity';
-import type { MailerService } from 'src/mailer/mailer.service';
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+} from "./dto/create-bookings.dto";
+import { CalenderEventGuest } from "./entities/calender-event-guest.entity";
+import { CustomerManagement } from "src/digifranchise-mgt/entities/customer-management.entity";
+import type { MailerService } from "src/mailer/mailer.service";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 @Injectable()
 export class CalenderMgtService {
   constructor(
@@ -40,18 +40,18 @@ export class CalenderMgtService {
     @InjectRepository(CalenderBooking)
     private readonly bookingRepository: Repository<CalenderBooking>,
     @InjectRepository(DigifranchiseOwner)
-    private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>
+    private readonly ownedFranchiseRepository: Repository<DigifranchiseOwner>,
   ) {}
 
   async createVenue(
     createVenueDto: CreateVenueDto,
-    ownedFranchise: string
+    ownedFranchise: string,
   ): Promise<CalenderVenue> {
     const owned = await this.ownedFranchiseRepository.findOne({
       where: { id: ownedFranchise },
     });
     if (!owned) {
-      throw new Error('Owner not exist');
+      throw new Error("Owner not exist");
     }
     const location = await this.venueRepository.findOne({
       where: { location: createVenueDto.location, ownedFranchiseId: owned },
@@ -59,9 +59,9 @@ export class CalenderMgtService {
     if (location) {
       throw new HttpException(
         {
-          message: 'Location already exists ',
+          message: "Location already exists ",
         },
-        HttpStatus.CONFLICT
+        HttpStatus.CONFLICT,
       );
     }
     const newVenue = this.venueRepository.create({
@@ -74,17 +74,17 @@ export class CalenderMgtService {
   async createEvent(
     userId: string,
     venueId: string,
-    createEventDto: CreateEventDto
+    createEventDto: CreateEventDto,
   ): Promise<CalenderEvents> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
-      throw new Error('User does not exist');
+      throw new Error("User does not exist");
     }
     const venue = await this.venueRepository.findOne({
       where: { id: venueId },
     });
     if (!venue) {
-      throw new Error('Venue does not exist');
+      throw new Error("Venue does not exist");
     }
     const newEvent = this.eventsRepository.create({
       ...createEventDto,
@@ -121,33 +121,33 @@ export class CalenderMgtService {
 
   async GetAllEventWithTheirGuest(): Promise<CalenderEvents[]> {
     return this.eventsRepository.find({
-      relations: ['guests', 'guests.customerId', 'venueId'],
+      relations: ["guests", "guests.customerId", "venueId"],
     });
   }
 
   async GetOneEventWithItsGuest(
-    eventId: string
+    eventId: string,
   ): Promise<CalenderEvents | null> {
     return this.eventsRepository.findOne({
       where: { id: eventId },
-      relations: ['guests', 'guests.customerId', 'venueId'],
+      relations: ["guests", "guests.customerId", "venueId"],
     });
   }
 
   async recordBooking(
     userId: string,
     eventId: string,
-    createBookingDto: CreateBookingDto
+    createBookingDto: CreateBookingDto,
   ): Promise<CalenderBooking> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new Error('User does not exist');
+      throw new Error("User does not exist");
     }
     const event = await this.eventsRepository.findOne({
       where: { id: eventId },
     });
     if (!event) {
-      throw new Error('Event does not exist');
+      throw new Error("Event does not exist");
     }
     const newBooking = this.bookingRepository.create({
       ...createBookingDto,
@@ -164,7 +164,7 @@ export class CalenderMgtService {
       where: { id: ownedFranchiseId },
     });
     if (!owned) {
-      throw new Error('Owner not exist');
+      throw new Error("Owner not exist");
     }
     return this.venueRepository.find({
       where: { deleteAt: IsNull(), ownedFranchiseId: Equal(owned.id) },
@@ -191,14 +191,14 @@ export class CalenderMgtService {
 
   async updateVenue(
     venueId: string,
-    updateVenueDto: UpdateVenueDto
+    updateVenueDto: UpdateVenueDto,
   ): Promise<CalenderVenue> {
     const venue = await this.venueRepository.findOne({
       where: { id: venueId, deleteAt: IsNull() },
     });
     if (!venue) {
       throw new NotFoundException(
-        `Venue with ID ${venueId} not found or has been soft deleted.`
+        `Venue with ID ${venueId} not found or has been soft deleted.`,
       );
     }
     this.venueRepository.merge(venue, updateVenueDto);
@@ -218,7 +218,7 @@ export class CalenderMgtService {
   }
 
   async getEventOwnerById(
-    eventOwnerId: string
+    eventOwnerId: string,
   ): Promise<CalenderEventOwner | null> {
     return this.eventOwnerRepository.findOne({
       where: { id: eventOwnerId, deleteAt: IsNull() },
@@ -227,14 +227,14 @@ export class CalenderMgtService {
 
   async updateEvent(
     eventId: string,
-    updateEventDto: UpdateEventDto
+    updateEventDto: UpdateEventDto,
   ): Promise<CalenderEvents> {
     const event = await this.eventsRepository.findOne({
       where: { id: eventId, deleteAt: IsNull() },
     });
     if (!event) {
       throw new NotFoundException(
-        `Event with ID ${eventId} not found or has been soft deleted.`
+        `Event with ID ${eventId} not found or has been soft deleted.`,
       );
     }
     this.eventsRepository.merge(event, updateEventDto);
@@ -243,14 +243,14 @@ export class CalenderMgtService {
 
   async updateBooking(
     bookingId: string,
-    updateBookingDto: UpdateBookingDto
+    updateBookingDto: UpdateBookingDto,
   ): Promise<CalenderBooking> {
     const booking = await this.bookingRepository.findOne({
       where: { id: bookingId, deleteAt: IsNull() },
     });
     if (!booking) {
       throw new NotFoundException(
-        `Booking with ID ${bookingId} not found or has been soft deleted.`
+        `Booking with ID ${bookingId} not found or has been soft deleted.`,
       );
     }
     this.bookingRepository.merge(booking, updateBookingDto);
@@ -296,7 +296,7 @@ export class CalenderMgtService {
     });
     if (!eventOwner) {
       throw new NotFoundException(
-        `Event owner with ID ${eventOwnerId} not found.`
+        `Event owner with ID ${eventOwnerId} not found.`,
       );
     }
     eventOwner.deleteAt = new Date();
@@ -329,7 +329,7 @@ export class CalenderMgtService {
 
   async addCustomerToEvent(
     customerId: string,
-    eventId: string
+    eventId: string,
   ): Promise<CalenderEventGuest> {
     const customer = await this.customerManagementRepository.findOne({
       where: { id: customerId },
@@ -360,7 +360,7 @@ export class CalenderMgtService {
   }
 
   async findOneCustomerForEvenet(
-    id: string
+    id: string,
   ): Promise<CalenderEventGuest | null> {
     return this.calenderEventGuestRepository.findOne({ where: { id } });
   }
@@ -371,7 +371,7 @@ export class CalenderMgtService {
     });
     if (!calenderEventGuest) {
       throw new NotFoundException(
-        `CalenderEventCustomer with ID ${id} not found.`
+        `CalenderEventCustomer with ID ${id} not found.`,
       );
     }
 
@@ -386,7 +386,7 @@ export class CalenderMgtService {
 
     if (!guestEventAssociation) {
       throw new NotFoundException(
-        `Guest with ID ${guestId} not found in the specified event.`
+        `Guest with ID ${guestId} not found in the specified event.`,
       );
     }
 
@@ -400,7 +400,7 @@ export class CalenderMgtService {
 
     if (!digifranchiseOwners || digifranchiseOwners.length === 0) {
       throw new NotFoundException(
-        `DigifranchiseOwner with userId ${userId} not found.`
+        `DigifranchiseOwner with userId ${userId} not found.`,
       );
     }
 

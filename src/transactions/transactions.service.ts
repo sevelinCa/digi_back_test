@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { TransactionsAuthService } from "./transactions-auth.service";
 import { GraphQLClient, gql } from "graphql-request";
 import { CreateTransactionDto } from "./dto/transactions.dto";
@@ -19,11 +23,11 @@ export class TransactionsService {
     @InjectRepository(DigifranchiseOwner)
     private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(OrderTable)
-    private readonly orderRepository: Repository<OrderTable>
+    private readonly orderRepository: Repository<OrderTable>,
   ) {}
 
   async createTransaction(
-    createTransactionDto: CreateTransactionDto
+    createTransactionDto: CreateTransactionDto,
   ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     console.log("Access Token:", accessToken);
@@ -757,14 +761,12 @@ export class TransactionsService {
   //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
   //   }
 
-
   //   const order = await this.orderRepository.findOne({
   //     where: { id: orderId }
   //   });
   //   if (!order || !order.ownedDigifranchise) {
   //     throw new NotFoundException("Order or ownedDigifranchise not found");
   //   }
-
 
   //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
   //     headers: {
@@ -812,42 +814,40 @@ export class TransactionsService {
   // }
 
   async createTransactionBuyerToken(orderId: string): Promise<any> {
-    
     const tradeSafeApiUrl = process.env.TRADE_SAFE_API_URL;
     if (!tradeSafeApiUrl) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-  
-    
+
     const accessToken = await this.transactionsAuthService.getAccessToken();
-  
-    
+
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
     });
-  
+
     if (!order) {
       throw new NotFoundException("Order or ownedDigifranchise not found");
     }
-  
-    
-    const basicInfoObj = order.orderAdditionalInfo.find(info => info.basic_info !== undefined);
-  
+
+    const basicInfoObj = order.orderAdditionalInfo.find(
+      (info) => info.basic_info !== undefined,
+    );
+
     if (!basicInfoObj || !basicInfoObj.basic_info) {
       throw new Error("Basic info not found in orderAdditionalInfo");
     }
-  
+
     const { name, email, phoneNumber } = basicInfoObj.basic_info;
-    const [givenName, familyName] = name.includes(' ') ? name.split(' ') : [name, ''];
-  
-    
+    const [givenName, familyName] = name.includes(" ")
+      ? name.split(" ")
+      : [name, ""];
+
     const client = new GraphQLClient(tradeSafeApiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
-    
+
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
         tokenCreate(input: $input) {
@@ -856,8 +856,7 @@ export class TransactionsService {
         }
       }
     `;
-  
-    
+
     const variables = {
       input: {
         user: {
@@ -879,25 +878,23 @@ export class TransactionsService {
         },
       },
     };
-  
+
     try {
-      
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-      
-      console.error('GraphQL Request Error:', error);
+      console.error("GraphQL Request Error:", error);
       if (error.response?.errors) {
-        console.error('GraphQL Error Details:', error.response.errors);
-        throw new Error(`Failed to create buyer token: ${error.response.errors[0].message}`);
+        console.error("GraphQL Error Details:", error.response.errors);
+        throw new Error(
+          `Failed to create buyer token: ${error.response.errors[0].message}`,
+        );
       } else {
-        console.error('Network or Unknown Error:', error.message);
+        console.error("Network or Unknown Error:", error.message);
         throw new Error("Failed to create buyer token");
       }
     }
   }
-  
-  
 
   async getDigifranchiseOwnerInfo(franchiseOwnerId: string): Promise<any> {
     const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
@@ -906,13 +903,13 @@ export class TransactionsService {
     });
     if (!franchiseOwner || !franchiseOwner.userId) {
       throw new NotFoundException(
-        "Franchise owner or associated user not found"
+        "Franchise owner or associated user not found",
       );
     }
 
     const userResult = await this.userRepository.manager.query(
       `SELECT "firstName", "lastName", "email", "phoneNumber" FROM "user" WHERE "id" = $1`,
-      [franchiseOwner.userId.id]
+      [franchiseOwner.userId.id],
     );
 
     if (!userResult.length) {
@@ -998,7 +995,7 @@ export class TransactionsService {
 
   async createTransactionWithAuth(
     userId: string,
-    orderId: string
+    orderId: string,
   ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
@@ -1033,7 +1030,7 @@ export class TransactionsService {
     const buyerTokenId = buyerTokenResponse.tokenCreate.id;
 
     const sellerTokenResponse = await this.createTransactionSellerToken(
-      order.ownedDigifranchise.id
+      order.ownedDigifranchise.id,
     );
     const sellerTokenId = sellerTokenResponse.tokenCreate.id;
 
@@ -1096,15 +1093,11 @@ export class TransactionsService {
     }
   }
 
-
-  async createTransactionWithoutAuth(
-    orderId: string
-  ): Promise<any> {
+  async createTransactionWithoutAuth(orderId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-
 
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
@@ -1129,7 +1122,7 @@ export class TransactionsService {
     const buyerTokenId = buyerTokenResponse.tokenCreate.id;
 
     const sellerTokenResponse = await this.createTransactionSellerToken(
-      order.ownedDigifranchise.id
+      order.ownedDigifranchise.id,
     );
     const sellerTokenId = sellerTokenResponse.tokenCreate.id;
 
@@ -1193,7 +1186,7 @@ export class TransactionsService {
   }
   async getCheckoutLink(
     transactionId: string,
-    paymentMethods: string[] = []
+    paymentMethods: string[] = [],
   ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
@@ -1240,31 +1233,37 @@ export class TransactionsService {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
     });
-  
+
     if (!order) {
       throw new NotFoundException("Order not found");
     }
-  
+
     Object.assign(order, updatingOrderStatusDto);
-  
+
     return this.orderRepository.save(order);
   }
 
-
   async createTransactionAndGetCheckoutLink(orderId: string): Promise<any> {
     try {
-      const transactionResponse = await this.createTransactionWithoutAuth(orderId);
-  
-      if (!transactionResponse || !transactionResponse.transactionCreate || !transactionResponse.transactionCreate.id) {
-        throw new BadRequestException("Failed to create transaction or transaction ID not found.");
+      const transactionResponse =
+        await this.createTransactionWithoutAuth(orderId);
+
+      if (
+        !transactionResponse ||
+        !transactionResponse.transactionCreate ||
+        !transactionResponse.transactionCreate.id
+      ) {
+        throw new BadRequestException(
+          "Failed to create transaction or transaction ID not found.",
+        );
       }
-  
+
       const transactionId = transactionResponse.transactionCreate.id;
       const title = transactionResponse.transactionCreate.title;
       const createdAt = transactionResponse.transactionCreate.createdAt;
-  
+
       const checkoutLink = await this.getCheckoutLink(transactionId);
-  
+
       return {
         transactionCreate: {
           id: transactionId,
@@ -1277,6 +1276,4 @@ export class TransactionsService {
       throw error;
     }
   }
-  
-  
 }

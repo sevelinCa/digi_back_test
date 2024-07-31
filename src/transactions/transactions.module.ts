@@ -7,17 +7,22 @@ import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-own
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { OrderTable } from "src/payment/entities/order.entity";
+import { PaystackAuthService } from "./paystack-auth.service";
+import { PaystackService } from "./paystack.service";
+import { PaystackController } from "./paystack.controller";
 
 @Module({
-
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([
-      UserEntity, DigifranchiseOwner,OrderTable
-    ]),
+    TypeOrmModule.forFeature([UserEntity, DigifranchiseOwner, OrderTable]),
   ],
-  
-  providers: [TransactionsService, TransactionsAuthService],
-  controllers: [TransactionsController],
+
+  providers: [
+    TransactionsService,
+    TransactionsAuthService,
+    PaystackAuthService,
+    PaystackService,
+  ],
+  controllers: [TransactionsController, PaystackController],
 })
 export class TransactionsModule {}

@@ -25,7 +25,9 @@ export class ConsultationsTable1721258810733 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "consultation_table" DROP CONSTRAINT "FK_consultation_table_ownedDigifranchise"`);
+    await queryRunner.query(
+      `ALTER TABLE "consultation_table" DROP CONSTRAINT "FK_consultation_table_ownedDigifranchise"`,
+    );
     await queryRunner.query(`DROP TABLE IF EXISTS "consultation_table"`);
   }
 }

@@ -37,7 +37,10 @@ export class CalenderEvents {
   @JoinColumn({ name: "venueId" })
   venueId: CalenderVenue;
 
-  @OneToMany(() => CalenderEventGuest, (guest) => guest.eventId, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => CalenderEventGuest, (guest) => guest.eventId, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   guests: CalenderEventGuest[];
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

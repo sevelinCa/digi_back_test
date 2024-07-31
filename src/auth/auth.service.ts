@@ -60,7 +60,6 @@ export class AuthService {
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
-
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({ email: loginDto.email });
 

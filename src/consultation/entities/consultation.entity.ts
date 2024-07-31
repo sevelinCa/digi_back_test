@@ -1,4 +1,4 @@
-import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,36 +7,36 @@ import {
   JoinColumn,
   ManyToOne,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 
 @Entity()
 export class ConsultationTable {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedFranchise) => ownedFranchise.order,
-    { onDelete: 'CASCADE' }
+    { onDelete: "CASCADE" },
   )
-  @JoinColumn({ name: 'ownedDigifranchise' })
+  @JoinColumn({ name: "ownedDigifranchise" })
   ownedDigifranchise: DigifranchiseOwner | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: "varchar", nullable: true })
   additionalInfo: string;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: "json", nullable: true })
   bookedTimeSlots: any[];
 
-  @Column({ type: 'json' })
+  @Column({ type: "json" })
   contactInfo: Object;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
 }

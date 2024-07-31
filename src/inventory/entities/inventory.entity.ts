@@ -19,7 +19,10 @@ export class Inventory {
   @Column({ type: "varchar", length: 255 })
   itemName: string;
 
-  @OneToMany(() => InventoryEntries, (entry) => entry.inventory, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => InventoryEntries, (entry) => entry.inventory, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   entries: InventoryEntries[];
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

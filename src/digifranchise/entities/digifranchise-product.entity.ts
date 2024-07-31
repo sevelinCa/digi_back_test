@@ -30,14 +30,14 @@ export class DigifranchiseProduct {
   @OneToMany(
     () => DigifranchiseGalleryImage,
     (image) => image.digifranchiseProductId,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   productGalleryImages: DigifranchiseGalleryImage[];
 
   @OneToMany(
     () => DigifranchiseSelectProductOrServiceTable,
     (selectItem) => selectItem.franchiseProduct,
-    { cascade: true, onDelete: "CASCADE" }
+    { cascade: true, onDelete: "CASCADE" },
   )
   selectedItem: DigifranchiseSelectProductOrServiceTable[];
 
