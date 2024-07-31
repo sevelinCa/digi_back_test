@@ -60,5 +60,41 @@ export class PaystackService {
     }
   }
 
+  async verifyTransaction(reference: string) {
+    console.log("Verifying transaction with reference:", reference);
 
+    try {
+      const response = await lastValueFrom(
+        this.httpService
+          .get(`${this.paystackApiUrl}/transaction/verify/${reference}`, {
+            headers: {
+              Authorization: `Bearer ${this.paystackApiKey}`,
+            },
+          })
+          .pipe(
+            map((response) => response.data),
+            catchError((error) => {
+              console.error(
+                "Error during transaction verification:",
+                error.response?.data,
+              );
+              throw new HttpException(
+                error.response?.data?.message ||
+                  "Transaction verification failed",
+                error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+            }),
+          ),
+      );
+
+      console.log("Transaction verification response:", response);
+      return response;
+    } catch (error) {
+      console.error("Transaction verification error:", error.message);
+      throw new HttpException(
+        error.message || "Transaction verification error",
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

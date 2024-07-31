@@ -35,4 +35,17 @@ export class PaystackController {
     }
   }
 
+  @Get("verify/:reference")
+  async verifyTransaction(@Param("reference") reference: string) {
+    try {
+      const response = await this.paystackService.verifyTransaction(reference);
+      return response;
+    } catch (error) {
+      console.error(error);
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: "Failed to verify transaction",
+      };
+    }
+  }
 }
