@@ -79,7 +79,6 @@ export class TimeSlotsProcessor {
             data.setWorkingHours.allowedTimeSlotUnits,
             data.setWorkingHours.breakTimeBetweenBookedSlots,
           );
-          console.log(slots);
           for (const slot of slots) {
             await this.createTimeSlot(
               getOwnedDigifranchise,
