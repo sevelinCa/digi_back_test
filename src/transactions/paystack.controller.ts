@@ -48,4 +48,9 @@ export class PaystackController {
     return this.paystackService.getAllTransactions();
   }
 
+  @Get('transaction-by-reference/:reference')
+  async getTransactionByReference(@Param('reference') reference: string) {
+    return this.paystackService.getTransactionByReference(reference);
+  }
+  
 }
