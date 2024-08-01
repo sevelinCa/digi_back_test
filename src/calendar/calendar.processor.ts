@@ -7,7 +7,6 @@ import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-own
 import dayjs from "dayjs";
 import { SetWorkingHoursDto } from "./dto/availability.dto";
 import { DigifranchiseWorkingHours } from "./entities/digifranchise-working-hours.entity";
-import { CalendarService } from "./calendar.service";
 interface ExtendedSetWorkingHoursDto {
   setWorkingHours: SetWorkingHoursDto;
   ownedDigifranchiseId: string;
@@ -18,10 +17,8 @@ export class TimeSlotsProcessor {
     @InjectRepository(DigifranchiseOwner)
     private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(DigifranchiseWorkingHours)
-    private readonly digifranchiseWorkingHoursRepository: Repository<DigifranchiseWorkingHours>,
     @InjectRepository(AvailabilityTimeSlots)
     private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
-    private readonly calendarService: CalendarService,
   ) {}
   @Process()
   async createTimeSlots(job: Job<ExtendedSetWorkingHoursDto>) {
@@ -47,12 +44,6 @@ export class TimeSlotsProcessor {
       await this.digifranchiseOwnerRepository.findOne({
         where: { id: data!.ownedDigifranchiseId },
       });
-    const setWorkingHours = this.digifranchiseWorkingHoursRepository.create(
-      data.setWorkingHours,
-    );
-    setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
-    setWorkingHours.availabilityWeekDays = workingDays;
-    await this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
 
     let currentDate = dayjs();
     const currentDay = currentDate.date();
