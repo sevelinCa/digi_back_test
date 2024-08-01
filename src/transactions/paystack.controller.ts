@@ -1,37 +1,46 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Param,
-  Res,
-  HttpStatus,
-} from "@nestjs/common";
-import { PaystackService } from "./paystack.service";
-import { CreatePayStackTransactionDTO } from "./dto/paystack.dto"; // Ensure this import matches the location of your DTO file
-import { Response } from "express";
-import { ApiTags } from "@nestjs/swagger";
+import { Controller, Post, Body, HttpException, HttpStatus, Param, Get } from '@nestjs/common';
+import { PaystackService } from './paystack.service';
+import { ApiTags } from '@nestjs/swagger';
+import { CreatePayStackTransactionDTO } from './dto/paystack.dto';
 
-@ApiTags("PAY STACK")
-@Controller("paystack")
+@ApiTags('PAYSTACK')
+@Controller('transaction')
 export class PaystackController {
   constructor(private readonly paystackService: PaystackService) {}
 
-  @Post("initialize")
-  async initializeTransaction(
-    @Body() createPayStackTransactionDto: CreatePayStackTransactionDTO,
-  ) {
+  @Post('create-transaction')
+  async createTransaction(@Body() dto: CreatePayStackTransactionDTO) {
     try {
-      const response = await this.paystackService.initializeTransaction(
-        createPayStackTransactionDto,
-      );
-      return response;
-    } catch (error) {
-      console.error(error);
+      const result = await this.paystackService.createTransaction(dto);
       return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        error: "Failed to initialize transaction",
+        status: true,
+        message: 'Transaction created successfully',
+        data: result,
       };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to create transaction',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
+  
+  @Get('verify-transaction/:referenceId')
+  async verifyTransaction(@Param('referenceId') referenceId: string) {
+    try {
+      const result = await this.paystackService.verifyTransaction(referenceId);
+      return {
+        status: true,
+        message: 'Transaction verified successfully',
+        data: result,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to verify transaction',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  
 }

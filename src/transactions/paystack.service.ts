@@ -1,62 +1,55 @@
-import { HttpService } from "@nestjs/axios";
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-  NotFoundException,
-} from "@nestjs/common";
-import { CreatePayStackTransactionDTO } from "./dto/paystack.dto";
-import { lastValueFrom } from "rxjs";
-import { catchError, map } from "rxjs/operators";
-import axios from "axios";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
+import { CreatePayStackTransactionDTO } from './dto/paystack.dto';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class PaystackService {
-  private readonly paystackApiUrl: string;
-  private readonly paystackApiKey: string;
+  private readonly paystackUrl: string;
 
-  constructor(private httpService: HttpService) {
-    this.paystackApiUrl = process.env.PAYSTACK_API_URL!;
-    if (!this.paystackApiUrl) {
-      throw new NotFoundException("API URL NOT FOUND");
-    }
-
-    this.paystackApiKey = process.env.PAYSTACK_SECRET_KEY!;
-    if (!this.paystackApiKey) {
-      throw new NotFoundException("API SECRET KEY NOT FOUND");
-    }
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService
+  ) {
+    this.paystackUrl = this.configService.get<string>('PAYSTACK_API_URL') || '';
   }
 
-  async initializeTransaction(dto: CreatePayStackTransactionDTO): Promise<any> {
-    const data = {
-      amount: dto.amount * 100,
-      email: dto.email,
-      callback_url: dto.callbackUrl,
+  async createTransaction(dto: CreatePayStackTransactionDTO) {
+    
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 1000;
+
+
+    dto.amount *= koboAmount;
+
+    const url = `${this.paystackUrl}/transaction/initialize`;
+    const callbackUrl = this.configService.get<string>('PAYSTACK_CALLBACK_URL');
+    const headers = {
+      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
+      'Content-Type': 'application/json',
     };
 
     try {
-      const response = await axios.post(
-        `${this.paystackApiUrl}/transaction/initialize`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${this.paystackApiKey}`,
-            "Content-Type": "application/json",
-          },
-        },
+      const response = await lastValueFrom(
+        this.httpService.post(url, { ...dto, callback: callbackUrl }, { headers })
       );
-
-      return response.data;
+      return response?.data;
     } catch (error) {
-      if (error.response) {
-        throw new Error(`Paystack API Error: ${error.response.data.message}`);
-      } else if (error.request) {
-        throw new Error("No response from Paystack API");
-      } else {
-        throw new Error(
-          `Error in transaction initialization: ${error.message}`,
-        );
-      }
+      throw new Error(`Failed to create Paystack transaction: ${error.message}`);
+    }
+  }
+  async verifyTransaction(referenceId: string) {
+    const url = `${this.paystackUrl}/transaction/verify/${referenceId}`;
+    const headers = {
+      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
+      'Content-Type': 'application/json',
+    };
+  
+    try {
+      const response = await lastValueFrom(this.httpService.get(url, { headers }));
+      return response?.data;
+    } catch (error) {
+      throw new Error(`Failed to verify Paystack transaction: ${error.message}`);
     }
   }
 
