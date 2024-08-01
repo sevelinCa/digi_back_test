@@ -83,4 +83,27 @@ export class PaystackService {
     }
   }
   
+  async getAllAbandonedTransactionReferences() {
+    const url = `${this.paystackUrl}/transaction`;
+    const headers = {
+      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
+      'Content-Type': 'application/json',
+    };
+  
+    try {
+      const response = await this.httpService.get(url, { headers }).toPromise();
+      console.log(response); 
+      const transactionsArray = Array.isArray(response?.data) ? response.data : response?.data.data;
+      const abandonedTransactions = transactionsArray.filter(transaction => transaction.status === 'abandoned');
+      
+      const referencesAndEmails = abandonedTransactions.map(transaction => ({
+        reference: transaction.reference,
+        email: transaction.customer.email
+      }));
+  
+      return referencesAndEmails;
+    } catch (error) {
+      throw new Error(`Failed to get Paystack transactions: ${error.message}`);
+    }
+  }
 }

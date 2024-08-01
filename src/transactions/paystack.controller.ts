@@ -52,5 +52,22 @@ export class PaystackController {
   async getTransactionByReference(@Param('reference') reference: string) {
     return this.paystackService.getTransactionByReference(reference);
   }
+
+  @Get('abandoned-references')
+  async getAllAbandonedTransactionReferences() {
+    try {
+      const references = await this.paystackService.getAllAbandonedTransactionReferences();
+      return {
+        status: true,
+        message: 'Successfully retrieved abandoned transaction references.',
+        data: references,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to retrieve abandoned transaction references.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
   
 }
