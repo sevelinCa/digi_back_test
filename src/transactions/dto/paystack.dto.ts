@@ -14,12 +14,4 @@ export class CreatePayStackTransactionDTO {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
-  @ApiProperty({
-    example: "https://example.com/callback",
-    description: "Callback URL after transaction completion",
-  })
-  @IsNotEmpty()
-  @Length(0, 255)
-  callbackUrl: string;
 }
