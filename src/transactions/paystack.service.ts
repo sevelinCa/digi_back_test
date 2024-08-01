@@ -68,6 +68,19 @@ export class PaystackService {
     }
   }
 
+  async getTransactionByReference(reference: string) {
+    const url = `${this.paystackUrl}/transaction/verify/${reference}`;
+    const headers = {
+      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
+      'Content-Type': 'application/json',
+    };
 
+    try {
+      const response = await this.httpService.get(url, { headers }).toPromise();
+      return response?.data;
+    } catch (error) {
+      throw new Error(`Failed to retrieve Paystack transaction by reference: ${error.message}`);
+    }
+  }
   
 }
