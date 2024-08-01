@@ -42,5 +42,10 @@ export class PaystackController {
     }
   }
 
-  
+
+  @Get('all-transactions')
+  async getAllTransactions() {
+    return this.paystackService.getAllTransactions();
+  }
+
 }
