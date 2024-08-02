@@ -17,7 +17,7 @@ export class PaystackService {
 
   async createTransaction(dto: CreatePayStackTransactionDTO) {
     
-    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 1000;
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 100;
 
 
     dto.amount *= koboAmount;
