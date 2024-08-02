@@ -38,6 +38,8 @@ export class CalendarService {
       await this.digifranchiseOwnerRepository.findOne({
         where: { id: ownedDigifranchiseId },
       });
+    const setWorkingHours =
+      this.digifranchiseWorkingHoursRepository.create(setWorkingHoursDto);
     if (!getOwnedDigifranchise) {
       throw new HttpException(
         {
@@ -60,6 +62,22 @@ export class CalendarService {
         HttpStatus.CONFLICT
       );
     }
+    let workingDays: any = [];
+    for (let i = 0; i < setWorkingHoursDto?.availabilityWeekDays!.length; i++) {
+      const obj = {
+        day: setWorkingHoursDto?.availabilityWeekDays![i]?.day,
+        startTime:
+          setWorkingHoursDto?.availabilityWeekDays![i]?.availabilityDayTime!
+            .startTime,
+        endTime:
+          setWorkingHoursDto?.availabilityWeekDays![i]?.availabilityDayTime!
+            .endTime,
+      };
+      workingDays.push(obj);
+    }
+    setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
+    setWorkingHours.availabilityWeekDays = workingDays;
+    await this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
     await this.timeSlotsQueue.add({
       ownedDigifranchiseId,
       setWorkingHours: setWorkingHoursDto,
@@ -169,7 +187,6 @@ export class CalendarService {
     } catch (error) {
       return error;
     }
-    // return data;
   }
   async bookAvailabilitySlot(timeslots: any, ownedDigifranchiseId: string) {
     const getOwnedDigifranchise: DigifranchiseOwner | null =
@@ -294,9 +311,9 @@ export class CalendarService {
       });
       for (const digi of digis) {
         const getOwnedDigifranchise: DigifranchiseOwner | null =
-        await this.digifranchiseOwnerRepository.findOne({
-          where: { id: digi?.ownedDigifranchise?.id },
-        });
+          await this.digifranchiseOwnerRepository.findOne({
+            where: { id: digi?.ownedDigifranchise?.id },
+          });
         const payload = {
           allowBookingOnPublicHolidays: digi.allowBookingOnPublicHolidays,
           allowedTimeSlotUnits: digi.allowedTimeSlotUnits,
@@ -322,7 +339,6 @@ export class CalendarService {
             .date();
           daysToCreateSlotsFor += endOfNextMonth;
         }
-console.log(daysToCreateSlotsFor,"daysToCreateSlotsFor=================================")
         for (let j = 0; j < daysToCreateSlotsFor; j++) {
           for (let i = 0; i < payload.availabilityWeekDays!.length; i++) {
             const day = payload.availabilityWeekDays![i];
