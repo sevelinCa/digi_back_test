@@ -3,16 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DigifranchiseWorkingHours } from './entities/digifranchise-working-hours.entity';
 import { Between, LessThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { AvailabilityTimeSlots } from './entities/time-slots.entity';
-import * as schedule from 'node-schedule';
-// import { DigifranchiseUnavailableTimes } from './entities/unavailable-times.entity';
 import {
-  AvailabilityWeekDaysDto,
   SetWorkingHoursDto,
 } from './dto/availability.dto';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
-import { response } from 'express';
-import { exit } from 'process';
-import { startOfToday } from 'date-fns';
 import dayjs from 'dayjs';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectQueue } from '@nestjs/bull';
