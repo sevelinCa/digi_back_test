@@ -6,7 +6,6 @@ import { Between, Repository } from "typeorm";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import dayjs from "dayjs";
 import { SetWorkingHoursDto } from "./dto/availability.dto";
-import { DigifranchiseWorkingHours } from "./entities/digifranchise-working-hours.entity";
 interface ExtendedSetWorkingHoursDto {
   setWorkingHours: SetWorkingHoursDto;
   ownedDigifranchiseId: string;
@@ -16,7 +15,6 @@ export class TimeSlotsProcessor {
   constructor(
     @InjectRepository(DigifranchiseOwner)
     private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
-    @InjectRepository(DigifranchiseWorkingHours)
     @InjectRepository(AvailabilityTimeSlots)
     private readonly digifranchiseAvailableTimeSlotsRepository: Repository<AvailabilityTimeSlots>,
   ) {}
