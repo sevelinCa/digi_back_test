@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpException, HttpStatus, Param, Get } from '@nestjs/common';
 import { PaystackService } from './paystack.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreatePayStackTransactionDTO } from './dto/paystack.dto';
+import { CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO } from './dto/paystack.dto';
 
 @ApiTags('PAYSTACK')
 @Controller('transaction')
@@ -65,6 +65,25 @@ export class PaystackController {
     } catch (error) {
       throw new HttpException(
         error.message || 'Failed to retrieve abandoned transaction references.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post('create-transaction-without-auth/:orderId')
+  async createPaystackTransactionWithoutAuth(
+    @Param("orderId") orderId: string,
+    @Body() paystackDto: CreatePayStackTransactionCallbackUrlDTO): Promise<any> {
+    try {
+      const result = await this.paystackService.createPaystackTransactionWithoutAuth(orderId, paystackDto);
+      return {
+        status: true,
+        message: 'Transaction created successfully',
+        data: result,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to create transaction',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

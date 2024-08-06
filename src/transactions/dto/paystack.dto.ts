@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsNumber, Length } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumber, Length, IsUrl } from "class-validator";
 
 export class CreatePayStackTransactionDTO {
   @ApiProperty({ example: 1000, description: "Amount to be charged" })
@@ -14,4 +14,24 @@ export class CreatePayStackTransactionDTO {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
+  @ApiProperty({
+    example: "https://example.com/callback",
+    description: "URL to redirect to after payment",
+  })
+  @IsNotEmpty()
+  @IsUrl()
+  callbackUrl: string;
+}
+
+
+
+export class CreatePayStackTransactionCallbackUrlDTO {
+  @ApiProperty({
+    example: "https://example.com/callback",
+    description: "URL to redirect to after payment",
+  })
+  @IsNotEmpty()
+  @IsUrl()
+  callbackUrl: string;
 }
