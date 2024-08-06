@@ -41,7 +41,7 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
         HttpStatus.NOT_FOUND
       );
@@ -54,7 +54,7 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.CONFLICT,
-          error: 'Digifranchise timeslots has already been created',
+          error: "Digifranchise timeslots has already been created",
         },
         HttpStatus.CONFLICT
       );
@@ -89,14 +89,14 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
         HttpStatus.NOT_FOUND
       );
     }
     const workingDays = await this.digifranchiseWorkingHoursRepository.findOne({
       where: { ownedDigifranchise: { id: ownedDigifranchiseId } },
-      relations: ['ownedDigifranchise'],
+      relations: ["ownedDigifranchise"],
     });
     return workingDays;
   }
@@ -113,14 +113,14 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
         HttpStatus.NOT_FOUND
       );
     }
     const today = new Date();
     const currentTime =
-      today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     const timeSlots = await this.digifranchiseAvailableTimeSlotsRepository.find(
       {
         where: {
@@ -128,7 +128,7 @@ export class CalendarService {
           isSlotAvailable: true,
           isSlotBooked: false,
           workingDate: Between(startOfDay, endOfDay),
-          ...(workingDate === today.toISOString().split('T')[0] && {
+          ...(workingDate === today.toISOString().split("T")[0] && {
             startTime: MoreThanOrEqual(currentTime),
           }),
         },
@@ -154,7 +154,7 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
         HttpStatus.NOT_FOUND
       );
@@ -202,7 +202,7 @@ export class CalendarService {
       throw new HttpException(
         {
           status: HttpStatus.NOT_FOUND,
-          error: 'Owned Digifranchise does not exist',
+          error: "Owned Digifranchise does not exist",
         },
         HttpStatus.NOT_FOUND
       );
@@ -217,8 +217,8 @@ export class CalendarService {
   }
   private async deleteSlotsAtEndOfDay() {
     try {
-      const startOfDay = dayjs().startOf('day').toDate();
-      const endOfDay = dayjs().endOf('day').toDate();
+      const startOfDay = dayjs().startOf("day").toDate();
+      const endOfDay = dayjs().endOf("day").toDate();
 
       const slotsToDelete =
         await this.digifranchiseAvailableTimeSlotsRepository.find({
@@ -231,7 +231,7 @@ export class CalendarService {
         await this.digifranchiseAvailableTimeSlotsRepository.delete(slot.id);
       }
     } catch (error) {
-      console.error('Error deleting slots:', error);
+      console.error("Error deleting slots:", error);
     }
   }
   private async createTimeSlot(
@@ -283,7 +283,7 @@ export class CalendarService {
     const startDate = dayjs(`2024-01-01T${startTime}`);
     const endDate = dayjs(`2024-01-01T${endTime}`);
 
-    const durationInMinutes = endDate.diff(startDate, 'minute');
+    const durationInMinutes = endDate.diff(startDate, "minute");
     const timeSlotDuration = slotDuration;
     const breakTimeDuration = breakTime;
     const numberOfSlots = Math.floor(
@@ -312,7 +312,7 @@ export class CalendarService {
     const today = new Date();
     if (today.getDate() === 25) {
       const digis = await this.digifranchiseWorkingHoursRepository.find({
-        relations: ['ownedDigifranchise'],
+        relations: ["ownedDigifranchise"],
       });
       for (const digi of digis) {
         const getOwnedDigifranchise: DigifranchiseOwner | null =
