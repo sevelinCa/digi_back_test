@@ -21,7 +21,7 @@ export class CreatePayStackTransactionDTO {
   })
   @IsNotEmpty()
   @IsUrl()
-  callbackUrl: string;
+  callback_url: string;
 }
 
 
@@ -33,5 +33,5 @@ export class CreatePayStackTransactionCallbackUrlDTO {
   })
   @IsNotEmpty()
   @IsUrl()
-  callbackUrl: string;
+  callback_url: string;
 }
