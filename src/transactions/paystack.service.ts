@@ -153,7 +153,7 @@ export class PaystackService {
     const transactionData = {
       amount: totalAmount,
       email: basicInfo.email,
-      callbackUrl: paystackDto.callbackUrl
+      callback_url: paystackDto.callback_url
     }
     try {
       const response = await lastValueFrom(
@@ -207,7 +207,7 @@ export class PaystackService {
     const transactionData = {
       amount: totalAmount,
       email: user.email,
-      callbackUrl: paystackDto.callbackUrl
+      callbackUrl: paystackDto.callback_url
     }
     try {
       const response = await lastValueFrom(
