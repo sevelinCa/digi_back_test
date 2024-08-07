@@ -53,6 +53,8 @@ import { OptionalFunctionalModule } from "./optional-functional/optional-functio
 import { TransactionsModule } from "./transactions/transactions.module";
 import { BullModule } from "@nestjs/bull";
 import { ConsultationModule } from "./consultation/consultation.module";
+import { QuotationModule } from './quotation/quotation.module';
+import { QuotationsModule } from './quotations/quotations.module';
 
 @Module({
   imports: [
@@ -153,6 +155,8 @@ import { ConsultationModule } from "./consultation/consultation.module";
     OptionalFunctionalModule,
     TransactionsModule,
     ConsultationModule,
+    QuotationModule,
+    QuotationsModule,
     // ChatModule
   ],
 })
