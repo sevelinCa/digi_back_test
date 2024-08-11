@@ -132,6 +132,7 @@ export class OrderTable {
 
   @Column({ type: "timestamp", nullable: true })
   deleteAt: Date | null;
+  customerEmail: string;
 }
 
 @Entity()
