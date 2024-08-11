@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { Digifranchise } from "./digifranchise.entity";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
@@ -14,6 +15,7 @@ import { DigifranchiseServiceCategory } from "./digifranchise-service-category.e
 import { DigifranchiseGalleryImage } from "./digifranchise-gallery-images.entity";
 import { DigifranchiseSelectProductOrServiceTable } from "./digifranchise-select-product-service.entity";
 import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
+
 @Entity()
 export class DigifranchiseServiceOffered {
   @PrimaryGeneratedColumn("uuid")

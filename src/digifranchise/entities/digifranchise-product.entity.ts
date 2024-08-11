@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { Digifranchise } from "./digifranchise.entity";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";

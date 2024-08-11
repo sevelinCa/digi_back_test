@@ -344,6 +344,36 @@ export class OrderService {
           data: {
             orderNumber: savedOrder.orderCode,
             email: userEmail,
+            items: savedOrder
+              ? savedOrder.productId
+                ? {
+                    ...savedOrder,
+                    availability:
+                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
+
+                    name: savedOrder.productId.productName,
+                    description: savedOrder.productId.description,
+                    orderDate: new Date(
+                      savedOrder.OrderDate
+                    ).toLocaleDateString(),
+                    customerDetails: {
+                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                    },
+                  }
+                : {
+                    ...savedOrder,
+                    name: savedOrder.serviceId?.serviceName,
+                    description: savedOrder.serviceId?.description,
+                    orderDate: new Date(
+                      savedOrder.OrderDate
+                    ).toLocaleDateString(),
+                    customerDetails: {
+                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                    },
+                    availability:
+                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
+                  }
+              : newOrder,
           },
         });
         emailStatus = "Email sent successfully";
@@ -514,6 +544,36 @@ export class OrderService {
           data: {
             orderNumber: savedOrder.orderCode,
             email: userEmail,
+            items: savedOrder
+              ? savedOrder.productId
+                ? {
+                    ...savedOrder,
+                    availability:
+                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
+
+                    name: savedOrder.productId.productName,
+                    description: savedOrder.productId.description,
+                    orderDate: new Date(
+                      savedOrder.OrderDate
+                    ).toLocaleDateString(),
+                    customerDetails: {
+                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                    },
+                  }
+                : {
+                    ...savedOrder,
+                    name: savedOrder.serviceId?.serviceName,
+                    description: savedOrder.serviceId?.description,
+                    orderDate: new Date(
+                      savedOrder.OrderDate
+                    ).toLocaleDateString(),
+                    customerDetails: {
+                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                    },
+                    availability:
+                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
+                  }
+              : newOrder,
           },
         });
         emailStatus = "Email sent successfully";
@@ -811,6 +871,36 @@ export class OrderService {
         data: {
           orderNumber: savedOrder.orderCode,
           email: userEmail,
+          items: savedOrder
+            ? savedOrder.productId
+              ? {
+                  ...savedOrder,
+                  availability:
+                    savedOrder.orderAdditionalInfo[6]["availability"] || [],
+
+                  name: savedOrder.productId.productName,
+                  description: savedOrder.productId.description,
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails: {
+                    ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                  },
+                }
+              : {
+                  ...savedOrder,
+                  name: savedOrder.serviceId?.serviceName,
+                  description: savedOrder.serviceId?.description,
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails: {
+                    ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                  },
+                  availability:
+                    savedOrder.orderAdditionalInfo[6]["availability"] || [],
+                }
+            : newOrder,
         },
       });
     }
@@ -937,6 +1027,36 @@ export class OrderService {
         data: {
           orderNumber: savedOrder.orderCode,
           email: userEmail,
+          items: savedOrder
+            ? savedOrder.productId
+              ? {
+                  ...savedOrder,
+                  availability:
+                    savedOrder.orderAdditionalInfo[6]["availability"] || [],
+
+                  name: savedOrder.productId.productName,
+                  description: savedOrder.productId.description,
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails: {
+                    ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                  },
+                }
+              : {
+                  ...savedOrder,
+                  name: savedOrder.serviceId?.serviceName,
+                  description: savedOrder.serviceId?.description,
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails: {
+                    ...savedOrder.orderAdditionalInfo[0]["basic_info"],
+                  },
+                  availability:
+                    savedOrder.orderAdditionalInfo[6]["availability"] || [],
+                }
+            : newOrder,
         },
       });
     }

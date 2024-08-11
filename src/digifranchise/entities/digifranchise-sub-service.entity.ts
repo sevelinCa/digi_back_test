@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { DigifranchiseServiceOffered } from "./digifranchise-service-offered.entity";
@@ -26,7 +27,7 @@ export class DigifranchiseSubServices {
   @OneToMany(
     () => DigifranchiseSubServiceCategory,
     (subCategory) => subCategory.subService,
-    { cascade: true, onDelete: "CASCADE" },
+    { cascade: true, onDelete: "CASCADE" }
   )
   subServiceCategories: DigifranchiseSubServiceCategory[];
 

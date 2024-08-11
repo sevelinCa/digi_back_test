@@ -2,25 +2,93 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Order Confirmation</title>
+    <title>Quotation Confirmation </title>
+    <style>
+      table { width: 100%;
+      border-collapse: collapse; margin-top: 20px; } table, th, td { border: 1px
+      solid #ddd; } th, td { padding: 8px; text-align: left; } th {
+      background-color: #f4f4f4; } .quotation-container { margin-top: 2rem;
+      width: 100%; } .quotation-top-container { display: grid;
+      grid-template-columns: 1fr 1fr 1fr;gap: 2rem;} .customer-details {
+      grid-column: 1 / 2; } .order-details { grid-column: 3/4} #quotation-title
+      { font-size: 2rem; font-weight: bold; background-color: #eeeeee;
+      text-align: center; color: #00838f; } @media screen and (max-width: 640px)
+      { .quotation-top-container { flex-direction: column; } } .order-details {
+      align-self: flex-end; } #total { font-weight: bold; color: #00838f; }
+      span{font-weight: bold;}
+    </style>
   </head>
   <body>
-    {{!-- <h1>Thank you for your order, {{customerName}}!</h1> --}}
-    <p>
-      We are pleased to confirm your order for the following
-      {{!-- {{orderType}}: --}}
-    </p>
+       {{#if quotation}}
 
-    <ul>
-      {{!-- {{#each items}}
-        <li>{{name}} (Quantity: {{quantity}}) - Price: ${{price}}</li>
-      {{/each}} --}}
-    </ul>
+        <div class="quotation-container">
+          <h2 id="quotation-title">QUOTATION DETAILS</h2>
+          <div class="quotation-top-container">
+            <div class="customer-details">
 
-    <p>
-      {{!-- The total amount is ${{totalPrice}}. Your order will be processed shortly. --}}
-    </p>
+              
+{{#if quotation.quotationRequest.email}}
+                <p>Customer Email:
+                  <span>{{quotation.quotationRequest.email}}</span>
+                </p>
+                {{/if}}
+{{#if quotation.quotationRequest.fullName}}
+                <p>Customer Name:
+                  <span>{{quotation.quotationRequest.fullName}}</span>
+                </p>
+                {{/if}}
+                {{#if quotation.quotationRequest.digifranchiseUrl}}
+                <p>Proceed to Order:
+                  <span> <a href="{{quotation.quotationRequest.digifranchiseUrl}}">Place Order</a></span>
+                </p>
+                {{/if}}
+              
+          
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Product/Service</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Description</th>
+                {{#if quotation.taxAmount}}
+                <th>Taxable Amount</th>
+                {{/if}}
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{quotation.item.name}}</td>
+                <td>{{quotation.quotationRequest.quantity}}</td>
+                <td>{{quotation.quotationRequest.price}}</td>
+                <td>{{quotation.item.description}}</td>
+                {{#if quotation.taxAmount}}
+                <td>{{quotation.taxAmount}}</td>
+                {{/if}}
+                {{#if quotation.totalPrice}}
+                <td>{{quotation.totalPrice}}</td>
+                {{/if}}
+              </tr>
+            </tbody>
+            <tfoot>
 
+              <tr>
+                {{#if quotation.taxAmount}}
+                <td colspan="5">Grand Total</td>
+                {{else}}
+                <td colspan="4">Grand Total</td>
+                {{/if}}
+                <td id="total">{{quotation.totalPrice}}</td>
+              </tr>
+
+            </tfoot>
+          </table>
+        </div>
+      {{/if}}
+    </table>
     <p>Thank you for choosing our service!</p>
   </body>
 </html>

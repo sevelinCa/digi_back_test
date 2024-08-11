@@ -54,6 +54,8 @@ import { TransactionsModule } from "./transactions/transactions.module";
 import { BullModule } from "@nestjs/bull";
 import { ConsultationModule } from "./consultation/consultation.module";
 
+import { QuotationsModule } from "./quotations/quotations.module";
+
 @Module({
   imports: [
     ScheduleModule.forRoot(),
@@ -154,6 +156,7 @@ import { ConsultationModule } from "./consultation/consultation.module";
     TransactionsModule,
     ConsultationModule,
     // ChatModule
+    QuotationsModule,
   ],
 })
 export class AppModule {}

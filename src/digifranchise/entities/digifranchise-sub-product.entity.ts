@@ -7,12 +7,12 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { DigifranchiseProduct } from "./digifranchise-product.entity";
 import { DigifranchiseGalleryImage } from "./digifranchise-gallery-images.entity";
 import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
-
 @Entity()
 export class DigifranchiseSubProduct {
   @PrimaryGeneratedColumn("uuid")
