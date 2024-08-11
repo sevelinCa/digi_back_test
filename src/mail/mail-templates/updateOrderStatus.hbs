@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{app_name}} Order Status Update Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #00838f;
+            color: #ffffff;
+        }
+
+        .content {
+            text-align: center;
+            padding: 20px 0;
+            color: #333333;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #eeeeee;
+            color: #666666;
+        }
+
+        .content p {
+            margin: 10px 0;
+        }
+
+        .content .statusUpdateMessage {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .content .orderDetails {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{app_name}} Order Status Update Confirmation</h1>
+        </div>
+        <div class="content">
+            <p class="statusUpdateMessage">Your order status has been successfully updated.</p>
+            <p class="orderDetails">Previous Status: <strong>{{previousStatus}}</strong></p>
+            <p class="orderDetails">New Status: <strong>{{newStatus}}</strong></p>
+            <p class="orderDetails">Order ID: <strong>{{orderId}}</strong></p>
+        </div>
+        <div class="footer">
+            <p>{{app_name}}</p>
+            <p class="appreciateMessage">If you have any questions or concerns regarding your order status, please contact us.</p>
+        </div>
+    </div>
+</body>
+
+</html>

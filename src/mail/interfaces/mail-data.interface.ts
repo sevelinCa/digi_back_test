@@ -3,3 +3,10 @@ export interface MailData<T = never> {
   websiteUrl?: string;
   data: T;
 }
+
+export interface OrderStatusUpdateMailData {
+  to: string;
+  orderId: string;
+  previousStatus: string;
+  newStatus: string;
+}

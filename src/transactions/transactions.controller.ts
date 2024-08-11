@@ -127,12 +127,25 @@ export class TransactionsController {
     return checkoutLink;
   }
 
+  // @Put("update-order-status/:orderId")
+  // async updateOrderStatus(
+  //   @Param("orderId") orderId: string,
+  //   @Body() updatingOrderStatusDto: UpdatingOrderStatusDto,
+  // ): Promise<any> {
+  //   return this.transactionsService.updateOrderStatus(
+  //     orderId,
+  //     updatingOrderStatusDto,
+  //   );
+  // }
+
+
+
   @Put("update-order-status/:orderId")
-  async updateOrderStatus(
+  async updateOrderStatusAndNotifyCustomerByEmail(
     @Param("orderId") orderId: string,
     @Body() updatingOrderStatusDto: UpdatingOrderStatusDto,
   ): Promise<any> {
-    return this.transactionsService.updateOrderStatus(
+    return this.transactionsService.updateOrderStatusAndNotifyCustomerByEmail(
       orderId,
       updatingOrderStatusDto,
     );
