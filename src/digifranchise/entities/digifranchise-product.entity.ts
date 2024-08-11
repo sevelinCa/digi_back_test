@@ -13,7 +13,6 @@ import { UserEntity } from "src/users/infrastructure/persistence/relational/enti
 import { DigifranchiseGalleryImage } from "./digifranchise-gallery-images.entity";
 import { DigifranchiseSelectProductOrServiceTable } from "./digifranchise-select-product-service.entity";
 import { DigifranchiseOwner } from "./digifranchise-ownership.entity";
-
 @Entity()
 export class DigifranchiseProduct {
   @PrimaryGeneratedColumn("uuid")
@@ -30,21 +29,21 @@ export class DigifranchiseProduct {
   @OneToMany(
     () => DigifranchiseGalleryImage,
     (image) => image.digifranchiseProductId,
-    { cascade: true, onDelete: "CASCADE" },
+    { cascade: true, onDelete: "CASCADE" }
   )
   productGalleryImages: DigifranchiseGalleryImage[];
 
   @OneToMany(
     () => DigifranchiseSelectProductOrServiceTable,
     (selectItem) => selectItem.franchiseProduct,
-    { cascade: true, onDelete: "CASCADE" },
+    { cascade: true, onDelete: "CASCADE" }
   )
   selectedItem: DigifranchiseSelectProductOrServiceTable[];
 
   @ManyToOne(
     () => DigifranchiseOwner,
     (ownedItem) => ownedItem.serviceOffered,
-    { nullable: true, onDelete: "CASCADE" },
+    { nullable: true, onDelete: "CASCADE" }
   )
   @JoinColumn({ name: "digifranchiseOwnedId" })
   ownedFranchise: DigifranchiseOwner | null;
