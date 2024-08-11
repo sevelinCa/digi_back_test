@@ -9,10 +9,12 @@ import { CreateTransactionDto } from "./dto/transactions.dto";
 import { CreateTokenDto } from "./dto/transaction-token.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { OrderTable } from "src/payment/entities/order.entity";
 import { UpdatingOrderStatusDto } from "./dto/updating-order-status.dto";
+import { OrderStatusUpdateMailData } from "src/mail/interfaces/mail-data.interface";
+import { MailService } from "src/mail/mail.service";
 
 @Injectable()
 export class TransactionsService {
@@ -24,6 +26,7 @@ export class TransactionsService {
     private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(OrderTable)
     private readonly orderRepository: Repository<OrderTable>,
+    private readonly mailService: MailService,
   ) {}
 
   async createTransaction(
@@ -909,22 +912,86 @@ export class TransactionsService {
     }
   }
 
-  async updateOrderStatus(
+  // async updateOrderStatus(
+  //   orderId: string,
+  //   updatingOrderStatusDto: UpdatingOrderStatusDto,
+  // ): Promise<OrderTable> {
+  //   const order = await this.orderRepository.findOne({
+  //     where: { id: orderId },
+  //   });
+
+  //   if (!order) {
+  //     throw new NotFoundException("Order not found");
+  //   }
+
+  //   Object.assign(order, updatingOrderStatusDto);
+
+  //   return this.orderRepository.save(order);
+  // }
+
+
+
+  async updateOrderStatusAndNotifyCustomerByEmail(
     orderId: string,
     updatingOrderStatusDto: UpdatingOrderStatusDto,
   ): Promise<OrderTable> {
+    console.log(`Fetching order with id: ${orderId}`);
+    
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
+      relations: [
+        "userId",
+      ],
     });
-
+    
     if (!order) {
+      console.error(`Order not found for id: ${orderId}`);
       throw new NotFoundException("Order not found");
     }
-
+    
+    console.log(`Fetched order: ${JSON.stringify(order)}`);
+    
+    if (!order.userId?.id) {
+      console.error(`Order userId is missing for order id: ${orderId}`);
+      throw new BadRequestException("Order userId is missing");
+    }
+    
+    console.log(`Fetching user with id: ${order.userId}`);
+    
+    const user = await this.userRepository.findOne({ where: { id: order.userId.id }});
+    
+    if (!user) {
+      console.error(`User not found for id: ${order.userId}`);
+      throw new NotFoundException("User not found");
+    }
+    
+    console.log(`User found: ${JSON.stringify(user)}`);
+    
+    const previousStatus = order.status; 
+    
     Object.assign(order, updatingOrderStatusDto);
-
-    return this.orderRepository.save(order);
+    const updatedOrder = await this.orderRepository.save(order);
+    
+    console.log(`Order status updated for order id: ${orderId} to status: ${updatingOrderStatusDto.status}`);
+    
+    const mailData: OrderStatusUpdateMailData = {
+      to: user.email!,
+      orderId: order.id,
+      previousStatus: previousStatus,
+      newStatus: updatingOrderStatusDto.status,
+    };
+    
+    console.log(`Sending email to: ${mailData.to}`);
+    
+    await this.mailService.sendOrderStatusUpdateEmail(mailData);
+    
+    console.log(`Email sent to: ${mailData.to}`);
+    
+    return updatedOrder;
   }
+  
+
+
 
   async createTransactionAndGetCheckoutLink(orderId: string): Promise<any> {
     try {

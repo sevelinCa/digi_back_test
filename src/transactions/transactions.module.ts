@@ -10,11 +10,13 @@ import { OrderTable } from "src/payment/entities/order.entity";
 import { PaystackAuthService } from "./paystack-auth.service";
 import { PaystackService } from "./paystack.service";
 import { PaystackController } from "./paystack.controller";
+import { MailModule } from "src/mail/mail.module";
 
 @Module({
   imports: [
     HttpModule,
     TypeOrmModule.forFeature([UserEntity, DigifranchiseOwner, OrderTable]),
+    MailModule,
   ],
 
   providers: [

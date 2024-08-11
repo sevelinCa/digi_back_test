@@ -15,4 +15,5 @@ export class UpdatingOrderStatusDto {
   @ApiProperty({ example: OrderStatus.PENDING, enum: OrderStatus })
   @IsEnum(OrderStatus)
   status: OrderStatus;
+  newStatus: string;
 }
