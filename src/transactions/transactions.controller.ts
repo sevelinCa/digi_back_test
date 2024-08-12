@@ -8,10 +8,7 @@ import {
   UseGuards,
   Req,
   Put,
-  BadRequestException,
-  Query,
-  Redirect,
-  Res,
+
 } from "@nestjs/common";
 import { TransactionsService } from "./transactions.service";
 import { CreateTransactionDto } from "./dto/transactions.dto";
@@ -126,19 +123,6 @@ export class TransactionsController {
     );
     return checkoutLink;
   }
-
-  // @Put("update-order-status/:orderId")
-  // async updateOrderStatus(
-  //   @Param("orderId") orderId: string,
-  //   @Body() updatingOrderStatusDto: UpdatingOrderStatusDto,
-  // ): Promise<any> {
-  //   return this.transactionsService.updateOrderStatus(
-  //     orderId,
-  //     updatingOrderStatusDto,
-  //   );
-  // }
-
-
 
   @Put("update-order-status/:orderId")
   async updateOrderStatusAndNotifyCustomerByEmail(

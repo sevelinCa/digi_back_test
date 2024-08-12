@@ -9,4 +9,5 @@ export interface OrderStatusUpdateMailData {
   orderId: string;
   previousStatus: string;
   newStatus: string;
+  orderUrl: string;
 }

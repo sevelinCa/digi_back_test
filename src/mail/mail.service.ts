@@ -327,41 +327,4 @@ export class MailService {
     });
   }
 
-  async sendOrderStatusUpdateEmail(mailData: OrderStatusUpdateMailData): Promise<void> {
-    const i18n = I18nContext.current();
-    
-    let emailSubject: string = ''; 
-    let emailBody: string;
-    
-    if (i18n) {
-      emailSubject = await i18n.t('orderStatusUpdate.subject');
-      emailBody = await i18n.t('orderStatusUpdate.body');
-    }
-    
-    const context = {
-      app_name: this.configService.get('app.name', { infer: true }),
-      previousStatus: mailData.previousStatus,
-      newStatus: mailData.newStatus,
-      orderId: mailData.orderId,
-    };
-  
-    try {
-      await this.mailerService.sendMail({
-        to: mailData.to,
-        subject: emailSubject || 'Order Status Update',
-        templatePath: path.join(
-          this.configService.getOrThrow('app.workingDirectory', { infer: true }),
-          'src',
-          'mail',
-          'mail-templates',
-          'updateOrderStatus.hbs',
-        ),
-        context: context,
-      });
-      console.log(`Email sent to: ${mailData.to}`);
-    } catch (error) {
-      console.error(`Failed to send email to: ${mailData.to}`, error);
-    }
-  }
-  
 }
