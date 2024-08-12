@@ -15,6 +15,7 @@ import { OrderTable } from "src/payment/entities/order.entity";
 import { UpdatingOrderStatusDto } from "./dto/updating-order-status.dto";
 import { OrderStatusUpdateMailData } from "src/mail/interfaces/mail-data.interface";
 import { MailService } from "src/mail/mail.service";
+import { TransactionsHelperService } from './transaction-helper.service';
 
 @Injectable()
 export class TransactionsService {
@@ -27,14 +28,14 @@ export class TransactionsService {
     @InjectRepository(OrderTable)
     private readonly orderRepository: Repository<OrderTable>,
     private readonly mailService: MailService,
+    private readonly transactionsHelperService: TransactionsHelperService,
   ) {}
 
   async createTransaction(
     createTransactionDto: CreateTransactionDto,
   ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
-    console.log("Access Token:", accessToken);
-
+    
     if (!process.env.TRADE_SAFE_API_URL) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
@@ -188,8 +189,7 @@ export class TransactionsService {
 
     try {
       const response = await client.request(query);
-      console.log("GraphQL Response:", response);
-
+      
       if (!response || !response.transactions || !response.transactions.data) {
         throw new Error("Invalid response structure");
       }
@@ -197,11 +197,9 @@ export class TransactionsService {
       return response.transactions.data;
     } catch (error) {
       if (error.response?.errors) {
-        console.error("GraphQL Error:", error.response.errors);
-        throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+                throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
       } else {
-        console.error("Error:", error);
-        throw new Error(`Unexpected Error: ${error.message}`);
+                throw new Error(`Unexpected Error: ${error.message}`);
       }
     }
   }
@@ -242,11 +240,9 @@ export class TransactionsService {
 
     try {
       const response = await client.request(query, { id: transactionId });
-      console.log("GraphQL Response:", response);
-      return response;
+            return response;
     } catch (error) {
-      console.error("GraphQL Error:", error.response.errors);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
@@ -281,11 +277,9 @@ export class TransactionsService {
 
     try {
       const response = await client.request(mutation, variables);
-      console.log("GraphQL Response:", response);
-      return response.transactionDelete;
+            return response.transactionDelete;
     } catch (error) {
-      console.error("GraphQL Error:", error.response.errors);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
@@ -316,11 +310,9 @@ export class TransactionsService {
 
     try {
       const response = await client.request(mutation, variables);
-      console.log("Transaction Deposit:", response);
-      return response.transactionDeposit;
+            return response.transactionDeposit;
     } catch (error) {
-      console.error("GraphQL Error:", error.response.errors);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
@@ -392,8 +384,7 @@ export class TransactionsService {
       const response = await client.request(mutation, variables);
       return response.tokenAccountWithdraw === true;
     } catch (error) {
-      console.error("GraphQL Error:", error.response.errors);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
@@ -402,36 +393,22 @@ export class TransactionsService {
     if (!tradeSafeApiUrl) {
       throw new Error("TRADE_SAFE_API_URL environment variable is not set");
     }
-
+  
     const accessToken = await this.transactionsAuthService.getAccessToken();
-
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId },
-    });
-
-    if (!order) {
-      throw new NotFoundException("Order or ownedDigifranchise not found");
-    }
-
-    const basicInfoObj = order.orderAdditionalInfo.find(
-      (info) => info.basic_info !== undefined,
-    );
-
-    if (!basicInfoObj || !basicInfoObj.basic_info) {
-      throw new Error("Basic info not found in orderAdditionalInfo");
-    }
-
-    const { name, email, phoneNumber } = basicInfoObj.basic_info;
+  
+    const basicInfo = await this.transactionsHelperService.getOrderBasicInfo(orderId);
+  
+    const { name, email, phoneNumber } = basicInfo;
     const [givenName, familyName] = name.includes(" ")
       ? name.split(" ")
       : [name, ""];
-
+  
     const client = new GraphQLClient(tradeSafeApiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
+  
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
         tokenCreate(input: $input) {
@@ -440,7 +417,7 @@ export class TransactionsService {
         }
       }
     `;
-
+  
     const variables = {
       input: {
         user: {
@@ -462,24 +439,20 @@ export class TransactionsService {
         },
       },
     };
-
+  
     try {
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-      console.error("GraphQL Request Error:", error);
-      if (error.response?.errors) {
-        console.error("GraphQL Error Details:", error.response.errors);
-        throw new Error(
+            if (error.response?.errors) {
+                throw new Error(
           `Failed to create buyer token: ${error.response.errors[0].message}`,
         );
       } else {
-        console.error("Network or Unknown Error:", error.message);
-        throw new Error("Failed to create buyer token");
+                throw new Error("Failed to create buyer token");
       }
-    }
   }
-
+  }
   async getDigifranchiseOwnerInfo(franchiseOwnerId: string): Promise<any> {
     const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
       where: { id: franchiseOwnerId },
@@ -572,8 +545,7 @@ export class TransactionsService {
     try {
       return await client.request(mutation, variables);
     } catch (error) {
-      console.error(`Failed to create seller token: ${error}`);
-      throw new Error("Failed to create seller token");
+            throw new Error("Failed to create seller token");
     }
   }
 
@@ -672,103 +644,10 @@ export class TransactionsService {
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-      console.error(`GraphQL Error: ${error}`);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
-  // async createTransactionWithoutAuth(orderId: string): Promise<any> {
-  //   const accessToken = await this.transactionsAuthService.getAccessToken();
-  //   if (!process.env.TRADE_SAFE_API_URL) {
-  //     throw new Error("TRADE_SAFE_API_URL environment variable is not set");
-  //   }
-
-  //   const order = await this.orderRepository.findOne({
-  //     where: { id: orderId },
-  //     relations: [
-  //       "serviceId",
-  //       "ownedDigifranchise",
-  //       "ownedDigifranchise.digifranchise",
-  //     ],
-  //   });
-  //   if (!order || !order.ownedDigifranchise) {
-  //     throw new NotFoundException("Order or ownedDigifranchise not found");
-  //   }
-
-  //   let totalAmount;
-  //   if (typeof order.totalAmount === "string") {
-  //     totalAmount = parseFloat(order.totalAmount);
-  //   } else {
-  //     totalAmount = order.totalAmount;
-  //   }
-
-  //   const buyerTokenResponse = await this.createTransactionBuyerToken(order.id);
-  //   const buyerTokenId = buyerTokenResponse.tokenCreate.id;
-
-  //   const sellerTokenResponse = await this.createTransactionSellerToken(
-  //     order.ownedDigifranchise.id,
-  //   );
-  //   const sellerTokenId = sellerTokenResponse.tokenCreate.id;
-
-  //   const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
-  //     headers: {
-  //       Authorization: `Bearer ${accessToken}`,
-  //     },
-  //   });
-
-  //   const mutation = gql`
-  //     mutation createTransaction($input: CreateTransactionInput!) {
-  //       transactionCreate(input: $input) {
-  //         id
-  //         title
-  //         createdAt
-  //       }
-  //     }
-  //   `;
-
-  //   const variables = {
-  //     input: {
-  //       title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
-  //       description: order.ownedDigifranchise.digifranchise?.description,
-  //       industry: "GENERAL_GOODS_SERVICES",
-  //       currency: "ZAR",
-  //       feeAllocation: "SELLER",
-  //       reference: order.id,
-  //       redirectUrl,
-  //       allocations: {
-  //         create: [
-  //           {
-  //             title: order.serviceId?.serviceName,
-  //             description: order.serviceId?.description,
-  //             value: totalAmount,
-  //             daysToDeliver: 7,
-  //             daysToInspect: 7,
-  //           },
-  //         ],
-  //       },
-  //       parties: {
-  //         create: [
-  //           {
-  //             token: buyerTokenId,
-  //             role: "BUYER",
-  //           },
-  //           {
-  //             token: sellerTokenId,
-  //             role: "SELLER",
-  //           },
-  //         ],
-  //       },
-  //     },
-  //   };
-
-  //   try {
-  //     const response = await client.request(mutation, variables);
-  //     return response;
-  //   } catch (error) {
-  //     console.error(`GraphQL Error: ${error}`);
-  //     throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
-  //   }
-  // }
 
   async createTransactionWithoutAuth(orderId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
@@ -795,10 +674,7 @@ export class TransactionsService {
       totalAmount = order.totalAmount;
     }
   
-    const basicInfo = order.orderAdditionalInfo.find(info => info.basic_info !== undefined)?.basic_info;
-    if (!basicInfo) {
-      throw new Error("Basic info not found in orderAdditionalInfo");
-    }
+    const basicInfo = await this.transactionsHelperService.getOrderBasicInfo(orderId);
     const redirectUrl = basicInfo.redirectUrl;
     const referanceData = `${order.id}///${redirectUrl}`;
   
@@ -865,8 +741,7 @@ export class TransactionsService {
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-      console.error(`GraphQL Error: ${error}`);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
@@ -904,95 +779,13 @@ export class TransactionsService {
 
     try {
       const response = await client.request(mutation, variables);
-      console.log("Checkout Link:", response);
-      return response.checkoutLink;
+            return response.checkoutLink;
     } catch (error) {
-      console.error("GraphQL Error:", error.response.errors);
-      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
-  // async updateOrderStatus(
-  //   orderId: string,
-  //   updatingOrderStatusDto: UpdatingOrderStatusDto,
-  // ): Promise<OrderTable> {
-  //   const order = await this.orderRepository.findOne({
-  //     where: { id: orderId },
-  //   });
-
-  //   if (!order) {
-  //     throw new NotFoundException("Order not found");
-  //   }
-
-  //   Object.assign(order, updatingOrderStatusDto);
-
-  //   return this.orderRepository.save(order);
-  // }
-
-
-
-  async updateOrderStatusAndNotifyCustomerByEmail(
-    orderId: string,
-    updatingOrderStatusDto: UpdatingOrderStatusDto,
-  ): Promise<OrderTable> {
-    console.log(`Fetching order with id: ${orderId}`);
-    
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId },
-      relations: [
-        "userId",
-      ],
-    });
-    
-    if (!order) {
-      console.error(`Order not found for id: ${orderId}`);
-      throw new NotFoundException("Order not found");
-    }
-    
-    console.log(`Fetched order: ${JSON.stringify(order)}`);
-    
-    if (!order.userId?.id) {
-      console.error(`Order userId is missing for order id: ${orderId}`);
-      throw new BadRequestException("Order userId is missing");
-    }
-    
-    console.log(`Fetching user with id: ${order.userId}`);
-    
-    const user = await this.userRepository.findOne({ where: { id: order.userId.id }});
-    
-    if (!user) {
-      console.error(`User not found for id: ${order.userId}`);
-      throw new NotFoundException("User not found");
-    }
-    
-    console.log(`User found: ${JSON.stringify(user)}`);
-    
-    const previousStatus = order.status; 
-    
-    Object.assign(order, updatingOrderStatusDto);
-    const updatedOrder = await this.orderRepository.save(order);
-    
-    console.log(`Order status updated for order id: ${orderId} to status: ${updatingOrderStatusDto.status}`);
-    
-    const mailData: OrderStatusUpdateMailData = {
-      to: user.email!,
-      orderId: order.id,
-      previousStatus: previousStatus,
-      newStatus: updatingOrderStatusDto.status,
-    };
-    
-    console.log(`Sending email to: ${mailData.to}`);
-    
-    await this.mailService.sendOrderStatusUpdateEmail(mailData);
-    
-    console.log(`Email sent to: ${mailData.to}`);
-    
-    return updatedOrder;
-  }
   
-
-
-
   async createTransactionAndGetCheckoutLink(orderId: string): Promise<any> {
     try {
       const transactionResponse =

@@ -11,6 +11,7 @@ import { PaystackAuthService } from "./paystack-auth.service";
 import { PaystackService } from "./paystack.service";
 import { PaystackController } from "./paystack.controller";
 import { MailModule } from "src/mail/mail.module";
+import { TransactionsHelperService } from "./transaction-helper.service";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MailModule } from "src/mail/mail.module";
     TransactionsAuthService,
     PaystackAuthService,
     PaystackService,
+    TransactionsHelperService,
   ],
   controllers: [TransactionsController, PaystackController],
 })
