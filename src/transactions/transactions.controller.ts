@@ -168,18 +168,7 @@ export class TransactionsController {
     return balance;
   }
 
-  @Put("update-seller-token-settings/:tokenId")
-  async updateTokenSettings(
-    @Param("tokenId") tokenId: string,
-    @Body() updateSettingsDto: UpdateTokenSettingsDto
-  ): Promise<any> {
-    const { payoutInterval, refundMethod } = updateSettingsDto;
-    return this.transactionsService.updateTokenSettings(
-      tokenId,
-      payoutInterval,
-      refundMethod
-    );
-  }
 
 
+////
 }
