@@ -181,11 +181,5 @@ export class TransactionsController {
     );
   }
 
-  @Post("request-withdrawal/:tokenId")
-  async requestOfWithdrawal(
-    @Param("tokenId") tokenId: string,
-    @Body("value") value: number
-  ): Promise<boolean> {
-    return this.transactionsService.requestOfWithdrawal(tokenId, value);
-  }
+
 }
