@@ -69,5 +69,33 @@ export class TransactionsHelperService {
     return user.email;
   }
 
+  async getOwnedFranchise(orderId: string): Promise<any> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['ownedDigifranchise']
+    });
+  
+    if (!order) {
+      throw new NotFoundException("Order not found");
+    }
+  
+    if (!order) {
+      throw new NotFoundException("Order not found");
+    }
 
+    if (!order.ownedDigifranchise?.id) {
+      throw new BadRequestException("Franchise manager of that order Id not found");
+    }
+
+    const seller = await this.digifranchiseOwnerRepository.findOne({
+      where: { id: order.ownedDigifranchise.id },
+    });
+
+    if (!seller) {
+      throw new NotFoundException("Seller not found");
+    }
+
+    return seller;
+
+  }
 }
