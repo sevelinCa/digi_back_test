@@ -856,5 +856,51 @@ export class TransactionsService {
     }
   }
 
+  // =============
+
+  async getSellerToken(registrationNumber: string): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const query = gql`
+      query {
+        tokens {
+          data {
+            id
+            name
+            reference
+            user {
+              givenName
+              familyName
+              email
+              mobile
+            }
+            organization {
+              name
+              tradeName
+              type
+              registration
+              taxNumber
+            }
+          }
+        }
+      }
+    `;
+  
+    const response = await client.request(query);
+    const filteredData = response.tokens.data.filter(item => item.organization !== null);
+    return filteredData.find(token => token.organization.registration === registrationNumber) || null;
+  }
+
+
+
 
 }

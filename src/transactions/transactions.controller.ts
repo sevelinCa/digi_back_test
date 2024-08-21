@@ -148,4 +148,16 @@ export class TransactionsController {
     );
   }
 
+  @Get("get-franchiseOwner-id/:orderId")
+  async getOwnedFranchise(@Param("orderId") orderId: string) {
+    return this.transactionsHelperService.getOwnedFranchise(orderId);
+  }
+
+
+  @Get("get-seller-token/:ownerId")
+  async getSellerToken(@Param("ownerId") ownerId: string): Promise<any> {
+    return this.transactionsService.getSellerToken(ownerId);
+  }
+
+
 }
