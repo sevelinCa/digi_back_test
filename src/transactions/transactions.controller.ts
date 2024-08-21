@@ -160,4 +160,13 @@ export class TransactionsController {
   }
 
 
+  
+  @Get("get-seller-balance/:tokenId")
+  async getTokenBalance(@Param("tokenId") tokenId: string): Promise<any> {
+    const balance = await this.transactionsService.getTokenBalance(tokenId);
+    console.log('Balance:', balance);
+    return balance;
+  }
+
+
 }
