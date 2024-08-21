@@ -524,8 +524,7 @@ export class TransactionsService {
           name: franchiseOwner.digifranchise.digifranchiseName,
           tradeName: franchiseOwner.digifranchise.digifranchiseName,
           type: "PRIVATE",
-          registrationNumber:
-            process.env.DEFAULT_REGISTRATION_NUMBER || "0000/000000/00",
+          registrationNumber:franchiseOwner.id,
           taxNumber: process.env.DEFAULT_TAX_NUMBER || "000000000",
         },
         bankAccount: {
@@ -856,4 +855,6 @@ export class TransactionsService {
       throw error;
     }
   }
+
+
 }

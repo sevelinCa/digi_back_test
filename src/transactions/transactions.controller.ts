@@ -8,7 +8,6 @@ import {
   UseGuards,
   Req,
   Put,
-
 } from "@nestjs/common";
 import { TransactionsService } from "./transactions.service";
 import { CreateTransactionDto } from "./dto/transactions.dto";
@@ -19,15 +18,20 @@ import { RolesGuard } from "src/roles/roles.guard";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { Request } from "express";
 import { UpdatingOrderStatusDto } from "./dto/updating-order-status.dto";
+import { TransactionsHelperService } from "./transaction-helper.service";
+import { UpdateTokenSettingsDto } from "./dto/update-token-settings.dto";
 
 @ApiTags("TRANSACTION")
 @Controller("transactions")
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(
+    private readonly transactionsService: TransactionsService,
+    private readonly transactionsHelperService: TransactionsHelperService
+  ) {}
 
   @Post("create-transaction")
   async create(
-    @Body() createTransactionDto: CreateTransactionDto,
+    @Body() createTransactionDto: CreateTransactionDto
   ): Promise<any> {
     return this.transactionsService.createTransaction(createTransactionDto);
   }
@@ -59,7 +63,7 @@ export class TransactionsController {
 
   @Post("process-wallet-deposit/:transactionId")
   async processWalletDeposit(
-    @Param("transactionId") transactionId: string,
+    @Param("transactionId") transactionId: string
   ): Promise<any> {
     return this.transactionsService.processWalletDeposit(transactionId);
   }
@@ -72,24 +76,24 @@ export class TransactionsController {
   @Post("request-withdrawal/:tokenId")
   async requestWithdrawal(
     @Param("tokenId") tokenId: string,
-    @Body("value") value: number,
+    @Body("value") value: number
   ): Promise<boolean> {
     return this.transactionsService.requestWithdrawal(tokenId, value);
   }
 
   @Post("create-buy-token/:orderId")
   async createTransactionBuyerToken(
-    @Param("orderId") orderId: string,
+    @Param("orderId") orderId: string
   ): Promise<any> {
     return this.transactionsService.createTransactionBuyerToken(orderId);
   }
 
   @Post("create-seller-token/:franchiseOwnerId")
   async createTransactionSellerToken(
-    @Param("franchiseOwnerId") franchiseOwnerId: string,
+    @Param("franchiseOwnerId") franchiseOwnerId: string
   ): Promise<any> {
     return this.transactionsService.createTransactionSellerToken(
-      franchiseOwnerId,
+      franchiseOwnerId
     );
   }
 
@@ -98,7 +102,7 @@ export class TransactionsController {
   @Post("create-transaction-with-auth/:orderId")
   async createTransactionWithAuth(
     @Req() req: Request,
-    @Param("orderId") orderId: string,
+    @Param("orderId") orderId: string
   ): Promise<any> {
     const userId = (req.user as UserEntity).id;
 
@@ -107,7 +111,7 @@ export class TransactionsController {
 
   @Post("create-transaction-without-auth/:orderId")
   async createTransactionWithoutAuth(
-    @Param("orderId") orderId: string,
+    @Param("orderId") orderId: string
   ): Promise<any> {
     return this.transactionsService.createTransactionWithoutAuth(orderId);
   }
@@ -115,11 +119,11 @@ export class TransactionsController {
   @Post("checkout-link/:transactionId")
   async getCheckoutLink(
     @Param("transactionId") transactionId: string,
-    @Body("paymentMethods") paymentMethods: string[],
+    @Body("paymentMethods") paymentMethods: string[]
   ): Promise<string> {
     const checkoutLink = await this.transactionsService.getCheckoutLink(
       transactionId,
-      paymentMethods,
+      paymentMethods
     );
     return checkoutLink;
   }
@@ -127,20 +131,21 @@ export class TransactionsController {
   @Put("update-order-status/:orderId")
   async updateOrderStatusAndNotifyCustomerByEmail(
     @Param("orderId") orderId: string,
-    @Body() updatingOrderStatusDto: UpdatingOrderStatusDto,
+    @Body() updatingOrderStatusDto: UpdatingOrderStatusDto
   ): Promise<any> {
     return this.transactionsService.updateOrderStatusAndNotifyCustomerByEmail(
       orderId,
-      updatingOrderStatusDto,
+      updatingOrderStatusDto
     );
   }
 
   @Post("create-transaction-and-checkout-link/:orderId")
   async createTransactionAndGetCheckoutLink(
-    @Param("orderId") orderId: string,
+    @Param("orderId") orderId: string
   ): Promise<any> {
     return await this.transactionsService.createTransactionAndGetCheckoutLink(
-      orderId,
+      orderId
     );
   }
+
 }
