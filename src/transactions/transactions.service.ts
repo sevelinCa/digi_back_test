@@ -943,6 +943,52 @@ export class TransactionsService {
     }
   }
 
+  async updateTokenSettings(tokenId: string, payoutInterval: string, refundMethod: string): Promise<any> {
+    const accessToken = await this.transactionsAuthService.getAccessToken();
+    if (!process.env.TRADE_SAFE_API_URL) {
+      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+    }
+  
+    const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  
+    const mutation = gql`
+      mutation tokenUpdate($id: ID!, $input: TokenUpdateInput!) {
+        tokenUpdate(id: $id, input: $input) {
+          id
+          name
+          settings {
+            payout {
+              interval
+              refund
+            }
+          }
+        }
+      }
+    `;
+  
+    const variables = {
+      id: tokenId,
+      input: {
+        settings: {
+          payout: {
+            interval: payoutInterval,
+            refund: refundMethod,
+          },
+        },
+      },
+    };
+  
+    try {
+      const response = await client.request(mutation, variables);
+      return response.tokenUpdate;
+    } catch (error) {
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+    }
+  }
 
 
 
