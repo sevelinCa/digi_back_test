@@ -856,8 +856,6 @@ export class TransactionsService {
     }
   }
 
-  // =============
-
   async getSellerToken(registrationNumber: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
