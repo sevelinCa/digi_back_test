@@ -1,86 +1,46 @@
-<!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{app_name}} Order Confirmation</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-                   }
 
-        .container {
-            width: 80%;
-            margin: auto;
-            background-color: #ffffff;
-                       padding: 20px;
-            border-radius: 8px;
-                       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                   }
-
-        .header {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #00838f;
-                       color: #ffffff;
-                   }
-
-        .content {
-            text-align: center;
-            padding: 20px 0;
-            color: #333333;
-                   }
-
-        .footer {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #eeeeee;
-                       color: #666666;
-                   }
-
-               .content p {
-            margin: 10px 0;
-                   }
-
-        .content .thankyMessage {
-            font-size: 14px;
-                       font-weight: bold;
-                   }
-
-        .content .orderNumber {
-            font-size: 20px;
-            color: #00838f;
-        }
-
-        .content .EmailReceipt,
-        .content .appreciateMessage {
-            font-size: 14px;
-                   }
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0;
+      background-color: #f4f4f4; } .container { width: 80%; margin: auto;
+      background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.1); } .header { text-align: center; padding:
+      20px 0; background-color: #00838f; color: #ffffff; } .content {
+      text-align: center; padding: 20px 0; color: #333333; } .footer {
+      text-align: center; padding: 20px 0; background-color: #eeeeee; color:
+      #666666; } .content p { margin: 10px 0; } .content .thankyMessage {
+      font-size: 14px; font-weight: bold; } .content .orderNumber { font-size:
+      20px; color: #00838f; } .content .EmailReceipt, .content
+      .appreciateMessage { font-size: 14px; }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>{{app_name}} Order Confirmation</h1>
-        </div>
-        <div class="content">
-            <p class="thankyMessage">Thank you for your order.</p>
+      <div class="header">
+        <h1>{{app_name}} Order Confirmation</h1>
+      </div>
+      <div class="content">
+        <p class="thankyMessage">Thank you for your order.</p>
 
-            <p class="orderNumber">Your order number is: <strong>{{orderNumber}}</strong></p>
+        <p class="orderNumber">Your order number is:
+          <strong>{{orderNumber}}</strong></p>
 
-            <p class="EmailReceipt">Please keep this email as a receipt for your order.</p>
-        </div>
-        <div class="footer">
-            <p>{{app_name}}</p>
-            <p class="appreciateMessage">We appreciate your business and look forward to serving you again.</p>
+        <p class="EmailReceipt">Please keep this email as a receipt for your
+          order.</p>
+      </div>
+      <div class="footer">
+        <p>{{app_name}}</p>
+        <p class="appreciateMessage">We appreciate your business and look
+          forward to serving you again.</p>
 
-        </div>
+      </div>
     </div>
-</body>
+  </body>
 
 </html>

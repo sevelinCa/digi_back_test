@@ -87,5 +87,10 @@ import { DigifranchiseSelectItemController } from "./digifranchise-select-item.c
     DigifranchiseExpenseService,
     DigifranchiseSelectItemService,
   ],
+  exports: [
+    DigifranchiseService,
+    // DigifranchiseProduct,
+    // DigifranchiseSubProduct,
+  ],
 })
 export class DigifranchiseModule {}

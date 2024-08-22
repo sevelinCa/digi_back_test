@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { I18nContext } from "nestjs-i18n";
-import { MailData, OrderStatusUpdateMailData } from "./interfaces/mail-data.interface";
+import {
+  MailData,
+  OrderStatusUpdateMailData,
+} from "./interfaces/mail-data.interface";
 import { AllConfigType } from "src/config/config.type";
 import { MaybeType } from "../utils/types/maybe.type";
 import { MailerService } from "../mailer/mailer.service";
@@ -18,7 +21,7 @@ interface EnquiryEmailBody {
 export class MailService {
   constructor(
     private readonly mailerService: MailerService,
-    private readonly configService: ConfigService<AllConfigType>,
+    private readonly configService: ConfigService<AllConfigType>
   ) {}
 
   async userSignUp(mailData: MailData<{ hash: string }>): Promise<void> {
@@ -51,7 +54,7 @@ export class MailService {
         "src",
         "mail",
         "mail-templates",
-        "activation.hbs",
+        "activation.hbs"
       ),
       context: {
         title: emailConfirmTitle,
@@ -66,7 +69,7 @@ export class MailService {
   }
 
   async customerSignUp(
-    mailData: MailData<{ hash: string; websiteUrl?: string }>,
+    mailData: MailData<{ hash: string; websiteUrl?: string }>
   ): Promise<void> {
     const i18n = I18nContext.current();
     let emailConfirmTitle: MaybeType<string>;
@@ -95,7 +98,7 @@ export class MailService {
         "src",
         "mail",
         "mail-templates",
-        "customer-activation.hbs",
+        "customer-activation.hbs"
       ),
       context: {
         title: emailConfirmTitle,
@@ -130,7 +133,7 @@ export class MailService {
     const url = new URL(
       this.configService.getOrThrow("app.frontendDomain", {
         infer: true,
-      }) + "/password-change",
+      }) + "/password-change"
     );
     url.searchParams.set("hash", mailData.data.hash);
 
@@ -145,7 +148,7 @@ export class MailService {
         "src",
         "mail",
         "mail-templates",
-        "reset-password.hbs",
+        "reset-password.hbs"
       ),
       context: {
         title: resetPasswordTitle,
@@ -163,7 +166,7 @@ export class MailService {
   }
 
   async forgotPasswordForWebs(
-    mailData: ForgotPasswordForWebsMailData,
+    mailData: ForgotPasswordForWebsMailData
   ): Promise<void> {
     const i18n = I18nContext.current();
     let resetPasswordTitle: MaybeType<string>;
@@ -196,7 +199,7 @@ export class MailService {
         "src",
         "mail",
         "mail-templates",
-        "reset-password.hbs",
+        "reset-password.hbs"
       ),
       context: {
         title: resetPasswordTitle,
@@ -218,7 +221,7 @@ export class MailService {
     subject: string,
     body: EnquiryEmailBody,
     senderName: string,
-    senderEmail: string,
+    senderEmail: string
   ): Promise<void> {
     const i18n = I18nContext.current();
     let emailSubject: MaybeType<string>;
@@ -236,7 +239,7 @@ export class MailService {
       "src",
       "mail",
       "mail-templates",
-      "enquiry-email.hbs",
+      "enquiry-email.hbs"
     );
 
     const context = {
@@ -261,7 +264,7 @@ export class MailService {
   }
 
   async confirmOrderNumber(
-    mailData: MailData<{ hash: string }>,
+    mailData: MailData<{ hash: string }>
   ): Promise<void> {
     const i18n = I18nContext.current();
     let emailConfirmTitle: MaybeType<string>;
@@ -289,7 +292,7 @@ export class MailService {
         "src",
         "mail",
         "mail-templates",
-        "activation.hbs",
+        "activation.hbs"
       ),
       context: {
         title: emailConfirmTitle,
@@ -303,13 +306,17 @@ export class MailService {
   }
 
   async sendMailToConfirmCreatedOrder(
-    mailData: MailData<{ orderNumber: string; email: string }>,
+    mailData: MailData<{
+      orderNumber: string;
+      email: string;
+      items?: any;
+    }>
   ): Promise<void> {
     const context = {
       orderNumber: mailData.data.orderNumber,
       app_name: this.configService.get("app.name", { infer: true }),
+      items: mailData.data.items,
     };
-
     const subject = `${context.app_name} Order Confirmation - Order Code: ${context.orderNumber}`;
 
     await this.mailerService.sendMail({
@@ -321,41 +328,69 @@ export class MailService {
         "src",
         "mail",
         "mail-templates",
-        "sendMail-toConfirm-CreatedOrder.hbs",
+        "sendMail-toConfirm-CreatedOrder.hbs"
+      ),
+      context: context,
+    });
+  }
+  async sendQuotationEmail(
+    mailData: MailData<{
+      quotation?: any;
+    }>
+  ): Promise<void> {
+    const context = {
+      quotation: mailData.data.quotation,
+      app_name: this.configService.get("app.name", { infer: true }),
+    };
+    const subject = `${context.app_name} Quotation - Quotation Code: ${mailData.data.quotation.id}`;
+
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      subject: subject,
+      templatePath: path.join(
+        this.configService.getOrThrow("app.workingDirectory", { infer: true }),
+        "src",
+        "mail",
+        "mail-templates",
+        "quotation.hbs"
       ),
       context: context,
     });
   }
 
-  async sendOrderStatusUpdateEmail(mailData: OrderStatusUpdateMailData): Promise<void> {
+  async sendOrderStatusUpdateEmail(
+    mailData: OrderStatusUpdateMailData
+  ): Promise<void> {
     const i18n = I18nContext.current();
-    
-    let emailSubject: string = ''; 
+
+    let emailSubject: string = "";
     let emailBody: string;
-    
+
     if (i18n) {
-      emailSubject = await i18n.t('orderStatusUpdate');
-      emailBody = await i18n.t('orderStatusUpdate.body');
+      emailSubject = await i18n.t("orderStatusUpdate");
+      emailBody = await i18n.t("orderStatusUpdate.body");
     }
-    
+
     const context = {
-      app_name: this.configService.get('app.name', { infer: true }),
+      app_name: this.configService.get("app.name", { infer: true }),
       previousStatus: mailData.previousStatus,
       newStatus: mailData.newStatus,
       orderUrl: mailData.orderUrl,
       orderId: mailData.orderId,
     };
-  
+
     try {
       await this.mailerService.sendMail({
         to: mailData.to,
-        subject: emailSubject || 'Order Status Update',
+        subject: emailSubject || "Order Status Update",
         templatePath: path.join(
-          this.configService.getOrThrow('app.workingDirectory', { infer: true }),
-          'src',
-          'mail',
-          'mail-templates',
-          'updateOrderStatus.hbs',
+          this.configService.getOrThrow("app.workingDirectory", {
+            infer: true,
+          }),
+          "src",
+          "mail",
+          "mail-templates",
+          "updateOrderStatus.hbs"
         ),
         context: context,
       });
@@ -364,5 +399,4 @@ export class MailService {
       console.error(`Failed to send email to: ${mailData.to}`, error);
     }
   }
-  
 }

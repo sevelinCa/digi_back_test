@@ -6,9 +6,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToOne,
 } from "typeorm";
 import { DigifranchiseServiceOffered } from "./digifranchise-service-offered.entity";
-
 @Entity()
 export class DigifranchiseServiceCategory {
   @PrimaryGeneratedColumn("uuid")
@@ -26,7 +26,7 @@ export class DigifranchiseServiceCategory {
   @ManyToOne(
     () => DigifranchiseServiceOffered,
     (service) => service.serviceCategories,
-    { onDelete: "CASCADE" },
+    { onDelete: "CASCADE" }
   )
   @JoinColumn({ name: "serviceId" })
   service: DigifranchiseServiceOffered;
