@@ -343,19 +343,49 @@ export class MailService {
       app_name: this.configService.get("app.name", { infer: true }),
     };
     const subject = `${context.app_name} Quotation - Quotation Code: ${mailData.data.quotation.id}`;
+    try {
+      await this.mailerService.sendMail({
+        to: mailData.to,
+        subject: subject,
+        templatePath: path.join(
+          this.configService.getOrThrow("app.workingDirectory", {
+            infer: true,
+          }),
+          "src",
+          "mail",
+          "mail-templates",
+          "quotation.hbs"
+        ),
+        context: context,
+      });
+    } catch (error) {
+      console.log("Error sending email....", error);
+    }
+  }
 
-    await this.mailerService.sendMail({
-      to: mailData.to,
-      subject: subject,
-      templatePath: path.join(
-        this.configService.getOrThrow("app.workingDirectory", { infer: true }),
-        "src",
-        "mail",
-        "mail-templates",
-        "quotation.hbs"
-      ),
-      context: context,
-    });
+  async quotationRequestNotification(info: MailData<{ request: any }>) {
+    const context = {
+      data: info.data.request,
+      link: `${this.configService.get("app.frontendDomain", { infer: true })}/dashboard/create-quotation?quotationId=${info.data.request.id}`,
+    };
+    try {
+      await this.mailerService.sendMail({
+        to: context.data.ownedDigifranchiseId.userEmail,
+        subject: "Quotation Request Inquiry!",
+        templatePath: path.join(
+          this.configService.getOrThrow("app.workingDirectory", {
+            infer: true,
+          }),
+          "src",
+          "mail",
+          "mail-templates",
+          "quotation-notification.hbs"
+        ),
+        context,
+      });
+    } catch (error) {
+      console.log("Error sending email...", error);
+    }
   }
 
   async sendOrderStatusUpdateEmail(

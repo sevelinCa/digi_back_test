@@ -1,26 +1,15 @@
 import {
-  IsString,
   IsDate,
-  IsArray,
   IsOptional,
-  IsNotEmpty,
   IsUUID,
   IsBoolean,
   IsNumber,
-  IsUrl,
-  ValidateNested,
-  IsEmail,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
-import { CreateQuotationRequestDto } from "./create-quotation-request.dto";
+import { QuotationEntity } from "../entities/quotation.entity";
 
 export class CreateQuotationDto {
-  @ApiProperty({ example: "5f4e7b7b-4b7d-4b7d-8b7d-4b7d4b7d4b7d" })
-  @IsUUID()
-  @IsOptional()
-  id?: string;
-
   @ApiProperty({ example: "5f4e7b7b-4b7d-4b7d-8b7d-4b7d4b7d4b7d" })
   @IsUUID()
   quotationRequest: string;
@@ -41,22 +30,9 @@ export class CreateQuotationDto {
   totalPrice: number;
 
   @ApiProperty({ example: "2024-03-15T00:00:00Z" })
+  @IsNumber()
   @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  createdAt: Date;
-
-  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  updatedAt: Date;
-
-  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  deletedAt: Date;
+  provisionHours?: number;
 }
 
-export type QuotationWithMessage = { message: string } & CreateQuotationDto;
+export type QuotationWithMessage = { message: string; data: QuotationEntity };

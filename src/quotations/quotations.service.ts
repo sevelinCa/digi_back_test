@@ -1,6 +1,5 @@
 import { DigifranchiseSubServices } from "src/digifranchise/entities/digifranchise-sub-service.entity";
 import { DigifranchiseServiceCategory } from "src/digifranchise/entities/digifranchise-service-category.entity";
-// import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 import {
   HttpException,
   HttpStatus,
@@ -10,7 +9,7 @@ import {
 import { QuotationEntity } from "./entities/quotation.entity";
 import { QuotationRequest } from "./entities/quotation-request.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { IsNull, Not, Repository } from "typeorm";
+import { IsNull, Not, Repository, ObjectLiteral, Equal } from "typeorm";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { CreateQuotationDto } from "./dto/create-quotation.dto";
 import { UpdateQuotationDto } from "./dto/update-quotation.dto";
@@ -21,6 +20,7 @@ import { MailService } from "src/mail/mail.service";
 import { DigifranchiseSubProduct } from "src/digifranchise/entities/digifranchise-sub-product.entity";
 import { RateTable } from "src/payment/entities/tax-rate.entity";
 import { QuotationWithMessage } from "./dto/create-quotation.dto";
+
 @Injectable()
 export class QuotationsService {
   constructor(
@@ -49,8 +49,7 @@ export class QuotationsService {
     private readonly mailService: MailService
   ) {}
 
-  private getQuotationItemWithName(quotationReq: QuotationRequest): any {
-    if (!quotationReq) return null;
+  private getQuotationItemWithName(quotationReq: QuotationRequest) {
     if (quotationReq.product) {
       return {
         ...quotationReq.product,
@@ -94,46 +93,30 @@ export class QuotationsService {
       ownedDigifranchiseId,
       quantity,
       expiryDate,
-      provisionHours,
       price,
       email,
       fullName,
+      otherInfo,
       ...productOrService
     } = createQuotationRequest;
-    const digifranchiseOwned =
-      await this.validateDigifranchiseOwner(ownedDigifranchiseId);
-    if (!digifranchiseOwned) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_FOUND, message: "Digifranchise not found" },
-        404
-      );
-    }
+
+    const digiOwned = await this.validateDigifranchiseOwner(
+      ownedDigifranchiseId,
+      productOrService
+    );
+
+    const { digifranchiseOwned, ...digifranchiseProductOrService } = digiOwned;
+
     const providedProductOrService: {
-      product: DigifranchiseProduct | null;
-      service: DigifranchiseServiceOffered | null;
       serviceCategory: DigifranchiseServiceCategory | null;
       subService: DigifranchiseSubServices | null;
       subProduct: DigifranchiseSubProduct | null;
     } = {
-      product: null,
-      service: null,
       serviceCategory: null,
       subService: null,
       subProduct: null,
     };
 
-    if (productOrService.product) {
-      providedProductOrService.product = (await this.validateProduct(
-        productOrService.product,
-        this.digifranchiseProductRepository
-      )) as DigifranchiseProduct;
-    }
-    if (productOrService.service) {
-      providedProductOrService.service = await this.validateService(
-        productOrService.service,
-        this.digifranchiseServiceOfferedRepository
-      );
-    }
     if (productOrService.serviceCategory) {
       providedProductOrService.serviceCategory = await this.validateService(
         productOrService.serviceCategory,
@@ -157,19 +140,76 @@ export class QuotationsService {
     const quotationRequest = this.quotationRequestRepository.create({
       quantity,
       expiryDate,
-      provisionHours,
       price,
       email,
       fullName,
       digifranchiseUrl,
+      otherInfo,
       ownedDigifranchiseId: digifranchiseOwned,
+      ...digifranchiseProductOrService,
       ...(providedProductOrService as any),
     });
     const newQuotationRequest =
       await this.quotationRequestRepository.save(quotationRequest);
-    console.log("quotationRequest", newQuotationRequest);
-    return newQuotationRequest;
+    const sendQuotation = (await this.quotationRequestRepository.findOne({
+      where: {
+        id: Equal((newQuotationRequest as any).id),
+      },
+      relations: [
+        "ownedDigifranchiseId",
+        "product",
+        "service",
+        "subService",
+        "serviceCategory",
+        "subProduct",
+      ],
+    })) as QuotationRequest;
+    await this.notifyDigifranchiseOwner(sendQuotation);
+    return {
+      message: "Quotation Request sent successfully!",
+      data: newQuotationRequest,
+    };
   }
+
+  async notifyDigifranchiseOwner(quotationRequest: QuotationRequest) {
+    const requestData = this.getQuotationItemWithName(quotationRequest);
+    await this.mailService.quotationRequestNotification({
+      to: quotationRequest.ownedDigifranchiseId.userEmail,
+      data: {
+        request: { ...quotationRequest, name: requestData?.name },
+      },
+    });
+  }
+  async sendQuotationEmail(quotation: QuotationEntity) {
+    const req = await this.getQuotationById(quotation.id);
+    await this.mailService.sendQuotationEmail({
+      to: req.quotationRequest.email,
+      data: {
+        quotation: {
+          ...req,
+          item: this.getQuotationItemWithName(req.quotationRequest),
+        },
+      },
+    });
+  }
+
+  async findAllRequests() {
+    const quotationRequests = await this.quotationRequestRepository.find({
+      relations: [
+        "ownedDigifranchiseId",
+        "product",
+        "service",
+        "subService",
+        "serviceCategory",
+        "subProduct",
+      ],
+    });
+    return {
+      message: "All Quotation requests retrieved successfully!",
+      data: quotationRequests,
+    };
+  }
+
   async createQuotation(
     createQuotationDto: CreateQuotationDto
   ): Promise<QuotationEntity | QuotationWithMessage> {
@@ -200,9 +240,8 @@ export class QuotationsService {
     if (previousQuotationRequest) {
       await this.sendQuotationEmail(previousQuotationRequest);
       return {
-        message:
-          "Quotation already sent to your Email, Kindly Check your email!",
-        ...previousQuotationRequest,
+        message: "Quotation already sent!",
+        data: previousQuotationRequest,
       };
     }
     const taxRate =
@@ -213,6 +252,8 @@ export class QuotationsService {
       )?.rateNumber as number) ?? 0;
     const newQuotation = this.quotationRepository.create({
       isOrdered: createQuotationDto.isOrdered,
+      provisionHours: createQuotationDto.provisionHours,
+
       quotationRequest: pendingQuotationRequest,
       taxAmount:
         pendingQuotationRequest.price *
@@ -225,42 +266,64 @@ export class QuotationsService {
     await this.sendQuotationEmail(createdQuotation);
 
     return {
-      message: "Quotation sent to your Email, Kindly Check your email!",
-      ...createdQuotation,
+      message: "Quotation email sent!",
+      data: createdQuotation,
     };
   }
 
-  async sendQuotationEmail(quotation: QuotationEntity) {
-    const req = await this.getQuotationById(quotation.id);
-    await this.mailService.sendQuotationEmail({
-      to: req.quotationRequest.email,
-      data: {
-        quotation: {
-          ...req,
-          item: this.getQuotationItemWithName(req.quotationRequest),
-        },
-      },
-    });
-  }
   private async validateDigifranchiseOwner(
-    ownedDigifranchiseId: string
-  ): Promise<DigifranchiseOwner> {
-    const digifranchiseOwned = await this.digifranchiseOwnerRepository.findOne({
-      where: { id: ownedDigifranchiseId },
+    ownedDigifranchiseId: string,
+    productOrService: any
+  ): Promise<any> {
+    if (!ownedDigifranchiseId || !productOrService) return null;
+    const providedProductOrService: {
+      product: DigifranchiseProduct | null;
+      service: DigifranchiseServiceOffered | null;
+    } = {
+      product: null,
+      service: null,
+    };
+
+    const ownedDigifranchise = await this.digifranchiseOwnerRepository.findOne({
+      where: { id: Equal(ownedDigifranchiseId) },
+      relations: ["digifranchise"],
     });
-    if (!digifranchiseOwned) {
+    if (!ownedDigifranchise) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, message: "Digifranchise not found" },
         404
       );
     }
 
-    return digifranchiseOwned;
+    if (productOrService.product) {
+      const products = await this.digifranchiseProductRepository.findBy({
+        digifranchiseId: Equal(ownedDigifranchise.digifranchise.id),
+      });
+      if (!products) throw new NotFoundException("Products Not Found!");
+      const product = products.find((p) => p.id === productOrService.product);
+      if (!product) throw new NotFoundException("Product Not found!");
+      providedProductOrService.product = product;
+    }
+    if (productOrService.service) {
+      const services = await this.digifranchiseServiceOfferedRepository.findBy({
+        digifranchiseId: Equal(ownedDigifranchise.digifranchise.id),
+      });
+
+      if (!services) throw new NotFoundException("Services Not Found!");
+      const service = services.find((s) => s.id === productOrService.service);
+      if (!service) throw new NotFoundException("Service Not Found!");
+      providedProductOrService.service = service;
+    }
+
+    return {
+      digifranchiseOwned: ownedDigifranchise,
+      ...providedProductOrService,
+    };
   }
 
   // validating the service
   private async validateService(
-    serviceId: string | undefined,
+    serviceId: string,
     serviceRepo: Repository<any>
   ): Promise<any> {
     if (!serviceId) return null;
@@ -277,24 +340,7 @@ export class QuotationsService {
 
     return service;
   }
-  // validating Product
-  private async validateProduct(
-    productId: string | undefined,
-    productRepo: Repository<DigifranchiseProduct | DigifranchiseSubProduct>
-  ): Promise<DigifranchiseProduct | DigifranchiseSubProduct | null> {
-    if (!productId) return null;
-    const product = await productRepo.findOne({
-      where: { id: productId },
-    });
 
-    if (!product) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_FOUND, message: "Product not found" },
-        404
-      );
-    }
-    return product;
-  }
   // validate quotation Request
   async validateQuotationRequest(id: string): Promise<QuotationRequest | null> {
     if (!id) return null;
