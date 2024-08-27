@@ -53,10 +53,11 @@ export class CreateQuotationRequestDto {
   @IsOptional()
   subProduct?: string;
 
-  @ApiProperty({ example: 10 })
+  @ApiProperty({ example: 1 })
   @IsNotEmpty()
   @IsNumber()
   @Min(1)
+  @IsOptional()
   quantity: number;
 
   @ApiProperty({ example: "2024-03-15T00:00:00Z" })

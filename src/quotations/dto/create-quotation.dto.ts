@@ -29,7 +29,7 @@ export class CreateQuotationDto {
   @IsNumber()
   totalPrice: number;
 
-  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
+  @ApiProperty({ example: 2 })
   @IsNumber()
   @IsOptional()
   provisionHours?: number;

@@ -63,6 +63,19 @@ export class QuotationsController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @ApiOperation({ summary: "Get all quotation Requests" })
+  @ApiResponse({
+    status: 200,
+    description: "Quotation Requests have been successfully retrieved.",
+    type: [QuotationRequest],
+  })
+  @Get("/requests")
+  findAllRequests() {
+    return this.quotationService.findAllRequests();
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Post()
   @ApiOperation({ summary: "Create a new quotation" })
   @ApiResponse({
@@ -104,18 +117,6 @@ export class QuotationsController {
     return this.quotationService.getQuotationById(id);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Get("/request")
-  @ApiOperation({ summary: "Get all quotation Requests" })
-  @ApiResponse({
-    status: 200,
-    description: "The quotations Requests have been successfully retrieved.",
-    type: [QuotationRequest],
-  })
-  findAllRequests() {
-    return this.quotationService.findAllRequests();
-  }
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Get()

@@ -187,6 +187,7 @@ export class QuotationsService {
       data: {
         quotation: {
           ...req,
+          url: `${req.quotationRequest.digifranchiseUrl}&quotationId=${req.id}`,
           item: this.getQuotationItemWithName(req.quotationRequest),
         },
       },
@@ -352,7 +353,14 @@ export class QuotationsService {
   async getQuotationRequestById(id: string): Promise<QuotationRequest> {
     const quotationRequest = await this.quotationRequestRepository.findOne({
       where: { id },
-      relations: ["ownedDigifranchiseId"],
+      relations: [
+        "ownedDigifranchiseId",
+        "product",
+        "service",
+        "subProduct",
+        "subService",
+        "serviceCategory",
+      ],
     });
 
     if (!quotationRequest) {
