@@ -3,11 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   JoinColumn,
-  ManyToOne,
-  OneToMany,
   OneToOne,
 } from "typeorm";
-import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { QuotationRequest } from "./quotation-request.entity";
 
 @Entity("quotations")
@@ -20,18 +17,6 @@ export class QuotationEntity {
   })
   @JoinColumn({ name: "quotationRequest" })
   quotationRequest: QuotationRequest;
-
-  // @OneToMany(
-  //   () => QuotationRequest,
-  //   (quotationRequest) => quotationRequest.quotation,
-  //   {
-  //     cascade: true,
-  //     onDelete: "CASCADE",
-  //     nullable: false,
-  //   }
-  // )
-  // @JoinColumn({ name: "quotationRequest" })
-  // quotationRequest: QuotationRequest;
 
   @Column({ type: "boolean", default: false })
   isOrdered: boolean;
@@ -53,6 +38,9 @@ export class QuotationEntity {
     default: 0.0,
   })
   taxAmount: number;
+
+  @Column({ type: "int", nullable: true })
+  provisionHours: number;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

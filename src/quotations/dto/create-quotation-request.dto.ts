@@ -8,9 +8,11 @@ import {
   IsUrl,
   Min,
   IsEmail,
+  IsArray,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
+import e from "express";
 
 export class CreateQuotationRequestDto {
   @ApiProperty({ example: "3df207f1-52f3-4a62-83a2-1ad9212d8603" })
@@ -63,12 +65,6 @@ export class CreateQuotationRequestDto {
   @Type(() => Date)
   expiryDate?: Date;
 
-  @ApiProperty({ example: "2024-03-15T00:00:00Z" })
-  @IsDate()
-  @IsOptional()
-  @Type(() => Date)
-  provisionHours?: Date;
-
   @ApiProperty({ example: 120.0 })
   @IsNotEmpty()
   @IsNumber()
@@ -84,4 +80,20 @@ export class CreateQuotationRequestDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
+  @ApiProperty({
+    example: [
+      {
+        service: "6f5f8e8c-5d8e-5d8e-9d8e-5d8e5d8e5d8e",
+        subService: "6f5f8e8c-5d8e-5d8e-9d8e-5d8e5d8e5d8e",
+        serviceCategory: "6f5f8e8c-5d8e-5d8e-9d8e-5d8e5d8e5d8e",
+        subProduct: "6f5f8e8c-5d8e-5d8e-9d8e-5d8e5d8e5d8e",
+        quantity: 10,
+        price: 120.0,
+      },
+    ],
+  })
+  @IsArray()
+  @IsOptional()
+  otherInfo: any[];
 }

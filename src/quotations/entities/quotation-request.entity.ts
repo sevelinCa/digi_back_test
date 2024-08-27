@@ -14,7 +14,7 @@ import { DigifranchiseSubServices } from "src/digifranchise/entities/digifranchi
 import { DigifranchiseSubProduct } from "src/digifranchise/entities/digifranchise-sub-product.entity";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
-@Entity("quotation_request")
+@Entity()
 export class QuotationRequest {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -35,14 +35,6 @@ export class QuotationRequest {
   )
   @JoinColumn({ name: "ownedDigifranchiseId" })
   ownedDigifranchiseId: DigifranchiseOwner;
-
-  // @ManyToOne(() => QuotationEntity, (quotation) => quotation.quotationRequest, {
-  //   onDelete: "CASCADE",
-  //   // cascade: true,
-  //   // nullable: true,
-  // })
-  // @JoinColumn({ name: "quotation" })
-  // quotation: QuotationEntity;
 
   @OneToOne(() => QuotationEntity, (quotation) => quotation.quotationRequest, {
     onDelete: "CASCADE",
@@ -66,15 +58,11 @@ export class QuotationRequest {
   @JoinColumn({ name: "service" })
   service?: DigifranchiseServiceOffered;
 
-  @ManyToOne(
-    () => DigifranchiseSubServices,
-    // (subService) => subService.quotationItem,
-    {
-      nullable: true,
-      cascade: true,
-      onDelete: "CASCADE",
-    }
-  )
+  @ManyToOne(() => DigifranchiseSubServices, {
+    nullable: true,
+    cascade: true,
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "subService" })
   subService?: DigifranchiseSubServices;
 
@@ -103,9 +91,9 @@ export class QuotationRequest {
   @Column({ type: "timestamp", nullable: true })
   expiryDate: Date;
 
-  @Column({ type: "timestamp", nullable: true })
-  provisionHours: Date;
-
   @Column({ type: "varchar", length: 255 })
   digifranchiseUrl: string;
+
+  @Column({ type: "json", nullable: true })
+  otherInfo: any[];
 }

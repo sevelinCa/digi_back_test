@@ -1,0 +1,30 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QUOTATION REQUEST NOTIFICATION</title>
+  </head>
+  <body>
+    <h2 style="text-align: center; background: #ccc; padding:10px 0;">QUOTATION
+      REQUEST</h2>
+    <p style="text-align: justify;">Client
+      {{data.fullName}}
+      has request a quotation on Product/service
+      <span style="color:#00838f; "> {{data.name}}</span>.
+      <br />Demanding quantity of
+      {{data.quantity}}</p>
+    <p style="text-align: justify;">Kindly click the button below to send
+      quotation</p>
+    <button
+      style="background: #00838f; padding: 8px 10px;  border-radius: 8px; border: none;"
+    ><a href="{{link}}" style="color:#fff; text-decoration: none;">GET REQUEST
+        ID</a></button>
+    <div
+      style=" background: #ccc;  padding: 15px; width:100%; margin-top: 20px;"
+    >
+      <p style="margin: 10px 0;">Thank you</p>
+      <p>Regards</p>
+    </div>
+
+  </body>
+</html>

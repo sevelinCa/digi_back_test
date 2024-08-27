@@ -1,5 +1,3 @@
-import { Digifranchise } from "./../digifranchise/entities/digifranchise.entity";
-import { DigifranchiseModule } from "./../digifranchise/digifranchise.module";
 import { Module } from "@nestjs/common";
 import { QuotationsService } from "./quotations.service";
 import { QuotationsController } from "./quotations.controller";
