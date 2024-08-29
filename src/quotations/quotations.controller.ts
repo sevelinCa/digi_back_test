@@ -46,6 +46,21 @@ export class QuotationsController {
     return this.quotationService.createQuotationRequest(createQuotationRequest);
   }
 
+  @Get("/request/:id")
+  @ApiOperation({ summary: "Get a single quotation request by ID" })
+  @ApiParam({
+    name: "id",
+    description: "ID of the quotation request to retrieve",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "The quotation request id has been successfully retrieved.",
+    type: QuotationEntity,
+  })
+  findRequestById(@Param("id") id: string) {
+    return this.quotationService.getQuotationRequestById(id);
+  }
+
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Post()
@@ -70,7 +85,6 @@ export class QuotationsController {
     description: "The quotation has been successfully updated.",
     type: QuotationEntity,
   })
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
   update(
     @Param("id") id: string,
     @Body() updateQuotationDto: UpdateQuotationDto
@@ -78,21 +92,6 @@ export class QuotationsController {
     return this.quotationService.updateQuotation(id, updateQuotationDto);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Delete(":id")
-  @ApiOperation({ summary: "Delete a quotation" })
-  @ApiParam({ name: "id", description: "ID of the quotation to delete" })
-  @ApiResponse({
-    status: 204,
-    description: "The quotation has been successfully deleted.",
-  })
-  remove(@Param("id") id: string) {
-    return this.quotationService.deleteQuotation(id);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Get(":id")
   @ApiOperation({ summary: "Get a single quotation by ID" })
   @ApiParam({ name: "id", description: "ID of the quotation to retrieve" })
@@ -107,24 +106,7 @@ export class QuotationsController {
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Get("/request/:id")
-  @ApiOperation({ summary: "Get a single quotation request by ID" })
-  @ApiParam({
-    name: "id",
-    description: "ID of the quotation request to retrieve",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "The quotation request id has been successfully retrieved.",
-    type: QuotationEntity,
-  })
-  findRequestById(@Param("id") id: string) {
-    return this.quotationService.getQuotationRequestById(id);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Get()
+  @Get("/request")
   @ApiOperation({ summary: "Get all quotation Requests" })
   @ApiResponse({
     status: 200,
@@ -134,7 +116,6 @@ export class QuotationsController {
   findAllRequests() {
     return this.quotationService.findAllRequests();
   }
-
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Get()
@@ -146,5 +127,17 @@ export class QuotationsController {
   })
   findAll() {
     return this.quotationService.getAllQuotations();
+  }
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete a quotation" })
+  @ApiParam({ name: "id", description: "ID of the quotation to delete" })
+  @ApiResponse({
+    status: 204,
+    description: "The quotation has been successfully deleted.",
+  })
+  remove(@Param("id") id: string) {
+    return this.quotationService.deleteQuotation(id);
   }
 }
