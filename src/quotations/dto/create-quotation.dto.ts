@@ -4,6 +4,7 @@ import {
   IsUUID,
   IsBoolean,
   IsNumber,
+  Min,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
@@ -17,6 +18,7 @@ export class CreateQuotationDto {
   @ApiProperty({ example: 5.5 })
   @IsNumber()
   @IsOptional()
+  @Min(0)
   taxAmount: number;
 
   @ApiProperty({ example: false })
@@ -27,11 +29,13 @@ export class CreateQuotationDto {
   @ApiProperty({ example: 1200.0 })
   @IsOptional()
   @IsNumber()
+  @Min(1)
   totalPrice: number;
 
   @ApiProperty({ example: 2 })
   @IsNumber()
   @IsOptional()
+  @Min(0)
   provisionHours?: number;
 }
 

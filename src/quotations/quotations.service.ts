@@ -86,11 +86,11 @@ export class QuotationsService {
     return null;
   }
   async createQuotationRequest(
-    createQuotationRequest: CreateQuotationRequestDto
+    createQuotationRequest: CreateQuotationRequestDto,
+    ownedDigifranchiseId: string
   ) {
     const {
       digifranchiseUrl,
-      ownedDigifranchiseId,
       quantity,
       expiryDate,
       price,
@@ -194,21 +194,47 @@ export class QuotationsService {
     });
   }
 
-  async findAllRequests() {
-    const quotationRequests = await this.quotationRequestRepository.find({
-      relations: [
-        "ownedDigifranchiseId",
-        "product",
-        "service",
-        "subService",
-        "serviceCategory",
-        "subProduct",
-      ],
-    });
-    return {
-      message: "All Quotation requests retrieved successfully!",
-      data: quotationRequests,
-    };
+  async findAllRequests(ownedDigifranchiseId: string) {
+    try {
+      const ownedDigifranchise =
+        await this.digifranchiseOwnerRepository.findOne({
+          where: { id: ownedDigifranchiseId },
+        });
+      if (!ownedDigifranchise) {
+        throw new NotFoundException("Digifranchise not found");
+      }
+      const quotationRequests = await this.quotationRequestRepository.find({
+        relations: [
+          "ownedDigifranchiseId",
+          "product",
+          "service",
+          "subService",
+          "serviceCategory",
+          "subProduct",
+        ],
+      });
+      const filteredQuotationRequests = quotationRequests.filter(
+        (quotationRequest) => {
+          return (
+            quotationRequest.ownedDigifranchiseId &&
+            quotationRequest.ownedDigifranchiseId.id === ownedDigifranchiseId
+          );
+        }
+      );
+      return {
+        message: "All Quotation requests retrieved successfully!",
+        data: filteredQuotationRequests,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: "Error retrieving Quotation Requests",
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async createQuotation(
@@ -258,10 +284,10 @@ export class QuotationsService {
       quotationRequest: pendingQuotationRequest,
       taxAmount:
         pendingQuotationRequest.price *
-        pendingQuotationRequest.quantity *
+        (pendingQuotationRequest.quantity || 1) *
         (taxRate / 100),
       totalPrice:
-        pendingQuotationRequest.price * pendingQuotationRequest.quantity,
+        pendingQuotationRequest.price * (pendingQuotationRequest.quantity || 1),
     });
     const createdQuotation = await this.quotationRepository.save(newQuotation);
     await this.sendQuotationEmail(createdQuotation);
@@ -436,7 +462,7 @@ export class QuotationsService {
     await this.quotationRepository.remove(quotation);
   }
 
-  async getAllQuotations(): Promise<QuotationEntity[]> {
+  async getAllQuotations(ownedDigifranchiseId: string) {
     const quotations = await this.quotationRepository.find({
       relations: [
         "quotationRequest",
@@ -448,14 +474,16 @@ export class QuotationsService {
         "quotationRequest.subProduct",
       ],
     });
-    const req = await this.quotationRequestRepository.find({
-      where: {
-        quotation: Not(IsNull()),
-      },
-      relations: ["ownedDigifranchiseId"],
+    const filteredQuotations = quotations.filter((quotation) => {
+      return (
+        quotation.quotationRequest &&
+        quotation.quotationRequest.ownedDigifranchiseId &&
+        quotation.quotationRequest.ownedDigifranchiseId.id ===
+          ownedDigifranchiseId
+      );
     });
 
-    return quotations;
+    return filteredQuotations;
   }
   //  get a single quotation
   async getQuotationById(id: string): Promise<QuotationEntity> {
@@ -475,7 +503,6 @@ export class QuotationsService {
     if (!quotation) {
       throw new NotFoundException("Quotation not found");
     }
-
     return quotation;
   }
 }

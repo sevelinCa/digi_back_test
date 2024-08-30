@@ -12,14 +12,8 @@ import {
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import e from "express";
 
 export class CreateQuotationRequestDto {
-  @ApiProperty({ example: "3df207f1-52f3-4a62-83a2-1ad9212d8603" })
-  @IsNotEmpty()
-  @IsUUID()
-  ownedDigifranchiseId: string;
-
   @ApiProperty({
     example:
       "https://beta.crop-minder.digifranchise.co.za/0789374643/order?serviceId=7048574d-2d6b-4aec-82e8-0d4b8b562d0b",
@@ -69,7 +63,7 @@ export class CreateQuotationRequestDto {
   @ApiProperty({ example: 120.0 })
   @IsNotEmpty()
   @IsNumber()
-  @Min(0.01)
+  @Min(1)
   price: number;
 
   @ApiProperty({ example: "John Doe" })
