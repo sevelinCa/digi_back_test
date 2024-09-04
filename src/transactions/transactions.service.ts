@@ -788,25 +788,29 @@ export class TransactionsService {
   async updateOrderStatusAndNotifyCustomerByEmail(
     orderId: string,
     updatingOrderStatusDto: UpdatingOrderStatusDto,
-  ): Promise<OrderTable> {
-      
+  ): Promise<{ updatedOrder: OrderTable; message: string }> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
-      relations: [
-        "userId",
-      ],
+      relations: ["userId"],
     });
   
     if (!order) {
-            throw new NotFoundException("Order not found");
+      throw new NotFoundException("Order not found");
     }
-    
-    const userEmail = await this.transactionsHelperService.getUserEmailFromOrderId(orderId);
   
-    const previousStatus = order.status; 
+    const userEmail = await this.transactionsHelperService.getEmailFromOrder(orderId);
+  
+    const previousStatus = order.status;
   
     Object.assign(order, updatingOrderStatusDto);
     const updatedOrder = await this.orderRepository.save(order);
+  
+    if (!userEmail) {
+      return {
+        updatedOrder,
+        message: "Order status updated, but email not sent because email not found.",
+      };
+    }
   
     const mailData: OrderStatusUpdateMailData = {
       to: userEmail,
@@ -818,9 +822,14 @@ export class TransactionsService {
   
     await this.mailService.sendOrderStatusUpdateEmail(mailData);
   
-      
-    return updatedOrder;
+    return {
+      updatedOrder,
+      message: "Order status updated and notification email sent successfully.",
+    };
   }
+  
+  
+
   
   async createTransactionAndGetCheckoutLink(orderId: string): Promise<any> {
     try {
