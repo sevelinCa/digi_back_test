@@ -7,7 +7,6 @@ import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-own
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { OrderTable } from "src/payment/entities/order.entity";
-import { PaystackAuthService } from "./paystack-auth.service";
 import { PaystackService } from "./paystack.service";
 import { PaystackController } from "./paystack.controller";
 import { MailModule } from "src/mail/mail.module";
@@ -23,7 +22,6 @@ import { TransactionsHelperService } from "./transaction-helper.service";
   providers: [
     TransactionsService,
     TransactionsAuthService,
-    PaystackAuthService,
     PaystackService,
     TransactionsHelperService,
   ],
