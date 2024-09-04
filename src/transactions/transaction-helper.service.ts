@@ -69,6 +69,29 @@ export class TransactionsHelperService {
     return user.email;
   }
 
+  async getEmailFromOrder(orderId: string): Promise<string | null> {
+    try {
+      const userEmail = await this.getUserEmailFromOrderId(orderId);
+      
+      return userEmail;
+    
+    } catch (error) {
+    
+      try {
+        const basicInfo = await this.getOrderBasicInfo(orderId);
+        const email = basicInfo.basic_info?.email;
+        
+        if (email) {
+          return email;
+        } else {
+          throw new Error('Email not found in orderAdditionalInfo');
+        }
+      
+      } catch (error) {
+        return null;
+      }
+    }
+  }
 
   async getOwnedFranchise(orderId: string): Promise<any> {
     const order = await this.orderRepository.findOne({
