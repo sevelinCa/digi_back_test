@@ -784,48 +784,8 @@ export class TransactionsService {
     }
   }
 
-  async updateOrderStatusAndNotifyCustomerByEmail(
-    orderId: string,
-    updatingOrderStatusDto: UpdatingOrderStatusDto,
-  ): Promise<{ updatedOrder: OrderTable; message: string }> {
-    const order = await this.orderRepository.findOne({
-      where: { id: orderId },
-      relations: ["userId"],
-    });
-  
-    if (!order) {
-      throw new NotFoundException("Order not found");
-    }
-  
-    const userEmail = await this.transactionsHelperService.getEmailFromOrder(orderId);
-  
-    const previousStatus = order.status;
-  
-    Object.assign(order, updatingOrderStatusDto);
-    const updatedOrder = await this.orderRepository.save(order);
-  
-    if (!userEmail) {
-      return {
-        updatedOrder,
-        message: "Order status updated, but email not sent because email not found.",
-      };
-    }
-  
-    const mailData: OrderStatusUpdateMailData = {
-      to: userEmail,
-      orderId: order.orderCode,
-      previousStatus: previousStatus,
-      newStatus: updatingOrderStatusDto.status,
-      orderUrl: updatingOrderStatusDto.orderUrl!,
-    };
-  
-    await this.mailService.sendOrderStatusUpdateEmail(mailData);
-  
-    return {
-      updatedOrder,
-      message: "Order status updated and notification email sent successfully.",
-    };
-  }
+
+
   
   
 
