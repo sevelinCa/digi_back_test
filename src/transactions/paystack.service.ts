@@ -23,7 +23,9 @@ export class PaystackService {
     this.paystackUrl = this.configService.get<string>('PAYSTACK_API_URL') || '';
   }
 
+
   async createTransaction(dto: CreatePayStackTransactionDTO) {
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 100;
   
     const url = `${this.paystackUrl}/transaction/initialize`;
     const callbackUrl = this.configService.get<string>('PAYSTACK_CALLBACK_URL');
@@ -32,19 +34,29 @@ export class PaystackService {
       'Content-Type': 'application/json',
     };
   
+    const amountInKobo = dto.amount * koboAmount;
+  
+    const transactionData = {
+      ...dto,
+      amount: amountInKobo, 
+      callback_url: callbackUrl, 
+    };
+  
     try {
       const response = await lastValueFrom(
-        this.httpService.post(url, { ...dto, callback: callbackUrl }, { headers })
+        this.httpService.post(url, transactionData, { headers })
       );
-      return {
+      const transactionDetails = {
         ...response?.data,
-        callbackUrl,
+        callbackUrl: callbackUrl,
       };
+      return transactionDetails;
     } catch (error) {
       throw new Error(`Failed to create Paystack transaction: ${error.message}`);
     }
-}
+  }
 
+  
   async verifyTransaction(referenceId: string) {
     const url = `${this.paystackUrl}/transaction/verify/${referenceId}`;
     const headers = {
@@ -116,6 +128,7 @@ export class PaystackService {
 
 
   async createPaystackTransactionWithoutAuth(orderId: string, paystackDto: CreatePayStackTransactionCallbackUrlDTO) {
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 100;
   
     const url = `${this.paystackUrl}/transaction/initialize`;
     const callbackUrl = this.configService.get<string>('PAYSTACK_CALLBACK_URL');
@@ -136,25 +149,27 @@ export class PaystackService {
       throw new NotFoundException("Order or ownedDigifranchise not found");
     }
   
-    let totalAmount: number | string;
+    let totalAmount: number;
     if (typeof order.totalAmount === "string") {
-      totalAmount = parseFloat(order.totalAmount);
+      totalAmount = parseFloat(order.totalAmount) * koboAmount;
     } else {
-      totalAmount = order.totalAmount;
+      totalAmount = order.totalAmount * koboAmount;
     }
   
     const basicInfo = order.orderAdditionalInfo.find(info => info.basic_info !== undefined)?.basic_info;
     if (!basicInfo) {
       throw new Error("Basic info not found in orderAdditionalInfo");
     }
+  
     const transactionData = {
       amount: totalAmount,
       email: basicInfo.email,
       callback_url: paystackDto.callback_url
-    }
+    };
+  
     try {
       const response = await lastValueFrom(
-        this.httpService.post(url, { ...transactionData, callback: callbackUrl }, { headers })
+        this.httpService.post(url, transactionData, { headers })
       );
       const transactionDetails = {
         ...response?.data,
@@ -165,10 +180,10 @@ export class PaystackService {
       throw new Error(`Failed to create Paystack transaction: ${error.message}`);
     }
   }
-
-
+  
   async createPaystackTransactionWithAuth(userId: string, orderId: string, paystackDto: CreatePayStackTransactionCallbackUrlDTO) {
- 
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 100;
+  
     const url = `${this.paystackUrl}/transaction/initialize`;
     const callbackUrl = this.configService.get<string>('PAYSTACK_CALLBACK_URL');
     const headers = {
@@ -180,7 +195,7 @@ export class PaystackService {
     if (!user) {
       throw new NotFoundException("User not found");
     }
-
+  
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: [
@@ -193,21 +208,22 @@ export class PaystackService {
       throw new NotFoundException("Order or ownedDigifranchise not found");
     }
   
-    let totalAmount: number | string;
+    let totalAmount: number;
     if (typeof order.totalAmount === "string") {
-      totalAmount = parseFloat(order.totalAmount);
+      totalAmount = parseFloat(order.totalAmount) * koboAmount;
     } else {
-      totalAmount = order.totalAmount;
+      totalAmount = order.totalAmount * koboAmount;
     }
   
     const transactionData = {
       amount: totalAmount,
       email: user.email,
-      callbackUrl: paystackDto.callback_url
-    }
+      callback_url: paystackDto.callback_url
+    };
+  
     try {
       const response = await lastValueFrom(
-        this.httpService.post(url, { ...transactionData, callback: callbackUrl }, { headers })
+        this.httpService.post(url, transactionData, { headers })
       );
       const transactionDetails = {
         ...response?.data,
@@ -218,4 +234,5 @@ export class PaystackService {
       throw new Error(`Failed to create Paystack transaction: ${error.message}`);
     }
   }
+  
 }
