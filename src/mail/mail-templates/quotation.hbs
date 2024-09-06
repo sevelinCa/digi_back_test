@@ -39,12 +39,12 @@
                 {{/if}}
                 {{#if quotation.quotationRequest.digifranchiseUrl}}
                 <p>Proceed to Order:
-                  <span> <a href="{{quotation.quotationRequest.digifranchiseUrl}}">Place Order</a></span>
+                  <span> <a href="{{quotation.url}}">Place Order</a></span>
                 </p>
                 {{/if}}
 
                 {{#if quotation.provisionHours}}
-                <p>provision Hours:
+                <p>Provision Hours:
                   <span>{{quotation.provisionHours}}</span>
                 </p>
                 {{/if}}
@@ -57,7 +57,9 @@
             <thead>
               <tr>
                 <th>Product/Service</th>
+                {{#if quotation.quotationRequest.quantity}}
                 <th>Quantity</th>
+                {{/if}}
                 <th>Unit Price</th>
                 <th>Description</th>
                 {{#if quotation.taxAmount}}
@@ -69,7 +71,9 @@
             <tbody>
               <tr>
                 <td>{{quotation.item.name}}</td>
+                {{#if quotation.quotationRequest.quantity}}
                 <td>{{quotation.quotationRequest.quantity}}</td>
+                {{/if}}
                 <td>{{quotation.quotationRequest.price}}</td>
                 <td>{{quotation.item.description}}</td>
                 {{#if quotation.taxAmount}}
@@ -86,7 +90,13 @@
                 {{#if quotation.taxAmount}}
                 <td colspan="5">Grand Total</td>
                 {{else}}
+                {{#if quotation.quotationRequest.quantity}}
                 <td colspan="4">Grand Total</td>
+                {{else}}
+                <td colspan="3">Grand Total</td>
+                {{/if}}
+                {{/if}}
+                {{#if quotation.totalPrice}}
                 {{/if}}
                 <td id="total">{{quotation.totalPrice}}</td>
               </tr>

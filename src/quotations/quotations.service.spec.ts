@@ -20,27 +20,27 @@ describe("QuotationsController", () => {
         QuotationsService,
         {
           provide: getRepositoryToken(QuotationEntity),
-          useValue: {}, // Mock the repository or use a mock function
+          useValue: {},
         },
         {
           provide: getRepositoryToken(QuotationRequest),
-          useValue: {}, // Mock the repository or use a mock function
+          useValue: {},
         },
         {
           provide: getRepositoryToken(DigifranchiseOwner),
-          useValue: {}, // Mock the repository or use a mock function
+          useValue: {},
         },
         {
           provide: getRepositoryToken(DigifranchiseProduct),
-          useValue: {}, // Mock the repository or use a mock function
+          useValue: {},
         },
         {
           provide: getRepositoryToken(DigifranchiseServiceOffered),
-          useValue: {}, // Mock the repository or use a mock function
+          useValue: {},
         },
         {
           provide: DigifranchiseService,
-          useValue: {}, // Mock the DigifranchiseService or use a mock function
+          useValue: {},
         },
       ],
     }).compile();

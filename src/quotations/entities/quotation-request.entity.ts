@@ -82,7 +82,7 @@ export class QuotationRequest {
   @JoinColumn({ name: "subProduct" })
   subProduct?: DigifranchiseSubProduct;
 
-  @Column({ type: "integer" })
+  @Column({ type: "integer", nullable: true })
   quantity: number;
 
   @Column({ type: "decimal" })

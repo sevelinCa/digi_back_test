@@ -86,11 +86,11 @@ export class QuotationsService {
     return null;
   }
   async createQuotationRequest(
-    createQuotationRequest: CreateQuotationRequestDto
+    createQuotationRequest: CreateQuotationRequestDto,
+    ownedDigifranchiseId: string
   ) {
     const {
       digifranchiseUrl,
-      ownedDigifranchiseId,
       quantity,
       expiryDate,
       price,
@@ -187,27 +187,54 @@ export class QuotationsService {
       data: {
         quotation: {
           ...req,
+          url: `${req.quotationRequest.digifranchiseUrl}&quotationId=${req.id}`,
           item: this.getQuotationItemWithName(req.quotationRequest),
         },
       },
     });
   }
 
-  async findAllRequests() {
-    const quotationRequests = await this.quotationRequestRepository.find({
-      relations: [
-        "ownedDigifranchiseId",
-        "product",
-        "service",
-        "subService",
-        "serviceCategory",
-        "subProduct",
-      ],
-    });
-    return {
-      message: "All Quotation requests retrieved successfully!",
-      data: quotationRequests,
-    };
+  async findAllRequests(ownedDigifranchiseId: string) {
+    try {
+      const ownedDigifranchise =
+        await this.digifranchiseOwnerRepository.findOne({
+          where: { id: ownedDigifranchiseId },
+        });
+      if (!ownedDigifranchise) {
+        throw new NotFoundException("Digifranchise not found");
+      }
+      const quotationRequests = await this.quotationRequestRepository.find({
+        relations: [
+          "ownedDigifranchiseId",
+          "product",
+          "service",
+          "subService",
+          "serviceCategory",
+          "subProduct",
+        ],
+      });
+      const filteredQuotationRequests = quotationRequests.filter(
+        (quotationRequest) => {
+          return (
+            quotationRequest.ownedDigifranchiseId &&
+            quotationRequest.ownedDigifranchiseId.id === ownedDigifranchiseId
+          );
+        }
+      );
+      return {
+        message: "All Quotation requests retrieved successfully!",
+        data: filteredQuotationRequests,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: "Error retrieving Quotation Requests",
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async createQuotation(
@@ -257,10 +284,10 @@ export class QuotationsService {
       quotationRequest: pendingQuotationRequest,
       taxAmount:
         pendingQuotationRequest.price *
-        pendingQuotationRequest.quantity *
+        (pendingQuotationRequest.quantity || 1) *
         (taxRate / 100),
       totalPrice:
-        pendingQuotationRequest.price * pendingQuotationRequest.quantity,
+        pendingQuotationRequest.price * (pendingQuotationRequest.quantity || 1),
     });
     const createdQuotation = await this.quotationRepository.save(newQuotation);
     await this.sendQuotationEmail(createdQuotation);
@@ -321,7 +348,6 @@ export class QuotationsService {
     };
   }
 
-  // validating the service
   private async validateService(
     serviceId: string,
     serviceRepo: Repository<any>
@@ -341,7 +367,6 @@ export class QuotationsService {
     return service;
   }
 
-  // validate quotation Request
   async validateQuotationRequest(id: string): Promise<QuotationRequest | null> {
     if (!id) return null;
     const quotationRequest = await this.quotationRequestRepository.findOne({
@@ -352,7 +377,14 @@ export class QuotationsService {
   async getQuotationRequestById(id: string): Promise<QuotationRequest> {
     const quotationRequest = await this.quotationRequestRepository.findOne({
       where: { id },
-      relations: ["ownedDigifranchiseId"],
+      relations: [
+        "ownedDigifranchiseId",
+        "product",
+        "service",
+        "subProduct",
+        "subService",
+        "serviceCategory",
+      ],
     });
 
     if (!quotationRequest) {
@@ -388,37 +420,7 @@ export class QuotationsService {
     });
     return quotationRequests;
   }
-  async updateQuotation(
-    id: string,
-    updateQuotationDto: UpdateQuotationDto
-  ): Promise<QuotationEntity> {
-    const existingQuotation = await this.getQuotationById(id);
 
-    const { quotationRequest, isOrdered } = updateQuotationDto;
-
-    if (isOrdered) existingQuotation.isOrdered = isOrdered;
-
-    if (quotationRequest) {
-      const existingRequest = await this.quotationRequestRepository.findOne({
-        where: { id: quotationRequest },
-      });
-      if (!existingRequest) {
-        throw new NotFoundException(
-          "Quotation Request not found with the provided id"
-        );
-      }
-      await this.quotationRequestRepository.update(
-        { id: quotationRequest },
-        { quotation: existingQuotation }
-      );
-    }
-
-    const updatedQuotation =
-      await this.quotationRepository.save(existingQuotation);
-    return updatedQuotation;
-  }
-
-  // delete a quotation
   async deleteQuotation(id: string): Promise<void> {
     const quotation = await this.quotationRepository.findOne({ where: { id } });
     if (!quotation) {
@@ -428,7 +430,7 @@ export class QuotationsService {
     await this.quotationRepository.remove(quotation);
   }
 
-  async getAllQuotations(): Promise<QuotationEntity[]> {
+  async getAllQuotations(ownedDigifranchiseId: string) {
     const quotations = await this.quotationRepository.find({
       relations: [
         "quotationRequest",
@@ -440,16 +442,17 @@ export class QuotationsService {
         "quotationRequest.subProduct",
       ],
     });
-    const req = await this.quotationRequestRepository.find({
-      where: {
-        quotation: Not(IsNull()),
-      },
-      relations: ["ownedDigifranchiseId"],
+    const filteredQuotations = quotations.filter((quotation) => {
+      return (
+        quotation.quotationRequest &&
+        quotation.quotationRequest.ownedDigifranchiseId &&
+        quotation.quotationRequest.ownedDigifranchiseId.id ===
+          ownedDigifranchiseId
+      );
     });
 
-    return quotations;
+    return filteredQuotations;
   }
-  //  get a single quotation
   async getQuotationById(id: string): Promise<QuotationEntity> {
     const quotation = await this.quotationRepository.findOne({
       where: { id },
@@ -467,7 +470,6 @@ export class QuotationsService {
     if (!quotation) {
       throw new NotFoundException("Quotation not found");
     }
-
     return quotation;
   }
 }

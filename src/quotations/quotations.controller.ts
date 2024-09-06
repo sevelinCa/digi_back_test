@@ -9,7 +9,11 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  ParseUUIDPipe,
+  HttpException,
 } from "@nestjs/common";
+import { Roles } from "src/roles/roles.decorator";
+import { RoleEnum } from "src/roles/roles.enum";
 import {
   ApiTags,
   ApiOperation,
@@ -32,7 +36,7 @@ import { CreateQuotationRequestDto } from "./dto/create-quotation-request.dto";
 export class QuotationsController {
   constructor(private readonly quotationService: QuotationsService) {}
 
-  @Post("/request")
+  @Post("/request/:ownedDigifranchiseId")
   @ApiOperation({ summary: "Create a new quotation Request" })
   @ApiResponse({
     status: 201,
@@ -40,10 +44,107 @@ export class QuotationsController {
     type: QuotationRequest,
   })
   @ApiBody({ type: CreateQuotationRequestDto })
+  @HttpCode(HttpStatus.CREATED)
   createQuotationRequest(
+    @Param("ownedDigifranchiseId") ownedDigifranchiseId: string,
     @Body() createQuotationRequest: CreateQuotationRequestDto
   ) {
-    return this.quotationService.createQuotationRequest(createQuotationRequest);
+    return this.quotationService.createQuotationRequest(
+      createQuotationRequest,
+      ownedDigifranchiseId
+    );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @ApiOperation({ summary: "Get all quotation Requests" })
+  @ApiResponse({
+    status: 200,
+    description: "Quotation Requests have been successfully retrieved.",
+    type: [QuotationRequest],
+  })
+  @Get("/requests/:ownedDigifranchiseId")
+  async findAllRequests(
+    @Param(
+      "ownedDigifranchiseId",
+      new ParseUUIDPipe({
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      })
+    )
+    ownedDigifranchiseId: string
+  ) {
+    return this.quotationService.findAllRequests(ownedDigifranchiseId);
+  }
+
+  @Post()
+  @ApiOperation({ summary: "Create a new quotation" })
+  @ApiResponse({
+    status: 201,
+    description: "The quotation has been successfully created.",
+    type: QuotationEntity,
+  })
+  @ApiBody({ type: CreateQuotationDto })
+  create(@Body() createQuotationDto: CreateQuotationDto) {
+    return this.quotationService.createQuotation(createQuotationDto);
+  }
+
+  @Get(":id")
+  @ApiOperation({ summary: "Get a single quotation by ID" })
+  @ApiParam({ name: "id", description: "ID of the quotation to retrieve" })
+  @ApiResponse({
+    status: 200,
+    description: "The quotation has been successfully retrieved.",
+    type: QuotationEntity,
+  })
+  findOne(
+    @Param(
+      "id",
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })
+    )
+    id: string
+  ) {
+    return this.quotationService.getQuotationById(id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @Get(":ownedDigifranchiseId")
+  @ApiOperation({ summary: "Get all quotations" })
+  @ApiResponse({
+    status: 200,
+    description: "The quotations have been successfully retrieved.",
+    type: [QuotationEntity],
+  })
+  async findAll(
+    @Param(
+      "ownedDigifranchiseId",
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })
+    )
+    ownedDigifranchiseId: string
+  ) {
+    return await this.quotationService.getAllQuotations(ownedDigifranchiseId);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Roles(RoleEnum.digifranchise_super_admin)
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete a quotation" })
+  @ApiParam({ name: "id", description: "ID of the quotation to delete" })
+  @ApiResponse({
+    status: 204,
+    description: "The quotation has been successfully deleted.",
+  })
+  remove(
+    @Param(
+      "id",
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })
+    )
+    id: string
+  ) {
+    return this.quotationService.deleteQuotation(id);
   }
 
   @Get("/request/:id")
@@ -57,87 +158,13 @@ export class QuotationsController {
     description: "The quotation request id has been successfully retrieved.",
     type: QuotationEntity,
   })
-  findRequestById(@Param("id") id: string) {
-    return this.quotationService.getQuotationRequestById(id);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Post()
-  @ApiOperation({ summary: "Create a new quotation" })
-  @ApiResponse({
-    status: 201,
-    description: "The quotation has been successfully created.",
-    type: QuotationEntity,
-  })
-  @ApiBody({ type: CreateQuotationDto })
-  create(@Body() createQuotationDto: CreateQuotationDto) {
-    return this.quotationService.createQuotation(createQuotationDto);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Put(":id")
-  @ApiOperation({ summary: "Update an existing quotation" })
-  @ApiParam({ name: "id", description: "ID of the quotation to update" })
-  @ApiResponse({
-    status: 200,
-    description: "The quotation has been successfully updated.",
-    type: QuotationEntity,
-  })
-  update(
-    @Param("id") id: string,
-    @Body() updateQuotationDto: UpdateQuotationDto
+  findRequestById(
+    @Param(
+      "id",
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.BAD_REQUEST })
+    )
+    id: string
   ) {
-    return this.quotationService.updateQuotation(id, updateQuotationDto);
-  }
-
-  @Get(":id")
-  @ApiOperation({ summary: "Get a single quotation by ID" })
-  @ApiParam({ name: "id", description: "ID of the quotation to retrieve" })
-  @ApiResponse({
-    status: 200,
-    description: "The quotation has been successfully retrieved.",
-    type: QuotationEntity,
-  })
-  findOne(@Param("id") id: string) {
-    return this.quotationService.getQuotationById(id);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Get("/request")
-  @ApiOperation({ summary: "Get all quotation Requests" })
-  @ApiResponse({
-    status: 200,
-    description: "The quotations Requests have been successfully retrieved.",
-    type: [QuotationRequest],
-  })
-  findAllRequests() {
-    return this.quotationService.findAllRequests();
-  }
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Get()
-  @ApiOperation({ summary: "Get all quotations" })
-  @ApiResponse({
-    status: 200,
-    description: "The quotations have been successfully retrieved.",
-    type: [QuotationEntity],
-  })
-  findAll() {
-    return this.quotationService.getAllQuotations();
-  }
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Delete(":id")
-  @ApiOperation({ summary: "Delete a quotation" })
-  @ApiParam({ name: "id", description: "ID of the quotation to delete" })
-  @ApiResponse({
-    status: 204,
-    description: "The quotation has been successfully deleted.",
-  })
-  remove(@Param("id") id: string) {
-    return this.quotationService.deleteQuotation(id);
+    return this.quotationService.getQuotationRequestById(id);
   }
 }
