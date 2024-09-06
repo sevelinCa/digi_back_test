@@ -348,7 +348,6 @@ export class QuotationsService {
     };
   }
 
-  // validating the service
   private async validateService(
     serviceId: string,
     serviceRepo: Repository<any>
@@ -368,7 +367,6 @@ export class QuotationsService {
     return service;
   }
 
-  // validate quotation Request
   async validateQuotationRequest(id: string): Promise<QuotationRequest | null> {
     if (!id) return null;
     const quotationRequest = await this.quotationRequestRepository.findOne({
@@ -422,37 +420,7 @@ export class QuotationsService {
     });
     return quotationRequests;
   }
-  async updateQuotation(
-    id: string,
-    updateQuotationDto: UpdateQuotationDto
-  ): Promise<QuotationEntity> {
-    const existingQuotation = await this.getQuotationById(id);
 
-    const { quotationRequest, isOrdered } = updateQuotationDto;
-
-    if (isOrdered) existingQuotation.isOrdered = isOrdered;
-
-    if (quotationRequest) {
-      const existingRequest = await this.quotationRequestRepository.findOne({
-        where: { id: quotationRequest },
-      });
-      if (!existingRequest) {
-        throw new NotFoundException(
-          "Quotation Request not found with the provided id"
-        );
-      }
-      await this.quotationRequestRepository.update(
-        { id: quotationRequest },
-        { quotation: existingQuotation }
-      );
-    }
-
-    const updatedQuotation =
-      await this.quotationRepository.save(existingQuotation);
-    return updatedQuotation;
-  }
-
-  // delete a quotation
   async deleteQuotation(id: string): Promise<void> {
     const quotation = await this.quotationRepository.findOne({ where: { id } });
     if (!quotation) {
@@ -485,7 +453,6 @@ export class QuotationsService {
 
     return filteredQuotations;
   }
-  //  get a single quotation
   async getQuotationById(id: string): Promise<QuotationEntity> {
     const quotation = await this.quotationRepository.findOne({
       where: { id },

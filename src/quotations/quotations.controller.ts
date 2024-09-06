@@ -130,24 +130,6 @@ export class QuotationsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Roles(RoleEnum.digifranchise_super_admin)
-  @Put(":id")
-  @ApiOperation({ summary: "Update an existing quotation" })
-  @ApiParam({ name: "id", description: "ID of the quotation to update" })
-  @ApiResponse({
-    status: 200,
-    description: "The quotation has been successfully updated.",
-    type: QuotationEntity,
-  })
-  update(
-    @Param("id", new ParseUUIDPipe()) id: string,
-    @Body() updateQuotationDto: UpdateQuotationDto
-  ) {
-    return this.quotationService.updateQuotation(id, updateQuotationDto);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
-  @Roles(RoleEnum.digifranchise_super_admin)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a quotation" })
   @ApiParam({ name: "id", description: "ID of the quotation to delete" })
