@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -33,6 +34,7 @@ export class DigifranchiseWorkingHours {
     { onDelete: "CASCADE" },
   )
   @JoinColumn({ name: "ownedDigifranchise" })
+  @Index()
   ownedDigifranchise: DigifranchiseOwner | null;
 
   @Column({

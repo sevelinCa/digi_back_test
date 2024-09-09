@@ -8,6 +8,7 @@ import { AvailabilityTimeSlots } from "./entities/time-slots.entity";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { BullModule } from "@nestjs/bull";
 import { TimeSlotsProcessor } from "./calendar.processor";
+import { Bookedtimeslots } from "./entities/new-timeslots.entity";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TimeSlotsProcessor } from "./calendar.processor";
       DigifranchiseOwner,
       DigifranchiseWorkingHours,
       AvailabilityTimeSlots,
+      Bookedtimeslots,
       // DigifranchiseUnavailableTimes
     ]),
     BullModule.registerQueue({
