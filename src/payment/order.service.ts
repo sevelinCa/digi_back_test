@@ -1020,30 +1020,19 @@ export class OrderService {
             ? savedOrder.productId
               ? {
                   ...savedOrder,
-                  availability:
-                    savedOrder.orderAdditionalInfo[6]["availability"] || [],
-
+                  availability: savedOrder.orderAdditionalInfo.length > 6 && savedOrder.orderAdditionalInfo[6]?.["availability"] ? savedOrder.orderAdditionalInfo[6]["availability"] || [] : undefined,
                   name: savedOrder.productId.productName,
                   description: savedOrder.productId.description,
-                  orderDate: new Date(
-                    savedOrder.OrderDate
-                  ).toLocaleDateString(),
-                  customerDetails: {
-                    ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                  },
+                  orderDate: new Date(savedOrder.OrderDate).toLocaleDateString(),
+                  customerDetails: savedOrder.orderAdditionalInfo.length > 0 && savedOrder.orderAdditionalInfo[0]?.["basic_info"],
                 }
               : {
                   ...savedOrder,
                   name: savedOrder.serviceId?.serviceName,
                   description: savedOrder.serviceId?.description,
-                  orderDate: new Date(
-                    savedOrder.OrderDate
-                  ).toLocaleDateString(),
-                  customerDetails: {
-                    ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                  },
-                  availability:
-                    savedOrder.orderAdditionalInfo[6]["availability"] || [],
+                  orderDate: new Date(savedOrder.OrderDate).toLocaleDateString(),
+                  customerDetails: savedOrder.orderAdditionalInfo.length > 0 && savedOrder.orderAdditionalInfo[0]?.["basic_info"],
+                  availability: savedOrder.orderAdditionalInfo.length > 6 && savedOrder.orderAdditionalInfo[6]?.["availability"] || [],
                 }
             : newOrder,
         },
