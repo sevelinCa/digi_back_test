@@ -154,20 +154,6 @@ export class DigifranchiseServiceSeedService {
           ],
         },
         {
-          serviceName: "Custom Exercise Plans",
-          description:
-            "Achieve your fitness goals with our Custom Exercise Plan tailored just for you. You get a personalized workout routine designed to fit your lifestyle and goals. Start your journey to a healthier, stronger you today.",
-          unitPrice: "250",
-          serviceCategory: [],
-        },
-        {
-          serviceName: "Youtube Channel Subscriptions",
-          description:
-            "Achieve your fitness goals with our Custom Exercise Plan tailored just for you. You get a personalized workout routine designed to fit your lifestyle and goals. Start your journey to a healthier, stronger you today.",
-          unitPrice: "50",
-          serviceCategory: [],
-        },
-        {
           serviceName: "Personal Training Sessions",
           description: "Personal Training Sessions Description",
           unitPrice: "",
