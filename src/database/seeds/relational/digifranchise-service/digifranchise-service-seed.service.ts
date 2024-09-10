@@ -12,7 +12,7 @@ export class DigifranchiseServiceSeedService {
     @InjectRepository(DigifranchiseServiceOffered)
     private serviceRepository: Repository<DigifranchiseServiceOffered>,
     @InjectRepository(DigifranchiseServiceCategory)
-    private serviceCategoryRepository: Repository<DigifranchiseServiceCategory>,
+    private serviceCategoryRepository: Repository<DigifranchiseServiceCategory>
   ) {}
 
   async run() {
@@ -154,20 +154,35 @@ export class DigifranchiseServiceSeedService {
           ],
         },
         {
+          serviceName: "Custom Exercise Plans",
+          description:
+            "Achieve your fitness goals with our Custom Exercise Plan tailored just for you. You get a personalized workout routine designed to fit your lifestyle and goals. Start your journey to a healthier, stronger you today.",
+          unitPrice: "250",
+          serviceCategory: [],
+        },
+        {
+          serviceName: "Youtube Channel Subscriptions",
+          description:
+            "Achieve your fitness goals with our Custom Exercise Plan tailored just for you. You get a personalized workout routine designed to fit your lifestyle and goals. Start your journey to a healthier, stronger you today.",
+          unitPrice: "50",
+          serviceCategory: [],
+        },
+        {
           serviceName: "Personal Training Sessions",
           description: "Personal Training Sessions Description",
           unitPrice: "",
           serviceCategory: [
             {
-              serviceCategoryName: "One Person",
-              unitPrice: "200",
-              description: "Description text here",
-            },
-
-            {
-              serviceCategoryName: "Group",
+              serviceCategoryName: "Online",
               unitPrice: "100",
-              description: "Description text here",
+              description:
+                "A Price of 100 for single person and 50 for each person for a group of people",
+            },
+            {
+              serviceCategoryName: "In-Person",
+              unitPrice: "200",
+              description:
+                "A Price of 200 for single person and 100 for each in group",
             },
           ],
         },
@@ -318,12 +333,7 @@ export class DigifranchiseServiceSeedService {
         {
           serviceName: "Pet sitting",
           description: "Pet sitting",
-          unitPrice: "50",
-        },
-        {
-          serviceName: "Dog walking",
-          description: "Dog walking",
-          unitPrice: "50",
+          unitPrice: "150",
         },
       ];
 
@@ -421,38 +431,44 @@ export class DigifranchiseServiceSeedService {
           ],
         },
         {
-          serviceName: "Alterations",
+          serviceName: "Basic Alterations",
           description: "Alterations - Description",
           unitPrice: "",
           serviceCategory: [
             {
               serviceCategoryName: "Lengthening and shortening",
-              unitPrice: "100",
-              description: "Description text here",
-            },
-            {
-              serviceCategoryName: "Resize Up or Down",
               unitPrice: "110",
               description: "Description text here",
             },
             {
-              serviceCategoryName: "Non-clothing alterations",
+              serviceCategoryName: "Resize Up or Down",
               unitPrice: "120",
+              description: "Description text here",
+            },
+            {
+              serviceCategoryName: "Non-clothing alterations",
+              unitPrice: "130",
               description: "Description text here",
             },
           ],
         },
         {
-          serviceName: "Patching",
-          description: "Patchting Description text here",
-          unitPrice: "65",
-          serviceCategory: [],
-        },
-        {
-          serviceName: "Button replacement",
-          description: "Button replacement Description here",
-          unitPrice: "20",
-          serviceCategory: [],
+          serviceName: "Clothing Repair",
+          description: "Clothing Repair description",
+          unitPrice: "",
+
+          serviceCategory: [
+            {
+              serviceCategoryName: "Patching",
+              unitPrice: "65",
+              description: "Patchting Description text here",
+            },
+            {
+              serviceCategoryName: "Button replacement",
+              unitPrice: "50",
+              description: "Button replacement Description here",
+            },
+          ],
         },
       ];
 
@@ -535,17 +551,25 @@ export class DigifranchiseServiceSeedService {
           unitPrice: "190",
         },
         {
-          serviceName: "Survey execution - digitally",
-          description: "Survey execution - digitally",
-          unitPrice: "5",
+          serviceName: "Survey execution",
+          description: "Survey execution description",
+          unitPrice: "",
+          serviceCategory: [
+            {
+              serviceCategoryName: "Digital",
+              description: "Max 20 questions and 20 respondents",
+              unitPrice: "100",
+            },
+            {
+              serviceCategoryName: "In-Person",
+              unitPrice: "500",
+              description: "Max 20 questions and 10 respondents",
+            },
+          ],
         },
+
         {
-          serviceName: "Survey execution - in-person",
-          description: "Survey execution - in-person",
-          unitPrice: "50",
-        },
-        {
-          serviceName: "In Field Data Collection",
+          serviceName: "In-Field Data Collection",
           description: "In Field Data Collection",
           unitPrice: "200",
         },
@@ -631,39 +655,14 @@ export class DigifranchiseServiceSeedService {
 
       const cropMinderServices = [
         {
-          serviceName: "Site assessment and planning",
-          description: "Site assessment and planning",
+          serviceName: "Online Consultation",
+          description: "via video or phone call",
           unitPrice: "120",
         },
         {
-          serviceName: "Crop selection and rotation",
-          description: "Crop selection and rotation",
-          unitPrice: "120",
-        },
-        {
-          serviceName: "Soil health management",
-          description: "Soil health management",
-          unitPrice: "120",
-        },
-        {
-          serviceName: "Harvesting and post-harvest handling",
-          description: "Harvesting and post-harvest handling",
-          unitPrice: "120",
-        },
-        {
-          serviceName: "Pest and disease management",
-          description: "Pest and disease management",
-          unitPrice: "120",
-        },
-        {
-          serviceName: "Water management",
-          description: "Water management",
-          unitPrice: "120",
-        },
-        {
-          serviceName: "Crop care and maintenance",
-          description: "Crop care and maintenance",
-          unitPrice: "120",
+          serviceName: "In-person Consultation",
+          description: "Physically",
+          unitPrice: "200",
         },
       ];
 
