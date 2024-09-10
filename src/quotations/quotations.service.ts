@@ -240,7 +240,7 @@ export class QuotationsService {
   async createQuotation(
     createQuotationDto: CreateQuotationDto
   ): Promise<QuotationEntity | QuotationWithMessage> {
-    const { quotationRequest } = createQuotationDto;
+    const { quotationRequest, totalPrice } = createQuotationDto;
     const pendingQuotationRequest =
       await this.quotationRequestRepository.findOne({
         where: { id: quotationRequest },
@@ -287,6 +287,7 @@ export class QuotationsService {
         (pendingQuotationRequest.quantity || 1) *
         (taxRate / 100),
       totalPrice:
+        totalPrice ||
         pendingQuotationRequest.price * (pendingQuotationRequest.quantity || 1),
     });
     const createdQuotation = await this.quotationRepository.save(newQuotation);
