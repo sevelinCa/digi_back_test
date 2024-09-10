@@ -41,14 +41,14 @@ export class DigifranchiseProductSeedService {
     const bodyRevampProduct = [
       {
         productName: "Custom Exercise Plans",
-        description: "Custom Exercise Plan description",
+        description: "Achieve your fitness goals with our Custom Exercise Plan tailored just for you. You get a personalized workout routine designed to fit your lifestyle and goals. Start your journey to a healthier, stronger you today.",
         unitPrice: "250",
       },
       {
-        productName: "Exercise Channel Subscription",
-        description: "Exercise Channel Subscription Description",
+        productName: "Youtube Channel Subscriptions",
+        description: "Achieve your fitness goals with our Custom Exercise Plan tailored just for you. You get a personalized workout routine designed to fit your lifestyle and goals. Start your journey to a healthier, stronger you today.",
         unitPrice: "50",
-      },
+      }, 
     ];
 
     for (const product of bodyRevampProduct) {
