@@ -133,13 +133,34 @@ export class CalendarController {
     status: HttpStatus.OK,
     description: "Users can book timeslots",
   })
-  @Post("book-timeslot/:ownedFranchiseId")
+  @Put("book-timeslot/:ownedFranchiseId")
   async bookTimeSlot(
     @Param("ownedFranchiseId") ownedFranchiseId: string,
     @Body() timeslots: BookedTimeslotDto[],
   ): Promise<any> {
     try {
       await this.calendarService.bookAvailabilitySlot(
+        timeslots,
+        ownedFranchiseId,
+      );
+      return { message: "Availability Booked successfully" };
+    } catch (error) {
+      return { message: "Error creating availability", error: error };
+    }
+  }
+  @ApiOperation({ summary: "New Book Timeslots" })
+  @ApiBody({ type: [TimeSlotDTO] })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Users can book timeslots",
+  })
+  @Post("new-book-timeslot/:ownedFranchiseId")
+  async newBookTimeSlot(
+    @Param("ownedFranchiseId") ownedFranchiseId: string,
+    @Body() timeslots: BookedTimeslotDto[],
+  ): Promise<any> {
+    try {
+      await this.calendarService.newBookAvailabilitySlot(
         timeslots,
         ownedFranchiseId,
       );

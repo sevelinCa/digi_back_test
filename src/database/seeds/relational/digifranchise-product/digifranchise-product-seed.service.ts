@@ -45,7 +45,7 @@ export class DigifranchiseProductSeedService {
         unitPrice: "250",
       },
       {
-        productName: "Youtube Channel Subscriptions",
+        productName: "Exercise Channel Subscriptions",
         description: "Achieve your fitness goals with our Custom Exercise Plan tailored just for you. You get a personalized workout routine designed to fit your lifestyle and goals. Start your journey to a healthier, stronger you today.",
         unitPrice: "50",
       }, 
