@@ -22,6 +22,7 @@ import {
 import { SetWorkingHoursDto, TimeSlotDTO } from "./dto/availability.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard } from "src/roles/roles.guard";
+import { BookedTimeslotDto } from "./dto/booked-timeslot.dto";
 
 @ApiTags("Digifranchise Working Hours")
 @Controller("calendar")
@@ -83,8 +84,8 @@ export class CalendarController {
     }
   }
   @ApiOperation({ summary: "Get Working Hours" })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard("jwt"), RolesGuard)
   @ApiResponse({
     status: HttpStatus.OK,
     description:
@@ -132,10 +133,10 @@ export class CalendarController {
     status: HttpStatus.OK,
     description: "Users can book timeslots",
   })
-  @Put("book-timeslot/:ownedFranchiseId")
+  @Post("book-timeslot/:ownedFranchiseId")
   async bookTimeSlot(
     @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() timeslots: TimeSlotDTO[],
+    @Body() timeslots: BookedTimeslotDto[],
   ): Promise<any> {
     try {
       await this.calendarService.bookAvailabilitySlot(
