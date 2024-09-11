@@ -535,6 +535,7 @@ export class DigifranchiseServiceSeedService {
           serviceName: "Survey design and questionnaire development",
           description: "Survey design and questionnaire development",
           unitPrice: "190",
+          serviceCategory: []
         },
         {
           serviceName: "Survey execution",
@@ -548,8 +549,8 @@ export class DigifranchiseServiceSeedService {
             },
             {
               serviceCategoryName: "In-Person",
-              unitPrice: "500",
               description: "Max 20 questions and 10 respondents",
+              unitPrice: "500",
             },
           ],
         },
@@ -558,11 +559,13 @@ export class DigifranchiseServiceSeedService {
           serviceName: "In-Field Data Collection",
           description: "In Field Data Collection",
           unitPrice: "200",
+          serviceCategory: []
         },
         {
           serviceName: "Data Cleaning and Capturing",
           description: "Data Cleaning and Capturing",
           unitPrice: "70",
+          serviceCategory: []
         },
       ];
 
@@ -572,6 +575,13 @@ export class DigifranchiseServiceSeedService {
           digifranchiseId: savedDigifranchise,
         });
         await this.serviceRepository.save(serviceEntity);
+        for (const category of service.serviceCategory) {
+          const categoryEntity = this.serviceCategoryRepository.create({
+            ...category,
+            service: serviceEntity,
+          });
+          await this.serviceCategoryRepository.save(categoryEntity);
+        }
       }
     }
   }
