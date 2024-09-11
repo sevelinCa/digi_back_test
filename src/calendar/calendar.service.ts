@@ -195,6 +195,28 @@ export class CalendarService {
         HttpStatus.NOT_FOUND
       );
     }
+    for(const slot of timeslots){
+      const updatedTimeSlot =
+      await this.digifranchiseAvailableTimeSlotsRepository.update(slot.id, {
+        isSlotAvailable: false,
+        isSlotBooked: true,
+      });
+    }
+  }
+  async newBookAvailabilitySlot(timeslots: any, ownedDigifranchiseId: string) {
+    const getOwnedDigifranchise: DigifranchiseOwner | null =
+      await this.digifranchiseOwnerRepository.findOne({
+        where: { id: ownedDigifranchiseId },
+      });
+    if (!getOwnedDigifranchise) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Owned Digifranchise does not exist',
+        },
+        HttpStatus.NOT_FOUND
+      );
+    }
     for (const slot of timeslots) {
       await this.digifranchiseBookedTimeslotRepository.save(slot);
     }
