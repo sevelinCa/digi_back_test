@@ -136,23 +136,23 @@ export class DigifranchiseServiceSeedService {
         await this.digifranchiseRepository.save(digifranchiseId);
 
       const bodyRevampServices = [
-        {
-          serviceName: "Live Training Sessions",
-          description: "Live Training Sessions Description",
-          unitPrice: "",
-          serviceCategory: [
-            {
-              serviceCategoryName: "One Person",
-              unitPrice: "100",
-              description: "Description text here",
-            },
-            {
-              serviceCategoryName: "Group",
-              unitPrice: "50",
-              description: "Description text here",
-            },
-          ],
-        },
+        // {
+        //   serviceName: "Live Training Sessions",
+        //   description: "Live Training Sessions Description",
+        //   unitPrice: "",
+        //   serviceCategory: [
+        //     {
+        //       serviceCategoryName: "One Person",
+        //       unitPrice: "100",
+        //       description: "Description text here",
+        //     },
+        //     {
+        //       serviceCategoryName: "Group",
+        //       unitPrice: "50",
+        //       description: "Description text here",
+        //     },
+        //   ],
+        // },
         {
           serviceName: "Personal Training Sessions",
           description: "Personal Training Sessions Description",
