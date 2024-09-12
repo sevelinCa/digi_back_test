@@ -121,6 +121,42 @@ export class CalendarService {
         HttpStatus.NOT_FOUND
       );
     }
+    const today = new Date();
+    const currentTime =
+      today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+    const timeSlots = await this.digifranchiseAvailableTimeSlotsRepository.find(
+      {
+        where: {
+          ownedDigifranchise: { id: ownedDigifranchiseId },
+          isSlotAvailable: true,
+          isSlotBooked: false,
+          workingDate: Between(startOfDay, endOfDay),
+          ...(workingDate === today.toISOString().split('T')[0] && {
+            startTime: MoreThanOrEqual(currentTime),
+          }),
+        },
+      }
+    );
+    return timeSlots;
+  }
+  async getBookedTimeSlots(ownedDigifranchiseId: string, workingDate: string) {
+    const startOfDay = new Date(workingDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(workingDate);
+    endOfDay.setHours(23, 59, 59, 999);
+    const getOwnedDigifranchise: DigifranchiseOwner | null =
+      await this.digifranchiseOwnerRepository.findOne({
+        where: { id: ownedDigifranchiseId },
+      });
+    if (!getOwnedDigifranchise) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Owned Digifranchise does not exist',
+        },
+        HttpStatus.NOT_FOUND
+      );
+    }
     const timeSlots = await this.digifranchiseBookedTimeslotRepository.find({
       where: {
         ownedDigifranchise: { id: ownedDigifranchiseId },
@@ -129,7 +165,6 @@ export class CalendarService {
     });
     return timeSlots;
   }
-
   async updateWorkingHoursForDigifranchise(
     setWorkingHoursDto: SetWorkingHoursDto,
     ownedFranchiseId: string
@@ -195,12 +230,12 @@ export class CalendarService {
         HttpStatus.NOT_FOUND
       );
     }
-    for(const slot of timeslots){
+    for (const slot of timeslots) {
       const updatedTimeSlot =
-      await this.digifranchiseAvailableTimeSlotsRepository.update(slot.id, {
-        isSlotAvailable: false,
-        isSlotBooked: true,
-      });
+        await this.digifranchiseAvailableTimeSlotsRepository.update(slot.id, {
+          isSlotAvailable: false,
+          isSlotBooked: true,
+        });
     }
   }
   async newBookAvailabilitySlot(timeslots: any, ownedDigifranchiseId: string) {
