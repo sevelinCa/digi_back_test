@@ -17,6 +17,7 @@ export enum AllowedTimeSlotUnits {
   THIRTY_MINUTES = 30,
   ONE_HOUR = 60,
   ONE_HOUR_AND_HALF = 90,
+  TWO_HOUR = 120
 }
 
 export enum BreakTimeBetweenBookedSlots {
