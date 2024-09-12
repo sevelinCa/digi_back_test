@@ -83,6 +83,27 @@ export class CalendarController {
       return { message: "Error fetching availability", error: error?.response };
     }
   }
+  @ApiOperation({ summary: "Get booed timeslots" })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      "Users can retrieve booked timeslots by date and digifranchise",
+  })
+  @Get("get-booked-timeslots/:ownedFranchiseId")
+  async getBookedTimeSlots(
+    @Param("ownedFranchiseId") ownedFranchiseId: string,
+    @Query("date") workingDate: string,
+  ): Promise<any> {
+    try {
+      const timeSlots = await this.calendarService.getBookedTimeSlots(
+        ownedFranchiseId,
+        workingDate,
+      );
+      return { message: "Booked timeslots fetched successfully", timeSlots };
+    } catch (error) {
+      return { message: "Error fetching booked timeslots", error: error?.response };
+    }
+  }
   @ApiOperation({ summary: "Get Working Hours" })
   // @ApiBearerAuth()
   // @UseGuards(AuthGuard("jwt"), RolesGuard)
