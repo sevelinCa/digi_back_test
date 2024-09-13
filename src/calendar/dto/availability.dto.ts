@@ -24,6 +24,7 @@ export enum BreakTimeBetweenBookedSlots {
   FIFTEEN_MINUTES = 15,
   THIRTY_MINUTES = 30,
   ONE_HOUR = 60,
+  ONE_HOUR_AND_HALF = 90
 }
 
 export class AvailabilityDayTimeDto {
