@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { RatingOrderTable } from "./entities/rating-order.entity";
@@ -27,6 +27,16 @@ export class RatingOrderService {
     if (!order) {
       throw new Error("Order does not exist");
     }
+    const orderRating = await this.ratingOrderRepository.findOne({where:{orderId:{id: orderId}}});    
+    if(orderRating){
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'You have already submitted a review',
+        },
+        HttpStatus.CONFLICT
+      );
+    };
 
     const newRatingOrder = this.ratingOrderRepository.create({
       ...createRatingOrderDto,
