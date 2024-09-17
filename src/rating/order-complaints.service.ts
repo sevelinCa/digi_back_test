@@ -1,13 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { OrderTable } from "src/payment/entities/order.entity";
-import { IsNull, Repository } from "typeorm";
-import { CreateRatingOrderDto } from "./dto/rating-order.dto";
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { OrderTable } from 'src/payment/entities/order.entity';
+import { IsNull, Repository } from 'typeorm';
+import { CreateRatingOrderDto } from './dto/rating-order.dto';
 import {
   OrderComplaintsTable,
   OrderIssueTable,
-} from "./entities/Complaints.entity";
-import { CreateOrderComplaintsDto } from "./dto/Complaints.dto";
+} from './entities/Complaints.entity';
+import { CreateOrderComplaintsDto } from './dto/Complaints.dto';
 
 @Injectable()
 export class OrderComplaintsService {
@@ -18,18 +18,29 @@ export class OrderComplaintsService {
     private readonly orderpository: Repository<OrderTable>,
 
     @InjectRepository(OrderIssueTable)
-    private readonly orderIssuepository: Repository<OrderIssueTable>,
+    private readonly orderIssuepository: Repository<OrderIssueTable>
   ) {}
 
   async createOrderComplaint(
     orderId: string,
-    createOrderComplaintsDto: CreateOrderComplaintsDto,
+    createOrderComplaintsDto: CreateOrderComplaintsDto
   ): Promise<OrderComplaintsTable> {
     const order = await this.orderpository.findOne({ where: { id: orderId } });
     if (!order) {
-      throw new Error("Order does not exist");
+      throw new Error('Order does not exist');
     }
-
+    const orderComplaints = await this.orderComplaintsRepository.findOne({
+      where: { order: { id: orderId } },
+    });
+    if(orderComplaints){
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          message: 'You have already submitted a complaint',
+        },
+        HttpStatus.CONFLICT
+      );
+    };
     const newOrderComplaint = this.orderComplaintsRepository.create({
       ...createOrderComplaintsDto,
       order: order,
@@ -40,7 +51,7 @@ export class OrderComplaintsService {
   async getAllOrderComplaint(): Promise<OrderComplaintsTable[]> {
     return await this.orderComplaintsRepository.find({
       where: { deleteAt: IsNull() },
-      relations: ["order"],
+      relations: ['order'],
     });
   }
 }
