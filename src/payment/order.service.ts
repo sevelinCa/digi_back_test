@@ -23,6 +23,7 @@ import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-own
 import { MailService } from "src/mail/mail.service";
 import { SmsService } from "src/sms/sms.service";
 import uniqid from "uniqid";
+import randomstring from "randomstring";
 import { AvailabilityTimeSlots } from "src/calendar/entities/time-slots.entity";
 
 @Injectable()
@@ -146,7 +147,10 @@ export class OrderService {
       vatAmount: vatAmount,
       totalAmount,
       orderNumber: nextOrderNumber,
-      orderCode: uniqid(),
+      orderCode: randomstring.generate({
+        length: 6,
+        charset: "numeric",
+      }),
       ownedDigifranchise: owned,
     });
 
@@ -319,7 +323,10 @@ export class OrderService {
       vatAmount: vatAmount,
       totalAmount,
       orderNumber: nextOrderNumber,
-      orderCode: uniqid(),
+      orderCode: randomstring.generate({
+        length: 6,
+        charset: "numeric",
+      }),
     });
 
     const savedOrder = await this.orderRepository.save(newOrder);
@@ -518,7 +525,10 @@ export class OrderService {
       vatAmount: vatAmount,
       totalAmount,
       orderNumber: nextOrderNumber,
-      orderCode: uniqid(),
+      orderCode: randomstring.generate({
+        length: 6,
+        charset: "numeric",
+      }),
       ownedDigifranchise: owned,
     });
 
@@ -849,7 +859,10 @@ export class OrderService {
       vatAmount: vatAmount,
       totalAmount,
       orderNumber: nextOrderNumber,
-      orderCode: uniqid(),
+      orderCode: randomstring.generate({
+        length: 6,
+        charset: "numeric",
+      }),
       ownedDigifranchise: owned,
     });
 
@@ -875,19 +888,34 @@ export class OrderService {
             ? savedOrder.productId
               ? {
                   ...savedOrder,
-                  availability: savedOrder.orderAdditionalInfo.length > 6 && savedOrder.orderAdditionalInfo[6]?.["availability"] ? savedOrder.orderAdditionalInfo[6]["availability"] || [] : undefined,
+                  availability:
+                    savedOrder.orderAdditionalInfo.length > 6 &&
+                    savedOrder.orderAdditionalInfo[6]?.["availability"]
+                      ? savedOrder.orderAdditionalInfo[6]["availability"] || []
+                      : undefined,
                   name: savedOrder.productId.productName,
                   description: savedOrder.productId.description,
-                  orderDate: new Date(savedOrder.OrderDate).toLocaleDateString(),
-                  customerDetails: savedOrder.orderAdditionalInfo.length > 0 && savedOrder.orderAdditionalInfo[0]?.["basic_info"],
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails:
+                    savedOrder.orderAdditionalInfo.length > 0 &&
+                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
                 }
               : {
                   ...savedOrder,
                   name: savedOrder.serviceId?.serviceName,
                   description: savedOrder.serviceId?.description,
-                  orderDate: new Date(savedOrder.OrderDate).toLocaleDateString(),
-                  customerDetails: savedOrder.orderAdditionalInfo.length > 0 && savedOrder.orderAdditionalInfo[0]?.["basic_info"],
-                  availability: savedOrder.orderAdditionalInfo.length > 6 && savedOrder.orderAdditionalInfo[6]?.["availability"] || [],
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails:
+                    savedOrder.orderAdditionalInfo.length > 0 &&
+                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
+                  availability:
+                    (savedOrder.orderAdditionalInfo.length > 6 &&
+                      savedOrder.orderAdditionalInfo[6]?.["availability"]) ||
+                    [],
                 }
             : newOrder,
         },
@@ -909,7 +937,6 @@ export class OrderService {
 
     return savedOrder;
   }
-
 
   async createOrderByCategoryWithAuth(
     createOrderTableDto: CreateOrderTableDto,
@@ -994,7 +1021,10 @@ export class OrderService {
       vatAmount: vatAmount,
       totalAmount,
       orderNumber: nextOrderNumber,
-      orderCode: uniqid(),
+      orderCode: randomstring.generate({
+        length: 6,
+        charset: "numeric",
+      }),
       ownedDigifranchise: owned,
     });
 
@@ -1020,19 +1050,34 @@ export class OrderService {
             ? savedOrder.productId
               ? {
                   ...savedOrder,
-                  availability: savedOrder.orderAdditionalInfo.length > 6 && savedOrder.orderAdditionalInfo[6]?.["availability"] ? savedOrder.orderAdditionalInfo[6]["availability"] || [] : undefined,
+                  availability:
+                    savedOrder.orderAdditionalInfo.length > 6 &&
+                    savedOrder.orderAdditionalInfo[6]?.["availability"]
+                      ? savedOrder.orderAdditionalInfo[6]["availability"] || []
+                      : undefined,
                   name: savedOrder.productId.productName,
                   description: savedOrder.productId.description,
-                  orderDate: new Date(savedOrder.OrderDate).toLocaleDateString(),
-                  customerDetails: savedOrder.orderAdditionalInfo.length > 0 && savedOrder.orderAdditionalInfo[0]?.["basic_info"],
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails:
+                    savedOrder.orderAdditionalInfo.length > 0 &&
+                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
                 }
               : {
                   ...savedOrder,
                   name: savedOrder.serviceId?.serviceName,
                   description: savedOrder.serviceId?.description,
-                  orderDate: new Date(savedOrder.OrderDate).toLocaleDateString(),
-                  customerDetails: savedOrder.orderAdditionalInfo.length > 0 && savedOrder.orderAdditionalInfo[0]?.["basic_info"],
-                  availability: savedOrder.orderAdditionalInfo.length > 6 && savedOrder.orderAdditionalInfo[6]?.["availability"] || [],
+                  orderDate: new Date(
+                    savedOrder.OrderDate
+                  ).toLocaleDateString(),
+                  customerDetails:
+                    savedOrder.orderAdditionalInfo.length > 0 &&
+                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
+                  availability:
+                    (savedOrder.orderAdditionalInfo.length > 6 &&
+                      savedOrder.orderAdditionalInfo[6]?.["availability"]) ||
+                    [],
                 }
             : newOrder,
         },

@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
 } from "typeorm";
 import { RoleEntity } from "../../../../../roles/infrastructure/persistence/relational/entities/role.entity";
 import { StatusEntity } from "../../../../../statuses/infrastructure/persistence/relational/entities/status.entity";
@@ -21,6 +22,7 @@ import { AuthProvidersEnum } from "src/auth/auth-providers.enum";
 import { Exclude, Expose } from "class-transformer";
 import { User } from "../../../../domain/user";
 import { SessionEntity } from "src/session/infrastructure/persistence/relational/entities/session.entity";
+import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 
 export class Qualifications {
   qualificationName: string;
