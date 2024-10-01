@@ -43,6 +43,7 @@ import { AuthForgotPasswordForWebSiteDto } from "./dto/auth-forgot-password-on-w
 import { ForgotPasswordMailData } from "forgot-password-mail-data.interface";
 import { Role } from "src/roles/domain/role";
 import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
+import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/digifranchise-customers.entity";
 
 @Injectable()
 export class AuthService {
@@ -56,6 +57,8 @@ export class AuthService {
     private customerSubscription: CustomerSubscriptionService,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly digifranchiseCustomersRepository: Repository<DigifranchiseCustomers>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
@@ -667,6 +670,13 @@ export class AuthService {
       user.id,
       digifranchiseId,
     );
+
+    const attachedCustomerToDigifranchise = this.digifranchiseCustomersRepository.create({
+      customerId: user.id,
+      digifranchiseId
+    })
+
+    await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
 
     await this.mailService.customerSignUp({
       to: dto.email,
