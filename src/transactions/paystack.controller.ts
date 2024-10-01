@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpException, HttpStatus, Param, Get, Req, UseGuards } from '@nestjs/common';
 import { PaystackService } from './paystack.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO } from './dto/paystack.dto';
+import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO } from './dto/paystack.dto';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
@@ -116,5 +116,7 @@ export class PaystackController {
       );
     }
   }
+
+
   
 }

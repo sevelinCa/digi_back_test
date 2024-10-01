@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO } from './dto/paystack.dto';
+import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO } from './dto/paystack.dto';
 import { lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
@@ -25,7 +25,7 @@ export class PaystackService {
 
 
   async createTransaction(dto: CreatePayStackTransactionDTO) {
-    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 100;
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT')!;
   
     const url = `${this.paystackUrl}/transaction/initialize`;
     const callbackUrl = this.configService.get<string>('PAYSTACK_CALLBACK_URL');
@@ -128,7 +128,7 @@ export class PaystackService {
 
 
   async createPaystackTransactionWithoutAuth(orderId: string, paystackDto: CreatePayStackTransactionCallbackUrlDTO) {
-    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 100;
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT')!;
   
     const url = `${this.paystackUrl}/transaction/initialize`;
     const callbackUrl = this.configService.get<string>('PAYSTACK_CALLBACK_URL');
@@ -182,7 +182,7 @@ export class PaystackService {
   }
   
   async createPaystackTransactionWithAuth(userId: string, orderId: string, paystackDto: CreatePayStackTransactionCallbackUrlDTO) {
-    const koboAmount = this.configService.get<number>('KOBO_AMOUNT') || 100;
+    const koboAmount = this.configService.get<number>('KOBO_AMOUNT')!;
   
     const url = `${this.paystackUrl}/transaction/initialize`;
     const callbackUrl = this.configService.get<string>('PAYSTACK_CALLBACK_URL');
@@ -234,5 +234,8 @@ export class PaystackService {
       throw new Error(`Failed to create Paystack transaction: ${error.message}`);
     }
   }
+
+
+  
   
 }
