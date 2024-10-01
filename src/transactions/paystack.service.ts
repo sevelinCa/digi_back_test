@@ -235,7 +235,42 @@ export class PaystackService {
     }
   }
 
-
+  async createSubAccount(dto: CreatePayStackSubAccountDTO) {
+    const url = `${this.paystackUrl}/subaccount`;
+    const headers = {
+      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
+      'Content-Type': 'application/json',
+    };
+  
+    try {
+      const response = await lastValueFrom(
+        this.httpService.post(url, dto, { headers })
+      );
+      const subaccountData = response?.data?.data;
+      
+      return {
+        status: true,
+        message: 'Subaccount created successfully',
+        data: subaccountData,
+      };
+    } catch (error) {
+      // Log detailed error for internal debugging
+      console.error('Error creating subaccount:', error?.response?.data);
+      
+      // Throw more specific errors if necessary
+      if (error.response && error.response.status === 400) {
+        throw new HttpException(
+          error.response?.data?.message || 'Invalid input data for subaccount',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      
+      throw new HttpException(
+        error.response?.data?.message || 'Failed to create Paystack subaccount',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
   
   
 }
