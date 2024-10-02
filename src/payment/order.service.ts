@@ -149,7 +149,7 @@ export class OrderService {
       orderNumber: nextOrderNumber,
       orderCode: randomstring.generate({
         length: 6,
-        charset: "numeric",
+        charset: "alphanumeric",
       }),
       ownedDigifranchise: owned,
     });
@@ -325,7 +325,7 @@ export class OrderService {
       orderNumber: nextOrderNumber,
       orderCode: randomstring.generate({
         length: 6,
-        charset: "numeric",
+        charset: "alphanumeric",
       }),
     });
 
@@ -527,7 +527,7 @@ export class OrderService {
       orderNumber: nextOrderNumber,
       orderCode: randomstring.generate({
         length: 6,
-        charset: "numeric",
+        charset: "alphanumeric",
       }),
       ownedDigifranchise: owned,
     });
@@ -861,7 +861,7 @@ export class OrderService {
       orderNumber: nextOrderNumber,
       orderCode: randomstring.generate({
         length: 6,
-        charset: "numeric",
+        charset: "alphanumeric",
       }),
       ownedDigifranchise: owned,
     });
@@ -1023,7 +1023,7 @@ export class OrderService {
       orderNumber: nextOrderNumber,
       orderCode: randomstring.generate({
         length: 6,
-        charset: "numeric",
+        charset: "alphanumeric",
       }),
       ownedDigifranchise: owned,
     });
