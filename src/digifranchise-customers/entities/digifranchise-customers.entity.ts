@@ -17,14 +17,20 @@ export class DigifranchiseCustomers {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar", nullable: true })
+  email: string;
+
+  @Column({ type: "varchar", nullable: true })
+  phoneNumber: string;
+
+  @Column({ type: "varchar" })
   customerId: string;
 
   @ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'customerId' })
   customer: UserEntity | null;;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ type: "varchar" })
   digifranchiseId: string;
   
   @ManyToOne(() => Digifranchise, { onDelete: "CASCADE" })
