@@ -65,7 +65,7 @@ export class OrderService {
     createOrderTableDto: CreateOrderTableDto,
     productOrServiceId: string,
     ownedDigifranchiseId: string
-  ): Promise<OrderTable|null> {
+  ): Promise<OrderTable | null> {
     let productOrService;
     let productOrServiceType;
 
@@ -155,13 +155,13 @@ export class OrderService {
     });
 
     const savedOrder = await this.orderRepository.save(newOrder);
-    return savedOrder
+    return savedOrder;
   }
 
   async createOrderForSubs(
     createOrderTableDto: CreateOrderTableDto,
     subProductOrSubServiceOrSubCategoryId: string
-  ): Promise<OrderTable|null> {
+  ): Promise<OrderTable | null> {
     let subProductOrSubServiceOrSubCategory;
     let subProductOrSubServiceOrSubCategoryType;
 
@@ -257,7 +257,7 @@ export class OrderService {
 
     const savedOrder = await this.orderRepository.save(newOrder);
 
-    return savedOrder
+    return savedOrder;
   }
 
   async createOrderWithAuth(
@@ -265,7 +265,7 @@ export class OrderService {
     userId: string,
     productOrServiceOrCategoryId: string,
     ownedDigifranchiseId: string
-  ): Promise<OrderTable|null> {
+  ): Promise<OrderTable | null> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
       throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
@@ -386,7 +386,7 @@ export class OrderService {
 
     const savedOrder = await this.orderRepository.save(newOrder);
 
-    return savedOrder
+    return savedOrder;
   }
 
   async getAllOrders(

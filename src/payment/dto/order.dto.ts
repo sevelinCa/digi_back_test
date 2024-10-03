@@ -40,6 +40,7 @@ export class CreateOrderTableDto {
           name: "Alex Smith",
           email: "alex.smith@example.com",
           address: "123 Main St, Anytown, AT 12345",
+          preferredMethodOfContact: "email address",
           phoneNumber: "123-456-7890",
           redirectUrl: "https://backend.dev.digifranchise.co.za/docs",
         },

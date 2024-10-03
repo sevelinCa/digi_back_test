@@ -46,7 +46,7 @@ export class RateController {
   @ApiBody({ type: CreateRateDto })
   @Post("create-rate")
   async createRateTable(
-    @Body() createRateDto: CreateRateDto,
+    @Body() createRateDto: CreateRateDto
   ): Promise<RateTable> {
     return this.rateService.createRateTable(createRateDto);
   }
@@ -80,7 +80,7 @@ export class RateController {
   @Put("update-rate/:rateId")
   async updateRateTable(
     @Param("rateId") rateId: string,
-    @Body() updateRateDto: UpdateRateDto,
+    @Body() updateRateDto: UpdateRateDto
   ): Promise<RateTable> {
     return this.rateService.updateRateTable(rateId, updateRateDto);
   }
@@ -114,12 +114,12 @@ export class OrderController {
     @Req() req: Request,
     @Param("productOrServiceId") productOrServiceId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() createOrderTableDto: CreateOrderTableDto,
-  ): Promise<OrderTable|null> {
+    @Body() createOrderTableDto: CreateOrderTableDto
+  ): Promise<OrderTable | null> {
     return this.orderService.createOrder(
       createOrderTableDto,
       productOrServiceId,
-      ownedFranchiseId,
+      ownedFranchiseId
     );
   }
 
@@ -130,7 +130,7 @@ export class OrderController {
   })
   @Get("get-all-order")
   async getAllOrders(
-    @Query("ownedDigifranchiseId") ownedDigifranchiseId: string,
+    @Query("ownedDigifranchiseId") ownedDigifranchiseId: string
   ): Promise<{ orders: OrderTable[]; count: number }> {
     return this.orderService.getAllOrders(ownedDigifranchiseId);
   }
@@ -142,7 +142,7 @@ export class OrderController {
   })
   @Get("get-one-order/:orderId")
   async getOneOrder(
-    @Param("orderId") orderId: string,
+    @Param("orderId") orderId: string
   ): Promise<OrderTable | null> {
     return this.orderService.getOneOrder(orderId);
   }
@@ -156,7 +156,7 @@ export class OrderController {
   @Put("update-order/:orderId")
   async updateOrder(
     @Param("orderId") orderId: string,
-    @Body() updateOrderTableDto: UpdateOrderTableDto,
+    @Body() updateOrderTableDto: UpdateOrderTableDto
   ): Promise<OrderTable> {
     return this.orderService.updateOrder(orderId, updateOrderTableDto);
   }
@@ -181,11 +181,11 @@ export class OrderController {
   async createOrderForSubs(
     @Body() createOrderTableDto: CreateOrderTableDto,
     @Param("subProductOrSubServiceOrSubCategoryId")
-    subProductOrSubServiceOrSubCategoryId: string,
-  ): Promise<OrderTable|null> {
+    subProductOrSubServiceOrSubCategoryId: string
+  ): Promise<OrderTable | null> {
     return this.orderService.createOrderForSubs(
       createOrderTableDto,
-      subProductOrSubServiceOrSubCategoryId,
+      subProductOrSubServiceOrSubCategoryId
     );
   }
 
@@ -203,11 +203,11 @@ export class OrderController {
   @Get("get-order-by-number/:orderCode")
   async getOrderByOrderNumber(
     @Param("orderCode") orderCode: string,
-    @Query("ownedFranchiseId") ownedFranchiseId: string,
+    @Query("ownedFranchiseId") ownedFranchiseId: string
   ): Promise<OrderTable> {
     const order = await this.orderService.getOrderByOrderNumber(
       orderCode,
-      ownedFranchiseId,
+      ownedFranchiseId
     );
     if (!order) {
       throw new NotFoundException("Order not found");
@@ -228,14 +228,14 @@ export class OrderController {
     @Req() req: Request,
     @Param("productOrServiceOrCategoryId") productOrServiceOrCategoryId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() createOrderTableDto: CreateOrderTableDto,
-  ): Promise<OrderTable|null> {
+    @Body() createOrderTableDto: CreateOrderTableDto
+  ): Promise<OrderTable | null> {
     const userId = (req.user as UserEntity).id;
     return this.orderService.createOrderWithAuth(
       createOrderTableDto,
       userId,
       productOrServiceOrCategoryId,
-      ownedFranchiseId,
+      ownedFranchiseId
     );
   }
 
@@ -248,7 +248,7 @@ export class OrderController {
   @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Get("get-all-order-with-auth/:ownedFranchiseId")
   async getAllOrdersWithAuth(
-    @Param("ownedFranchiseId") ownedFranchiseId: string,
+    @Param("ownedFranchiseId") ownedFranchiseId: string
   ): Promise<{ orders: OrderTable[]; count: number }> {
     return this.orderService.getAllOrdersWithAuth(ownedFranchiseId);
   }
@@ -263,12 +263,12 @@ export class OrderController {
   @Get("get-all-order-with-auth-user/:ownedFranchiseId")
   async getAllOrdersWithAuthAndUser(
     @Req() req: Request,
-    @Param("ownedFranchiseId") ownedFranchiseId: string,
+    @Param("ownedFranchiseId") ownedFranchiseId: string
   ): Promise<{ orders: OrderTable[]; count: number }> {
     const userId = (req.user as UserEntity).id;
     return this.orderService.getAllOrdersWithAuthAndUser(
       userId,
-      ownedFranchiseId,
+      ownedFranchiseId
     );
   }
 
@@ -291,17 +291,17 @@ export class OrderController {
   })
   @ApiBody({ type: CreateOrderTableDto })
   @Post(
-    "create-order-with-serviceCategory/:serviceCategoryId/:ownedFranchiseId",
+    "create-order-with-serviceCategory/:serviceCategoryId/:ownedFranchiseId"
   )
   async createOrderByCategory(
     @Param("serviceCategoryId") serviceCategoryId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() createOrderTableDto: CreateOrderTableDto,
+    @Body() createOrderTableDto: CreateOrderTableDto
   ): Promise<OrderTable> {
     return this.orderService.createOrderByCategory(
       createOrderTableDto,
       serviceCategoryId,
-      ownedFranchiseId,
+      ownedFranchiseId
     );
   }
 
@@ -314,20 +314,20 @@ export class OrderController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Post(
-    "create-order-serviceCategory-auth/:serviceCategoryId/:ownedFranchiseId",
+    "create-order-serviceCategory-auth/:serviceCategoryId/:ownedFranchiseId"
   )
   async createOrderByCategoryWithAuth(
     @Req() req: Request,
     @Param("serviceCategoryId") serviceCategoryId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
-    @Body() createOrderTableDto: CreateOrderTableDto,
+    @Body() createOrderTableDto: CreateOrderTableDto
   ): Promise<OrderTable> {
     const userId = (req.user as UserEntity).id;
     return this.orderService.createOrderByCategoryWithAuth(
       createOrderTableDto,
       userId,
       serviceCategoryId,
-      ownedFranchiseId,
+      ownedFranchiseId
     );
   }
 }
