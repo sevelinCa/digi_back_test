@@ -43,7 +43,8 @@ import { AuthForgotPasswordForWebSiteDto } from "./dto/auth-forgot-password-on-w
 import { ForgotPasswordMailData } from "forgot-password-mail-data.interface";
 import { Role } from "src/roles/domain/role";
 import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
-import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/digifranchise-customers.entity";
+import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/customers.entity";
+import { DigifranchiseCustomersAccessControl } from "src/digifranchise-customers/entities/digifranchise-customers-access-control.entity";
 
 @Injectable()
 export class AuthService {
@@ -57,8 +58,10 @@ export class AuthService {
     private customerSubscription: CustomerSubscriptionService,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<User>,
-    @InjectRepository(UserEntity)
+    @InjectRepository(DigifranchiseCustomers)
     private readonly digifranchiseCustomersRepository: Repository<DigifranchiseCustomers>,
+    @InjectRepository(DigifranchiseCustomersAccessControl)
+    private readonly digifranchiseCustomerAccessControlRepository: Repository<DigifranchiseCustomers>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) { }
@@ -633,9 +636,15 @@ export class AuthService {
     websiteURL: string,
   ): Promise<void> {
     try {
-      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { email: dto.email } })
-
-      if (checkExistingCustomer?.digifranchiseId === digifranchiseId) {
+      console.log('********', digifranchiseId)
+      console.log('********', dto.email)
+      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({
+        where: {
+          email: dto.email,
+        }
+      })
+      console.log('>>>>>>>>', checkExistingCustomer)
+      if (checkExistingCustomer) {
         throw new HttpException(
           "User with this email is already signed up to this digifranchise.",
           HttpStatus.CONFLICT,
@@ -692,7 +701,8 @@ export class AuthService {
         const attachedCustomerToDigifranchise = this.digifranchiseCustomersRepository.create({
           email: dto.email,
           customerId: user.id,
-          digifranchiseId
+          digifranchiseId,
+          password: dto.password
         })
 
         await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
@@ -706,6 +716,7 @@ export class AuthService {
         });
       }
     } catch (error) {
+      console.log('-----------', error)
       throw new HttpException(
         "internal server error",
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -840,7 +851,7 @@ export class AuthService {
   ) {
     try {
       const { phoneNumber } = dto;
-      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber } })
+      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber, digifranchiseId } })
 
       if (checkExistingCustomer?.digifranchiseId === digifranchiseId) {
         throw new HttpException(
@@ -893,7 +904,8 @@ export class AuthService {
         const attachedCustomerToDigifranchise = this.digifranchiseCustomersRepository.create({
           phoneNumber: dto.phoneNumber,
           customerId: user.id,
-          digifranchiseId
+          digifranchiseId,
+          password: dto.password
         })
 
         await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
@@ -1042,7 +1054,7 @@ export class AuthService {
       );
     }
 
-    const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { email: dto.phoneNumber, digifranchiseId } })
+    const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber: dto.phoneNumber, digifranchiseId } })
 
     if (!!checkExistingCustomer) {
       throw new HttpException(

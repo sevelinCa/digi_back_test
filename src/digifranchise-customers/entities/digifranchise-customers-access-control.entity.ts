@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Exclude, Expose } from "class-transformer";
 import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import {
@@ -11,24 +11,19 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from "typeorm";
+import { DigifranchiseCustomers } from "./customers.entity";
 
 @Entity()
-export class DigifranchiseCustomers {
+export class DigifranchiseCustomersAccessControl {
   @PrimaryGeneratedColumn("uuid")
   id: string;
-
-  @Column({ type: "varchar", nullable: true })
-  email: string;
-
-  @Column({ type: "varchar", nullable: true })
-  phoneNumber: string;
 
   @Column({ type: "varchar" })
   customerId: string;
 
-  @ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
+  @ManyToOne(() => DigifranchiseCustomers, { onDelete: "CASCADE" })
   @JoinColumn({ name: 'customerId' })
-  customer: UserEntity | null;;
+  customer: DigifranchiseCustomers | null;;
 
   @Column({ type: "varchar" })
   digifranchiseId: string;
@@ -36,6 +31,10 @@ export class DigifranchiseCustomers {
   @ManyToOne(() => Digifranchise, { onDelete: "CASCADE" })
   @JoinColumn({ name: "digifranchiseId" })
   digifranchise: Digifranchise;
+
+  @Column({ nullable: true })
+  @Exclude({ toPlainOnly: true })
+  password: string;
 
   @UpdateDateColumn()
   updatedAt: Date;
