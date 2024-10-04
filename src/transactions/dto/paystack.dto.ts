@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsNumber, Length, IsUrl } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumber, Length, IsUrl, IsOptional } from "class-validator";
 
 export class CreatePayStackTransactionDTO {
   @ApiProperty({ example: 1000, description: "Amount to be charged" })
@@ -25,7 +25,6 @@ export class CreatePayStackTransactionDTO {
 }
 
 
-
 export class CreatePayStackTransactionCallbackUrlDTO {
   @ApiProperty({
     example: "https://example.com/callback",
@@ -40,21 +39,21 @@ export class CreatePayStackTransactionCallbackUrlDTO {
 export class CreatePayStackSubAccountDTO {
   @ApiProperty({
     example: "Business Name",
-    description: "Name of the business for the subaccount",
+    description: "Name of the business for the subAccount",
   })
   @IsNotEmpty()
   business_name: string;
 
   @ApiProperty({
-    example: "058",
-    description: "Three-digit bank code",
+    example: "068",
+    description: "Three-digit bank code (for Equity Bank in Kenya)",
   })
   @IsNotEmpty()
   @Length(3, 3)
   bank_code: string;
 
   @ApiProperty({
-    example: "0123456789",
+    example: "1234567890",
     description: "Ten-digit account number",
   })
   @IsNotEmpty()
@@ -62,11 +61,10 @@ export class CreatePayStackSubAccountDTO {
   account_number: string;
 
   @ApiProperty({
-    example: 30,
-    description: "Percentage charge for the subaccount (0-100)",
+    example: 15,
+    description: "Percentage charge for the subAccount (0-100)",
   })
   @IsNotEmpty()
   percentage_charge: number;
 }
-
 
