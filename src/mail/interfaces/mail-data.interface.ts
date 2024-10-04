@@ -11,3 +11,11 @@ export interface OrderStatusUpdateMailData {
   newStatus: string;
   orderUrl: string;
 }
+
+
+export interface enquiryEmailNotificationMailData {
+  to: string;
+  customerEmail: string;
+  franchiseOwnerEmail: string;
+}
+
