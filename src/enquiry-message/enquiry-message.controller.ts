@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   HttpStatus,
   Param,
   Post,
@@ -38,7 +39,7 @@ export class EnquiryMessageController {
     @Param("digifranchiseOwnedId") digifranchiseOwnedId: string,
     @Body() createEnquiriesTableDto: CreateEnquiriesTableDto,
   ): Promise<EnquiriesTable> {
-    return this.enquiryMessageService.createEquiry(
+    return this.enquiryMessageService.createEnquiry(
       createEnquiriesTableDto,
       digifranchiseOwnedId,
     );
@@ -71,4 +72,16 @@ export class EnquiryMessageController {
   ): Promise<EnquiriesTable> {
     return this.enquiryMessageService.getEnquiryById(enquiryId);
   }
+
+
+  @Get('get-franchise-owner-email/:id')
+  async getEmail(@Param('id') digifranchiseOwnerId: string) {
+    try {
+      const email = await this.enquiryMessageService.getEmailByDigifranchiseOwnerId(digifranchiseOwnerId);
+      return { email };
+    } catch (error) {  
+      throw new HttpException(error.message || 'Internal Server Error', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
 }
