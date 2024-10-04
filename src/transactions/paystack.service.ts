@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO } from './dto/paystack.dto';
+import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO,  } from './dto/paystack.dto';
 import { lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
@@ -242,6 +242,8 @@ export class PaystackService {
       'Content-Type': 'application/json',
     };
   
+    console.log('Creating subaccount with:', dto);  
+  
     try {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, { headers })
@@ -254,10 +256,8 @@ export class PaystackService {
         data: subaccountData,
       };
     } catch (error) {
-      // Log detailed error for internal debugging
       console.error('Error creating subaccount:', error?.response?.data);
       
-      // Throw more specific errors if necessary
       if (error.response && error.response.status === 400) {
         throw new HttpException(
           error.response?.data?.message || 'Invalid input data for subaccount',
@@ -271,6 +271,6 @@ export class PaystackService {
       );
     }
   }
-  
+ 
   
 }
