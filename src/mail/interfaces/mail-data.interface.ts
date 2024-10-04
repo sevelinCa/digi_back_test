@@ -15,7 +15,8 @@ export interface OrderStatusUpdateMailData {
 
 export interface enquiryEmailNotificationMailData {
   to: string;
-  customerEmail: string;
   franchiseOwnerEmail: string;
+  customerName: string; 
 }
+
 

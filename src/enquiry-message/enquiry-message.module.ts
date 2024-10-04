@@ -4,9 +4,12 @@ import { EnquiryMessageController } from "./enquiry-message.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 import { EnquiriesTable } from "./entities/enquiries.entity";
+import { MailModule } from "src/mail/mail.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EnquiriesTable, DigifranchiseOwner])],
+  imports: [
+    MailModule,
+    TypeOrmModule.forFeature([EnquiriesTable, DigifranchiseOwner])],
   providers: [EnquiryMessageService],
   controllers: [EnquiryMessageController],
 })

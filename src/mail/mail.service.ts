@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { I18nContext } from "nestjs-i18n";
 import {
+  enquiryEmailNotificationMailData,
   MailData,
   OrderStatusUpdateMailData,
 } from "./interfaces/mail-data.interface";
@@ -429,4 +430,42 @@ export class MailService {
       console.error(`Failed to send email to: ${mailData.to}`, error);
     }
   }
+
+
+  async sendEnquiryConfirmationEmail(
+    mailData: enquiryEmailNotificationMailData & { customerName: string }
+  ): Promise<void> {
+    const i18n = I18nContext.current();
+  
+    let emailSubject: string = 'Enquiry Confirmation';
+    let emailText: string = 'Thank you for your enquiry. We will respond within 48 hours.';
+  
+    if (i18n) {
+      [emailSubject, emailText] = await Promise.all([
+        i18n.t("enquiry.emailSubject", { defaultValue: 'Enquiry Confirmation' }),
+        i18n.t("enquiry.emailText", { defaultValue: 'Thank you for your enquiry. We will respond within 48 hours.' }),
+      ]);
+    }
+  
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      subject: emailSubject, 
+      text: emailText, 
+      templatePath: path.join(
+        this.configService.getOrThrow("app.workingDirectory", { infer: true }),
+        "src",
+        "mail",
+        "mail-templates",
+        "enquiry-confirmation.hbs"
+      ),
+      context: {
+        title: emailSubject,
+        supportEmail: mailData.franchiseOwnerEmail,
+        companyName: this.configService.get('app.name', { infer: true }), 
+        customerName: mailData.customerName,
+      },
+    });
+  }
+  
+  
 }

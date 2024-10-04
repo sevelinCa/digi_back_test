@@ -46,7 +46,7 @@ export class CreatePayStackSubAccountDTO {
 
   @ApiProperty({
     example: "068",
-    description: "Three-digit bank code (for Equity Bank in Kenya)",
+    description: "Three-digit bank code",
   })
   @IsNotEmpty()
   @Length(3, 3)
