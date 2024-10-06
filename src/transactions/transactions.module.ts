@@ -11,12 +11,14 @@ import { PaystackService } from "./paystack.service";
 import { PaystackController } from "./paystack.controller";
 import { MailModule } from "src/mail/mail.module";
 import { TransactionsHelperService } from "./transaction-helper.service";
+import { SmsModule } from "src/sms/sms.module";
 
 @Module({
   imports: [
     HttpModule,
     TypeOrmModule.forFeature([UserEntity, DigifranchiseOwner, OrderTable]),
     MailModule,
+    SmsModule
   ],
 
   providers: [

@@ -2,20 +2,21 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-} from "@nestjs/common";
-import { TransactionsAuthService } from "./transactions-auth.service";
-import { GraphQLClient, gql } from "graphql-request";
-import { CreateTransactionDto } from "./dto/transactions.dto";
-import { CreateTokenDto } from "./dto/transaction-token.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
-import { Equal, Repository } from "typeorm";
-import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
-import { OrderTable } from "src/payment/entities/order.entity";
-import { UpdatingOrderStatusDto } from "./dto/updating-order-status.dto";
-import { OrderStatusUpdateMailData } from "src/mail/interfaces/mail-data.interface";
-import { MailService } from "src/mail/mail.service";
+} from '@nestjs/common';
+import { TransactionsAuthService } from './transactions-auth.service';
+import { GraphQLClient, gql } from 'graphql-request';
+import { CreateTransactionDto } from './dto/transactions.dto';
+import { CreateTokenDto } from './dto/transaction-token.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { Equal, Repository } from 'typeorm';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { OrderStatus, OrderTable } from 'src/payment/entities/order.entity';
+import { UpdatingOrderStatusDto } from './dto/updating-order-status.dto';
+import { OrderStatusUpdateMailData } from 'src/mail/interfaces/mail-data.interface';
+import { MailService } from 'src/mail/mail.service';
 import { TransactionsHelperService } from './transaction-helper.service';
+import { SmsService } from 'src/sms/sms.service';
 
 @Injectable()
 export class TransactionsService {
@@ -28,16 +29,17 @@ export class TransactionsService {
     @InjectRepository(OrderTable)
     private readonly orderRepository: Repository<OrderTable>,
     private readonly mailService: MailService,
-    private readonly transactionsHelperService: TransactionsHelperService,
+    private readonly smsService: SmsService,
+    private readonly transactionsHelperService: TransactionsHelperService
   ) {}
 
   async createTransaction(
-    createTransactionDto: CreateTransactionDto,
+    createTransactionDto: CreateTransactionDto
   ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
-    
+
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -95,7 +97,7 @@ export class TransactionsService {
   async createToken(createTokenDto: CreateTokenDto): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -123,7 +125,7 @@ export class TransactionsService {
   async getTokens(): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -163,7 +165,7 @@ export class TransactionsService {
   async getAllTransactions(): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -189,17 +191,17 @@ export class TransactionsService {
 
     try {
       const response = await client.request(query);
-      
+
       if (!response || !response.transactions || !response.transactions.data) {
-        throw new Error("Invalid response structure");
+        throw new Error('Invalid response structure');
       }
 
       return response.transactions.data;
     } catch (error) {
       if (error.response?.errors) {
-                throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+        throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
       } else {
-                throw new Error(`Unexpected Error: ${error.message}`);
+        throw new Error(`Unexpected Error: ${error.message}`);
       }
     }
   }
@@ -207,7 +209,7 @@ export class TransactionsService {
   async getOneTransaction(transactionId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -240,9 +242,9 @@ export class TransactionsService {
 
     try {
       const response = await client.request(query, { id: transactionId });
-            return response;
+      return response;
     } catch (error) {
-            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
@@ -250,7 +252,7 @@ export class TransactionsService {
     const accessToken = await this.transactionsAuthService.getAccessToken();
 
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -277,16 +279,16 @@ export class TransactionsService {
 
     try {
       const response = await client.request(mutation, variables);
-            return response.transactionDelete;
+      return response.transactionDelete;
     } catch (error) {
-            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
   async processWalletDeposit(transactionId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -310,16 +312,16 @@ export class TransactionsService {
 
     try {
       const response = await client.request(mutation, variables);
-            return response.transactionDeposit;
+      return response.transactionDeposit;
     } catch (error) {
-            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
   async checkWalletBalance(tokenId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -360,7 +362,7 @@ export class TransactionsService {
   async requestWithdrawal(tokenId: string, value: number): Promise<boolean> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -384,31 +386,32 @@ export class TransactionsService {
       const response = await client.request(mutation, variables);
       return response.tokenAccountWithdraw === true;
     } catch (error) {
-            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
   async createTransactionBuyerToken(orderId: string): Promise<any> {
     const tradeSafeApiUrl = process.env.TRADE_SAFE_API_URL;
     if (!tradeSafeApiUrl) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
-  
+
     const accessToken = await this.transactionsAuthService.getAccessToken();
-  
-    const basicInfo = await this.transactionsHelperService.getOrderBasicInfo(orderId);
-  
+
+    const basicInfo =
+      await this.transactionsHelperService.getOrderBasicInfo(orderId);
+
     const { name, email, phoneNumber } = basicInfo;
-    const [givenName, familyName] = name.includes(" ")
-      ? name.split(" ")
-      : [name, ""];
-  
+    const [givenName, familyName] = name.includes(' ')
+      ? name.split(' ')
+      : [name, ''];
+
     const client = new GraphQLClient(tradeSafeApiUrl, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const mutation = gql`
       mutation tokenCreate($input: TokenInput!) {
         tokenCreate(input: $input) {
@@ -417,7 +420,7 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const variables = {
       input: {
         user: {
@@ -427,50 +430,50 @@ export class TransactionsService {
           mobile: phoneNumber,
         },
         bankAccount: {
-          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000",
-          accountType: "CHEQUE",
-          bank: "SBSA",
+          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || '0000000000',
+          accountType: 'CHEQUE',
+          bank: 'SBSA',
         },
         settings: {
           payout: {
-            interval: "IMMEDIATE",
-            refund: "WALLET",
+            interval: 'IMMEDIATE',
+            refund: 'WALLET',
           },
         },
       },
     };
-  
+
     try {
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-            if (error.response?.errors) {
-                throw new Error(
-          `Failed to create buyer token: ${error.response.errors[0].message}`,
+      if (error.response?.errors) {
+        throw new Error(
+          `Failed to create buyer token: ${error.response.errors[0].message}`
         );
       } else {
-                throw new Error("Failed to create buyer token");
+        throw new Error('Failed to create buyer token');
       }
-  }
+    }
   }
   async getDigifranchiseOwnerInfo(franchiseOwnerId: string): Promise<any> {
     const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
       where: { id: franchiseOwnerId },
-      relations: ["userId"],
+      relations: ['userId'],
     });
     if (!franchiseOwner || !franchiseOwner.userId) {
       throw new NotFoundException(
-        "Franchise owner or associated user not found",
+        'Franchise owner or associated user not found'
       );
     }
 
     const userResult = await this.userRepository.manager.query(
       `SELECT "firstName", "lastName", "email", "phoneNumber" FROM "user" WHERE "id" = $1`,
-      [franchiseOwner.userId.id],
+      [franchiseOwner.userId.id]
     );
 
     if (!userResult.length) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
     return {
       firstname: userResult[0].firstname,
@@ -483,15 +486,15 @@ export class TransactionsService {
   async createTransactionSellerToken(franchiseOwnerId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const franchiseOwner = await this.digifranchiseOwnerRepository.findOne({
       where: { id: franchiseOwnerId },
-      relations: ["digifranchise"],
+      relations: ['digifranchise'],
     });
     if (!franchiseOwner) {
-      throw new NotFoundException("Franchise owner not found");
+      throw new NotFoundException('Franchise owner not found');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -523,19 +526,19 @@ export class TransactionsService {
         organization: {
           name: franchiseOwner.digifranchise.digifranchiseName,
           tradeName: franchiseOwner.digifranchise.digifranchiseName,
-          type: "PRIVATE",
-          registrationNumber:franchiseOwner.id,
-          taxNumber: process.env.DEFAULT_TAX_NUMBER || "000000000",
+          type: 'PRIVATE',
+          registrationNumber: franchiseOwner.id,
+          taxNumber: process.env.DEFAULT_TAX_NUMBER || '000000000',
         },
         bankAccount: {
-          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || "0000000000",
-          accountType: "CHEQUE",
-          bank: "SBSA",
+          accountNumber: process.env.DEFAULT_ACCOUNT_NUMBER || '0000000000',
+          accountType: 'CHEQUE',
+          bank: 'SBSA',
         },
         settings: {
           payout: {
-            interval: "IMMEDIATE",
-            refund: "WALLET",
+            interval: 'IMMEDIATE',
+            refund: 'WALLET',
           },
         },
       },
@@ -544,38 +547,38 @@ export class TransactionsService {
     try {
       return await client.request(mutation, variables);
     } catch (error) {
-            throw new Error("Failed to create seller token");
+      throw new Error('Failed to create seller token');
     }
   }
 
   async createTransactionWithAuth(
     userId: string,
-    orderId: string,
+    orderId: string
   ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: [
-        "serviceId",
-        "ownedDigifranchise",
-        "ownedDigifranchise.digifranchise",
+        'serviceId',
+        'ownedDigifranchise',
+        'ownedDigifranchise.digifranchise',
       ],
     });
     if (!order || !order.ownedDigifranchise) {
-      throw new NotFoundException("Order or ownedDigifranchise not found");
+      throw new NotFoundException('Order or ownedDigifranchise not found');
     }
 
     let totalAmount;
-    if (typeof order.totalAmount === "string") {
+    if (typeof order.totalAmount === 'string') {
       totalAmount = parseFloat(order.totalAmount);
     } else {
       totalAmount = order.totalAmount;
@@ -585,7 +588,7 @@ export class TransactionsService {
     const buyerTokenId = buyerTokenResponse.tokenCreate.id;
 
     const sellerTokenResponse = await this.createTransactionSellerToken(
-      order.ownedDigifranchise.id,
+      order.ownedDigifranchise.id
     );
     const sellerTokenId = sellerTokenResponse.tokenCreate.id;
 
@@ -609,9 +612,9 @@ export class TransactionsService {
       input: {
         title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
         description: order.ownedDigifranchise.digifranchise?.description,
-        industry: "GENERAL_GOODS_SERVICES",
-        currency: "ZAR",
-        feeAllocation: "SELLER",
+        industry: 'GENERAL_GOODS_SERVICES',
+        currency: 'ZAR',
+        feeAllocation: 'SELLER',
         reference: order.id,
         allocations: {
           create: [
@@ -628,11 +631,11 @@ export class TransactionsService {
           create: [
             {
               token: buyerTokenId,
-              role: "BUYER",
+              role: 'BUYER',
             },
             {
               token: sellerTokenId,
-              role: "SELLER",
+              role: 'SELLER',
             },
           ],
         },
@@ -643,54 +646,54 @@ export class TransactionsService {
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
-
 
   async createTransactionWithoutAuth(orderId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
-  
+
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: [
-        "serviceId",
-        "ownedDigifranchise",
-        "ownedDigifranchise.digifranchise",
+        'serviceId',
+        'ownedDigifranchise',
+        'ownedDigifranchise.digifranchise',
       ],
     });
     if (!order || !order.ownedDigifranchise) {
-      throw new NotFoundException("Order or ownedDigifranchise not found");
+      throw new NotFoundException('Order or ownedDigifranchise not found');
     }
-  
+
     let totalAmount;
-    if (typeof order.totalAmount === "string") {
+    if (typeof order.totalAmount === 'string') {
       totalAmount = parseFloat(order.totalAmount);
     } else {
       totalAmount = order.totalAmount;
     }
-  
-    const basicInfo = await this.transactionsHelperService.getOrderBasicInfo(orderId);
+
+    const basicInfo =
+      await this.transactionsHelperService.getOrderBasicInfo(orderId);
     const redirectUrl = basicInfo.redirectUrl;
     const referanceData = `${order.id}///${redirectUrl}`;
-  
+
     const buyerTokenResponse = await this.createTransactionBuyerToken(order.id);
     const buyerTokenId = buyerTokenResponse.tokenCreate.id;
-  
+
     const sellerTokenResponse = await this.createTransactionSellerToken(
-      order.ownedDigifranchise.id,
+      order.ownedDigifranchise.id
     );
     const sellerTokenId = sellerTokenResponse.tokenCreate.id;
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const mutation = gql`
       mutation createTransaction($input: CreateTransactionInput!) {
         transactionCreate(input: $input) {
@@ -700,16 +703,16 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const variables = {
       input: {
         title: order.ownedDigifranchise.digifranchise?.digifranchiseName,
         description: order.ownedDigifranchise.digifranchise?.description,
-        industry: "GENERAL_GOODS_SERVICES",
-        currency: "ZAR",
-        feeAllocation: "SELLER",
+        industry: 'GENERAL_GOODS_SERVICES',
+        currency: 'ZAR',
+        feeAllocation: 'SELLER',
         reference: referanceData,
-      
+
         allocations: {
           create: [
             {
@@ -725,32 +728,32 @@ export class TransactionsService {
           create: [
             {
               token: buyerTokenId,
-              role: "BUYER",
+              role: 'BUYER',
             },
             {
               token: sellerTokenId,
-              role: "SELLER",
+              role: 'SELLER',
             },
           ],
         },
       },
     };
-  
+
     try {
       const response = await client.request(mutation, variables);
       return response;
     } catch (error) {
-            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
   async getCheckoutLink(
     transactionId: string,
-    paymentMethods: string[] = [],
+    paymentMethods: string[] = []
   ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
 
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
@@ -778,40 +781,105 @@ export class TransactionsService {
 
     try {
       const response = await client.request(mutation, variables);
-            return response.checkoutLink;
+      return response.checkoutLink;
     } catch (error) {
-            throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
-
   async updateOrderStatusAndNotifyCustomerByEmail(
     orderId: string,
-    updatingOrderStatusDto: UpdatingOrderStatusDto,
+    updatingOrderStatusDto: UpdatingOrderStatusDto
   ): Promise<{ updatedOrder: OrderTable; message: string }> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
-      relations: ["userId"],
+      relations: ['userId'],
     });
-  
+
     if (!order) {
-      throw new NotFoundException("Order not found");
+      throw new NotFoundException('Order not found');
     }
-  
-    const userEmail = await this.transactionsHelperService.getEmailFromOrder(orderId);
-  
+    const userEmail = order?.orderAdditionalInfo[0]?.basic_info?.email;
+    const userPhoneNumber =
+      order?.orderAdditionalInfo[0]?.basic_info?.phoneNumber;
     const previousStatus = order.status;
-  
+    const thankYouMessage = `Thank you for your order. Your order code is: ${order.orderCode}.`;
+
+    let emailStatus = 'Email not provided';
+    let smsStatus = 'SMS not provided';
     Object.assign(order, updatingOrderStatusDto);
     const updatedOrder = await this.orderRepository.save(order);
-  
+
     if (!userEmail) {
       return {
         updatedOrder,
-        message: "Order status updated, but email not sent because email not found.",
+        message:
+          'Order status updated, but email not sent because email not found.',
       };
     }
-  
+    if (updatedOrder?.status === OrderStatus.PROCESSING) {
+      if (userEmail) {
+        try {
+          await this.mailService.sendMailToConfirmCreatedOrder({
+            to: userEmail,
+            data: {
+              orderNumber: order.orderCode,
+              email: userEmail,
+              items: order
+                ? order.productId
+                  ? {
+                      ...order,
+                      availability:
+                        order.orderAdditionalInfo.find((info) =>
+                          info.hasOwnProperty('availability')
+                        )?.availability || [],
+
+                      name: order.productId.productName,
+                      description: order.productId.description,
+                      orderDate: new Date(order.OrderDate).toLocaleDateString(),
+                      customerDetails: {
+                        ...order.orderAdditionalInfo[0]['basic_info'],
+                      },
+                    }
+                  : {
+                      ...order,
+                      name: order.serviceId?.serviceName,
+                      description: order.serviceId?.description,
+                      orderDate: new Date(order.OrderDate).toLocaleDateString(),
+                      customerDetails: {
+                        ...order.orderAdditionalInfo[0]['basic_info'],
+                      },
+                      availability:
+                        order.orderAdditionalInfo.find((info) =>
+                          info.hasOwnProperty('availability')
+                        )?.availability || [],
+                    }
+                : updatedOrder,
+            },
+          });
+          emailStatus = 'Email sent successfully';
+        } catch (error) {
+          emailStatus = 'Failed to send email';
+        }
+      }
+
+      if (userPhoneNumber) {
+        try {
+          await this.smsService.sendOrderCreationConfirmMessage(
+            userPhoneNumber,
+            thankYouMessage
+          );
+          smsStatus = 'SMS sent successfully';
+        } catch (error) {
+          smsStatus = 'Failed to send SMS';
+        }
+      }
+      return {
+        updatedOrder,
+        message: smsStatus,
+      };
+    }
+
     const mailData: OrderStatusUpdateMailData = {
       to: userEmail,
       orderId: order.orderCode,
@@ -819,18 +887,15 @@ export class TransactionsService {
       newStatus: updatingOrderStatusDto.status,
       orderUrl: updatingOrderStatusDto.orderUrl!,
     };
-  
+
     await this.mailService.sendOrderStatusUpdateEmail(mailData);
-  
+
     return {
       updatedOrder,
-      message: "Order status updated and notification email sent successfully.",
+      message: 'Order status updated and notification email sent successfully.',
     };
   }
-  
-  
 
-  
   async createTransactionAndGetCheckoutLink(orderId: string): Promise<any> {
     try {
       const transactionResponse =
@@ -842,7 +907,7 @@ export class TransactionsService {
         !transactionResponse.transactionCreate.id
       ) {
         throw new BadRequestException(
-          "Failed to create transaction or transaction ID not found.",
+          'Failed to create transaction or transaction ID not found.'
         );
       }
 
@@ -868,15 +933,15 @@ export class TransactionsService {
   async getSellerToken(registrationNumber: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const query = gql`
       query {
         tokens {
@@ -901,24 +966,30 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const response = await client.request(query);
-    const filteredData = response.tokens.data.filter(item => item.organization !== null);
-    return filteredData.find(token => token.organization.registration === registrationNumber) || null;
+    const filteredData = response.tokens.data.filter(
+      (item) => item.organization !== null
+    );
+    return (
+      filteredData.find(
+        (token) => token.organization.registration === registrationNumber
+      ) || null
+    );
   }
 
   async getTokenBalance(tokenId: string): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const query = gql`
       query token($id: ID!) {
         token(id: $id) {
@@ -935,33 +1006,40 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const variables = {
       id: tokenId,
     };
-  
+
     try {
       const response = await client.request(query, variables);
       console.log('Raw GraphQL Response:', JSON.stringify(response, null, 2)); // Log the raw response
       return response.token;
     } catch (error) {
-      console.error('GraphQL Error:', error.response ? error.response.errors : error.message);
+      console.error(
+        'GraphQL Error:',
+        error.response ? error.response.errors : error.message
+      );
       throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
 
-  async updateTokenSettings(tokenId: string, payoutInterval: string, refundMethod: string): Promise<any> {
+  async updateTokenSettings(
+    tokenId: string,
+    payoutInterval: string,
+    refundMethod: string
+  ): Promise<any> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const mutation = gql`
       mutation tokenUpdate($id: ID!, $input: TokenUpdateInput!) {
         tokenUpdate(id: $id, input: $input) {
@@ -976,7 +1054,7 @@ export class TransactionsService {
         }
       }
     `;
-  
+
     const variables = {
       id: tokenId,
       input: {
@@ -988,7 +1066,7 @@ export class TransactionsService {
         },
       },
     };
-  
+
     try {
       const response = await client.request(mutation, variables);
       return response.tokenUpdate;
@@ -1000,26 +1078,26 @@ export class TransactionsService {
   async requestOfWithdrawal(tokenId: string, value: number): Promise<boolean> {
     const accessToken = await this.transactionsAuthService.getAccessToken();
     if (!process.env.TRADE_SAFE_API_URL) {
-      throw new Error("TRADE_SAFE_API_URL environment variable is not set");
+      throw new Error('TRADE_SAFE_API_URL environment variable is not set');
     }
-  
+
     const client = new GraphQLClient(process.env.TRADE_SAFE_API_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-  
+
     const mutation = gql`
       mutation tokenAccountWithdraw($id: ID!, $value: Float!) {
         tokenAccountWithdraw(id: $id, value: $value)
       }
     `;
-  
+
     const variables = {
       id: tokenId,
       value: value,
     };
-  
+
     try {
       const response = await client.request(mutation, variables);
       return response.tokenAccountWithdraw === true;
@@ -1027,6 +1105,4 @@ export class TransactionsService {
       throw new Error(`GraphQL Error: ${error.response.errors[0].message}`);
     }
   }
-
-
 }
