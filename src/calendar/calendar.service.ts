@@ -75,8 +75,22 @@ export class CalendarService {
       };
       workingDays.push(obj);
     }
+    let consultations: any = [];
+    for (let i = 0; i < setWorkingHoursDto?.freeConsultations!.length; i++) {
+      const obj = {
+        day: setWorkingHoursDto?.freeConsultations![i]?.day,
+        startTime:
+          setWorkingHoursDto?.freeConsultations![i]?.availabilityDayTime!
+            .startTime,
+        endTime:
+          setWorkingHoursDto?.freeConsultations![i]?.availabilityDayTime!
+            .endTime,
+      };
+      consultations.push(obj);
+    }
     setWorkingHours.ownedDigifranchise = getOwnedDigifranchise;
     setWorkingHours.availabilityWeekDays = workingDays;
+    setWorkingHours.freeConsulations=consultations;
     await this.digifranchiseWorkingHoursRepository.save(setWorkingHours);
     await this.timeSlotsQueue.add({
       ownedDigifranchiseId,

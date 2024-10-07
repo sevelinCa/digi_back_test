@@ -11,7 +11,7 @@ import { AvailabilityTimeSlots } from "src/calendar/entities/time-slots.entity";
     TypeOrmModule.forFeature([
       DigifranchiseOwner,
       ConsultationTable,
-      AvailabilityTimeSlots,
+      AvailabilityTimeSlots, 
     ]),
   ],
   providers: [ConsultationService],
