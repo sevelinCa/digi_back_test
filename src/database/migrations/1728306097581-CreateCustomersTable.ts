@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateCustomersTable1727938587119 implements MigrationInterface {
-    name = 'CreateCustomersTable1727938587119'
+export class CreateCustomersTable1728306097581 implements MigrationInterface {
+    name = 'CreateCustomersTable1728306097581'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "consultation_table" DROP CONSTRAINT "FK_consultation_table_ownedDigifranchise"`);
-        await queryRunner.query(`CREATE TABLE "digifranchise_customers" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying, "phoneNumber" character varying, "password" character varying, "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "createdAt" TIMESTAMP, CONSTRAINT "PK_1972d27f0595a8915fefaf14b24" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "digifranchise_customers" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying, "lastName" character varying, "email" character varying, "phoneNumber" character varying, "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "createdAt" TIMESTAMP, CONSTRAINT "PK_1972d27f0595a8915fefaf14b24" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "digifranchise_customers_access_control" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "customerId" uuid NOT NULL, "digifranchiseId" uuid NOT NULL, "password" character varying, "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "createdAt" TIMESTAMP, CONSTRAINT "PK_ad5429f32cc9a00421a8a220090" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "consultation_table" ALTER COLUMN "createdAt" SET DEFAULT now()`);
         await queryRunner.query(`ALTER TABLE "consultation_table" ALTER COLUMN "updatedAt" SET DEFAULT now()`);

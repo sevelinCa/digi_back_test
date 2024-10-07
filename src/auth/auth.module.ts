@@ -22,6 +22,8 @@ import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-own
 import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
 import { Role } from "src/roles/domain/role";
 import { SessionEntity } from "src/session/infrastructure/persistence/relational/entities/session.entity";
+import { DigifranchiseCustomersAccessControl } from "src/digifranchise-customers/entities/digifranchise-customers-access-control.entity";
+import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/customers.entity";
 // import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/digifranchise-customers.entity";
 
 @Module({
@@ -42,7 +44,8 @@ import { SessionEntity } from "src/session/infrastructure/persistence/relational
       Digifranchise,
       DigifranchiseOwner,
       SessionEntity,
-      // DigifranchiseCustomers
+      DigifranchiseCustomers,
+      DigifranchiseCustomersAccessControl
     ]),
   ],
   controllers: [AuthController],

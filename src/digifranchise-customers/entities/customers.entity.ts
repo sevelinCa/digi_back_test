@@ -18,14 +18,16 @@ export class DigifranchiseCustomers {
   id: string;
 
   @Column({ type: "varchar", nullable: true })
+  firstName: string;
+
+  @Column({ type: "varchar", nullable: true })
+  lastName: string;
+
+  @Column({ type: "varchar", nullable: true })
   email: string;
 
   @Column({ type: "varchar", nullable: true })
   phoneNumber: string;
-
-  @Column({ nullable: true })
-  @Exclude({ toPlainOnly: true })
-  password: string;
 
   @UpdateDateColumn()
   updatedAt: Date;
