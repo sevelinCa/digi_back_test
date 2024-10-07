@@ -65,7 +65,7 @@ export class OrderService {
     createOrderTableDto: CreateOrderTableDto,
     productOrServiceId: string,
     ownedDigifranchiseId: string
-  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+  ): Promise<OrderTable|null> {
     let productOrService;
     let productOrServiceType;
 
@@ -154,88 +154,14 @@ export class OrderService {
       ownedDigifranchise: owned,
     });
 
-    const userInfo = createOrderTableDto.orderAdditionalInfo.find(
-      (info) =>
-        info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
-    );
-    const userEmail = userInfo?.basic_info?.email;
-    const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-
     const savedOrder = await this.orderRepository.save(newOrder);
-    const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-
-    let emailStatus = "Email not provided";
-    let smsStatus = "SMS not provided";
-
-    if (userEmail) {
-      try {
-        await this.mailService.sendMailToConfirmCreatedOrder({
-          to: userEmail,
-          data: {
-            orderNumber: savedOrder.orderCode,
-            email: userEmail,
-            items: savedOrder
-              ? savedOrder.productId
-                ? {
-                    ...savedOrder,
-                    availability:
-                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
-
-                    name: savedOrder.productId.productName,
-                    description: savedOrder.productId.description,
-                    orderDate: new Date(
-                      savedOrder.OrderDate
-                    ).toLocaleDateString(),
-                    customerDetails: {
-                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                    },
-                  }
-                : {
-                    ...savedOrder,
-                    name: savedOrder.serviceId?.serviceName,
-                    description: savedOrder.serviceId?.description,
-                    orderDate: new Date(
-                      savedOrder.OrderDate
-                    ).toLocaleDateString(),
-                    customerDetails: {
-                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                    },
-                    availability:
-                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
-                  }
-              : newOrder,
-          },
-        });
-        emailStatus = "Email sent successfully";
-      } catch (error) {
-        emailStatus = "Failed to send email";
-      }
-    }
-
-    if (userPhoneNumber) {
-      try {
-        await this.smsService.sendOrderCreationConfirmMessage(
-          userPhoneNumber,
-          thankYouMessage
-        );
-        smsStatus = "SMS sent successfully";
-      } catch (error) {
-        smsStatus = "Failed to send SMS";
-      }
-    }
-
-    return {
-      order: savedOrder,
-      emailStatus,
-      smsStatus,
-    };
+    return savedOrder
   }
 
   async createOrderForSubs(
     createOrderTableDto: CreateOrderTableDto,
     subProductOrSubServiceOrSubCategoryId: string
-  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+  ): Promise<OrderTable|null> {
     let subProductOrSubServiceOrSubCategory;
     let subProductOrSubServiceOrSubCategoryType;
 
@@ -331,81 +257,7 @@ export class OrderService {
 
     const savedOrder = await this.orderRepository.save(newOrder);
 
-    let emailStatus = "Email not provided";
-    let smsStatus = "SMS not provided";
-
-    const userInfo = createOrderTableDto.orderAdditionalInfo.find(
-      (info) =>
-        info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
-    );
-    const userEmail = userInfo?.basic_info?.email;
-    const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-
-    const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-
-    if (userEmail) {
-      try {
-        await this.mailService.sendMailToConfirmCreatedOrder({
-          to: userEmail,
-          data: {
-            orderNumber: savedOrder.orderCode,
-            email: userEmail,
-            items: savedOrder
-              ? savedOrder.productId
-                ? {
-                    ...savedOrder,
-                    availability:
-                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
-
-                    name: savedOrder.productId.productName,
-                    description: savedOrder.productId.description,
-                    orderDate: new Date(
-                      savedOrder.OrderDate
-                    ).toLocaleDateString(),
-                    customerDetails: {
-                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                    },
-                  }
-                : {
-                    ...savedOrder,
-                    name: savedOrder.serviceId?.serviceName,
-                    description: savedOrder.serviceId?.description,
-                    orderDate: new Date(
-                      savedOrder.OrderDate
-                    ).toLocaleDateString(),
-                    customerDetails: {
-                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                    },
-                    availability:
-                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
-                  }
-              : newOrder,
-          },
-        });
-        emailStatus = "Email sent successfully";
-      } catch (error) {
-        emailStatus = `Failed to send email: ${error.message}`;
-      }
-    }
-
-    if (userPhoneNumber) {
-      try {
-        await this.smsService.sendOrderCreationConfirmMessage(
-          userPhoneNumber,
-          thankYouMessage
-        );
-        smsStatus = "SMS sent successfully";
-      } catch (error) {
-        smsStatus = `Failed to send SMS: ${error.message}`;
-      }
-    }
-
-    return {
-      order: savedOrder,
-      emailStatus,
-      smsStatus,
-    };
+    return savedOrder
   }
 
   async createOrderWithAuth(
@@ -413,7 +265,7 @@ export class OrderService {
     userId: string,
     productOrServiceOrCategoryId: string,
     ownedDigifranchiseId: string
-  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+  ): Promise<OrderTable|null> {
     const user = await checkIfUserExists(this.userRepository, userId);
     if (!user) {
       throw new HttpException("User does not exist", HttpStatus.NOT_FOUND);
@@ -534,81 +386,7 @@ export class OrderService {
 
     const savedOrder = await this.orderRepository.save(newOrder);
 
-    let emailStatus = "Email not provided";
-    let smsStatus = "SMS not provided";
-
-    const userInfo = createOrderTableDto.orderAdditionalInfo.find(
-      (info) =>
-        info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
-    );
-    const userEmail = userInfo?.basic_info?.email;
-    const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-
-    const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-
-    if (userEmail) {
-      try {
-        await this.mailService.sendMailToConfirmCreatedOrder({
-          to: userEmail,
-          data: {
-            orderNumber: savedOrder.orderCode,
-            email: userEmail,
-            items: savedOrder
-              ? savedOrder.productId
-                ? {
-                    ...savedOrder,
-                    availability:
-                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
-
-                    name: savedOrder.productId.productName,
-                    description: savedOrder.productId.description,
-                    orderDate: new Date(
-                      savedOrder.OrderDate
-                    ).toLocaleDateString(),
-                    customerDetails: {
-                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                    },
-                  }
-                : {
-                    ...savedOrder,
-                    name: savedOrder.serviceId?.serviceName,
-                    description: savedOrder.serviceId?.description,
-                    orderDate: new Date(
-                      savedOrder.OrderDate
-                    ).toLocaleDateString(),
-                    customerDetails: {
-                      ...savedOrder.orderAdditionalInfo[0]["basic_info"],
-                    },
-                    availability:
-                      savedOrder.orderAdditionalInfo[6]["availability"] || [],
-                  }
-              : newOrder,
-          },
-        });
-        emailStatus = "Email sent successfully";
-      } catch (error) {
-        emailStatus = `Failed to send email: ${error.message}`;
-      }
-    }
-
-    if (userPhoneNumber) {
-      try {
-        await this.smsService.sendOrderCreationConfirmMessage(
-          userPhoneNumber,
-          thankYouMessage
-        );
-        smsStatus = "SMS sent successfully";
-      } catch (error) {
-        smsStatus = `Failed to send SMS: ${error.message}`;
-      }
-    }
-
-    return {
-      order: savedOrder,
-      emailStatus,
-      smsStatus,
-    };
+    return savedOrder
   }
 
   async getAllOrders(
@@ -868,73 +646,6 @@ export class OrderService {
 
     const savedOrder = await this.orderRepository.save(newOrder);
 
-    const userInfo = createOrderTableDto.orderAdditionalInfo.find(
-      (info) =>
-        info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
-    );
-    const userEmail = userInfo?.basic_info?.email;
-    const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-
-    const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-
-    if (userEmail) {
-      await this.mailService.sendMailToConfirmCreatedOrder({
-        to: userEmail,
-        data: {
-          orderNumber: savedOrder.orderCode,
-          email: userEmail,
-          items: savedOrder
-            ? savedOrder.productId
-              ? {
-                  ...savedOrder,
-                  availability:
-                    savedOrder.orderAdditionalInfo.length > 6 &&
-                    savedOrder.orderAdditionalInfo[6]?.["availability"]
-                      ? savedOrder.orderAdditionalInfo[6]["availability"] || []
-                      : undefined,
-                  name: savedOrder.productId.productName,
-                  description: savedOrder.productId.description,
-                  orderDate: new Date(
-                    savedOrder.OrderDate
-                  ).toLocaleDateString(),
-                  customerDetails:
-                    savedOrder.orderAdditionalInfo.length > 0 &&
-                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
-                }
-              : {
-                  ...savedOrder,
-                  name: savedOrder.serviceId?.serviceName,
-                  description: savedOrder.serviceId?.description,
-                  orderDate: new Date(
-                    savedOrder.OrderDate
-                  ).toLocaleDateString(),
-                  customerDetails:
-                    savedOrder.orderAdditionalInfo.length > 0 &&
-                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
-                  availability:
-                    (savedOrder.orderAdditionalInfo.length > 6 &&
-                      savedOrder.orderAdditionalInfo[6]?.["availability"]) ||
-                    [],
-                }
-            : newOrder,
-        },
-      });
-    }
-    if (userPhoneNumber) {
-      await this.smsService.sendOrderCreationConfirmMessage(
-        userPhoneNumber,
-        thankYouMessage
-      );
-    }
-
-    if (!userEmail && !userPhoneNumber) {
-      throw new HttpException(
-        "Neither email nor phone number is provided in order additional info",
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
     return savedOrder;
   }
 
@@ -1030,73 +741,6 @@ export class OrderService {
 
     const savedOrder = await this.orderRepository.save(newOrder);
 
-    const userInfo = createOrderTableDto.orderAdditionalInfo.find(
-      (info) =>
-        info.basic_info &&
-        (info.basic_info.email || info.basic_info.phoneNumber)
-    );
-    const userEmail = userInfo?.basic_info?.email;
-    const userPhoneNumber = userInfo?.basic_info?.phoneNumber;
-
-    const thankYouMessage = `Thank you for your order. Your order code is: ${savedOrder.orderCode}.`;
-
-    if (userEmail) {
-      await this.mailService.sendMailToConfirmCreatedOrder({
-        to: userEmail,
-        data: {
-          orderNumber: savedOrder.orderCode,
-          email: userEmail,
-          items: savedOrder
-            ? savedOrder.productId
-              ? {
-                  ...savedOrder,
-                  availability:
-                    savedOrder.orderAdditionalInfo.length > 6 &&
-                    savedOrder.orderAdditionalInfo[6]?.["availability"]
-                      ? savedOrder.orderAdditionalInfo[6]["availability"] || []
-                      : undefined,
-                  name: savedOrder.productId.productName,
-                  description: savedOrder.productId.description,
-                  orderDate: new Date(
-                    savedOrder.OrderDate
-                  ).toLocaleDateString(),
-                  customerDetails:
-                    savedOrder.orderAdditionalInfo.length > 0 &&
-                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
-                }
-              : {
-                  ...savedOrder,
-                  name: savedOrder.serviceId?.serviceName,
-                  description: savedOrder.serviceId?.description,
-                  orderDate: new Date(
-                    savedOrder.OrderDate
-                  ).toLocaleDateString(),
-                  customerDetails:
-                    savedOrder.orderAdditionalInfo.length > 0 &&
-                    savedOrder.orderAdditionalInfo[0]?.["basic_info"],
-                  availability:
-                    (savedOrder.orderAdditionalInfo.length > 6 &&
-                      savedOrder.orderAdditionalInfo[6]?.["availability"]) ||
-                    [],
-                }
-            : newOrder,
-        },
-      });
-    }
-
-    if (userPhoneNumber) {
-      await this.smsService.sendOrderCreationConfirmMessage(
-        userPhoneNumber,
-        thankYouMessage
-      );
-    }
-
-    if (!userEmail && !userPhoneNumber) {
-      throw new HttpException(
-        "Neither email nor phone number is provided in order additional info",
-        HttpStatus.BAD_REQUEST
-      );
-    }
     return savedOrder;
   }
 }

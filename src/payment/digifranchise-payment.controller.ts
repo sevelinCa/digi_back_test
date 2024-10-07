@@ -115,7 +115,7 @@ export class OrderController {
     @Param("productOrServiceId") productOrServiceId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
     @Body() createOrderTableDto: CreateOrderTableDto,
-  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+  ): Promise<OrderTable|null> {
     return this.orderService.createOrder(
       createOrderTableDto,
       productOrServiceId,
@@ -182,7 +182,7 @@ export class OrderController {
     @Body() createOrderTableDto: CreateOrderTableDto,
     @Param("subProductOrSubServiceOrSubCategoryId")
     subProductOrSubServiceOrSubCategoryId: string,
-  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+  ): Promise<OrderTable|null> {
     return this.orderService.createOrderForSubs(
       createOrderTableDto,
       subProductOrSubServiceOrSubCategoryId,
@@ -229,7 +229,7 @@ export class OrderController {
     @Param("productOrServiceOrCategoryId") productOrServiceOrCategoryId: string,
     @Param("ownedFranchiseId") ownedFranchiseId: string,
     @Body() createOrderTableDto: CreateOrderTableDto,
-  ): Promise<{ order: OrderTable; emailStatus: string; smsStatus: string }> {
+  ): Promise<OrderTable|null> {
     const userId = (req.user as UserEntity).id;
     return this.orderService.createOrderWithAuth(
       createOrderTableDto,
