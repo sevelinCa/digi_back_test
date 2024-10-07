@@ -15,7 +15,7 @@ export class ConsultationController {
     description: "A user should be able to create consultation",
   })
   @ApiBody({ type: CreateConsultationTableDto })
-  @Post()
+  @Post("/:ownedFranchiseId")
   async createConsultation(
     @Param("ownedFranchiseId") ownedFranchiseId: string,
     @Body() consultation: CreateConsultationTableDto,
@@ -32,8 +32,8 @@ export class ConsultationController {
     status: HttpStatus.OK,
     description: "Admin can retrieve his/her consultations",
   })
-  @Get()
-  async getConsultations() {
-    return this.consultationService.getConsultations();
+  @Get("/:ownedFranchiseId")
+  async getConsultations(@Param("ownedFranchiseId") ownedFranchiseId: string) {
+    return this.consultationService.getConsultations(ownedFranchiseId);
   }
 }

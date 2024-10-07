@@ -173,6 +173,38 @@ export class SetWorkingHoursDto {
   availabilityWeekDays?: AvailabilityWeekDaysDto[] | any[];
 
   @ApiProperty({
+    type: [AvailabilityWeekDaysDto],
+    example: [
+      {
+        day: "Tuesday",
+        availabilityDayTime: {
+          startTime: "10:00",
+          endTime: "14:00",
+        },
+      },
+      {
+        day: "Wednesday",
+        availabilityDayTime: {
+          startTime: "08:00",
+          endTime: "11:00",
+        },
+      },
+      {
+        day: "Thursday",
+        availabilityDayTime: {
+          startTime: "09:30",
+          endTime: "13:30",
+        },
+      },
+    ],
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  @Type(() => AvailabilityWeekDaysDto)
+  freeConsultations?: AvailabilityWeekDaysDto[] | any[];
+
+  @ApiProperty({
     type: [UnavailabilityDto],
     example: [
       {

@@ -60,6 +60,9 @@ export class DigifranchiseWorkingHours {
   availabilityWeekDays: any[];
 
   @Column({ type: "json", nullable: true })
+  freeConsulations: any[];
+
+  @Column({ type: "json", nullable: true })
   unavailability: any[];
 
   @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
