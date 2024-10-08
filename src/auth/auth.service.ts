@@ -218,7 +218,7 @@ export class AuthService {
   async customerEmailLogin(
     digifranchiseId: string,
     loginDto: AuthEmailLoginDto,
-  ): Promise<any> {
+  ): Promise<LoginResponseType> {
     const user = await this.digifranchiseCustomersRepository.findOne({
       where: { email: loginDto.email },
     });
@@ -299,12 +299,11 @@ export class AuthService {
     });
 
     return {
-      // refreshToken,
+      refreshToken,
       token,
       tokenExpires,
       user,
     };
-    return null
   }
 
   async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
@@ -1020,7 +1019,7 @@ export class AuthService {
   async customerPhoneLogin(
     digifranchiseId: string,
     dto: AuthPhoneLoginDto,
-  ): Promise<any> {
+  ): Promise<LoginResponseType> {
     const user = await this.digifranchiseCustomersRepository.findOne({
       where: { phoneNumber: dto.phoneNumber },
     });
@@ -1122,10 +1121,10 @@ export class AuthService {
     });
 
     return {
-      // refreshToken,
+      refreshToken,
       token,
       tokenExpires,
-      // user,
+      user,
     };
   }
 

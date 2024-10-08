@@ -157,7 +157,15 @@ export class AuthController {
     @Query("digifranchiseId") digifranchiseId: string,
     @Body() dto: AuthEmailLoginDto,
   ) {
-    return await this.service.customerEmailLogin(digifranchiseId, dto);
+    const data = await this.service.customerEmailLogin(digifranchiseId, dto)
+    return {
+      user: {
+        ...data.user,
+        token: data.token,
+        refreshToken: data.refreshToken,
+        tokenExpires: data.tokenExpires,
+      },
+    };
   }
 
   @Post("phone/digifranchise-customer/register")
