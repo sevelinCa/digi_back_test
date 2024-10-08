@@ -12,6 +12,7 @@ import {
   DeleteDateColumn,
 } from "typeorm";
 import { DigifranchiseCustomers } from "./customers.entity";
+import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
 
 @Entity()
 export class DigifranchiseCustomersAccessControl {
@@ -28,9 +29,9 @@ export class DigifranchiseCustomersAccessControl {
   @Column({ type: "varchar" })
   digifranchiseId: string;
   
-  @ManyToOne(() => Digifranchise, { onDelete: "CASCADE" })
+  @ManyToOne(() => DigifranchiseOwner, { onDelete: "CASCADE" })
   @JoinColumn({ name: "digifranchiseId" })
-  digifranchise: Digifranchise;
+  digifranchise: DigifranchiseOwner;
 
   @Column({ nullable: true })
   @Exclude({ toPlainOnly: true })

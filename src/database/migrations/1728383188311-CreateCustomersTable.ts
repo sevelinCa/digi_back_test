@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateCustomersTable1728306097581 implements MigrationInterface {
-    name = 'CreateCustomersTable1728306097581'
+export class CreateCustomersTable1728383188311 implements MigrationInterface {
+    name = 'CreateCustomersTable1728383188311'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "consultation_table" DROP CONSTRAINT "FK_consultation_table_ownedDigifranchise"`);
@@ -11,7 +11,7 @@ export class CreateCustomersTable1728306097581 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "consultation_table" ALTER COLUMN "updatedAt" SET DEFAULT now()`);
         await queryRunner.query(`CREATE INDEX "IDX_481065189f21e163c70e1caa6a" ON "digifranchise_working_hours" ("ownedDigifranchise") `);
         await queryRunner.query(`ALTER TABLE "digifranchise_customers_access_control" ADD CONSTRAINT "FK_363b45febb123ddac08e15145b1" FOREIGN KEY ("customerId") REFERENCES "digifranchise_customers"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "digifranchise_customers_access_control" ADD CONSTRAINT "FK_8237cf19aae6751c9a05bfd943b" FOREIGN KEY ("digifranchiseId") REFERENCES "digifranchise"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "digifranchise_customers_access_control" ADD CONSTRAINT "FK_8237cf19aae6751c9a05bfd943b" FOREIGN KEY ("digifranchiseId") REFERENCES "digifranchise_owner"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "consultation_table" ADD CONSTRAINT "FK_f67ef7b57cf158bdbd6da2ad380" FOREIGN KEY ("ownedDigifranchise") REFERENCES "digifranchise_owner"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
     }
 

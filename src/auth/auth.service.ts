@@ -218,18 +218,9 @@ export class AuthService {
   async customerEmailLogin(
     digifranchiseId: string,
     loginDto: AuthEmailLoginDto,
-  ): Promise<LoginResponseType> {
-    const checkExistingCustomer = await this.digifranchiseCustomerAccessControlRepository.findOne({ where: { digifranchiseId } })
-
-    if (!!checkExistingCustomer) {
-      throw new HttpException(
-        "user is not signed up to this digifranchise",
-        HttpStatus.CONFLICT,
-      );
-    }
-
-    const user = await this.usersService.findOne({
-      email: loginDto.email,
+  ): Promise<any> {
+    const user = await this.digifranchiseCustomersRepository.findOne({
+      where: { email: loginDto.email },
     });
 
     if (!user) {
@@ -244,55 +235,31 @@ export class AuthService {
       );
     }
 
-    if (user.role && user.role.id !== RoleEnum.customer) {
+    const checkExistingCustomer = await this.digifranchiseCustomerAccessControlRepository.findOne({ where: { digifranchiseId, customerId: user.id } })
+
+    // console.log('*********', checkExistingCustomer)
+
+    if (!checkExistingCustomer) {
       throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          errors: {
-            role: "notAllowed",
-          },
-        },
-        HttpStatus.FORBIDDEN,
+        "user is not signed up to this digifranchise",
+        HttpStatus.CONFLICT,
       );
     }
 
-    if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    // if (user.status?.id !== StatusEnum.active) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.FORBIDDEN,
+    //       errors: { role: "verify your email or contact super admin" },
+    //     },
+    //     HttpStatus.FORBIDDEN,
+    //   );
+    // }
 
-    if (user.status?.id !== StatusEnum.active) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          errors: { role: "verify your email or contact super admin" },
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    if (!user.password) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: "incorrectPassword",
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
 
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
-      user.password,
+      checkExistingCustomer.password,
     );
 
     if (!isValidPassword) {
@@ -307,36 +274,37 @@ export class AuthService {
       );
     }
 
-    const session = await this.sessionService.create({
-      user,
-    });
+    // const session = await this.sessionService.create({
+    //   user,
+    // });
 
-    const getCustomerSubscriptions =
-      await this.customerSubscription.getAllSubscriptions(user.id);
+    // const getCustomerSubscriptions =
+    //   await this.customerSubscription.getAllSubscriptions(user.id);
 
-    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-      if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
-        return;
-      } else {
-        await this.customerSubscription.createSubscription(
-          user.id,
-          digifranchiseId,
-        );
-      }
-    });
+    // getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+    //   if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
+    //     return;
+    //   } else {
+    //     await this.customerSubscription.createSubscription(
+    //       user.id,
+    //       digifranchiseId,
+    //     );
+    //   }
+    // });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
-      role: user.role,
-      sessionId: session.id,
+      // role: RoleEnum.customer,
+      // sessionId: session.id,
     });
 
     return {
-      refreshToken,
+      // refreshToken,
       token,
       tokenExpires,
       user,
     };
+    return null
   }
 
   async googleAuth(googleUser: GoogleCreateUserDto): Promise<any> {
@@ -636,14 +604,11 @@ export class AuthService {
     websiteURL: string,
   ): Promise<void> {
     try {
-      console.log('********', digifranchiseId)
-      console.log('********', dto.email)
       const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({
         where: {
           email: dto.email,
         }
       })
-      console.log('>>>>>>>>', checkExistingCustomer)
       if (checkExistingCustomer) {
         throw new HttpException(
           "User with this email is already signed up to this digifranchise.",
@@ -692,7 +657,7 @@ export class AuthService {
         await this.digifranchiseCustomerAccessControlRepository.save(
           this.digifranchiseCustomerAccessControlRepository.create({
             customerId: attachedCustomerToDigifranchise.id,
-            digifranchiseId,
+            digifranchiseId: digifranchiseId,
             password: hashedPassword
           })
         )
@@ -725,10 +690,9 @@ export class AuthService {
         });
       }
     } catch (error) {
-      console.log('-----------', error)
       throw new HttpException(
-        "internal server error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        error.response,
+        error.status,
       );
     }
   }
@@ -919,6 +883,8 @@ export class AuthService {
         })
         await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
 
+        // console.log('>>>>>>>>>>>', attachedCustomerToDigifranchise.id)
+
         await this.digifranchiseCustomerAccessControlRepository.save(
           this.digifranchiseCustomerAccessControlRepository.create({
             customerId: attachedCustomerToDigifranchise.id,
@@ -1054,9 +1020,9 @@ export class AuthService {
   async customerPhoneLogin(
     digifranchiseId: string,
     dto: AuthPhoneLoginDto,
-  ): Promise<LoginResponseType> {
-    const user = await this.usersService.findOne({
-      phoneNumber: dto.phoneNumber,
+  ): Promise<any> {
+    const user = await this.digifranchiseCustomersRepository.findOne({
+      where: { phoneNumber: dto.phoneNumber },
     });
 
     if (!user) {
@@ -1071,50 +1037,53 @@ export class AuthService {
       );
     }
 
-    const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber: dto.phoneNumber } })
+    const checkExistingCustomer = await this.digifranchiseCustomerAccessControlRepository.findOne({ where: { digifranchiseId, customerId: user.id } })
 
-    if (!!checkExistingCustomer) {
+    if (!checkExistingCustomer) {
       throw new HttpException(
         "user is not signed up to this digifranchise",
         HttpStatus.CONFLICT,
       );
     }
 
-    if (user.provider !== AuthProvidersEnum.phone) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    // if (user.provider !== AuthProvidersEnum.phone) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //       errors: {
+    //         email: `needLoginViaProvider:${user.provider}`,
+    //       },
+    //     },
+    //     HttpStatus.UNPROCESSABLE_ENTITY,
+    //   );
+    // }
 
-    if (!user.password) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: "incorrectPassword",
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    // if (!user.password) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //       errors: {
+    //         password: "incorrectPassword",
+    //       },
+    //     },
+    //     HttpStatus.UNPROCESSABLE_ENTITY,
+    //   );
+    // }
 
-    if (user.status?.id !== StatusEnum.active) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          errors: { role: "verify your phone or contact super admin" },
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
+    // if (user.status?.id !== StatusEnum.active) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.FORBIDDEN,
+    //       errors: { role: "verify your phone or contact super admin" },
+    //     },
+    //     HttpStatus.FORBIDDEN,
+    //   );
+    // }
 
-    const isValidPassword = await bcrypt.compare(dto.password, user.password);
+    const isValidPassword = await bcrypt.compare(
+      dto.password, 
+      checkExistingCustomer.password
+    );
 
     if (!isValidPassword) {
       throw new HttpException(
@@ -1128,35 +1097,35 @@ export class AuthService {
       );
     }
 
-    const session = await this.sessionService.create({
-      user,
-    });
+    // const session = await this.sessionService.create({
+    //   user,
+    // });
 
-    const getCustomerSubscriptions =
-      await this.customerSubscription.getAllSubscriptions(user.id);
+    // const getCustomerSubscriptions =
+    //   await this.customerSubscription.getAllSubscriptions(user.id);
 
-    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-      if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
-        return;
-      } else {
-        await this.customerSubscription.createSubscription(
-          user.id,
-          digifranchiseId,
-        );
-      }
-    });
+    // getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+    //   if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
+    //     return;
+    //   } else {
+    //     await this.customerSubscription.createSubscription(
+    //       user.id,
+    //       digifranchiseId,
+    //     );
+    //   }
+    // });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
-      role: user.role,
-      sessionId: session.id,
+      // role: user.role,
+      // sessionId: session.id,
     });
 
     return {
-      refreshToken,
+      // refreshToken,
       token,
       tokenExpires,
-      user,
+      // user,
     };
   }
 
@@ -1567,8 +1536,8 @@ export class AuthService {
 
   private async getTokensData(data: {
     id: User["id"];
-    role: User["role"];
-    sessionId: Session["id"];
+    role?: User["role"];
+    sessionId?: Session["id"];
   }) {
     const tokenExpiresIn = this.configService.getOrThrow("auth.expires", {
       infer: true,
