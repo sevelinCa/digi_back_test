@@ -43,6 +43,8 @@ import { AuthForgotPasswordForWebSiteDto } from "./dto/auth-forgot-password-on-w
 import { ForgotPasswordMailData } from "forgot-password-mail-data.interface";
 import { Role } from "src/roles/domain/role";
 import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
+import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/customers.entity";
+import { DigifranchiseCustomersAccessControl } from "src/digifranchise-customers/entities/digifranchise-customers-access-control.entity";
 
 @Injectable()
 export class AuthService {
@@ -56,9 +58,13 @@ export class AuthService {
     private customerSubscription: CustomerSubscriptionService,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(DigifranchiseCustomers)
+    private readonly digifranchiseCustomersRepository: Repository<DigifranchiseCustomers>,
+    @InjectRepository(DigifranchiseCustomersAccessControl)
+    private readonly digifranchiseCustomerAccessControlRepository: Repository<DigifranchiseCustomersAccessControl>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-  ) {}
+  ) { }
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({ email: loginDto.email });
@@ -213,8 +219,8 @@ export class AuthService {
     digifranchiseId: string,
     loginDto: AuthEmailLoginDto,
   ): Promise<LoginResponseType> {
-    const user = await this.usersService.findOne({
-      email: loginDto.email,
+    const user = await this.digifranchiseCustomersRepository.findOne({
+      where: { email: loginDto.email },
     });
 
     if (!user) {
@@ -229,55 +235,31 @@ export class AuthService {
       );
     }
 
-    if (user.role && user.role.id !== RoleEnum.customer) {
+    const checkExistingCustomer = await this.digifranchiseCustomerAccessControlRepository.findOne({ where: { digifranchiseId, customerId: user.id } })
+
+    // console.log('*********', checkExistingCustomer)
+
+    if (!checkExistingCustomer) {
       throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          errors: {
-            role: "notAllowed",
-          },
-        },
-        HttpStatus.FORBIDDEN,
+        "user is not signed up to this digifranchise",
+        HttpStatus.CONFLICT,
       );
     }
 
-    if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    // if (user.status?.id !== StatusEnum.active) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.FORBIDDEN,
+    //       errors: { role: "verify your email or contact super admin" },
+    //     },
+    //     HttpStatus.FORBIDDEN,
+    //   );
+    // }
 
-    if (user.status?.id !== StatusEnum.active) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          errors: { role: "verify your email or contact super admin" },
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    if (!user.password) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: "incorrectPassword",
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
 
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
-      user.password,
+      checkExistingCustomer.password,
     );
 
     if (!isValidPassword) {
@@ -292,28 +274,28 @@ export class AuthService {
       );
     }
 
-    const session = await this.sessionService.create({
-      user,
-    });
+    // const session = await this.sessionService.create({
+    //   user,
+    // });
 
-    const getCustomerSubscriptions =
-      await this.customerSubscription.getAllSubscriptions(user.id);
+    // const getCustomerSubscriptions =
+    //   await this.customerSubscription.getAllSubscriptions(user.id);
 
-    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-      if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
-        return;
-      } else {
-        await this.customerSubscription.createSubscription(
-          user.id,
-          digifranchiseId,
-        );
-      }
-    });
+    // getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+    //   if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
+    //     return;
+    //   } else {
+    //     await this.customerSubscription.createSubscription(
+    //       user.id,
+    //       digifranchiseId,
+    //     );
+    //   }
+    // });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
-      role: user.role,
-      sessionId: session.id,
+      // role: RoleEnum.customer,
+      // sessionId: session.id,
     });
 
     return {
@@ -620,61 +602,98 @@ export class AuthService {
     dto: AuthRegisterLoginDto,
     websiteURL: string,
   ): Promise<void> {
-    const user = await this.usersService.create({
-      ...dto,
-      email: dto.email,
-      phoneNumber: null,
-      role: {
-        id: RoleEnum.customer,
-      },
-      status: {
-        id: StatusEnum.inactive,
-      },
-      image: null,
-      idImage: null,
-      gender: null,
-      race: null,
-      homeAddress: null,
-      educationLevel: null,
-      currentActivity: null,
-      fieldOfStudy: null,
-      qualifications: null,
-      professionalBody: null,
-      southAfricanCitizen: null,
-      documentId: null,
-      countryOfOrigin: null,
-      criminalRecord: null,
-      policeClearenceCertificate: null,
-      crimes: null,
-      isProfileComplete: false,
-    });
+    try {
+      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({
+        where: {
+          email: dto.email,
+        }
+      })
+      if (checkExistingCustomer) {
+        throw new HttpException(
+          "User with this email is already signed up to this digifranchise.",
+          HttpStatus.CONFLICT,
+        );
+      } else {
+        // const user = await this.usersService.create({
+        //   ...dto,
+        //   email: dto.email,
+        //   phoneNumber: null,
+        //   role: {
+        //     id: RoleEnum.customer,
+        //   },
+        //   status: {
+        //     id: StatusEnum.inactive,
+        //   },
+        //   image: null,
+        //   idImage: null,
+        //   gender: null,
+        //   race: null,
+        //   homeAddress: null,
+        //   educationLevel: null,
+        //   currentActivity: null,
+        //   fieldOfStudy: null,
+        //   qualifications: null,
+        //   professionalBody: null,
+        //   southAfricanCitizen: null,
+        //   documentId: null,
+        //   countryOfOrigin: null,
+        //   criminalRecord: null,
+        //   policeClearenceCertificate: null,
+        //   crimes: null,
+        //   isProfileComplete: false,
+        // });
 
-    const hash = await this.jwtService.signAsync(
-      {
-        confirmEmailUserId: user.id,
-      },
-      {
-        secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
-          infer: true,
-        }),
-        expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
-          infer: true,
-        }),
-      },
-    );
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(dto.password, salt);
 
-    await this.customerSubscription.createSubscription(
-      user.id,
-      digifranchiseId,
-    );
+        const attachedCustomerToDigifranchise = this.digifranchiseCustomersRepository.create({
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
+        })
+        await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
 
-    await this.mailService.customerSignUp({
-      to: dto.email,
-      data: {
-        hash,
-        websiteUrl: websiteURL,
-      },
-    });
+        await this.digifranchiseCustomerAccessControlRepository.save(
+          this.digifranchiseCustomerAccessControlRepository.create({
+            customerId: attachedCustomerToDigifranchise.id,
+            digifranchiseId: digifranchiseId,
+            password: hashedPassword
+          })
+        )
+
+        const hash = await this.jwtService.signAsync(
+          {
+            confirmEmailUserId: attachedCustomerToDigifranchise.id,
+          },
+          {
+            secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
+              infer: true,
+            }),
+            expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
+              infer: true,
+            }),
+          },
+        );
+
+        // await this.customerSubscription.createSubscription(
+        //   user.id,
+        //   digifranchiseId,
+        // );
+
+        await this.mailService.customerSignUp({
+          to: dto.email,
+          data: {
+            hash,
+            websiteUrl: websiteURL,
+          },
+        });
+      }
+    } catch (error) {
+      throw new HttpException(
+        error.response,
+        error.status,
+      );
+    }
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -802,80 +821,115 @@ export class AuthService {
     digifranchiseId: string,
     dto: AuthPhoneRegisterDto,
   ) {
-    const { phoneNumber } = dto;
-    const users = await this.usersService.findOne({ phoneNumber });
-    if (users) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          errors: {
-            message: "Phone number already exists",
-          },
-        },
-        HttpStatus.CONFLICT,
-      );
-    }
-    const user = await this.usersService.create({
-      ...dto,
-      provider: AuthProvidersEnum.phone,
-      email: null,
-      phoneNumber: dto.phoneNumber,
-      role: {
-        id: RoleEnum.customer,
-      },
-      status: {
-        id: StatusEnum.inactive,
-      },
-      image: null,
-      idImage: null,
-      gender: null,
-      race: null,
-      homeAddress: null,
-      educationLevel: null,
-      currentActivity: null,
-      fieldOfStudy: null,
-      qualifications: null,
-      professionalBody: null,
-      southAfricanCitizen: null,
-      documentId: null,
-      countryOfOrigin: null,
-      criminalRecord: null,
-      policeClearenceCertificate: null,
-      crimes: null,
-      isProfileComplete: false,
-    });
+    try {
+      const { phoneNumber } = dto;
+      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber } })
 
-    if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          errors: {
-            phoneNumber: "failedToCreatUser",
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
-    if (user) {
-      try {
-        await this.smsService.sendOTP(dto.phoneNumber);
-        await this.customerSubscription.createSubscription(
-          user.id,
-          digifranchiseId,
-        );
-      } catch (error) {
+      if (checkExistingCustomer) {
         throw new HttpException(
-          {
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            errors: {
-              phoneNumber: "failed to send SMS",
-              message: "user has been created but unable to SMS at this time",
-            },
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          "User with this email is already signed up to this digifranchise.",
+          HttpStatus.CONFLICT,
         );
+      } else {
+        // const users = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber } });
+        // if (users) {
+        //   throw new HttpException(
+        //     {
+        //       status: HttpStatus.CONFLICT,
+        //       errors: {
+        //         message: "Phone number already exists",
+        //       },
+        //     },
+        //     HttpStatus.CONFLICT,
+        //   );
+        // }
+        // const user = await this.usersService.create({
+        //   ...dto,
+        //   provider: AuthProvidersEnum.phone,
+        //   email: null,
+        //   phoneNumber: dto.phoneNumber,
+        //   role: {
+        //     id: RoleEnum.customer,
+        //   },
+        //   status: {
+        //     id: StatusEnum.inactive,
+        //   },
+        //   image: null,
+        //   idImage: null,
+        //   gender: null,
+        //   race: null,
+        //   homeAddress: null,
+        //   educationLevel: null,
+        //   currentActivity: null,
+        //   fieldOfStudy: null,
+        //   qualifications: null,
+        //   professionalBody: null,
+        //   southAfricanCitizen: null,
+        //   documentId: null,
+        //   countryOfOrigin: null,
+        //   criminalRecord: null,
+        //   policeClearenceCertificate: null,
+        //   crimes: null,
+        //   isProfileComplete: false,
+        // });
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(dto.password, salt);
+
+        const attachedCustomerToDigifranchise = this.digifranchiseCustomersRepository.create({
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          phoneNumber: dto.phoneNumber,
+        })
+        await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
+
+        // console.log('>>>>>>>>>>>', attachedCustomerToDigifranchise.id)
+
+        await this.digifranchiseCustomerAccessControlRepository.save(
+          this.digifranchiseCustomerAccessControlRepository.create({
+            customerId: attachedCustomerToDigifranchise.id,
+            digifranchiseId,
+            password: hashedPassword
+          })
+        )
+
+        if (!attachedCustomerToDigifranchise) {
+          throw new HttpException(
+            {
+              status: HttpStatus.INTERNAL_SERVER_ERROR,
+              errors: {
+                phoneNumber: "failedToCreatUser",
+              },
+            },
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
+        }
+
+        if (attachedCustomerToDigifranchise) {
+          try {
+            await this.smsService.sendOTP(dto.phoneNumber);
+            // await this.customerSubscription.createSubscription(
+            //   attachedCustomerToDigifranchise.id,
+            //   digifranchiseId,
+            // );
+          } catch (error) {
+            throw new HttpException(
+              {
+                status: HttpStatus.INTERNAL_SERVER_ERROR,
+                errors: {
+                  phoneNumber: "failed to send SMS",
+                  message: "user has been created but unable to SMS at this time",
+                },
+              },
+              HttpStatus.UNPROCESSABLE_ENTITY,
+            );
+          }
+        }
       }
+    } catch (error) {
+      throw new HttpException(
+        "internal server error",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -966,8 +1020,8 @@ export class AuthService {
     digifranchiseId: string,
     dto: AuthPhoneLoginDto,
   ): Promise<LoginResponseType> {
-    const user = await this.usersService.findOne({
-      phoneNumber: dto.phoneNumber,
+    const user = await this.digifranchiseCustomersRepository.findOne({
+      where: { phoneNumber: dto.phoneNumber },
     });
 
     if (!user) {
@@ -982,41 +1036,53 @@ export class AuthService {
       );
     }
 
-    if (user.provider !== AuthProvidersEnum.phone) {
+    const checkExistingCustomer = await this.digifranchiseCustomerAccessControlRepository.findOne({ where: { digifranchiseId, customerId: user.id } })
+
+    if (!checkExistingCustomer) {
       throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        "user is not signed up to this digifranchise",
+        HttpStatus.CONFLICT,
       );
     }
 
-    if (!user.password) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            password: "incorrectPassword",
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    // if (user.provider !== AuthProvidersEnum.phone) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //       errors: {
+    //         email: `needLoginViaProvider:${user.provider}`,
+    //       },
+    //     },
+    //     HttpStatus.UNPROCESSABLE_ENTITY,
+    //   );
+    // }
 
-    if (user.status?.id !== StatusEnum.active) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          errors: { role: "verify your phone or contact super admin" },
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
+    // if (!user.password) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.UNPROCESSABLE_ENTITY,
+    //       errors: {
+    //         password: "incorrectPassword",
+    //       },
+    //     },
+    //     HttpStatus.UNPROCESSABLE_ENTITY,
+    //   );
+    // }
 
-    const isValidPassword = await bcrypt.compare(dto.password, user.password);
+    // if (user.status?.id !== StatusEnum.active) {
+    //   throw new HttpException(
+    //     {
+    //       status: HttpStatus.FORBIDDEN,
+    //       errors: { role: "verify your phone or contact super admin" },
+    //     },
+    //     HttpStatus.FORBIDDEN,
+    //   );
+    // }
+
+    const isValidPassword = await bcrypt.compare(
+      dto.password, 
+      checkExistingCustomer.password
+    );
 
     if (!isValidPassword) {
       throw new HttpException(
@@ -1030,28 +1096,28 @@ export class AuthService {
       );
     }
 
-    const session = await this.sessionService.create({
-      user,
-    });
+    // const session = await this.sessionService.create({
+    //   user,
+    // });
 
-    const getCustomerSubscriptions =
-      await this.customerSubscription.getAllSubscriptions(user.id);
+    // const getCustomerSubscriptions =
+    //   await this.customerSubscription.getAllSubscriptions(user.id);
 
-    getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
-      if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
-        return;
-      } else {
-        await this.customerSubscription.createSubscription(
-          user.id,
-          digifranchiseId,
-        );
-      }
-    });
+    // getCustomerSubscriptions.map(async (subscription: CustomerSubscription) => {
+    //   if (subscription.digifranchiseOwnerId.id === digifranchiseId) {
+    //     return;
+    //   } else {
+    //     await this.customerSubscription.createSubscription(
+    //       user.id,
+    //       digifranchiseId,
+    //     );
+    //   }
+    // });
 
     const { token, refreshToken, tokenExpires } = await this.getTokensData({
       id: user.id,
-      role: user.role,
-      sessionId: session.id,
+      // role: user.role,
+      // sessionId: session.id,
     });
 
     return {
@@ -1469,8 +1535,8 @@ export class AuthService {
 
   private async getTokensData(data: {
     id: User["id"];
-    role: User["role"];
-    sessionId: Session["id"];
+    role?: User["role"];
+    sessionId?: Session["id"];
   }) {
     const tokenExpiresIn = this.configService.getOrThrow("auth.expires", {
       infer: true,

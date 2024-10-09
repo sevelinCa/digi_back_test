@@ -55,6 +55,7 @@ import { BullModule } from "@nestjs/bull";
 import { ConsultationModule } from "./consultation/consultation.module";
 
 import { QuotationsModule } from "./quotations/quotations.module";
+import { DigifranchiseCustomersModule } from './digifranchise-customers/digifranchise-customers.module';
 
 @Module({
   imports: [
@@ -157,6 +158,7 @@ import { QuotationsModule } from "./quotations/quotations.module";
     ConsultationModule,
     // ChatModule
     QuotationsModule,
+    DigifranchiseCustomersModule,
   ],
 })
 export class AppModule {}

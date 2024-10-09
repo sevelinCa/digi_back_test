@@ -1,3 +1,4 @@
+import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/customers.entity";
 import { User } from "src/users/domain/user";
 
 export class Session {
