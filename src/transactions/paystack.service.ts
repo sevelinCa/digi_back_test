@@ -254,5 +254,26 @@ export class PaystackService {
       throw new Error(`Failed to get Paystack supported banks: ${error.message}`);
     }
   }
+
+
+  async getPayStackSupportedCountry(): Promise<any> {
+    const apiUrl = 'https://api.paystack.co/country'; 
+    const apiKey = process.env.PAYSTACK_API_KEY;
+  
+    const headers = {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    };
+  
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(apiUrl, { headers })
+      );
+      
+      return response.data; 
+    } catch (error) {
+      throw new Error(`Failed to get Paystack supported countrys: ${error.message}`);
+    }
+  }
   
 }

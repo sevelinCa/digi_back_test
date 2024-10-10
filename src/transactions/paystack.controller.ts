@@ -134,4 +134,21 @@ export class PaystackController {
       );
     }
   }
+
+  @Get('supported-country')
+  async getPayStackSupportedCountry() {
+    try {
+      const country = await this.paystackService.getPayStackSupportedCountry();
+      return {
+        status: true,
+        message: 'Successfully retrieved supported country',
+        data: country.data 
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to retrieve supported country',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
