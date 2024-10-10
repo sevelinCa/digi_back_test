@@ -115,27 +115,23 @@ export class PaystackController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-  }
+  }  
 
 
-  @Post('subaccount')
-  async createSubAccount(@Body() dto: CreatePayStackSubAccountDTO) {
+  @Get('supported-banks')
+  async getPayStackSupportedBanks() {
     try {
-      const result = await this.paystackService.createSubAccount(dto);
+      const banks = await this.paystackService.getPayStackSupportedBanks();
       return {
         status: true,
-        message: 'Subaccount created successfully',
-        data: result.data,
+        message: 'Successfully retrieved supported banks',
+        data: banks.data 
       };
     } catch (error) {
       throw new HttpException(
-        error.message || 'Failed to create subAccount',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message || 'Failed to retrieve supported banks',
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
-
-
-
-  
 }

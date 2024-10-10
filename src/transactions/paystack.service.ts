@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO,  } from './dto/paystack.dto';
-import { lastValueFrom } from 'rxjs';
+import { CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO,  } from './dto/paystack.dto';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
 import { Repository } from 'typeorm';
@@ -235,42 +235,24 @@ export class PaystackService {
     }
   }
 
-  async createSubAccount(dto: CreatePayStackSubAccountDTO) {
-    const url = `${this.paystackUrl}/subaccount`;
+  async getPayStackSupportedBanks(): Promise<any> {
+    const apiUrl = 'https://api.paystack.co/bank'; 
+    const apiKey = process.env.PAYSTACK_API_KEY;
+  
     const headers = {
-      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
-      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
     };
   
-    console.log('Creating subaccount with:', dto);  
-  
     try {
-      const response = await lastValueFrom(
-        this.httpService.post(url, dto, { headers })
+      const response = await firstValueFrom(
+        this.httpService.get(apiUrl, { headers })
       );
-      const subaccountData = response?.data?.data;
       
-      return {
-        status: true,
-        message: 'Subaccount created successfully',
-        data: subaccountData,
-      };
+      return response.data; 
     } catch (error) {
-      console.error('Error creating subaccount:', error?.response?.data);
-      
-      if (error.response && error.response.status === 400) {
-        throw new HttpException(
-          error.response?.data?.message || 'Invalid input data for subaccount',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      
-      throw new HttpException(
-        error.response?.data?.message || 'Failed to create Paystack subaccount',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new Error(`Failed to get Paystack supported banks: ${error.message}`);
     }
   }
- 
   
 }
