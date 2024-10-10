@@ -38,7 +38,7 @@ export class OrderComplaintsController {
     description: "A new order complait has been successfully created.",
   })
   @ApiBody({ type: CreateOrderComplaintsDto })
-  @Post("rating-order-complain")
+  @Post("create-order-complain/:orderId")
   async createRatingOrder(
     @Body() createOrderComplaintsDto: CreateOrderComplaintsDto,
     @Query("orderId") orderId: string,
