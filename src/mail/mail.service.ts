@@ -432,7 +432,6 @@ export class MailService {
     }
   }
 
-
   async sendEnquiryConfirmationEmail(
     mailData: enquiryEmailNotificationMailData & { customerName: string }
   ): Promise<void> {
@@ -502,5 +501,4 @@ export class MailService {
       },
     });
   }
-  
 }
