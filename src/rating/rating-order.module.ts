@@ -16,9 +16,11 @@ import { OrderComplaintsController } from "./order-complaints.controller";
 import { DigifranchiseSubProduct } from "src/digifranchise/entities/digifranchise-sub-product.entity";
 import { DigifranchiseSubServices } from "src/digifranchise/entities/digifranchise-sub-service.entity";
 import { DigifranchiseOwner } from "src/digifranchise/entities/digifranchise-ownership.entity";
+import { MailModule } from "src/mail/mail.module";
 
 @Module({
   imports: [
+    MailModule,
     TypeOrmModule.forFeature([
       RatingOrderTable,
       UserEntity,
