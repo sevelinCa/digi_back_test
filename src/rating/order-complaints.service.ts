@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
 import { IsNull, Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import {
 import { CreateOrderComplaintsDto } from './dto/Complaints.dto';
 import { getOrderUserNamesAndEmailWithOwnerEmail } from 'src/helper/Enquiry-complement-helper-functions';
 import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class OrderComplaintsService {
@@ -23,21 +24,25 @@ export class OrderComplaintsService {
     @InjectRepository(DigifranchiseOwner)
     private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(OrderIssueTable)
-    private readonly orderIssuepository: Repository<OrderIssueTable>
+    private readonly orderIssuepository: Repository<OrderIssueTable>,
+
+    @Inject(MailService)
+    private readonly mailService: MailService,
   ) {}
 
   async createOrderComplaint(
     orderId: string,
     createOrderComplaintsDto: CreateOrderComplaintsDto
   ): Promise<OrderComplaintsTable> {
-    const order = await this.orderpository.findOne({ where: { id: orderId } });
+    const order = await this.orderRepository.findOne({ where: { id: orderId } });
     if (!order) {
       throw new Error('Order does not exist');
     }
+  
     const orderComplaints = await this.orderComplaintsRepository.findOne({
       where: { order: { id: orderId } },
     });
-    if(orderComplaints){
+    if (orderComplaints) {
       throw new HttpException(
         {
           status: HttpStatus.CONFLICT,
@@ -45,13 +50,27 @@ export class OrderComplaintsService {
         },
         HttpStatus.CONFLICT
       );
-    };
+    }
+  
     const newOrderComplaint = this.orderComplaintsRepository.create({
       ...createOrderComplaintsDto,
       order: order,
     });
-    return await this.orderComplaintsRepository.save(newOrderComplaint);
+    const savedComplaint = await this.orderComplaintsRepository.save(newOrderComplaint);
+  
+    const emailData = await this.getOrderUserNamesAndEmailWithOwnerEmail(orderId);
+  
+    if (emailData) {
+      await this.mailService.sendComplaintConfirmationEmail({
+        to: emailData.email,          
+        supportEmail: emailData.supportEmail, 
+        customerName: emailData.name  
+      });
+    }
+  
+    return savedComplaint;
   }
+  
 
   async getAllOrderComplaint(): Promise<OrderComplaintsTable[]> {
     return await this.orderComplaintsRepository.find({

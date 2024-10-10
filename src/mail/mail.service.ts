@@ -495,7 +495,7 @@ export class MailService {
       ),
       context: {
         title: emailSubject,
-        supportEmail: mailData.franchiseOwnerEmail,
+        supportEmail: mailData.supportEmail,
         companyName: this.configService.get('app.name', { infer: true }), 
         customerName: mailData.customerName,
       },
