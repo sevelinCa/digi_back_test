@@ -330,4 +330,11 @@ export class OrderController {
       ownedFranchiseId
     );
   }
+
+
+  @Get(':orderId/get-user-names-and-email')
+  async getUserNamesAndEmail(@Param('orderId') orderId: string) {
+    const result = await this.orderService.getOrderUserNamesAndEmail(orderId);
+    return result;
+  }
 }
