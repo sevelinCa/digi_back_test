@@ -8,6 +8,8 @@ import {
   OrderIssueTable,
 } from './entities/Complaints.entity';
 import { CreateOrderComplaintsDto } from './dto/Complaints.dto';
+import { getOrderUserNamesAndEmailWithOwnerEmail } from 'src/helper/Enquiry-complement-helper-functions';
+import { DigifranchiseOwner } from 'src/digifranchise/entities/digifranchise-ownership.entity';
 
 @Injectable()
 export class OrderComplaintsService {
@@ -16,7 +18,10 @@ export class OrderComplaintsService {
     private readonly orderComplaintsRepository: Repository<OrderComplaintsTable>,
     @InjectRepository(OrderTable)
     private readonly orderpository: Repository<OrderTable>,
-
+    @InjectRepository(OrderTable)
+    private readonly orderRepository: Repository<OrderTable>,
+    @InjectRepository(DigifranchiseOwner)
+    private readonly digifranchiseOwnerRepository: Repository<DigifranchiseOwner>,
     @InjectRepository(OrderIssueTable)
     private readonly orderIssuepository: Repository<OrderIssueTable>
   ) {}
@@ -54,4 +59,56 @@ export class OrderComplaintsService {
       relations: ['order'],
     });
   }
+
+  async getOrderUserNamesAndEmailWithOwnerEmail(orderId: string): Promise<{
+    email: string;
+    name: string;
+    digifranchiseOwnerId: string;
+    supportEmail: string;
+  } | null> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['userId', 'ownedDigifranchise'],
+    });
+  
+    if (!order) {
+      return null;
+    }
+  
+    const userInfo = order.orderAdditionalInfo.find((info) => info.basic_info);
+  
+    if (!userInfo || !userInfo.basic_info) {
+      return null;
+    }
+  
+    const digifranchiseOwnerId = order.ownedDigifranchise!.id;
+  
+    try {
+      const supportEmail = await this.getEmailByDigifranchiseOwnerId(digifranchiseOwnerId);
+  
+      return {
+        email: userInfo.basic_info.email,
+        name: userInfo.basic_info.name,
+        digifranchiseOwnerId: digifranchiseOwnerId,
+        supportEmail: supportEmail,
+      };
+    } catch (error) {
+      console.error(`Error getting owner email: ${error.message}`);
+      return null;
+    }
+  }
+  
+  private async getEmailByDigifranchiseOwnerId(digifranchiseOwnerId: string): Promise<string> {
+    const owner = await this.digifranchiseOwnerRepository.findOne({
+      where: { id: digifranchiseOwnerId },
+      select: ['userEmail'],
+    });
+  
+    if (!owner) {
+      throw new Error(`No owner found with ID: ${digifranchiseOwnerId}`);
+    }
+  
+    return owner.userEmail;
+  }
+    
 }

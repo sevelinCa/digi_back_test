@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f2f4f6;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: left; /* Align text to the left */
+        }
+        h1 {
+            font-size: 28px;
+            color: #2d3748;
+            text-align: center; /* Center align title */
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        a {
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+
+                .signature {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .button-container {
+            text-align: center; 
+        }
+        
+        footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{title}}</h1>
+        <p>Dear {{customerName}},</p> 
+        <p>Thank you for reaching out to us. We have received your complaint and will investigate the issue. You can expect a response within 48 hours.</p>
+        <p>If you have further questions, feel free to reach out to us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.</p>
+       <footer class="signature">
+            <p>Best regards,</p>
+            <p>The {{companyName}} Team</p>
+        </footer>
+    </div>
+</body>
+</html>

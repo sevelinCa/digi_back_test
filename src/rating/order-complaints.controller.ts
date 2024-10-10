@@ -21,6 +21,7 @@ import { RolesGuard } from "src/roles/roles.guard";
 import { CreateOrderComplaintsDto } from "./dto/Complaints.dto";
 import { OrderComplaintsTable } from "./entities/Complaints.entity";
 import { OrderComplaintsService } from "./order-complaints.service";
+import { getOrderUserNamesAndEmailWithOwnerEmail } from "src/helper/Enquiry-complement-helper-functions";
 
 @ApiTags("Order - Complaints")
 // @ApiBearerAuth()
@@ -56,5 +57,11 @@ export class OrderComplaintsController {
   @Get("all")
   async getAllOrderComplaint(): Promise<OrderComplaintsTable[]> {
     return this.orderComplaintsService.getAllOrderComplaint();
+  }
+
+  @Get('get-user-names-and-email-with-owner/:orderId')
+  async getUserNamesAndEmailWithOwner(@Param('orderId') orderId: string) {
+    const result = await this.orderComplaintsService.getOrderUserNamesAndEmailWithOwnerEmail(orderId);
+    return result;
   }
 }

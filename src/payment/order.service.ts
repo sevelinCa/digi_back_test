@@ -743,4 +743,38 @@ export class OrderService {
 
     return savedOrder;
   }
+
+
+
+
+  async  getOrderUserNamesAndEmail(orderId: string): Promise<{ 
+    email: string; 
+    name: string; 
+    digifranchiseOwnerId: string;
+  } | null> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['userId', 'ownedDigifranchise']
+    });
+
+    if (!order) {
+      return null;
+    }
+
+    const userInfo = order.orderAdditionalInfo.find(info => info.basic_info);
+    
+    if (!userInfo || !userInfo.basic_info) {
+      return null;
+    }
+
+    return {
+      email: userInfo.basic_info.email,
+      name: userInfo.basic_info.name,
+      digifranchiseOwnerId: order.ownedDigifranchise!.id,
+    };
+  }
+
+
+
+  
 }
