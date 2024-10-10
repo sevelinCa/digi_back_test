@@ -19,3 +19,8 @@ export interface enquiryEmailNotificationMailData {
   customerName: string; 
 }
 
+export interface enquiryAndComplaintEmailNotificationMailData {
+  to: string;
+  franchiseOwnerEmail: string;
+  customerName: string; 
+}
