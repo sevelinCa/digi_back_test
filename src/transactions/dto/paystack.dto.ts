@@ -67,4 +67,3 @@ export class CreatePayStackSubAccountDTO {
   @IsNotEmpty()
   percentage_charge: number;
 }
-

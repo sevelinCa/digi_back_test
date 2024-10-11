@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO,  } from './dto/paystack.dto';
+import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO,  } from './dto/paystack.dto';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
@@ -273,6 +273,45 @@ export class PaystackService {
       return response.data; 
     } catch (error) {
       throw new Error(`Failed to get Paystack supported countrys: ${error.message}`);
+    }
+  }
+
+
+
+  async createSubAccount(dto: CreatePayStackSubAccountDTO) {
+    const url = `${this.paystackUrl}/subaccount`;
+    const headers = {
+      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
+      'Content-Type': 'application/json',
+    };
+  
+    console.log('Creating subaccount with:', dto);  
+  
+    try {
+      const response = await lastValueFrom(
+        this.httpService.post(url, dto, { headers })
+      );
+      const subaccountData = response?.data?.data;
+      
+      return {
+        status: true,
+        message: 'Subaccount created successfully',
+        data: subaccountData,
+      };
+    } catch (error) {
+      console.error('Error creating subaccount:', error?.response?.data);
+      
+      if (error.response && error.response.status === 400) {
+        throw new HttpException(
+          error.response?.data?.message || 'Invalid input data for subaccount',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      
+      throw new HttpException(
+        error.response?.data?.message || 'Failed to create Paystack subaccount',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   
