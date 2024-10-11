@@ -151,4 +151,21 @@ export class PaystackController {
       );
     }
   }
+
+  @Post('subaccount')
+  async createSubAccount(@Body() dto: CreatePayStackSubAccountDTO) {
+    try {
+      const result = await this.paystackService.createSubAccount(dto);
+      return {
+        status: true,
+        message: 'Subaccount created successfully',
+        data: result.data,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to create subAccount',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
