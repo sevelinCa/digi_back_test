@@ -315,5 +315,26 @@ export class PaystackService {
   }
 
 
+  
+
+
+  async getSubAccounts() {
+    const url = `${this.paystackUrl}/subaccount`;
+    const headers = {
+      Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
+    };
+  
+    try {
+      const response = await lastValueFrom(this.httpService.get(url, { headers }));
+      return response?.data?.data;
+    } catch (error) {
+      console.error('Error fetching subaccounts:', error?.response?.data);
+      throw new HttpException(
+        error.response?.data?.message || 'Failed to retrieve subaccounts',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  
 
 }
