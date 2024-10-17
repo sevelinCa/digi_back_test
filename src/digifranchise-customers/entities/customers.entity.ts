@@ -1,4 +1,7 @@
 import { Exclude, Expose } from "class-transformer";
+import { Status } from "src/statuses/domain/status";
+import { StatusEntity } from "src/statuses/infrastructure/persistence/relational/entities/status.entity";
+import { StatusEnum } from "src/statuses/statuses.enum";
 // import { Digifranchise } from "src/digifranchise/entities/digifranchise.entity";
 // import { UserEntity } from "src/users/infrastructure/persistence/relational/entities/user.entity";
 import {
@@ -10,6 +13,7 @@ import {
   // ManyToOne,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToOne,
 } from "typeorm";
 
 @Entity()
@@ -37,4 +41,8 @@ export class DigifranchiseCustomers {
 
   @Column({ type: "timestamp", nullable: true })
   createdAt: Date | null;
+  
+  @ManyToOne(()=> StatusEntity,{onDelete: "CASCADE",cascade: true})
+  status: StatusEntity;
+
 }
