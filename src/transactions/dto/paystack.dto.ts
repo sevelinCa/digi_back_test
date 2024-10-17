@@ -69,3 +69,40 @@ export class CreatePayStackSubAccountDTO {
 }
 
 
+export class InitializeSplitPaymentDTO {
+  @ApiProperty({
+    example: "customer@email.com",
+    description: "Customer's email",
+  })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({
+    example: 20000,
+    description: "Amount to charge in kobo (20000 = 200 Naira)",
+  })
+  @IsNotEmpty()
+  amount: number;
+
+  @ApiProperty({
+    example: "ACCT_xxxxxxxxxx",
+    description: "Subaccount to split the payment with",
+  })
+  @IsNotEmpty()
+  subaccount: string;
+
+  @ApiProperty({
+    example: 10000,
+    description: "Flat fee that goes to the main account",
+    required: false,
+  })
+  transaction_charge?: number;
+
+  @ApiProperty({
+    example: "subaccount",
+    description: "Bearer of transaction fee (optional)",
+    required: false,
+  })
+  bearer?: string;
+}
