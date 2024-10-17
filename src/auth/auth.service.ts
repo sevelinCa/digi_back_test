@@ -45,6 +45,7 @@ import { Role } from "src/roles/domain/role";
 import { RoleEntity } from "src/roles/infrastructure/persistence/relational/entities/role.entity";
 import { DigifranchiseCustomers } from "src/digifranchise-customers/entities/customers.entity";
 import { DigifranchiseCustomersAccessControl } from "src/digifranchise-customers/entities/digifranchise-customers-access-control.entity";
+import { StatusEntity } from "src/statuses/infrastructure/persistence/relational/entities/status.entity";
 
 @Injectable()
 export class AuthService {
@@ -63,8 +64,8 @@ export class AuthService {
     @InjectRepository(DigifranchiseCustomersAccessControl)
     private readonly digifranchiseCustomerAccessControlRepository: Repository<DigifranchiseCustomersAccessControl>,
     @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
-  ) { }
+    private readonly roleRepository: Repository<RoleEntity>
+  ) {}
 
   async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
     const user = await this.usersService.findOne({ email: loginDto.email });
@@ -75,7 +76,7 @@ export class AuthService {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: { email: "notFound" },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -85,7 +86,7 @@ export class AuthService {
           status: HttpStatus.FORBIDDEN,
           errors: { role: "notAllowed" },
         },
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -95,7 +96,7 @@ export class AuthService {
           status: HttpStatus.FORBIDDEN,
           errors: { role: "verify your email or contact super admin" },
         },
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -105,7 +106,7 @@ export class AuthService {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: { email: `needLoginViaProvider:${user.provider}` },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -115,13 +116,13 @@ export class AuthService {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: { password: "incorrectPassword" },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
-      user.password,
+      user.password
     );
 
     if (!isValidPassword) {
@@ -130,7 +131,7 @@ export class AuthService {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: { password: "incorrectPassword" },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -147,7 +148,7 @@ export class AuthService {
     try {
       const csrfResponse = await axios.get(
         `${this.configService.get<string>("ACADEMY_API_BASE_URL")}${this.configService.get<string>("ACADEMY_CSRF_TOKEN_ENDPOINT")}`,
-        { withCredentials: true },
+        { withCredentials: true }
       );
       csrfToken = csrfResponse.data.csrfToken;
       cookies = csrfResponse.headers["set-cookie"]?.join("; ") || "";
@@ -157,7 +158,7 @@ export class AuthService {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: { login: "AcademyCSRFTokenFetchFailed" },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -177,7 +178,7 @@ export class AuthService {
             Cookie: cookies,
           },
           withCredentials: true,
-        },
+        }
       );
 
       const academyData = academyResponse.data;
@@ -217,10 +218,11 @@ export class AuthService {
 
   async customerEmailLogin(
     digifranchiseId: string,
-    loginDto: AuthEmailLoginDto,
+    loginDto: AuthEmailLoginDto
   ): Promise<LoginResponseType> {
     const user = await this.digifranchiseCustomersRepository.findOne({
       where: { email: loginDto.email },
+      relations: ["status"],
     });
 
     if (!user) {
@@ -231,18 +233,31 @@ export class AuthService {
             email: "notFound",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
-    const checkExistingCustomer = await this.digifranchiseCustomerAccessControlRepository.findOne({ where: { digifranchiseId, customerId: user.id } })
+    if (user?.status?.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your email or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    const checkExistingCustomer =
+      await this.digifranchiseCustomerAccessControlRepository.findOne({
+        where: { digifranchiseId, customerId: user.id },
+      });
 
     // console.log('*********', checkExistingCustomer)
 
     if (!checkExistingCustomer) {
       throw new HttpException(
         "user is not signed up to this digifranchise",
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
 
@@ -256,10 +271,9 @@ export class AuthService {
     //   );
     // }
 
-
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
-      checkExistingCustomer.password,
+      checkExistingCustomer.password
     );
 
     if (!isValidPassword) {
@@ -270,7 +284,7 @@ export class AuthService {
             password: "incorrectPassword",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -315,7 +329,7 @@ export class AuthService {
       if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
         throw new HttpException(
           "Only users with the digifranchise_super_admin role can log in through this method.",
-          HttpStatus.FORBIDDEN,
+          HttpStatus.FORBIDDEN
         );
       }
 
@@ -347,7 +361,7 @@ export class AuthService {
           },
           image: googleUser.profilePic,
           provider: "google",
-        }),
+        })
       );
 
       const user = await this.usersRepository.findOne({
@@ -358,7 +372,7 @@ export class AuthService {
         if (user.role?.id !== RoleEnum.digifranchise_super_admin) {
           throw new HttpException(
             "Only users with the digifranchise_super_admin role can log in through this method.",
-            HttpStatus.FORBIDDEN,
+            HttpStatus.FORBIDDEN
           );
         }
 
@@ -383,7 +397,7 @@ export class AuthService {
 
   async googleAuthCustomer(
     ownedDigifranchiseId: string,
-    googleUser: GoogleCreateUserDto,
+    googleUser: GoogleCreateUserDto
   ): Promise<any> {
     const existingUserWithDifferentProvider =
       await this.usersRepository.findOne({
@@ -393,7 +407,7 @@ export class AuthService {
     if (existingUserWithDifferentProvider) {
       throw new HttpException(
         "An account with this email address already exists, Please log in or use a different email address.",
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
 
@@ -405,7 +419,7 @@ export class AuthService {
       if (user.role?.id !== RoleEnum.customer) {
         throw new HttpException(
           "Only users with the customer role can log in through this method.",
-          HttpStatus.FORBIDDEN,
+          HttpStatus.FORBIDDEN
         );
       }
 
@@ -423,10 +437,10 @@ export class AuthService {
           } else {
             await this.customerSubscription.createSubscription(
               user.id,
-              ownedDigifranchiseId,
+              ownedDigifranchiseId
             );
           }
-        },
+        }
       );
 
       const { token, refreshToken, tokenExpires } =
@@ -454,7 +468,7 @@ export class AuthService {
           },
           image: googleUser.profilePic,
           provider: "google",
-        }),
+        })
       );
 
       const user = await this.usersRepository.findOne({
@@ -465,7 +479,7 @@ export class AuthService {
         if (user.role?.id !== RoleEnum.customer) {
           throw new HttpException(
             "Only users with the customer role can log in through this method.",
-            HttpStatus.FORBIDDEN,
+            HttpStatus.FORBIDDEN
           );
         }
 
@@ -483,10 +497,10 @@ export class AuthService {
             } else {
               await this.customerSubscription.createSubscription(
                 user.id,
-                ownedDigifranchiseId,
+                ownedDigifranchiseId
               );
             }
-          },
+          }
         );
 
         const { token, refreshToken, tokenExpires } =
@@ -508,14 +522,14 @@ export class AuthService {
 
   async getCsrfToken(): Promise<string> {
     const response = await axios.get(
-      `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_CSRF_TOKEN_ENDPOINT")}`,
+      `${this.configService.get("ACADEMY_API_BASE_URL")}${this.configService.get("ACADEMY_CSRF_TOKEN_ENDPOINT")}`
     );
 
     return response.data.token;
   }
 
   async register(
-    dto: AuthRegisterLoginDto,
+    dto: AuthRegisterLoginDto
   ): Promise<{ user: User; academyError: string | null }> {
     const csrfToken = await this.getCsrfToken();
 
@@ -567,7 +581,7 @@ export class AuthService {
             "Content-Type": "application/x-www-form-urlencoded",
             "X-CSRFToken": csrfToken,
           },
-        },
+        }
       );
     } catch (error) {
       academyError = "AcademyRegisterFailed";
@@ -584,7 +598,7 @@ export class AuthService {
         expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
           infer: true,
         }),
-      },
+      }
     );
 
     await this.mailService.userSignUp({
@@ -600,98 +614,93 @@ export class AuthService {
   async customerRegister(
     digifranchiseId: string,
     dto: AuthRegisterLoginDto,
-    websiteURL: string,
+    websiteURL: string
   ): Promise<void> {
     try {
-      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({
-        where: {
-          email: dto.email,
-        }
-      })
-      if (checkExistingCustomer) {
+      const checkExistingCustomer =
+        await this.digifranchiseCustomersRepository.findOne({
+          where: {
+            email: dto.email,
+          },
+        });
+
+      const existingCustomerInDigifranchise =
+        await this.digifranchiseCustomerAccessControlRepository.findOne({
+          where: {
+            digifranchiseId: digifranchiseId,
+            customerId: checkExistingCustomer?.id,
+          },
+        });
+
+      if (checkExistingCustomer && existingCustomerInDigifranchise) {
         throw new HttpException(
-          "User with this email is already signed up to this digifranchise.",
-          HttpStatus.CONFLICT,
+          "User with this email is already signed up to this DigiFranchise.",
+          HttpStatus.CONFLICT
         );
+      }
+
+      let customerIdToConfirm: string;
+      let newCustomer: any;
+
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(dto.password, salt);
+
+      if (checkExistingCustomer) {
+        await this.digifranchiseCustomerAccessControlRepository.save(
+          this.digifranchiseCustomerAccessControlRepository.create({
+            customerId: checkExistingCustomer.id,
+            digifranchiseId: digifranchiseId,
+            password: hashedPassword,
+          })
+        );
+
+        customerIdToConfirm = checkExistingCustomer.id;
       } else {
-        // const user = await this.usersService.create({
-        //   ...dto,
-        //   email: dto.email,
-        //   phoneNumber: null,
-        //   role: {
-        //     id: RoleEnum.customer,
-        //   },
-        //   status: {
-        //     id: StatusEnum.inactive,
-        //   },
-        //   image: null,
-        //   idImage: null,
-        //   gender: null,
-        //   race: null,
-        //   homeAddress: null,
-        //   educationLevel: null,
-        //   currentActivity: null,
-        //   fieldOfStudy: null,
-        //   qualifications: null,
-        //   professionalBody: null,
-        //   southAfricanCitizen: null,
-        //   documentId: null,
-        //   countryOfOrigin: null,
-        //   criminalRecord: null,
-        //   policeClearenceCertificate: null,
-        //   crimes: null,
-        //   isProfileComplete: false,
-        // });
-
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(dto.password, salt);
-
-        const attachedCustomerToDigifranchise = this.digifranchiseCustomersRepository.create({
+        newCustomer = this.digifranchiseCustomersRepository.create({
           firstName: dto.firstName,
           lastName: dto.lastName,
           email: dto.email,
-        })
-        await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
+          status: {
+            id: StatusEnum.inactive,
+          },
+        });
+
+        await this.digifranchiseCustomersRepository.save(newCustomer);
 
         await this.digifranchiseCustomerAccessControlRepository.save(
           this.digifranchiseCustomerAccessControlRepository.create({
-            customerId: attachedCustomerToDigifranchise.id,
+            customerId: newCustomer.id,
             digifranchiseId: digifranchiseId,
-            password: hashedPassword
+            password: hashedPassword,
           })
-        )
-
-        const hash = await this.jwtService.signAsync(
-          {
-            confirmEmailUserId: attachedCustomerToDigifranchise.id,
-          },
-          {
-            secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
-              infer: true,
-            }),
-            expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
-              infer: true,
-            }),
-          },
         );
 
-        // await this.customerSubscription.createSubscription(
-        //   user.id,
-        //   digifranchiseId,
-        // );
-
-        await this.mailService.customerSignUp({
-          to: dto.email,
-          data: {
-            hash,
-            websiteUrl: websiteURL,
-          },
-        });
+        customerIdToConfirm = newCustomer.id;
       }
+
+      const hash = await this.jwtService.signAsync(
+        { confirmEmailUserId: customerIdToConfirm },
+        {
+          secret: this.configService.getOrThrow("auth.confirmEmailSecret", {
+            infer: true,
+          }),
+          expiresIn: this.configService.getOrThrow("auth.confirmEmailExpires", {
+            infer: true,
+          }),
+        }
+      );
+
+      await this.mailService.customerSignUp({
+        to: dto.email,
+        data: {
+          hash,
+          websiteUrl: websiteURL,
+        },
+      });
     } catch (error) {
       throw new HttpException(
-        error.response,
-        error.status,
+        error.response || "An error occurred during registration.",
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -717,30 +726,56 @@ export class AuthService {
             hash: `invalidHash`,
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
-    const user = await this.usersService.findOne({
-      id: userId,
-    });
+    const user = await this.usersService.findOne({ id: userId });
 
-    if (!user || user?.status?.id !== StatusEnum.inactive) {
-      throw new HttpException(
+    if (user) {
+      if (user?.status?.id === StatusEnum.inactive) {
+        const updatedStatus = { id: StatusEnum.active };
+        Object.assign(user, { status: updatedStatus.id });
+        await this.usersRepository.save(user);
+      } else {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `notFound`,
+          },
+          HttpStatus.NOT_FOUND
+        );
+      }
+    } else {
+      const customer: any = await this.digifranchiseCustomersRepository.findOne(
         {
-          status: HttpStatus.NOT_FOUND,
-          error: `notFound`,
-        },
-        HttpStatus.NOT_FOUND,
+          where: { id: userId },
+          relations: ["status"],
+        }
       );
+
+      if (customer) {
+        if (customer?.status?.id === StatusEnum.inactive) {
+          const activeStatus = new StatusEntity();
+          activeStatus.id = StatusEnum.active;
+          customer.status = activeStatus;
+          await this.digifranchiseCustomersRepository.save(customer);
+        } else {
+          const activeStatus = new StatusEntity();
+          activeStatus.id = StatusEnum.active;
+          customer.status = activeStatus;
+          await this.digifranchiseCustomersRepository.save(customer);
+        }
+      } else {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `notFound`,
+          },
+          HttpStatus.NOT_FOUND
+        );
+      }
     }
-
-    const updatedStatus = {
-      id: StatusEnum.active,
-    };
-
-    Object.assign(user, { status: updatedStatus.id });
-    await this.usersRepository.save(user);
   }
 
   async phoneRegister(dto: AuthPhoneRegisterDto) {
@@ -754,7 +789,7 @@ export class AuthService {
             message: "Phone number already exists",
           },
         },
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
     const user = await this.usersService.create({
@@ -795,7 +830,7 @@ export class AuthService {
             phoneNumber: "failedToCreatUser",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -811,7 +846,7 @@ export class AuthService {
               message: "user has been created but unable to SMS at this time",
             },
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.UNPROCESSABLE_ENTITY
         );
       }
     }
@@ -819,116 +854,75 @@ export class AuthService {
 
   async phoneCustomerRegister(
     digifranchiseId: string,
-    dto: AuthPhoneRegisterDto,
+    dto: AuthPhoneRegisterDto
   ) {
     try {
       const { phoneNumber } = dto;
-      const checkExistingCustomer = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber } })
 
-      if (checkExistingCustomer) {
-        throw new HttpException(
-          "User with this email is already signed up to this digifranchise.",
-          HttpStatus.CONFLICT,
-        );
-      } else {
-        // const users = await this.digifranchiseCustomersRepository.findOne({ where: { phoneNumber } });
-        // if (users) {
-        //   throw new HttpException(
-        //     {
-        //       status: HttpStatus.CONFLICT,
-        //       errors: {
-        //         message: "Phone number already exists",
-        //       },
-        //     },
-        //     HttpStatus.CONFLICT,
-        //   );
-        // }
-        // const user = await this.usersService.create({
-        //   ...dto,
-        //   provider: AuthProvidersEnum.phone,
-        //   email: null,
-        //   phoneNumber: dto.phoneNumber,
-        //   role: {
-        //     id: RoleEnum.customer,
-        //   },
-        //   status: {
-        //     id: StatusEnum.inactive,
-        //   },
-        //   image: null,
-        //   idImage: null,
-        //   gender: null,
-        //   race: null,
-        //   homeAddress: null,
-        //   educationLevel: null,
-        //   currentActivity: null,
-        //   fieldOfStudy: null,
-        //   qualifications: null,
-        //   professionalBody: null,
-        //   southAfricanCitizen: null,
-        //   documentId: null,
-        //   countryOfOrigin: null,
-        //   criminalRecord: null,
-        //   policeClearenceCertificate: null,
-        //   crimes: null,
-        //   isProfileComplete: false,
-        // });
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(dto.password, salt);
+      const existingCustomer =
+        await this.digifranchiseCustomersRepository.findOne({
+          where: { phoneNumber },
+        });
 
-        const attachedCustomerToDigifranchise = this.digifranchiseCustomersRepository.create({
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          phoneNumber: dto.phoneNumber,
-        })
-        await this.digifranchiseCustomersRepository.save(attachedCustomerToDigifranchise)
+      let customerId: string;
 
-        // console.log('>>>>>>>>>>>', attachedCustomerToDigifranchise.id)
-
-        await this.digifranchiseCustomerAccessControlRepository.save(
-          this.digifranchiseCustomerAccessControlRepository.create({
-            customerId: attachedCustomerToDigifranchise.id,
-            digifranchiseId,
-            password: hashedPassword
-          })
-        )
-
-        if (!attachedCustomerToDigifranchise) {
-          throw new HttpException(
-            {
-              status: HttpStatus.INTERNAL_SERVER_ERROR,
-              errors: {
-                phoneNumber: "failedToCreatUser",
-              },
+      if (existingCustomer) {
+        const existingAccessControl =
+          await this.digifranchiseCustomerAccessControlRepository.findOne({
+            where: {
+              customerId: existingCustomer.id,
+              digifranchiseId: digifranchiseId,
             },
-            HttpStatus.UNPROCESSABLE_ENTITY,
+          });
+
+        if (existingAccessControl) {
+          throw new HttpException(
+            "User with this phone number is already signed up to this digifranchise.",
+            HttpStatus.CONFLICT
           );
         }
 
-        if (attachedCustomerToDigifranchise) {
-          try {
-            await this.smsService.sendOTP(dto.phoneNumber);
-            // await this.customerSubscription.createSubscription(
-            //   attachedCustomerToDigifranchise.id,
-            //   digifranchiseId,
-            // );
-          } catch (error) {
-            throw new HttpException(
-              {
-                status: HttpStatus.INTERNAL_SERVER_ERROR,
-                errors: {
-                  phoneNumber: "failed to send SMS",
-                  message: "user has been created but unable to SMS at this time",
-                },
-              },
-              HttpStatus.UNPROCESSABLE_ENTITY,
-            );
-          }
-        }
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(dto.password, salt);
+
+        await this.digifranchiseCustomerAccessControlRepository.save(
+          this.digifranchiseCustomerAccessControlRepository.create({
+            customerId: existingCustomer.id,
+            digifranchiseId: digifranchiseId,
+            password: hashedPassword,
+          })
+        );
+        customerId = existingCustomer.id;
+      } else {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(dto.password, salt);
+
+        const newCustomer = this.digifranchiseCustomersRepository.create({
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          phoneNumber: dto.phoneNumber,
+          status: {
+            id: StatusEnum.inactive,
+          },
+        });
+
+        await this.digifranchiseCustomersRepository.save(newCustomer);
+        customerId = newCustomer.id;
+
+        await this.digifranchiseCustomerAccessControlRepository.save(
+          this.digifranchiseCustomerAccessControlRepository.create({
+            customerId: newCustomer.id,
+            digifranchiseId: digifranchiseId,
+            password: hashedPassword,
+          })
+        );
       }
+
+      await this.smsService.sendOTP(dto.phoneNumber);
     } catch (error) {
       throw new HttpException(
-        "internal server error",
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        "Internal server error",
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
@@ -946,7 +940,7 @@ export class AuthService {
             phone: "notFound",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -958,7 +952,7 @@ export class AuthService {
             email: `needLoginViaProvider:${user.provider}`,
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -968,7 +962,7 @@ export class AuthService {
           status: HttpStatus.FORBIDDEN,
           errors: { role: "verify your phone or contact super admin" },
         },
-        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -980,7 +974,7 @@ export class AuthService {
             password: "incorrectPassword",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -994,7 +988,7 @@ export class AuthService {
             password: "incorrectPassword",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -1018,10 +1012,11 @@ export class AuthService {
 
   async customerPhoneLogin(
     digifranchiseId: string,
-    dto: AuthPhoneLoginDto,
+    dto: AuthPhoneLoginDto
   ): Promise<LoginResponseType> {
     const user = await this.digifranchiseCustomersRepository.findOne({
       where: { phoneNumber: dto.phoneNumber },
+      relations: ["status"],
     });
 
     if (!user) {
@@ -1032,16 +1027,29 @@ export class AuthService {
             phone: "notFound",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
-    const checkExistingCustomer = await this.digifranchiseCustomerAccessControlRepository.findOne({ where: { digifranchiseId, customerId: user.id } })
+    if (user.status?.id !== StatusEnum.active) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          errors: { role: "verify your phone or contact super admin" },
+        },
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    const checkExistingCustomer =
+      await this.digifranchiseCustomerAccessControlRepository.findOne({
+        where: { digifranchiseId, customerId: user.id },
+      });
 
     if (!checkExistingCustomer) {
       throw new HttpException(
         "user is not signed up to this digifranchise",
-        HttpStatus.CONFLICT,
+        HttpStatus.CONFLICT
       );
     }
 
@@ -1080,7 +1088,7 @@ export class AuthService {
     // }
 
     const isValidPassword = await bcrypt.compare(
-      dto.password, 
+      dto.password,
       checkExistingCustomer.password
     );
 
@@ -1092,7 +1100,7 @@ export class AuthService {
             password: "incorrectPassword",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -1131,7 +1139,7 @@ export class AuthService {
   async verifyUserWithPhone(dto: AuthConfirmPhoneDto) {
     const phoneIsVerified = await this.smsService.verifyOTP(
       dto.phoneNumber,
-      dto.otp,
+      dto.otp
     );
 
     if (phoneIsVerified) {
@@ -1144,7 +1152,7 @@ export class AuthService {
             status: HttpStatus.NOT_FOUND,
             error: `notFound`,
           },
-          HttpStatus.NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
       }
 
@@ -1159,7 +1167,7 @@ export class AuthService {
           status: HttpStatus.BAD_REQUEST,
           error: "Wrong otp",
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
   }
@@ -1177,7 +1185,7 @@ export class AuthService {
             email: "email does not exist",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -1192,7 +1200,7 @@ export class AuthService {
         expiresIn: this.configService.getOrThrow("auth.forgotExpires", {
           infer: true,
         }),
-      },
+      }
     );
 
     await this.mailService.forgotPassword({
@@ -1204,37 +1212,35 @@ export class AuthService {
   }
 
   async forgetPasswordForWebs(
-    dto: AuthForgotPasswordForWebSiteDto,
+    dto: AuthForgotPasswordForWebSiteDto
   ): Promise<void> {
-    const user = await this.usersService.findOne({
+    let entityType = "user";
+    let entity: any = await this.usersService.findOne({
       email: dto.email,
     });
 
-    if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: "email does not exist",
+    if (!entity) {
+      entityType = "customer";
+      entity = await this.digifranchiseCustomersRepository.findOne({
+        where: { email: dto.email },
+      });
+
+      if (!entity) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              email: "email does not exist",
+            },
           },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
     }
-    // if (!dto.websiteURL || dto.websiteURL.trim() === '') {
-    //   throw new HttpException(
-    //     {
-    //       status: HttpStatus.BAD_REQUEST,
-    //       error: 'websiteURL is required and must not be empty',
-    //     },
-    //     HttpStatus.BAD_REQUEST,
-    //   );
-    // }
-    console.log(`Website URL: ${dto.websiteURL}`);
 
     const hash = await this.jwtService.signAsync(
       {
-        forgotUserId: user.id,
+        forgotUserId: entity.id,
       },
       {
         secret: this.configService.getOrThrow("auth.forgotSecret", {
@@ -1243,7 +1249,7 @@ export class AuthService {
         expiresIn: this.configService.getOrThrow("auth.forgotExpires", {
           infer: true,
         }),
-      },
+      }
     );
 
     await this.mailService.forgotPasswordForWebs({
@@ -1268,7 +1274,7 @@ export class AuthService {
             phone: "phone does not exist",
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
@@ -1280,7 +1286,7 @@ export class AuthService {
   async resetPasswordWithPhone(
     otp: string,
     phoneNumber: string,
-    newPassword: string,
+    newPassword: string
   ): Promise<any> {
     const phoneIsVerified = await this.smsService.verifyOTP(phoneNumber, otp);
 
@@ -1290,29 +1296,49 @@ export class AuthService {
           status: HttpStatus.BAD_REQUEST,
           error: `otpExpired`,
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
     if (phoneIsVerified) {
       const user = await this.usersService.findOne({ phoneNumber });
-      if (!user) {
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: `notFound`,
-          },
-          HttpStatus.NOT_FOUND,
-        );
+      if (user) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+        Object.assign(user, { password: hashedPassword });
+        await this.usersRepository.save(user);
+        return {
+          status: HttpStatus.OK,
+          message: "Password successfully reset for user",
+        };
       }
 
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      const customerUser: any =
+        await this.digifranchiseCustomersRepository.findOne({
+          where: { phoneNumber: phoneNumber },
+        });
+      const customer =
+        await this.digifranchiseCustomerAccessControlRepository.findOne({
+          where: { customerId: customerUser.id },
+        });
+      if (customer) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+        Object.assign(customer, { password: hashedPassword });
+        await this.digifranchiseCustomerAccessControlRepository.save(customer);
+        return {
+          status: HttpStatus.OK,
+          message: "Password successfully reset for user",
+        };
+      }
 
-      Object.assign(user, { password: hashedPassword });
-      await this.usersRepository.save(user);
-
-      return { status: HttpStatus.OK, message: "password successfully reset" };
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: `notFound`,
+        },
+        HttpStatus.NOT_FOUND
+      );
     }
   }
 
@@ -1321,7 +1347,7 @@ export class AuthService {
 
     try {
       const jwtData = await this.jwtService.verifyAsync<{
-        forgotUserId: User["id"];
+        forgotUserId: string;
       }>(hash, {
         secret: this.configService.getOrThrow("auth.forgotSecret", {
           infer: true,
@@ -1333,73 +1359,91 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            hash: `invalidHash`,
-          },
+          errors: { hash: `invalidHash` },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
-    const user = await this.usersService.findOne({
-      id: userId,
-    });
-
-    if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            hash: `notFound`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+    const user = await this.usersService.findOne({ id: userId });
+    if (user) {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+      Object.assign(user, { password: hashedPassword });
+      await this.usersRepository.save(user);
+      return;
     }
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const customer =
+      await this.digifranchiseCustomerAccessControlRepository.findOne({
+        where: { customerId: userId },
+      });
+    if (customer) {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+      Object.assign(customer, { password: hashedPassword });
+      await this.digifranchiseCustomerAccessControlRepository.save(customer);
+      return;
+    }
 
-    Object.assign(user, { password: hashedPassword });
-
-    await this.usersRepository.save(user);
+    throw new HttpException(
+      { status: HttpStatus.UNPROCESSABLE_ENTITY, errors: { hash: `notFound` } },
+      HttpStatus.UNPROCESSABLE_ENTITY
+    );
   }
 
   async me(userJwtPayload: JwtPayloadType): Promise<NullableType<User>> {
-    return this.usersService.findOne({
+    const user = await this.usersService.findOne({
       id: userJwtPayload.id,
     });
+    if (user) {
+      return user;
+    }
+    const customer: any = await this.digifranchiseCustomersRepository.findOne({
+      where: { id: userJwtPayload.id },
+    });
+    return customer;
   }
 
   async update(
     userJwtPayload: JwtPayloadType,
-    updateUserProfileDto: UserProfileDto,
+    updateUserProfileDto: UserProfileDto
   ): Promise<void> {
-    const user = await this.usersService.findOne({
+    let user: any = await this.usersService.findOne({
       id: userJwtPayload.id,
     });
 
+    let customer: any = null;
+
     if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            hash: `notFound`,
+      customer = await this.digifranchiseCustomersRepository.findOne({
+        where: { id: userJwtPayload.id },
+      });
+
+      if (!customer) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              hash: `notFound`,
+            },
           },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+          HttpStatus.UNPROCESSABLE_ENTITY
+        );
+      }
     }
 
     if (
       updateUserProfileDto.email &&
       updateUserProfileDto.email.trim().length > 0
     ) {
-      const userObject = await this.usersService.findOne({
-        email: updateUserProfileDto.email,
-      });
+      const existingEntity: any = await (user
+        ? this.usersService.findOne({ email: updateUserProfileDto.email })
+        : this.digifranchiseCustomersRepository.findOne({
+            where: { email: updateUserProfileDto.email },
+          }));
 
-      if (userObject && userObject.id !== userJwtPayload.id) {
+      if (existingEntity && existingEntity.id !== userJwtPayload.id) {
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1407,7 +1451,7 @@ export class AuthService {
               email: "email already exists",
             },
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.UNPROCESSABLE_ENTITY
         );
       }
     }
@@ -1416,11 +1460,15 @@ export class AuthService {
       updateUserProfileDto.phoneNumber &&
       updateUserProfileDto.phoneNumber.trim().length > 0
     ) {
-      const userObject = await this.usersService.findOne({
-        phoneNumber: updateUserProfileDto.phoneNumber,
-      });
+      const existingEntity: any = await (user
+        ? this.usersService.findOne({
+            phoneNumber: updateUserProfileDto.phoneNumber,
+          })
+        : this.digifranchiseCustomersRepository.findOne({
+            where: { phoneNumber: updateUserProfileDto.phoneNumber },
+          }));
 
-      if (userObject && userObject.id !== userJwtPayload.id) {
+      if (existingEntity && existingEntity.id !== userJwtPayload.id) {
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1428,42 +1476,58 @@ export class AuthService {
               phoneNumber: "phone number already exists",
             },
           },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+          HttpStatus.UNPROCESSABLE_ENTITY
         );
       }
     }
 
-    Object.assign(user, {
-      image: updateUserProfileDto?.image,
-      email: updateUserProfileDto?.email,
-      firstName: updateUserProfileDto?.firstName,
-      lastName: updateUserProfileDto?.lastName,
-      idImage: updateUserProfileDto?.idImage,
-      gender: updateUserProfileDto?.gender,
-      race: updateUserProfileDto?.race,
-      homeAddress: updateUserProfileDto?.homeAddress,
-      phoneNumber: updateUserProfileDto?.phoneNumber,
-      educationLevel: updateUserProfileDto?.educationLevel,
-      currentActivity: updateUserProfileDto?.currentActivity,
-      fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
-      qualifications: updateUserProfileDto?.qualifications,
-      professionalBody: updateUserProfileDto?.professionalBody,
-      southAfricanCitizen: updateUserProfileDto?.southAfricanCitizen,
-      dateOfBirth: updateUserProfileDto?.dateOfBirth,
-      documentId: updateUserProfileDto?.documentId,
-      countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
-      criminalRecord: updateUserProfileDto?.criminalRecord,
-      policeClearenceCertificate:
-        updateUserProfileDto?.policeClearenceCertificate,
-      crimes: updateUserProfileDto?.crimes,
-    });
+    if (user) {
+      Object.assign(user, {
+        image: updateUserProfileDto?.image,
+        email: updateUserProfileDto?.email,
+        firstName: updateUserProfileDto?.firstName,
+        lastName: updateUserProfileDto?.lastName,
+        idImage: updateUserProfileDto?.idImage,
+        gender: updateUserProfileDto?.gender,
+        race: updateUserProfileDto?.race,
+        homeAddress: updateUserProfileDto?.homeAddress,
+        phoneNumber: updateUserProfileDto?.phoneNumber,
+        educationLevel: updateUserProfileDto?.educationLevel,
+        currentActivity: updateUserProfileDto?.currentActivity,
+        fieldOfStudy: updateUserProfileDto?.fieldOfStudy,
+        qualifications: updateUserProfileDto?.qualifications,
+        professionalBody: updateUserProfileDto?.professionalBody,
+        southAfricanCitizen: updateUserProfileDto?.southAfricanCitizen,
+        dateOfBirth: updateUserProfileDto?.dateOfBirth,
+        documentId: updateUserProfileDto?.documentId,
+        countryOfOrigin: updateUserProfileDto?.countryOfOrigin,
+        criminalRecord: updateUserProfileDto?.criminalRecord,
+        policeClearenceCertificate:
+          updateUserProfileDto?.policeClearenceCertificate,
+        crimes: updateUserProfileDto?.crimes,
+      });
 
-    await this.usersRepository.save(user);
+      await this.usersRepository.save(user);
+    }
 
-    const updatedUser = await this.usersService.findOne({
-      id: userJwtPayload.id,
-    });
-    if (!updatedUser) {
+    if (customer) {
+      Object.assign(customer, {
+        firstName: updateUserProfileDto?.firstName,
+        lastName: updateUserProfileDto?.lastName,
+        email: updateUserProfileDto?.email,
+        phoneNumber: updateUserProfileDto?.phoneNumber,
+      });
+
+      await this.digifranchiseCustomersRepository.save(customer);
+    }
+
+    const updatedEntity: any = user
+      ? await this.usersService.findOne({ id: userJwtPayload.id })
+      : await this.digifranchiseCustomersRepository.findOne({
+          where: { id: userJwtPayload.id },
+        });
+
+    if (!updatedEntity) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -1471,36 +1535,34 @@ export class AuthService {
             hash: `notFound`,
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     }
 
-    if (
-      (!!updatedUser.email || !!updatedUser.phoneNumber) &&
-      !!updatedUser.gender &&
-      !!updatedUser.race &&
-      !!updatedUser.homeAddress &&
-      !!updatedUser.educationLevel &&
-      !!updatedUser.currentActivity &&
-      !!updatedUser.fieldOfStudy &&
-      !!updatedUser.southAfricanCitizen &&
-      !!updatedUser.documentId &&
-      !!updatedUser.countryOfOrigin
-    ) {
-      Object.assign(updatedUser, {
-        isProfileComplete: true,
-      });
-      await this.usersRepository.save(updatedUser);
-    } else {
-      Object.assign(updatedUser, {
-        isProfileComplete: false,
-      });
-      await this.usersRepository.save(updatedUser);
+    if (user) {
+      if (
+        (!!updatedEntity.email || !!updatedEntity.phoneNumber) &&
+        !!updatedEntity.gender &&
+        !!updatedEntity.race &&
+        !!updatedEntity.homeAddress &&
+        !!updatedEntity.educationLevel &&
+        !!updatedEntity.currentActivity &&
+        !!updatedEntity.fieldOfStudy &&
+        !!updatedEntity.southAfricanCitizen &&
+        !!updatedEntity.documentId &&
+        !!updatedEntity.countryOfOrigin
+      ) {
+        Object.assign(updatedEntity, { isProfileComplete: true });
+      } else {
+        Object.assign(updatedEntity, { isProfileComplete: false });
+      }
+
+      await this.usersRepository.save(updatedEntity);
     }
   }
 
   async refreshToken(
-    data: Pick<JwtRefreshPayloadType, "sessionId">,
+    data: Pick<JwtRefreshPayloadType, "sessionId">
   ): Promise<Omit<LoginResponseType, "user">> {
     const session = await this.sessionService.findOne({
       id: data.sessionId,
@@ -1554,7 +1616,7 @@ export class AuthService {
         {
           secret: this.configService.getOrThrow("auth.secret", { infer: true }),
           expiresIn: tokenExpiresIn,
-        },
+        }
       ),
       await this.jwtService.signAsync(
         {
@@ -1567,7 +1629,7 @@ export class AuthService {
           expiresIn: this.configService.getOrThrow("auth.refreshExpires", {
             infer: true,
           }),
-        },
+        }
       ),
     ]);
 
@@ -1628,7 +1690,7 @@ export class AuthService {
           expiresIn: this.configService.getOrThrow("auth.refreshExpires", {
             infer: true,
           }),
-        },
+        }
       ),
     ]);
 
