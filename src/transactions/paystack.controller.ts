@@ -170,6 +170,7 @@ export class PaystackController {
   }
 
 
+
 @Get('get-subaccounts')
 async getSubAccounts() {
   try {
@@ -188,6 +189,26 @@ async getSubAccounts() {
 }
 
 
+@Get('supported-by-country-name')
+  async getSupportedBanks(@Query('country') country: string) {
+    if (!country) {
+      throw new HttpException('Country parameter is required', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      const banks = await this.paystackService.getPayStackSupportedBanksByCountry(country);
+      return {
+        status: true,
+        message: `Supported banks for ${country}`,
+        data: banks,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to retrieve supported banks',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
 
 
