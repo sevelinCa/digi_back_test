@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO,  } from './dto/paystack.dto';
+import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO, InitializeSplitPaymentDTO,  } from './dto/paystack.dto';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderTable } from 'src/payment/entities/order.entity';
@@ -278,15 +278,14 @@ export class PaystackService {
 
 
 
+  
   async createSubAccount(dto: CreatePayStackSubAccountDTO) {
     const url = `${this.paystackUrl}/subaccount`;
     const headers = {
       Authorization: `Bearer ${this.configService.get<string>('PAYSTACK_SECRET_KEY')}`,
       'Content-Type': 'application/json',
     };
-  
-    console.log('Creating subaccount with:', dto);  
-  
+   
     try {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, { headers })
@@ -314,5 +313,7 @@ export class PaystackService {
       );
     }
   }
-  
+
+
+
 }

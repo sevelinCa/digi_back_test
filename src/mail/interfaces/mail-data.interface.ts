@@ -22,5 +22,8 @@ export interface enquiryEmailNotificationMailData {
 export interface enquiryAndComplaintEmailNotificationMailData {
   to: string;
   supportEmail: string;
-  customerName: string; 
+  customerName: string;
+  submissionDate: string; 
+  complaintSummary: string; 
+  complaintReferenceNumber: string; 
 }
