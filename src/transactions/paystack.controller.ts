@@ -1,7 +1,7 @@
-import { Controller, Post, Body, HttpException, HttpStatus, Param, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus, Param, Get, Req, UseGuards, Query } from '@nestjs/common';
 import { PaystackService } from './paystack.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO,  } from './dto/paystack.dto';
+import { CreatePayStackSubAccountDTO, CreatePayStackTransactionCallbackUrlDTO, CreatePayStackTransactionDTO, InitializeSplitPaymentDTO,  } from './dto/paystack.dto';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { Request } from "express";
 import { AuthGuard } from '@nestjs/passport';
@@ -135,7 +135,7 @@ export class PaystackController {
     }
   }
 
-  @Get('supported-country')
+  @Get('supported-countries')
   async getPayStackSupportedCountry() {
     try {
       const country = await this.paystackService.getPayStackSupportedCountry();
@@ -168,4 +168,10 @@ export class PaystackController {
       );
     }
   }
+
+
+
+
+
+
 }

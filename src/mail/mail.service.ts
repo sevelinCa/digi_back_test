@@ -467,25 +467,29 @@ export class MailService {
     });
   }
   
+
+
+
+  
   async sendComplaintConfirmationEmail(
     mailData: enquiryAndComplaintEmailNotificationMailData
   ): Promise<void> {
     const i18n = I18nContext.current();
-    
+  
     let emailSubject: string = 'Complaint Confirmation';
     let emailText: string = 'Thank you for your complaint. We will respond within 48 hours.';
-
+  
     if (i18n) {
       [emailSubject, emailText] = await Promise.all([
         i18n.t("complaint.emailSubject", { defaultValue: 'Complaint Confirmation' }),
         i18n.t("complaint.emailText", { defaultValue: 'Thank you for your complaint. We will respond within 48 hours.' }),
       ]);
     }
-
+  
     await this.mailerService.sendMail({
       to: mailData.to,
-      subject: emailSubject, 
-      text: emailText, 
+      subject: emailSubject,
+      text: emailText,
       templatePath: path.join(
         this.configService.getOrThrow("app.workingDirectory", { infer: true }),
         "src",
@@ -496,9 +500,14 @@ export class MailService {
       context: {
         title: emailSubject,
         supportEmail: mailData.supportEmail,
-        companyName: this.configService.get('app.name', { infer: true }), 
+        companyName: this.configService.get('app.name', { infer: true }),
         customerName: mailData.customerName,
+        submissionDate: mailData.submissionDate, 
+        complaintSummary: mailData.complaintSummary, 
+        complaintReferenceNumber: mailData.complaintReferenceNumber, 
       },
     });
   }
+
+  
 }

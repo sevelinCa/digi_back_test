@@ -12,11 +12,20 @@ import {
 } from "class-validator";
 
 export enum OrderStatus {
+  // PENDING = "PENDING",
+  // PROCESSING = "PROCESSING",
+  // SHIPPED = "SHIPPED",
+  // DELIVERED = "DELIVERED",
+  // CANCELLED = "CANCELLED",
+
   PENDING = "PENDING",
   PROCESSING = "PROCESSING",
   SHIPPED = "SHIPPED",
   DELIVERED = "DELIVERED",
   CANCELLED = "CANCELLED",
+  RETURNED = "RETURNED",
+  DECLINED = "DECLINED",
+  COMPLETE = "COMPLETE",
 }
 
 export class CreateOrderTableDto {
