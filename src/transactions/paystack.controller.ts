@@ -170,6 +170,25 @@ export class PaystackController {
   }
 
 
+@Get('get-subaccounts')
+async getSubAccounts() {
+  try {
+    const result = await this.paystackService.getSubAccounts();
+    return {
+      status: true,
+      message: 'Subaccounts retrieved successfully',
+      data: result,
+    };
+  } catch (error) {
+    throw new HttpException(
+      error.message || 'Failed to retrieve subaccounts',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
+}
+
+
+
 
 
 
