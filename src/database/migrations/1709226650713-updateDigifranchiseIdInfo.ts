@@ -12,8 +12,9 @@ export class UpdateDigifranchiseIdInfo1709226650713
     await queryRunner.query(
       `ALTER TABLE "digifranchise_compliance_info" DROP CONSTRAINT "FK_aaf18ed9b15cc56f76043dc0d5a"`,
     );
+    // Drop unique constraint using DROP INDEX instead of DROP CONSTRAINT
     await queryRunner.query(
-      `ALTER TABLE "digifranchise_general_info" DROP CONSTRAINT "REL_628ee3d8e80b874079732697d6"`,
+      `DROP INDEX IF EXISTS "REL_628ee3d8e80b874079732697d6" CASCADE;`,
     );
     await queryRunner.query(
       `ALTER TABLE "digifranchise_general_info" DROP COLUMN "ownedDigifranchiseId"`,
@@ -21,8 +22,9 @@ export class UpdateDigifranchiseIdInfo1709226650713
     await queryRunner.query(
       `ALTER TABLE "digifranchise_general_info" ADD "ownedDigifranchiseId" character varying NOT NULL`,
     );
+    // Drop unique constraint using DROP INDEX instead of DROP CONSTRAINT
     await queryRunner.query(
-      `ALTER TABLE "digifranchise_compliance_info" DROP CONSTRAINT "REL_aaf18ed9b15cc56f76043dc0d5"`,
+      `DROP INDEX IF EXISTS "REL_aaf18ed9b15cc56f76043dc0d5" CASCADE;`,
     );
     await queryRunner.query(
       `ALTER TABLE "digifranchise_compliance_info" DROP COLUMN "ownedDigifranchiseId"`,

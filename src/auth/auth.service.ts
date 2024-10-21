@@ -838,6 +838,7 @@ export class AuthService {
       try {
         await this.smsService.sendOTP(dto.phoneNumber);
       } catch (error) {
+        console.log("error outside", error)
         throw new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,

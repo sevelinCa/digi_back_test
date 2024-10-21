@@ -34,9 +34,11 @@ export class SmsService {
         from: process.env.TWILIO_PHONE_NUMBER,
         to: phoneNumber,
       });
+      console.log("result inside", result)
 
       return result;
     } catch (error) {
+      console.log("error inside==>", error )
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
